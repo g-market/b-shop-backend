@@ -1,0 +1,56 @@
+spring:
+  profiles:
+    active: local  # default
+    group:
+      local:
+        - common
+        - security
+      prod:
+        - common
+
+---
+spring:
+  config:
+    activate:
+      on-profile: common
+
+  data:
+    redis:
+      host: ${REDIS-SERVER-URL}
+      port: ${REDIS-SERVER-PORT}
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:test_db;MODE=MySQL;
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    open-in-view: false
+
+---
+spring:
+  config:
+    activate:
+      on-profile: prod
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: ${SPRING-DATASOURCE-URL}
+    username: ${SPRING-DATASOURCE-USERNAME}
+    password: ${SPRING-DATASOURCE-PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+    open-in-view: false
