@@ -15,5 +15,4 @@ public class Category {
 
     @Column(nullable = false, columnDefinition = "varchar(255)")
     private String name;
-
 }
