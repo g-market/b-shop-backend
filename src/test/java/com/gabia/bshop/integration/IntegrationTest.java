@@ -14,8 +14,6 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @ActiveProfiles("test")
 public abstract class IntegrationTest {
 
-	@ClassRule
-	static MySQLContainer<?> MY_SQL_CONTAINER;
 	private static final String REDIS_VERSION = "redis:6.2.7";
 	private static final int REDIS_PORT = 6379;
 	@ClassRule
