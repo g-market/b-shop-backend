@@ -54,14 +54,14 @@ public class Options extends BaseEntity {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Options options = (Options) o;
+        final Options options = (Options) o;
         return getId().equals(options.getId());
     }
 
