@@ -1,3 +1,4 @@
+/* Licensed under Apache Corp */
 package com.gabia.bshop;
 
 import com.gabia.bshop.entity.Category;
@@ -11,20 +12,17 @@ import org.springframework.transaction.annotation.Transactional;
 @SpringBootTest
 public class JpaTest {
 
-    @Autowired
-    private EntityManager entityManager;
+    @Autowired private EntityManager entityManager;
 
     @Transactional
     @Test
     void JPA_기본_영속_조회기능() {
-        //given
-        Category category = Category.builder()
-                .name("test_category")
-                .build();
+        // given
+        Category category = Category.builder().name("test_category").build();
         entityManager.persist(category);
-        //when
+        // when
         Category findCategory = entityManager.find(Category.class, category.getId());
-        //then
+        // then
         Assertions.assertThat(category.getName()).isEqualTo("test_category");
     }
 }
