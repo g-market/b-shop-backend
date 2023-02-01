@@ -20,8 +20,8 @@ hiworks:
     id: testid
     secret: testsecret
   url:
-    accessToken: https://github.com/login/oauth/access_token
-    user: https://api.github.com/user
+    accessToken: https://api.hiworks.com/open/auth/accesstoken
+    user: https://api.hiworks.com/user/v2/me
 
 token:
   access-expired-time: 12345678
