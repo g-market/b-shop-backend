@@ -11,7 +11,9 @@ import lombok.ToString;
 @ToString(exclude = {"item"})
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "item_image", indexes = {})
+@Table(
+        name = "item_image",
+        indexes = {})
 @Entity
 public class ItemImage {
 
