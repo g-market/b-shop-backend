@@ -9,7 +9,7 @@ import org.testcontainers.utility.DockerImageName;
 @Testcontainers
 public abstract class IntegrationTest {
 
-    private static final String REDIS_VERSION = "redis:6";
+    private static final String REDIS_VERSION = "redis:6.2.7";
     private static final int REDIS_PORT = 6379;
 
     static final GenericContainer REDIS_CONTAINER;
