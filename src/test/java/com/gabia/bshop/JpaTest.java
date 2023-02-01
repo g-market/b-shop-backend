@@ -12,13 +12,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-public class TestContainerTest {
+public class JpaTest {
 
     @Autowired
     private MemberRepository memberRepository;
 
     @Test
     void 유저를_저장한다() {
+        // given
         final Member member = Member.builder()
                 .hiworksId("hiworksId")
                 .email("email")
@@ -26,8 +27,9 @@ public class TestContainerTest {
                 .phoneNumber("phoneNumber")
                 .role(MemberRole.NORMAL).grade(MemberGrade.BRONZE)
                 .build();
+        // when
         memberRepository.save(member);
-
+        // then
         assertThat(member.getId()).isEqualTo(1L);
     }
 }
