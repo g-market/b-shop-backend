@@ -1,6 +1,7 @@
 /* Licensed under Apache Corp */
 package com.gabia.bshop;
 
+import com.gabia.bshop.integration.IntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
 @SpringBootTest
-public class RedisTest {
+public class RedisTest extends IntegrationTest {
 
     @Autowired StringRedisTemplate stringRedisTemplate;
 
