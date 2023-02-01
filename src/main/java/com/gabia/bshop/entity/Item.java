@@ -2,6 +2,7 @@ package com.gabia.bshop.entity;
 
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -10,13 +11,13 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 
-import java.time.LocalDateTime;
-
 @ToString(exclude = {"category"})
 @Getter
 @SQLDelete(sql = "update item set deleted = true where id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "item", indexes = {})
+@Table(
+        name = "item",
+        indexes = {})
 @Entity
 public class Item extends BaseEntity {
 
@@ -48,8 +49,15 @@ public class Item extends BaseEntity {
     private boolean deleted;
 
     @Builder
-    private Item(final Long id, final String name, final Category category, final String description, final int basePrice,
-            final ItemStatus itemStatus, final LocalDateTime openAt, final boolean deleted) {
+    private Item(
+            final Long id,
+            final String name,
+            final Category category,
+            final String description,
+            final int basePrice,
+            final ItemStatus itemStatus,
+            final LocalDateTime openAt,
+            final boolean deleted) {
         this.id = id;
         this.name = name;
         this.category = category;

@@ -11,7 +11,9 @@ import lombok.ToString;
 @ToString(exclude = {"item"})
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "options", indexes = {})
+@Table(
+        name = "options",
+        indexes = {})
 @Entity
 public class Options extends BaseEntity {
 
@@ -36,7 +38,12 @@ public class Options extends BaseEntity {
     private int stockQuantity;
 
     @Builder
-    private Options(final Long id, final Item item, final String description, final int optionLevel, final int optionPrice,
+    private Options(
+            final Long id,
+            final Item item,
+            final String description,
+            final int optionLevel,
+            final int optionPrice,
             final int stockQuantity) {
         this.id = id;
         this.item = item;
