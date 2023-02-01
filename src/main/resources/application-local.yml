@@ -1,16 +1,15 @@
 spring:
   datasource:
-    driver-class-name: org.h2.Driver
-    url: jdbc:h2:mem:test_db;MODE=MySQL;
-    username: sa
-    password:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/bshop_db
+    username: root
+    password: 1234
   jpa:
     hibernate:
       ddl-auto: create
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.MySQL8Dialect
-      #https://velog:io/@bigquann97/TIL-15-%EB%A6%AC%ED%8C%A9%ED%84%B0%EB%A7%81:
+        hibernate.default_batch_fetch_size: 100
       jakarta:
         persistence:
           sharedCache:
@@ -26,3 +25,16 @@ logging:
     org:
       hibernate:
         SQL: debug
+---
+hiworks:
+  client:
+    id: hiworks-client-id
+    secret: hiworks-client-secret
+  url:
+    accessToken: https://api.hiworks.com/open/auth/accesstoken
+    user: https://api.hiworks.com/user/v2/me
+
+token:
+  access-expired-time: 123456789
+  refresh-expired-time: 123456780
+  secret: abcdefghijklmnopqrstuv.secret.key
