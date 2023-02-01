@@ -21,17 +21,8 @@ spring:
       host: 127.0.0.1
       port: 6379
 ---
-#logging:
-#  level:
-#    org:
-#      hibernate:
-#        SQL: debug
----
-# https://velog.io/@bigquann97/TIL-15-%EB%A6%AC%ED%8C%A9%ED%84%B0%EB%A7%81
-#spring:
-#  jpa:
-#    properties:
-#      jakarta:
-#        persistence:
-#          sharedCache:
-#            mode: ALL
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: debug

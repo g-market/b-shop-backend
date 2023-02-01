@@ -91,7 +91,7 @@ public class EmbeddedRedisConfig {
     }
 
     /**
-     * 해당 port를 사용중인 프로세스 확인하는 sh 실행
+     * 해당 port를 사용중인 프로세스 확인하는 커맨드 실행
      */
     private Process executeGrepProcessCommand(int port) throws IOException {
         String command = String.format("netstat -nao | find \"LISTEN\" | find \"%d\"", port);

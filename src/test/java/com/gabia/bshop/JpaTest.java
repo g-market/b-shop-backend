@@ -2,6 +2,7 @@ package com.gabia.bshop;
 
 import com.gabia.bshop.entity.Category;
 import jakarta.persistence.EntityManager;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,10 +18,13 @@ public class JpaTest {
     @Test
     void JPA_기본_영속_조회기능() {
         //given
-        entityManager.persist(new Category(null, "test_category"));
+        Category category = Category.builder()
+                .name("test_category")
+                .build();
+        entityManager.persist(category);
         //when
-        Category category = entityManager.find(Category.class, 1L);
+        Category findCategory = entityManager.find(Category.class, category.getId());
         //then
-        System.out.println("category = " + category);
+        Assertions.assertThat(category.getName()).isEqualTo("test_category");
     }
 }

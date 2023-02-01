@@ -4,13 +4,17 @@ import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class Member extends BaseEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, columnDefinition = "varchar(255)", unique = true)
@@ -32,4 +36,16 @@ public class Member extends BaseEntity {
 
     @Column(nullable = false, columnDefinition = "varchar(255)", unique = true)
     private String hiworksId;
+
+    @Builder
+    private Member(final Long id, final String email, final String phoneNumber, final String name, final MemberRole role,
+            final MemberGrade grade, final String hiworksId) {
+        this.id = id;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.name = name;
+        this.role = role;
+        this.grade = grade;
+        this.hiworksId = hiworksId;
+    }
 }

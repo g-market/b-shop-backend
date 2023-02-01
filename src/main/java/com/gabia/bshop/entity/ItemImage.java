@@ -2,8 +2,11 @@ package com.gabia.bshop.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class ItemImage {
@@ -18,4 +21,11 @@ public class ItemImage {
 
     @Column(nullable = false)
     private String url;
+
+    @Builder
+    private ItemImage(final Long id, final Item item, final String url) {
+        this.id = id;
+        this.item = item;
+        this.url = url;
+    }
 }

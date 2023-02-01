@@ -2,8 +2,11 @@ package com.gabia.bshop.entity;
 
 import jakarta.persistence.*;
 import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+@Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
 public class OrderItem extends BaseEntity {
@@ -25,4 +28,13 @@ public class OrderItem extends BaseEntity {
 
     @Column(nullable = false)
     private long price;
+
+    @Builder
+    private OrderItem(final Long id, final Item item, final Orders order, final int orderCount, final long price) {
+        this.id = id;
+        this.item = item;
+        this.order = order;
+        this.orderCount = orderCount;
+        this.price = price;
+    }
 }
