@@ -1,0 +1,31 @@
+spring:
+  profiles:
+    active: test
+  datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:mysql:8.0.31://testDB
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+    show-sql: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+
+hiworks:
+  client:
+    id: testid
+    secret: testsecret
+  url:
+    accessToken: https://api.hiworks.com/open/auth/accesstoken
+    user: https://api.hiworks.com/user/v2/me
+
+token:
+  access-expired-time: 12345678
+  refresh-expired-time: 123456789
+  secret: testkey1234567891011121314151617181920

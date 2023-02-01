@@ -62,14 +62,14 @@ public class Member extends BaseEntity {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Member member = (Member) o;
+        final Member member = (Member) o;
         return getId().equals(member.getId());
     }
 
