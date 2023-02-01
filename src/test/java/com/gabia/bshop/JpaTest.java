@@ -1,28 +1,35 @@
 /* Licensed under Apache Corp */
 package com.gabia.bshop;
 
-import com.gabia.bshop.entity.Category;
-import jakarta.persistence.EntityManager;
-import org.assertj.core.api.Assertions;
+import static org.assertj.core.api.Assertions.assertThat;
+
+import com.gabia.bshop.entity.Member;
+import com.gabia.bshop.entity.enumtype.MemberGrade;
+import com.gabia.bshop.entity.enumtype.MemberRole;
+import com.gabia.bshop.repository.MemberRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootTest
 public class JpaTest {
 
-    @Autowired private EntityManager entityManager;
+    @Autowired
+    private MemberRepository memberRepository;
 
-    @Transactional
     @Test
-    void JPA_기본_영속_조회기능() {
+    void 유저를_저장한다() {
         // given
-        Category category = Category.builder().name("test_category").build();
-        entityManager.persist(category);
+        final Member member = Member.builder()
+                .hiworksId("hiworksId")
+                .email("email")
+                .name("Test User")
+                .phoneNumber("phoneNumber")
+                .role(MemberRole.NORMAL).grade(MemberGrade.BRONZE)
+                .build();
         // when
-        Category findCategory = entityManager.find(Category.class, category.getId());
+        memberRepository.save(member);
         // then
-        Assertions.assertThat(category.getName()).isEqualTo("test_category");
+        assertThat(member.getId()).isEqualTo(1L);
     }
 }
