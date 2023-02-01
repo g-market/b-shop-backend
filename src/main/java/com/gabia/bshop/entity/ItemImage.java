@@ -1,13 +1,17 @@
 package com.gabia.bshop.entity;
 
 import jakarta.persistence.*;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@ToString(exclude = {"item"})
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "item_image", indexes = {})
 @Entity
 public class ItemImage {
 
@@ -27,5 +31,22 @@ public class ItemImage {
         this.id = id;
         this.item = item;
         this.url = url;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ItemImage itemImage = (ItemImage) o;
+        return getId().equals(itemImage.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

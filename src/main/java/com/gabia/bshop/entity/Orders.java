@@ -2,14 +2,17 @@ package com.gabia.bshop.entity;
 
 import com.gabia.bshop.entity.enumtype.OrderStatus;
 import jakarta.persistence.*;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-
+@ToString(exclude = {"member"})
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "orders", indexes = {})
 @Entity
 public class Orders {
 
@@ -22,7 +25,7 @@ public class Orders {
     private Member member;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "char(9)")
+    @Column(columnDefinition = "char(9)", nullable = false)
     private OrderStatus status;
 
     @Column(nullable = false)
@@ -34,5 +37,22 @@ public class Orders {
         this.member = member;
         this.status = status;
         this.totalPrice = totalPrice;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Orders orders = (Orders) o;
+        return getId().equals(orders.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

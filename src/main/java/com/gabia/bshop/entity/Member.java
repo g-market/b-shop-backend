@@ -3,13 +3,17 @@ package com.gabia.bshop.entity;
 import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import jakarta.persistence.*;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@ToString(exclude = {})
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "member", indexes = {})
 @Entity
 public class Member extends BaseEntity {
 
@@ -17,24 +21,24 @@ public class Member extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, columnDefinition = "varchar(255)", unique = true)
+    @Column(columnDefinition = "varchar(255)", unique = true, nullable = false)
     private String email;
 
     @Column(columnDefinition = "char(11)", unique = true)
     private String phoneNumber;
 
-    @Column(nullable = false, columnDefinition = "varchar(15)")
+    @Column(columnDefinition = "varchar(15)", nullable = false)
     private String name;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "char(6)")
+    @Column(columnDefinition = "char(6)", nullable = false)
     private MemberRole role;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "varchar(8)")
+    @Column(columnDefinition = "varchar(8)", nullable = false)
     private MemberGrade grade;
 
-    @Column(nullable = false, columnDefinition = "varchar(255)", unique = true)
+    @Column(columnDefinition = "varchar(255)", unique = true, nullable = false)
     private String hiworksId;
 
     @Builder
@@ -47,5 +51,22 @@ public class Member extends BaseEntity {
         this.role = role;
         this.grade = grade;
         this.hiworksId = hiworksId;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Member member = (Member) o;
+        return getId().equals(member.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

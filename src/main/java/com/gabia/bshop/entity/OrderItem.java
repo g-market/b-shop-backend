@@ -1,13 +1,17 @@
 package com.gabia.bshop.entity;
 
 import jakarta.persistence.*;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@ToString(exclude = {"item", "order"})
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "order_item", indexes = {})
 @Entity
 public class OrderItem extends BaseEntity {
 
@@ -36,5 +40,22 @@ public class OrderItem extends BaseEntity {
         this.order = order;
         this.orderCount = orderCount;
         this.price = price;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        OrderItem orderItem = (OrderItem) o;
+        return getId().equals(orderItem.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }

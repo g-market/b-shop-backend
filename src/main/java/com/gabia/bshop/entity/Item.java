@@ -2,17 +2,21 @@ package com.gabia.bshop.entity;
 
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 import jakarta.persistence.*;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import org.hibernate.annotations.SQLDelete;
 
 import java.time.LocalDateTime;
 
+@ToString(exclude = {"category"})
 @Getter
 @SQLDelete(sql = "update item set deleted = true where id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(name = "item", indexes = {})
 @Entity
 public class Item extends BaseEntity {
 
@@ -20,21 +24,21 @@ public class Item extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false, columnDefinition = "varchar(255)")
-    private String name;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
-    @Column(nullable = false, columnDefinition = "varchar(1000)")
+    @Column(columnDefinition = "varchar(255)", nullable = false)
+    private String name;
+
+    @Column(columnDefinition = "varchar(1000)", nullable = false)
     private String description;
 
     @Column(nullable = false)
     private int basePrice;
 
     @Enumerated(value = EnumType.STRING)
-    @Column(nullable = false, columnDefinition = "char(8)")
+    @Column(columnDefinition = "char(8)", nullable = false)
     private ItemStatus itemStatus;
 
     @Column(nullable = false)
@@ -54,5 +58,22 @@ public class Item extends BaseEntity {
         this.itemStatus = itemStatus;
         this.openAt = openAt;
         this.deleted = deleted;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        Item item = (Item) o;
+        return getId().equals(item.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
     }
 }
