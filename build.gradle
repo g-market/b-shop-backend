@@ -25,26 +25,31 @@ dependencies {
 
 	// redis
 	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
-	implementation (group: 'it.ozimov', name: 'embedded-redis', version: '0.7.3') {
-		exclude group: 'org.slf4j', module: 'slf4j-simple'
-	}
 
-	runtimeOnly 'com.h2database:h2'
+	// jwt
+    implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
+    runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
 	runtimeOnly 'com.mysql:mysql-connector-j'
 
-	// Querydsl 추가
+	// querydsl
 	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
 	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
 	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
-
+	// lombok
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
+
+	// test Containers
+	testImplementation "org.testcontainers:junit-jupiter:1.17.6"
+	testImplementation "org.testcontainers:mysql:1.17.6"
+
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
 	// mapstruct
 	implementation 'org.mapstruct:mapstruct:1.4.2.Final'

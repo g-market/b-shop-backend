@@ -1,0 +1,29 @@
+spring:
+  datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:mysql:8://testDB
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+    show-sql: true
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+
+hiworks:
+  client:
+    id: testid
+    secret: testsecret
+  url:
+    accessToken: https://github.com/login/oauth/access_token
+    user: https://api.github.com/user
+
+token:
+  access-expired-time: 12345678
+  refresh-expired-time: 123456789
+  secret: testkey1234567891011121314151617181920
