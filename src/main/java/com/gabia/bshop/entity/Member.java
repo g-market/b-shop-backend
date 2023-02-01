@@ -13,7 +13,9 @@ import lombok.ToString;
 @ToString(exclude = {})
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "member", indexes = {})
+@Table(
+        name = "member",
+        indexes = {})
 @Entity
 public class Member extends BaseEntity {
 
@@ -42,8 +44,14 @@ public class Member extends BaseEntity {
     private String hiworksId;
 
     @Builder
-    private Member(final Long id, final String email, final String phoneNumber, final String name, final MemberRole role,
-            final MemberGrade grade, final String hiworksId) {
+    private Member(
+            final Long id,
+            final String email,
+            final String phoneNumber,
+            final String name,
+            final MemberRole role,
+            final MemberGrade grade,
+            final String hiworksId) {
         this.id = id;
         this.email = email;
         this.phoneNumber = phoneNumber;

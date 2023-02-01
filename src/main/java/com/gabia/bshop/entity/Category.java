@@ -11,7 +11,9 @@ import lombok.ToString;
 @ToString(exclude = {})
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(name = "category", indexes = {})
+@Table(
+        name = "category",
+        indexes = {})
 @Entity
 public class Category {
 

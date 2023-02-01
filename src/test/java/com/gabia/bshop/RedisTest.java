@@ -1,3 +1,4 @@
+/* Licensed under Apache Corp */
 package com.gabia.bshop;
 
 import org.assertj.core.api.Assertions;
@@ -9,16 +10,15 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 @SpringBootTest
 public class RedisTest {
 
-    @Autowired
-    StringRedisTemplate stringRedisTemplate;
+    @Autowired StringRedisTemplate stringRedisTemplate;
 
     @Test
     public void 기본_등록_조회기능() {
-        //given
-        stringRedisTemplate.opsForValue().set("asdff","bbbbbbb");
-        //when
+        // given
+        stringRedisTemplate.opsForValue().set("asdff", "bbbbbbb");
+        // when
         String result = stringRedisTemplate.opsForValue().get("asdff");
-        //then
+        // then
         Assertions.assertThat(result).isEqualTo("bbbbbbb");
     }
 }
