@@ -1,4 +1,4 @@
-package com.gabia.bshop.security.config;
+package com.gabia.bshop.config.jpa;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;

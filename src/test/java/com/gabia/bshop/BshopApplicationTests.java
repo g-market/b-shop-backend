@@ -9,5 +9,4 @@ class BshopApplicationTests {
 	@Test
 	void contextLoads() {
 	}
-
 }
