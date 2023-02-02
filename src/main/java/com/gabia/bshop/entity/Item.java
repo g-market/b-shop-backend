@@ -30,57 +30,57 @@ import lombok.ToString;
 @SQLDelete(sql = "update item set deleted = true where id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
-	name = "item",
-	indexes = {})
+        name = "item",
+        indexes = {})
 @Entity
 public class Item extends BaseEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "category_id", nullable = false)
-	private Category category;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "category_id", nullable = false)
+    private Category category;
 
-	@Column(columnDefinition = "varchar(255)", nullable = false)
-	private String name;
+    @Column(columnDefinition = "varchar(255)", nullable = false)
+    private String name;
 
-	@Column(columnDefinition = "text", nullable = false)
-	private String description;
+    @Column(columnDefinition = "varchar(1000)", nullable = false)
+    private String description;
 
-	@Column(nullable = false)
-	private int basePrice;
+    @Column(nullable = false)
+    private int basePrice;
 
-	@Enumerated(value = EnumType.STRING)
-	@Column(columnDefinition = "char(8)", nullable = false)
-	private ItemStatus itemStatus;
+    @Enumerated(value = EnumType.STRING)
+    @Column(columnDefinition = "char(8)", nullable = false)
+    private ItemStatus itemStatus;
 
-	@Column(nullable = false)
-	private LocalDateTime openAt;
+    @Column(nullable = false)
+    private LocalDateTime openAt;
 
-	@Column(nullable = false)
-	private boolean deleted;
+    @Column(nullable = false)
+    private boolean deleted;
 
-	@Builder
-	private Item(
-		final Long id,
-		final String name,
-		final Category category,
-		final String description,
-		final int basePrice,
-		final ItemStatus itemStatus,
-		final LocalDateTime openAt,
-		final boolean deleted) {
-		this.id = id;
-		this.name = name;
-		this.category = category;
-		this.description = description;
-		this.basePrice = basePrice;
-		this.itemStatus = itemStatus;
-		this.openAt = openAt;
-		this.deleted = deleted;
-	}
+    @Builder
+    private Item(
+            final Long id,
+            final String name,
+            final Category category,
+            final String description,
+            final int basePrice,
+            final ItemStatus itemStatus,
+            final LocalDateTime openAt,
+            final boolean deleted) {
+        this.id = id;
+        this.name = name;
+        this.category = category;
+        this.description = description;
+        this.basePrice = basePrice;
+        this.itemStatus = itemStatus;
+        this.openAt = openAt;
+        this.deleted = deleted;
+    }
 
 	public void update(final ItemDto itemDto, final Category category) {
 		updateName(itemDto.name());
