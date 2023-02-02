@@ -4,11 +4,7 @@ import com.gabia.bshop.entity.enumtype.ItemStatus;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.Objects;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 
 @ToString(exclude = {"category"})
@@ -66,6 +62,25 @@ public class Item extends BaseEntity {
         this.itemStatus = itemStatus;
         this.openAt = openAt;
         this.deleted = deleted;
+    }
+
+    public void addCategory(final Category category) {
+        this.category = category;
+    }
+
+    public void update(
+            final String name,
+            final Category category,
+            final String description,
+            final int basePrice,
+            final ItemStatus itemStatus,
+            final LocalDateTime openAt) {
+        this.name = name;
+        this.category = category;
+        this.description = description;
+        this.basePrice = basePrice;
+        this.itemStatus = itemStatus;
+        this.openAt = openAt;
     }
 
     @Override
