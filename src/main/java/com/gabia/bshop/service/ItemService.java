@@ -9,7 +9,12 @@ import com.gabia.bshop.repository.ItemRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional
@@ -36,11 +41,12 @@ public class ItemService {
     /*
     상품 목록 조회
     * */
-    //        public List<ItemDto> getListItems(Pageable page)
-    //        {
-    //            Page<ItemDto>
-    //
-    //        }
+    public List<ItemDto> getListItems(Pageable page)
+    {
+        Page<Item> itemPage = itemRepository.findAll(page);
+
+        return itemPage.stream().map(ItemMapper.INSTANCE::itemToDto).toList();
+    }
 
     /*
     상품 생성

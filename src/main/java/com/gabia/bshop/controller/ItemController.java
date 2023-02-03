@@ -3,10 +3,13 @@ package com.gabia.bshop.controller;
 import com.gabia.bshop.dto.ItemDto;
 import com.gabia.bshop.service.ItemService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -18,11 +21,10 @@ public class ItemController {
         return ResponseEntity.ok().body(itemService.getItem(id));
     }
 
-    //        @GetMapping("/items")
-    //        public ResponseEntity<ItemDto> PageItem(Pageable pageable) {
-    //            System.out.printf(pageable.toString());
-    //            return ResponseEntity.ok().body(itemService.getItem(pageable));
-    //        }
+    @GetMapping("/items")
+            public ResponseEntity<List<ItemDto>> PageItem(Pageable pageable) {
+                return ResponseEntity.ok().body(itemService.getListItems(pageable));
+    }
 
     @PostMapping("/items")
     public ResponseEntity<ItemDto> creatItem(@RequestBody ItemDto itemDto) {
