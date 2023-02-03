@@ -4,7 +4,7 @@ import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.Orders;
-import com.gabia.bshop.gvhuj.GlobalMapper;
+import com.gabia.bshop.mapper.OrderInfoMapper;
 import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
@@ -35,7 +35,7 @@ public class OrderService {
         List<Orders> orders = orderRepository.findByMemberIdPagination(memberId, pageable);
         List<OrderItem> orderItems = orderItemRepository.findByOrderIds(orders.stream().map(o -> o.getId()).collect(Collectors.toList()));
         List<ItemImage> itemImagesWithItem = itemImageRepository.findWithItemByItemIds(orderItems.stream().map(oi -> oi.getItem().getId()).collect(Collectors.toList()));
-        OrderInfoPageResponse orderInfoPageResponse = GlobalMapper.INSTANCE.orderInfoRelatedEntitiesToOrderInfoPageResponse(
+        OrderInfoPageResponse orderInfoPageResponse = OrderInfoMapper.INSTANCE.orderInfoRelatedEntitiesToOrderInfoPageResponse(
                 orders, orderItems, itemImagesWithItem);
         System.out.println("orderInfoPageResponse = " + orderInfoPageResponse);
         return orderInfoPageResponse;

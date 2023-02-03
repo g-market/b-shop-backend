@@ -1,4 +1,4 @@
-package com.gabia.bshop.gvhuj;
+package com.gabia.bshop.mapper;
 
 import static java.util.stream.Collectors.groupingBy;
 import static java.util.stream.Collectors.summingInt;
@@ -16,8 +16,8 @@ import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 
 @Mapper(componentModel = "spring")
-public interface GlobalMapper {
-    GlobalMapper INSTANCE = Mappers.getMapper(GlobalMapper.class);
+public interface OrderInfoMapper {
+    OrderInfoMapper INSTANCE = Mappers.getMapper(OrderInfoMapper.class);
 
     default OrderInfoPageResponse orderInfoRelatedEntitiesToOrderInfoPageResponse(List<Orders> orders, List<OrderItem> orderItems, List<ItemImage> itemImagesWithItem) {
 
