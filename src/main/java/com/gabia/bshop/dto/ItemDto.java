@@ -13,10 +13,5 @@ public record ItemDto(
         String description,
         int basePrice,
         ItemStatus itemStatus,
-LocalDateTime openAt
-
-
-
-
-
+        LocalDateTime openAt
 ) {}
