@@ -24,7 +24,7 @@ public class OrderController {
         Long memberId = 6L;
 
         validatePageElementSize(pageable);
-        return ResponseEntity.ok( orderService.findOrdersPagination(memberId, pageable));
+        return ResponseEntity.ok(orderService.findOrdersPagination(memberId, pageable));
     }
 
     private void validatePageElementSize(Pageable pageable) {
