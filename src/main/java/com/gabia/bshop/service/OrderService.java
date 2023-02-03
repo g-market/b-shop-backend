@@ -28,13 +28,13 @@ public class OrderService {
     private final MemberRepository memberRepository;
 
     @Transactional(readOnly = true)
-    public OrderInfoPageResponse findOrdersPagination(Long memberId, Pageable pageable) {
+    public OrderInfoPageResponse findOrdersPagination(final Long memberId, final Pageable pageable) {
         memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalStateException("해당하는 id의 회원이 존재하지 않습니다."));
 
-        List<Orders> orders = orderRepository.findByMemberIdPagination(memberId, pageable);
-        List<OrderItem> orderItems = orderItemRepository.findByOrderIds(orders.stream().map(o -> o.getId()).collect(Collectors.toList()));
-        List<ItemImage> itemImagesWithItem = itemImageRepository.findWithItemByItemIds(orderItems.stream().map(oi -> oi.getItem().getId()).collect(Collectors.toList()));
+        final List<Orders> orders = orderRepository.findByMemberIdPagination(memberId, pageable);
+        final List<OrderItem> orderItems = orderItemRepository.findByOrderIds(orders.stream().map(o -> o.getId()).collect(Collectors.toList()));
+        final List<ItemImage> itemImagesWithItem = itemImageRepository.findWithItemByItemIds(orderItems.stream().map(oi -> oi.getItem().getId()).collect(Collectors.toList()));
 
         return OrderInfoMapper.INSTANCE.orderInfoRelatedEntitiesToOrderInfoPageResponse(orders, orderItems, itemImagesWithItem);
     }

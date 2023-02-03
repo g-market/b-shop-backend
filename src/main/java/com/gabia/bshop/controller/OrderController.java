@@ -20,14 +20,14 @@ public class OrderController {
 
     // TODO: 인가 적용
     @GetMapping("/order-infos")
-    public ResponseEntity<OrderInfoPageResponse> orderPagination(Pageable pageable) {
-        Long memberId = 6L;
+    public ResponseEntity<OrderInfoPageResponse> orderPagination(final Pageable pageable) {
+        final Long memberId = 6L;
 
         validatePageElementSize(pageable);
         return ResponseEntity.ok(orderService.findOrdersPagination(memberId, pageable));
     }
 
-    private void validatePageElementSize(Pageable pageable) {
+    private void validatePageElementSize(final Pageable pageable) {
         if (pageable.getPageSize() > MAX_PAGE_ELEMENT_REQUEST_SIZE) {
             throw new IllegalArgumentException(String.format("상품은 한 번에 %d개 까지만 조회할 수 있습니다.", MAX_PAGE_ELEMENT_REQUEST_SIZE));
         }

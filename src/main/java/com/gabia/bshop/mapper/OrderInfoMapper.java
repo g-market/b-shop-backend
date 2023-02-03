@@ -19,10 +19,10 @@ import org.mapstruct.factory.Mappers;
 public interface OrderInfoMapper {
     OrderInfoMapper INSTANCE = Mappers.getMapper(OrderInfoMapper.class);
 
-    default OrderInfoPageResponse orderInfoRelatedEntitiesToOrderInfoPageResponse(List<Orders> orders, List<OrderItem> orderItems, List<ItemImage> itemImagesWithItem) {
+    default OrderInfoPageResponse orderInfoRelatedEntitiesToOrderInfoPageResponse(final List<Orders> orders, final List<OrderItem> orderItems, final List<ItemImage> itemImagesWithItem) {
 
         // 주문 별 상품 종류 개수 수집
-        Map<Long, Integer> itemCountPerOrder = orderItems.stream()
+        final Map<Long, Integer> itemCountPerOrder = orderItems.stream()
                 .collect(groupingBy(oi -> oi.getOrder().getId(), summingInt(OrderItem::getOrderCount)));
 
         return new OrderInfoPageResponse(orders.size(),
