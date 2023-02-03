@@ -15,6 +15,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.util.Objects;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,49 +26,49 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
-	name = "orders",
-	indexes = {})
+        name = "orders",
+        indexes = {})
 @Entity
-public class Orders extends BaseEntity {
+public class Orders {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "member_id", nullable = false)
-	private Member member;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 
-	@Enumerated(value = EnumType.STRING)
-	@Column(columnDefinition = "char(9)", nullable = false)
-	private OrderStatus status;
+    @Enumerated(value = EnumType.STRING)
+    @Column(columnDefinition = "char(9)", nullable = false)
+    private OrderStatus status;
 
-	@Column(nullable = false)
-	private long totalPrice;
+    @Column(nullable = false)
+    private long totalPrice;
 
-	@Builder
-	private Orders(
-		final Long id, final Member member, final OrderStatus status, final long totalPrice) {
-		this.id = id;
-		this.member = member;
-		this.status = status;
-		this.totalPrice = totalPrice;
-	}
+    @Builder
+    private Orders(
+            final Long id, final Member member, final OrderStatus status, final long totalPrice) {
+        this.id = id;
+        this.member = member;
+        this.status = status;
+        this.totalPrice = totalPrice;
+    }
 
-	@Override
-	public boolean equals(final Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		final Orders orders = (Orders)o;
-		return getId().equals(orders.getId());
-	}
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) {
+            return true;
+        }
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        final Orders orders = (Orders) o;
+        return getId().equals(orders.getId());
+    }
 
-	@Override
-	public int hashCode() {
-		return Objects.hash(getId());
-	}
+    @Override
+    public int hashCode() {
+        return Objects.hash(getId());
+    }
 }
