@@ -22,6 +22,7 @@ public class ItemService {
     /*
     상품 조회
     * */
+    @Transactional
     public ItemDto getItem(final Long id) {
         final Item item =
                 itemRepository
@@ -44,6 +45,7 @@ public class ItemService {
     /*
     상품 생성
     */
+    @Transactional
     public ItemDto createItem(ItemDto itemDto) {
 
         Long categoryId = itemDto.categoryDto().id();
@@ -60,6 +62,7 @@ public class ItemService {
     /*
     상품 수정
     * */
+    @Transactional
     public ItemDto updateItem(ItemDto itemDto) {
         Item item = itemRepository.findById(itemDto.id()).orElseThrow(EntityNotFoundException::new);
         Long categoryId = itemDto.categoryDto().id();
@@ -80,8 +83,9 @@ public class ItemService {
     /*
     상품 삭제
     * */
+    @Transactional
     public void deleteItem(Long id) {
-        // 삭제 시 리턴 타입
-        itemRepository.deleteById(id);
+        Item item = itemRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        itemRepository.deleteById(item.getId());
     }
 }
