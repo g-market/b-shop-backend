@@ -9,6 +9,7 @@ import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
+import jakarta.persistence.EntityNotFoundException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -30,7 +31,7 @@ public class OrderService {
     @Transactional(readOnly = true)
     public OrderInfoPageResponse findOrdersPagination(final Long memberId, final Pageable pageable) {
         memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalStateException("해당하는 id의 회원이 존재하지 않습니다."));
+                .orElseThrow(() -> new EntityNotFoundException("해당하는 id의 회원이 존재하지 않습니다."));
 
         final List<Orders> orders = orderRepository.findByMemberIdPagination(memberId, pageable);
         final List<OrderItem> orderItems = orderItemRepository.findByOrderIds(orders.stream().map(o -> o.getId()).collect(Collectors.toList()));

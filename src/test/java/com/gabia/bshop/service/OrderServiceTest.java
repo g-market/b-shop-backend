@@ -8,6 +8,7 @@ import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -39,9 +40,9 @@ class OrderServiceTest {
         //given
         Long invalidMemberId = 999999999999L;
         when(memberRepository.findById(invalidMemberId))
-                .thenThrow(IllegalStateException.class);
+                .thenThrow(EntityNotFoundException.class);
         //when & then
         Assertions.assertThatThrownBy(() -> orderService.findOrdersPagination(invalidMemberId, PageRequest.of(0, 10)))
-                .isInstanceOf(IllegalStateException.class);
+                .isInstanceOf(EntityNotFoundException.class);
     }
 }

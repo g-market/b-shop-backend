@@ -21,6 +21,7 @@ import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
 import com.gabia.bshop.service.OrderService;
+import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -166,7 +167,7 @@ class OrderServiceTest extends IntegrationTest {
         PageRequest pageable = PageRequest.of(0, 10);
         //when & then
         Assertions.assertThatThrownBy(() -> orderService.findOrdersPagination(invalidMemberId, pageable))
-                .isInstanceOf(IllegalStateException.class);
+                .isInstanceOf(EntityNotFoundException.class);
     }
 
     @Test
