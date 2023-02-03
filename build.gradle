@@ -58,6 +58,7 @@ spotless {
 		removeUnusedImports()
 		// 공백 제거
 		trimTrailingWhitespace()
+		targetExclude('**/*Dto.java')
 		// Tab으로 처리(파라미터에 숫자를 넣으면 )
 		indentWithTabs(2)
 		indentWithSpaces(4)
