@@ -157,4 +157,14 @@ class OrderServiceTest extends IntegrationTest {
         Assertions.assertThat(orderInfo.orderInfos().get(1).itemTotalCount()).isEqualTo(2);
         Assertions.assertThat(orderInfo.orderInfos().get(1).orderStatus()).isEqualTo(order2.getStatus());
     }
+
+    @Test
+    void 존재하지_않는_회원이_주문목록_조회를_요청하면_오류가_발생해야한다() {
+        //given
+        Long invalidMemberId = 12375819347689L;
+        PageRequest pageable = PageRequest.of(0, 10);
+        //when & then
+        Assertions.assertThatThrownBy(() -> orderService.findOrdersPagination(invalidMemberId, pageable))
+                .isInstanceOf(IllegalStateException.class);
+    }
 }
