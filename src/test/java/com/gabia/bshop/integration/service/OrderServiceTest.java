@@ -168,4 +168,63 @@ class OrderServiceTest extends IntegrationTest {
         Assertions.assertThatThrownBy(() -> orderService.findOrdersPagination(invalidMemberId, pageable))
                 .isInstanceOf(IllegalStateException.class);
     }
+
+    @Test
+    void 주문_후_삭제된_상품도_주문목록에서_조회되어야한다() {
+        //given
+        LocalDateTime now = LocalDateTime.now();
+        Member member1 = Member.builder()
+                .name("1_test_name")
+                .email("1_ckdals1234@naver.com")
+                .hiworksId("1_asdfasdf")
+                .phoneNumber("01000000001")
+                .role(MemberRole.NORMAL)
+                .grade(MemberGrade.BRONZE)
+                .build();
+        Category category1 = Category.builder()
+                .name("카테고리1")
+                .build();
+        Item item1 = Item.builder()
+                .category(category1)
+                .name("temp_item_name1")
+                .description("temp_item_1_description " + UUID.randomUUID().toString())
+                .basePrice(11111)
+                .itemStatus(ItemStatus.PUBLIC)
+                .openAt(now)
+                .deleted(true)
+                .build();
+        Orders order1 = Orders.builder()
+                .member(member1)
+                .status(OrderStatus.PENDING)
+                .totalPrice(11111L)
+                .build();
+        OrderItem orderItem1_order1 = OrderItem.builder()
+                .item(item1)
+                .order(order1)
+                .orderCount(1)
+                .price(11111L)
+                .build();
+
+        ItemImage itemImage1 = ItemImage.builder()
+                .item(item1)
+                .url(UUID.randomUUID().toString())
+                .build();
+        ItemImage itemImage2 = ItemImage.builder()
+                .item(item1)
+                .url(UUID.randomUUID().toString())
+                .build();
+        memberRepository.save(member1);
+        categoryRepository.save(category1);
+        itemRepository.saveAll(List.of(item1));
+        itemImageRepository.saveAll(List.of(itemImage1, itemImage2));
+        orderRepository.saveAll(List.of(order1));
+        orderItemRepository.saveAll(List.of(orderItem1_order1));
+        PageRequest pageable = PageRequest.of(0, 10);
+
+        //when
+        OrderInfoPageResponse orderInfo = orderService.findOrdersPagination(member1.getId(), pageable);
+
+        //then
+        Assertions.assertThat(orderInfo.resultCount()).isEqualTo(1);
+    }
 }
