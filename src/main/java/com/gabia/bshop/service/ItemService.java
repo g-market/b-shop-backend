@@ -8,32 +8,24 @@ import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemRepository;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Transactional
 @Service
 public class ItemService {
     private final ItemRepository itemRepository;
-
     private final CategoryRepository categoryRepository;
 
     /*
     상품 조회
     * */
-    @Transactional
     public ItemDto getItem(final Long id) {
-        final Item item =
-                itemRepository
-                        .findById(id)
-                        .orElseThrow(
-                                () -> new IllegalArgumentException("아이템이 존재하지 않습니다. id = " + id));
+        final Item item = itemRepository.findById(id).orElseThrow(EntityNotFoundException::new);
 
         return ItemMapper.INSTANCE.itemToDto(item);
     }
@@ -41,9 +33,8 @@ public class ItemService {
     /*
     상품 목록 조회
     */
-    public List<ItemDto> getListItems(final Pageable page)
-    {
-        Page<Item> itemPage = itemRepository.findAll(page);
+    public List<ItemDto> getListItems(final Pageable page) {
+        final Page<Item> itemPage = itemRepository.findAll(page);
         return itemPage.stream().map(ItemMapper.INSTANCE::itemToDto).toList();
     }
 
@@ -53,7 +44,7 @@ public class ItemService {
     @Transactional
     public ItemDto createItem(final ItemDto itemDto) {
 
-        Long categoryId = itemDto.categoryDto().id();
+        final Long categoryId = itemDto.categoryDto().id();
 
         final Category category =
                 categoryRepository.findById(categoryId).orElseThrow(EntityNotFoundException::new);
@@ -70,9 +61,9 @@ public class ItemService {
     @Transactional
     public ItemDto updateItem(final ItemDto itemDto) {
         Item item = itemRepository.findById(itemDto.id()).orElseThrow(EntityNotFoundException::new);
-        Long categoryId = itemDto.categoryDto().id();
+        final Long categoryId = itemDto.categoryDto().id();
 
-        Category category =
+        final Category category =
                 categoryRepository.findById(categoryId).orElseThrow(EntityNotFoundException::new);
 
         item.update(
@@ -91,7 +82,7 @@ public class ItemService {
     */
     @Transactional
     public void deleteItem(final Long id) {
-        Item item = itemRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+        final Item item = itemRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         itemRepository.deleteById(item.getId());
     }
 }

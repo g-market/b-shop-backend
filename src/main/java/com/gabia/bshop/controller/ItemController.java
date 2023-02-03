@@ -2,16 +2,14 @@ package com.gabia.bshop.controller;
 
 import com.gabia.bshop.dto.ItemDto;
 import com.gabia.bshop.service.ItemService;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-@Controller
+@RestController
 @RequiredArgsConstructor
 public class ItemController {
     private final ItemService itemService;
@@ -22,8 +20,8 @@ public class ItemController {
     }
 
     @GetMapping("/items")
-            public ResponseEntity<List<ItemDto>> PageItem(Pageable pageable) {
-                return ResponseEntity.ok().body(itemService.getListItems(pageable));
+    public ResponseEntity<List<ItemDto>> PageItem(Pageable pageable) {
+        return ResponseEntity.ok().body(itemService.getListItems(pageable));
     }
 
     @PostMapping("/items")

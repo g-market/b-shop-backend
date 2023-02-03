@@ -69,11 +69,10 @@ class ItemServiceTest {
                         .openAt(LocalDateTime.now())
                         .build();
 
-
         itemList = new ArrayList<>();
         itemList.add(item1);
         itemList.add(item2);
-        Pageable pageable = PageRequest.of(0,10);
+        Pageable pageable = PageRequest.of(0, 10);
 
         Page<Item> itemPage = new PageImpl<>(Collections.unmodifiableList(itemList));
 
@@ -100,11 +99,11 @@ class ItemServiceTest {
 
     @Test
     void 상품_목록_조회() {
-        //givn
-        Pageable pageable = PageRequest.of(0,10);
+        // givn
+        Pageable pageable = PageRequest.of(0, 10);
         List<ItemDto> itemDtoList = itemList.stream().map(ItemMapper.INSTANCE::itemToDto).toList();
-        //then
-        assertEquals(itemDtoList ,itemService.getListItems(pageable));
+        // then
+        assertEquals(itemDtoList, itemService.getListItems(pageable));
     }
 
     @Test
