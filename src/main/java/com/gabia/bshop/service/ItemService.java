@@ -40,11 +40,10 @@ public class ItemService {
 
     /*
     상품 목록 조회
-    * */
-    public List<ItemDto> getListItems(Pageable page)
+    */
+    public List<ItemDto> getListItems(final Pageable page)
     {
         Page<Item> itemPage = itemRepository.findAll(page);
-
         return itemPage.stream().map(ItemMapper.INSTANCE::itemToDto).toList();
     }
 
@@ -52,11 +51,11 @@ public class ItemService {
     상품 생성
     */
     @Transactional
-    public ItemDto createItem(ItemDto itemDto) {
+    public ItemDto createItem(final ItemDto itemDto) {
 
         Long categoryId = itemDto.categoryDto().id();
 
-        Category category =
+        final Category category =
                 categoryRepository.findById(categoryId).orElseThrow(EntityNotFoundException::new);
 
         Item item = ItemMapper.INSTANCE.itemDtoToEntity(itemDto);
@@ -67,9 +66,9 @@ public class ItemService {
 
     /*
     상품 수정
-    * */
+    */
     @Transactional
-    public ItemDto updateItem(ItemDto itemDto) {
+    public ItemDto updateItem(final ItemDto itemDto) {
         Item item = itemRepository.findById(itemDto.id()).orElseThrow(EntityNotFoundException::new);
         Long categoryId = itemDto.categoryDto().id();
 
@@ -86,11 +85,12 @@ public class ItemService {
 
         return ItemMapper.INSTANCE.itemToDto(itemRepository.save(item));
     }
+
     /*
     상품 삭제
-    * */
+    */
     @Transactional
-    public void deleteItem(Long id) {
+    public void deleteItem(final Long id) {
         Item item = itemRepository.findById(id).orElseThrow(EntityNotFoundException::new);
         itemRepository.deleteById(item.getId());
     }
