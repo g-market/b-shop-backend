@@ -16,5 +16,5 @@ public interface ItemImageRepository extends JpaRepository<ItemImage, Long> {
                             + "where t.item.id in (:itemIds) "
                             + "group by t.item.id "
                             + "order by t.id)")
-    List<ItemImage> findWithItemByItemIds(@Param("itemIds") List<Long> itemIds);
+    List<ItemImage> findWithItemByItemIds(List<Long> itemIds);
 }
