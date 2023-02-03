@@ -1,4 +1,4 @@
-package com.gabia.bshop.service;
+package com.gabia.bshop.integration.service;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,6 +20,7 @@ import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
+import com.gabia.bshop.service.OrderService;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
