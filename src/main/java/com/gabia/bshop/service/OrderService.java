@@ -35,9 +35,7 @@ public class OrderService {
         List<Orders> orders = orderRepository.findByMemberIdPagination(memberId, pageable);
         List<OrderItem> orderItems = orderItemRepository.findByOrderIds(orders.stream().map(o -> o.getId()).collect(Collectors.toList()));
         List<ItemImage> itemImagesWithItem = itemImageRepository.findWithItemByItemIds(orderItems.stream().map(oi -> oi.getItem().getId()).collect(Collectors.toList()));
-        OrderInfoPageResponse orderInfoPageResponse = OrderInfoMapper.INSTANCE.orderInfoRelatedEntitiesToOrderInfoPageResponse(
-                orders, orderItems, itemImagesWithItem);
-        System.out.println("orderInfoPageResponse = " + orderInfoPageResponse);
-        return orderInfoPageResponse;
+
+        return OrderInfoMapper.INSTANCE.orderInfoRelatedEntitiesToOrderInfoPageResponse(orders, orderItems, itemImagesWithItem);
     }
 }
