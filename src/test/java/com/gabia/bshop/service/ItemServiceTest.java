@@ -13,6 +13,8 @@ import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemRepository;
 import jakarta.persistence.EntityNotFoundException;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.Assertions;
@@ -21,6 +23,10 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @SpringBootTest
 class ItemServiceTest {
@@ -63,11 +69,22 @@ class ItemServiceTest {
                         .openAt(LocalDateTime.now())
                         .build();
 
+
+        itemList = new ArrayList<>();
+        itemList.add(item1);
+        itemList.add(item2);
+        Pageable pageable = PageRequest.of(0,10);
+
+        Page<Item> itemPage = new PageImpl<>(Collections.unmodifiableList(itemList));
+
         when(categoryRepository.findById(1L)).thenReturn(Optional.ofNullable(category));
 
         // 존재하는 상품
         when(itemRepository.findById(1L)).thenReturn(Optional.ofNullable(item1));
         when(itemRepository.findById(2L)).thenReturn(Optional.ofNullable(item2));
+
+        // PageResult
+        when(itemRepository.findAll(pageable)).thenReturn(itemPage);
 
         // 존재하지 않는 상품
         when(itemRepository.findById(3L)).thenThrow(EntityNotFoundException.class);
@@ -82,7 +99,13 @@ class ItemServiceTest {
     }
 
     @Test
-    void 상품_목록_조회() {}
+    void 상품_목록_조회() {
+        //givn
+        Pageable pageable = PageRequest.of(0,10);
+        List<ItemDto> itemDtoList = itemList.stream().map(ItemMapper.INSTANCE::itemToDto).toList();
+        //then
+        assertEquals(itemDtoList ,itemService.getListItems(pageable));
+    }
 
     @Test
     void 상품_정보_수정() {
