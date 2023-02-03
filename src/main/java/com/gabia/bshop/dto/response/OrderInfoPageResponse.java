@@ -6,7 +6,13 @@ import java.util.List;
 
 public record OrderInfoPageResponse(int resultCount, List<OrderInfo> orderInfos) {
 
-    public record OrderInfo(long orderId, String thumbnailImage, String representativeName, int itemTotalCount, OrderStatus orderStatus, long totalPrice, LocalDateTime createdAt) {
+    public record OrderInfo(long orderId,
+                            String thumbnailImage,
+                            String representativeName,
+                            int itemTotalCount,
+                            OrderStatus orderStatus,
+                            long totalPrice,
+                            LocalDateTime createdAt) {
 
     }
 }
