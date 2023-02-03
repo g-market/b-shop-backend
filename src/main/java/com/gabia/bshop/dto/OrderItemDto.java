@@ -3,7 +3,7 @@ package com.gabia.bshop.dto;
 import lombok.Builder;
 
 @Builder
-public record MemberDto(
+public record OrderItemDto(
         Long id,
-        String email
+        int orderCount
 ) {}

@@ -52,6 +52,10 @@ public class Orders {
         this.totalPrice = totalPrice;
     }
 
+    public void setMember(final Member member){
+        this.member = member;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {

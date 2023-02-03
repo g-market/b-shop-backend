@@ -57,6 +57,11 @@ public class OrderItem extends BaseEntity {
         this.price = price;
     }
 
+    public void setCreateOrderItem(final Item item, final Orders order){
+        this.item = item;
+        this.order =  order;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {

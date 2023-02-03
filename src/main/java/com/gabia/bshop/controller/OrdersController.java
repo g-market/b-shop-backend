@@ -1,8 +1,10 @@
 package com.gabia.bshop.controller;
 
-import com.gabia.bshop.dto.OrdersDto;
+import com.gabia.bshop.dto.OrdersCreateRequestDto;
+import com.gabia.bshop.dto.OrdersCreateResponseDto;
 import com.gabia.bshop.service.OrdersService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -20,8 +22,8 @@ public class OrdersController {
      * 주문 생성
      */
     @PostMapping("/orders")
-    public ResponseEntity<OrdersDto> createOrders(@RequestBody OrdersDto ordersDto){
-        OrdersDto result = ordersService.createOrders(ordersDto);
+    public ResponseEntity<OrdersCreateResponseDto> createOrders(@RequestBody OrdersCreateRequestDto ordersCreateRequestDto){
+        OrdersCreateResponseDto result = ordersService.createOrders(ordersCreateRequestDto);
         return ResponseEntity.ok().body(result);
     }
 
@@ -30,6 +32,6 @@ public class OrdersController {
      */
     @DeleteMapping("/orders/{id}")
     public void deleteOrders(@PathVariable Long id){
-        ordersService.deleteOrders(id);
+        //ordersService.deleteOrders(id);
     }
 }
