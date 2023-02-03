@@ -32,7 +32,7 @@ public class Item extends BaseEntity {
     @Column(columnDefinition = "varchar(255)", nullable = false)
     private String name;
 
-    @Column(columnDefinition = "varchar(1000)", nullable = false)
+    @Column(columnDefinition = "text", nullable = false)
     private String description;
 
     @Column(nullable = false)
