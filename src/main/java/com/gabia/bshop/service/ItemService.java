@@ -24,7 +24,7 @@ public class ItemService {
     /*
     상품 조회
     * */
-    public ItemDto getItem(final Long id) {
+    public ItemDto findItem(final Long id) {
         final Item item = itemRepository.findById(id).orElseThrow(EntityNotFoundException::new);
 
         return ItemMapper.INSTANCE.itemToDto(item);
@@ -33,7 +33,7 @@ public class ItemService {
     /*
     상품 목록 조회
     */
-    public List<ItemDto> getListItems(final Pageable page) {
+    public List<ItemDto> findListItems(final Pageable page) {
         final Page<Item> itemPage = itemRepository.findAll(page);
         return itemPage.stream().map(ItemMapper.INSTANCE::itemToDto).toList();
     }

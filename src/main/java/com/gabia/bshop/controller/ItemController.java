@@ -15,13 +15,13 @@ public class ItemController {
     private final ItemService itemService;
 
     @GetMapping("/items/{id}")
-    public ResponseEntity<ItemDto> getItem(@PathVariable("id") Long id) {
-        return ResponseEntity.ok().body(itemService.getItem(id));
+    public ResponseEntity<ItemDto> findItem(@PathVariable("id") Long id) {
+        return ResponseEntity.ok().body(itemService.findItem(id));
     }
 
     @GetMapping("/items")
     public ResponseEntity<List<ItemDto>> PageItem(Pageable pageable) {
-        return ResponseEntity.ok().body(itemService.getListItems(pageable));
+        return ResponseEntity.ok().body(itemService.findListItems(pageable));
     }
 
     @PostMapping("/items")

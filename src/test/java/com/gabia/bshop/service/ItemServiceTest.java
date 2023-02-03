@@ -93,8 +93,8 @@ class ItemServiceTest {
     @Test
     void 상품_조회() {
         // then
-        assertEquals(1L, itemService.getItem(1L).id());
-        assertEquals(2L, itemService.getItem(2L).id());
+        assertEquals(1L, itemService.findItem(1L).id());
+        assertEquals(2L, itemService.findItem(2L).id());
     }
 
     @Test
@@ -103,7 +103,7 @@ class ItemServiceTest {
         Pageable pageable = PageRequest.of(0, 10);
         List<ItemDto> itemDtoList = itemList.stream().map(ItemMapper.INSTANCE::itemToDto).toList();
         // then
-        assertEquals(itemDtoList, itemService.getListItems(pageable));
+        assertEquals(itemDtoList, itemService.findListItems(pageable));
     }
 
     @Test
