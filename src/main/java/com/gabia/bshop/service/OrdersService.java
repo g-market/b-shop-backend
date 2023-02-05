@@ -33,6 +33,7 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
+
 @Slf4j
 @RequiredArgsConstructor
 @Service
@@ -40,6 +41,7 @@ public class OrdersService {
 
 	private final OrdersRepository ordersRepository;
 	private final OrderItemRepository orderItemRepository;
+    private final ItemRepository itemRepository;
 	private final ItemImageRepository itemImageRepository;
 	private final MemberRepository memberRepository;
     private final OptionsRepository optionsRepository;
@@ -67,6 +69,7 @@ public class OrdersService {
         Member member = memberRepository.findById(ordersCreateRequestDto.memberId())
                 .orElseThrow(EntityNotFoundException::new);
         Orders orders = OrdersMapper.INSTANCE.ordersCreateDtoToEntity(ordersCreateRequestDto);
+        orders.setMember(member);
 
         List<OrderItem> orderItemEntityList = ordersCreateRequestDto.itemList()
                 .stream()
