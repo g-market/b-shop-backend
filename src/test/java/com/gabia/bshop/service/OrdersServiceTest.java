@@ -18,8 +18,10 @@ import jakarta.persistence.EntityNotFoundException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.time.Instant;
@@ -40,7 +42,9 @@ import static org.mockito.Mockito.*;
     3. (optional) 수정
  */
 
-@SpringBootTest
+//@ExtendWith(MockitoExtension.class)
+//@SpringBootTest
+@ExtendWith(MockitoExtension.class)
 class OrdersServiceTest {
 
     @Mock
@@ -85,7 +89,7 @@ class OrdersServiceTest {
 
         Item item2 =
                 Item.builder()
-                        .id(1L)
+                        .id(2L)
                         .category(category)
                         .name("item")
                         .itemStatus(ItemStatus.PUBLIC)
@@ -111,23 +115,17 @@ class OrdersServiceTest {
                 .build();
 
         OrderItem orderItem2 = OrderItem.builder()
-                .id(1L)
+                .id(2L)
                 .item(item1)
                 .order(orders)
                 .orderCount(1)
                 .price(10000)
                 .build();
 
-        List<OrderItem> orderItemList = new ArrayList<>();
+        List<OrderItem> orderItemList = List.of(orderItem1,orderItem2);
 
-        orderItemList.add(orderItem1);
-        orderItemList.add(orderItem2);
         List<OrderItemDto> orderItemDtos = orderItemList.stream().map(
                 OrderItemMapper.INSTANCE::orderItemDto).toList();
-
-        List<Item> itemList = new ArrayList<>();
-        itemList.add(item1);
-        itemList.add(item2);
 
         //when
         when(memberRepository.findById(1L)).thenReturn(Optional.ofNullable(member));
@@ -137,7 +135,6 @@ class OrdersServiceTest {
         when(orderItemRepository.save(orderItem1)).thenReturn(orderItem1);
         when(orderItemRepository.save(orderItem1)).thenReturn(orderItem2);
 
-        when(itemRepository.findAllById(anyList())).thenReturn(itemList);
 
         OrdersCreateRequestDto ordersCreateRequestDto = OrdersCreateRequestDto.builder()
                 .memberId(1L)
@@ -150,7 +147,6 @@ class OrdersServiceTest {
 
         //then
         assertAll(
-//                () -> assertEquals(returnDto.id(), 1L),
                 () -> assertEquals(returnDto.itemDtoList(), orderItemDtos),
                 () -> assertEquals(returnDto.totalPrice(), ordersCreateRequestDto.totalPrice()),
                 () -> assertEquals(returnDto.memberDto(), MemberMapper.INSTANCE.memberToDto(member)),
