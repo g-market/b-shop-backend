@@ -82,10 +82,6 @@ public class Item extends BaseEntity {
 		this.deleted = deleted;
 	}
 
-	public void addCategory(final Category category) {
-		this.category = category;
-	}
-
 	public void update(final ItemDto itemDto, final Category category) {
 		updateName(itemDto.name());
 		updateCategory(category);
