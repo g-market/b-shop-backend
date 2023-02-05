@@ -55,6 +55,10 @@ public class Orders {
         this.totalPrice = totalPrice;
     }
 
+    public void calculateTotalPrice(final OrderItem orderItem, final int count) {
+        this.totalPrice += orderItem.getPrice() * count;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {

@@ -58,9 +58,19 @@ public class OrderItem extends BaseEntity {
         this.price = price;
     }
 
-    public void setCreateOrderItem(final Item item, final Orders order){
-        this.item = item;
-        this.order =  order;
+    public static OrderItem createOrderItem(final Item item, final Options options,
+            final Orders orders, final int count) {
+        OrderItem orderItem = OrderItem.builder()
+                .item(item)
+                .order(orders)
+                .orderCount(count)
+                .price((item.getBasePrice() + options.getOptionPrice()))
+                .build();
+
+        options.removeStockQuantity(count);
+        orders.calculateTotalPrice(orderItem, count);
+
+        return orderItem;
     }
 
     @Override

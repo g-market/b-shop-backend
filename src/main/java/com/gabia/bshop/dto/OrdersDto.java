@@ -1,10 +1,9 @@
 package com.gabia.bshop.dto;
 
-import com.gabia.bshop.entity.enumtype.OrderStatus;
+import lombok.Builder;
 
+@Builder
 public record OrdersDto(
         Long id,
-        MemberDto memberDto,
-        OrderStatus orderStatus,
-        long totalPrice
+        int orderCount
 ) {}
