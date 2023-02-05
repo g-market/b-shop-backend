@@ -52,8 +52,8 @@ public class Orders {
         this.totalPrice = totalPrice;
     }
 
-    public void setMember(final Member member){
-        this.member = member;
+    public void calculateTotalPrice(final OrderItem orderItem, final int count) {
+        this.totalPrice += orderItem.getPrice() * count;
     }
 
     @Override

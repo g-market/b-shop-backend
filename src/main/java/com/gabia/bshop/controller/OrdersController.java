@@ -22,16 +22,18 @@ public class OrdersController {
      * 주문 생성
      */
     @PostMapping("/orders")
-    public ResponseEntity<OrdersCreateResponseDto> createOrders(@RequestBody OrdersCreateRequestDto ordersCreateRequestDto){
-        OrdersCreateResponseDto result = ordersService.createOrders(ordersCreateRequestDto);
+    public ResponseEntity<OrdersCreateResponseDto> createOrder(
+            @RequestBody OrdersCreateRequestDto ordersCreateRequestDto) {
+        OrdersCreateResponseDto result = ordersService.createOrder(ordersCreateRequestDto);
         return ResponseEntity.ok().body(result);
     }
 
     /**
-     * 주문 제거
+     * 주문 취소
      */
     @DeleteMapping("/orders/{id}")
-    public void deleteOrders(@PathVariable Long id){
-        //ordersService.deleteOrders(id);
+    public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
+        ordersService.deleteOrder(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

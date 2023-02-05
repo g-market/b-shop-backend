@@ -1,5 +1,6 @@
 package com.gabia.bshop.entity;
 
+import com.gabia.bshop.exception.OutOfStockException;
 import jakarta.persistence.*;
 import java.util.Objects;
 import lombok.AccessLevel;
@@ -51,6 +52,14 @@ public class Options extends BaseEntity {
         this.optionLevel = optionLevel;
         this.optionPrice = optionPrice;
         this.stockQuantity = stockQuantity;
+    }
+
+    public void removeStockQuantity(final int orderCount) {
+        int restStock = this.stockQuantity - orderCount;
+        if (restStock < 0) {
+            throw new OutOfStockException("상품의 재고가 부족합니다.(현재 재고 수량: " + this.stockQuantity + ")");
+        }
+        this.stockQuantity = restStock;
     }
 
     @Override

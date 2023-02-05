@@ -1,6 +1,5 @@
 package com.gabia.bshop.mapper;
 
-import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.dto.OrdersCreateRequestDto;
 import com.gabia.bshop.dto.OrdersCreateResponseDto;
 import com.gabia.bshop.dto.OrdersDto;
@@ -17,21 +16,27 @@ public interface OrdersMapper {
 
     OrdersMapper INSTANCE = Mappers.getMapper(OrdersMapper.class);
 
-    Orders ordersDtoToEntity(OrdersDto ordersDto);
-
     @Mappings({
-            @Mapping(source = "member", target = "memberDto"),
-            //@Mapping(source = "product", target = "productResponse")
-            })
-    OrdersDto ordersToDto(Orders orders);
-
-    //OrderCreate
+            @Mapping(source = "memberId", target = "member.id"),
+            @Mapping(target = "status", defaultValue = "PENDING"),
+            @Mapping(target = "id", ignore = true),
+            @Mapping(target = "totalPrice", ignore = true)
+    })
     Orders ordersCreateDtoToEntity(OrdersCreateRequestDto ordersCreateRequestDto);
 
-    @Mappings({
-        //@Mapping(target = "memberId", expression = "java(orders.getMember().getId())")
-        @Mapping(source = "orders.member", target = "memberDto"),
-        @Mapping(source = "orderItemList", target = "itemDtoList")
-    })
-    OrdersCreateResponseDto ordersToCreateDto(Orders orders, List<OrderItem> orderItemList);
+    @Mapping(source = "item.id", target = "id")
+    OrdersDto orderItemToOrdersDto(OrderItem orderItem);
+
+    List<OrdersDto> orderItemListToOrderDtoList(List<OrderItem> orderItemList);
+
+    default OrdersCreateResponseDto orderCreateEntityToOrdersCreateResponseDto(Orders orders,
+            List<OrderItem> orderItemList) {
+
+        return OrdersCreateResponseDto.builder()
+                .itemList(orderItemListToOrderDtoList(orderItemList))
+                .memberId(orders.getMember().getId())
+                .status(orders.getStatus())
+                .totalPrice(orders.getTotalPrice())
+                .build();
+    }
 }
