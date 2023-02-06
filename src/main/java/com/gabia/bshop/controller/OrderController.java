@@ -38,8 +38,8 @@ public class OrderController {
     }
 
     // TODO: admin 인가
-    @GetMapping("/order-infos")
-    public ResponseEntity adminOrderInfos(final OrderInfoSearchRequest orderInfoSearchRequest, final Pageable pageable) {
+    @GetMapping("/admin/order-infos")
+    public ResponseEntity<OrderInfoPageResponse> adminOrderInfos(final OrderInfoSearchRequest orderInfoSearchRequest, final Pageable pageable) {
         final OrderInfoPageResponse adminOrdersPagination = orderService.findAdminOrdersPagination(
                 orderInfoSearchRequest, pageable);
         return ResponseEntity.ok(adminOrdersPagination);
