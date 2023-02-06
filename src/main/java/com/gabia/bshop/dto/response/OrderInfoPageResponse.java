@@ -7,6 +7,7 @@ import java.util.List;
 public record OrderInfoPageResponse(int resultCount, List<OrderInfo> orderInfos) {
 
     public record OrderInfo(long orderId,
+                            long itemId,
                             String thumbnailImage,
                             String representativeName,
                             int itemTotalCount,

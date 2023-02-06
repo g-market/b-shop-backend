@@ -34,6 +34,7 @@ public interface OrderInfoMapper {
                         .boxed()
                         .map(i -> new OrderInfo(
                                 orders.get(i).getId(),
+                                orderItemsPerOrderId.get(orders.get(i).getId()).getItem().getId(),
                                 itemImagePerItemId.get(orderItemsPerOrderId.get(orders.get(i).getId()).getItem().getId()).getUrl(),
                                 itemImagePerItemId.get(orderItemsPerOrderId.get(orders.get(i).getId()).getItem().getId()).getItem().getName(),
                                 itemCountPerOrderId.get(orders.get(i).getId()),
