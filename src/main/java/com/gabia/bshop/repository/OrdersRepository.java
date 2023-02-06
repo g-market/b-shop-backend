@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.gabia.bshop.entity.Orders;
 
-public interface OrderRepository extends JpaRepository<Orders, Long> {
+public interface OrdersRepository extends JpaRepository<Orders, Long> {
 
 	// TODO: created_at 인덱스 생성
 	@Query("select o from Orders o where o.member.id =:memberId order by o.createdAt")
