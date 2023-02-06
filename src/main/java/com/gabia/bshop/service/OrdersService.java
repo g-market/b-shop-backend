@@ -1,3 +1,4 @@
+<<<<<<<< HEAD:src/main/java/com/gabia/bshop/service/OrdersService.java
 package com.gabia.bshop.service;
 
 import java.util.List;
@@ -46,3 +47,5 @@ public class OrdersService {
 			itemImagesWithItem);
 	}
 }
+========
+>>>>>>>> 4b8cca2 (rename: order -> orders 로 rename 변경):src/main/java/com/gabia/bshop/service/OrderService.java
