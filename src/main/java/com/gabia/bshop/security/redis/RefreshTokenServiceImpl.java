@@ -1,6 +1,6 @@
 package com.gabia.bshop.security.redis;
 
-import com.gabia.bshop.global.UnAuthorizedException;
+import com.gabia.bshop.exception.UnAuthorizedException;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

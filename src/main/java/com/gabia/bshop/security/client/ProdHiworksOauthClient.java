@@ -2,12 +2,11 @@ package com.gabia.bshop.security.client;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.util.JSONPObject;
 import com.gabia.bshop.dto.request.HiworksTokenRequest;
 import com.gabia.bshop.dto.response.HiworksProfileResponse;
 import com.gabia.bshop.dto.response.HiworksTokenResponse;
-import com.gabia.bshop.global.ConflictException;
-import com.gabia.bshop.global.InternalServerException;
+import com.gabia.bshop.exception.ConflictException;
+import com.gabia.bshop.exception.InternalServerException;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
