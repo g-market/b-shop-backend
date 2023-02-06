@@ -1,6 +1,5 @@
 package com.gabia.bshop.service;
 
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,32 +19,20 @@ import com.gabia.bshop.security.redis.RefreshToken;
 import com.gabia.bshop.security.redis.RefreshTokenService;
 
 import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Service
 @Slf4j
+@RequiredArgsConstructor
 @Transactional(readOnly = true)
+@Service
 public class AuthService {
 
 	private final HiworksOauthClient hiworksOauthClient;
-	private final HiworksOauthClient adminHiworksOauthClient;
 	private final MemberRepository memberRepository;
 	private final JwtProvider jwtProvider;
 	private final RefreshTokenProvider refreshTokenProvider;
 	private final RefreshTokenService refreshTokenService;
-
-	public AuthService(@Qualifier("normal") final HiworksOauthClient hiworksOauthClient,
-		@Qualifier("admin") final HiworksOauthClient adminHiworksOauthClient,
-		final MemberRepository memberRepository,
-		final JwtProvider jwtProvider, final RefreshTokenProvider refreshTokenProvider,
-		final RefreshTokenService refreshTokenService) {
-		this.hiworksOauthClient = hiworksOauthClient;
-		this.adminHiworksOauthClient = adminHiworksOauthClient;
-		this.memberRepository = memberRepository;
-		this.jwtProvider = jwtProvider;
-		this.refreshTokenProvider = refreshTokenProvider;
-		this.refreshTokenService = refreshTokenService;
-	}
 
 	@Transactional
 	public LoginResult login(final String authCode) {
@@ -59,8 +46,7 @@ public class AuthService {
 		return new LoginResult(refreshToken.refreshToken(), applicationAccessToken, member);
 	}
 
-	public AdminLoginResponse loginAdmin(final String authCode
-	) {
+	public AdminLoginResponse loginAdmin(final String authCode) {
 		final HiworksProfileResponse hiworksProfileResponse = getAdminHiworksProfileResponse(authCode);
 		final Member member = memberRepository.findByHiworksId(hiworksProfileResponse.hiworksId())
 			.orElseThrow(() -> new EntityNotFoundException("관리자로 등록되지 않으셨습니다."));
@@ -95,7 +81,7 @@ public class AuthService {
 	}
 
 	private HiworksProfileResponse getAdminHiworksProfileResponse(final String code) {
-		final String hiworksAccessToken = adminHiworksOauthClient.getAccessToken(code);
+		final String hiworksAccessToken = hiworksOauthClient.getAccessToken(code);
 		return hiworksOauthClient.getProfile(hiworksAccessToken);
 	}
 
