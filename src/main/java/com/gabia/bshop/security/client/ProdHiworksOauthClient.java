@@ -81,14 +81,14 @@ public class ProdHiworksOauthClient implements HiworksOauthClient {
 	}
 
 	private HttpRequest buildAccessTokenRequest(final String requestBody) {
-		return HttpRequest.newBuilder(toURI(accessTokenUrl))
+		return HttpRequest.newBuilder(toUri(accessTokenUrl))
 			.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
 			.header(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
 			.POST(HttpRequest.BodyPublishers.ofString(requestBody))
 			.build();
 	}
 
-	private URI toURI(final String accessTokenUrl) {
+	private URI toUri(final String accessTokenUrl) {
 		try {
 			return new URI(accessTokenUrl);
 		} catch (URISyntaxException e) {
@@ -139,7 +139,7 @@ public class ProdHiworksOauthClient implements HiworksOauthClient {
 
 	private HttpRequest buildProfileRequest(final String accessToken) {
 		return HttpRequest
-			.newBuilder(toURI(profileUrl))
+			.newBuilder(toUri(profileUrl))
 			.header(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE)
 			.header(HttpHeaders.AUTHORIZATION, "Bearer " + accessToken)
 			.GET()
