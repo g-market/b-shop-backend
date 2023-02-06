@@ -1,8 +1,8 @@
 # docker-compose up -d
 # docker-compose down -v
 version: "3.8"                         # 파일 규격 버전
-services:                              # 이 항목 밑에 실행하려는 컨테이너들을 정의
-  b-shop-redis:                        # 서비스명
+services: # 이 항목 밑에 실행하려는 컨테이너들을 정의
+  b-shop-redis: # 서비스명
     container_name: b-shop-redis       # 컨테이너 명
     image: redis:6
     environment:
