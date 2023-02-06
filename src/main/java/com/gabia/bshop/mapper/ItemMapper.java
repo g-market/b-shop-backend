@@ -5,7 +5,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import com.gabia.bshop.dto.ItemDto;
-import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 
 @Mapper(componentModel = "spring")
