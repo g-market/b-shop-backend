@@ -2,6 +2,7 @@ package com.gabia.bshop.security.provider;
 
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.exception.UnAuthorizedException;
+import com.gabia.bshop.security.MemberPayload;
 import com.gabia.bshop.util.AuthTokenExtractor;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
