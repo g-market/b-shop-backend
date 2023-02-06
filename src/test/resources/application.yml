@@ -2,20 +2,20 @@ spring:
   profiles:
     active: test
   datasource:
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/bshop_db
-    username: root
-    password: 1234
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:mysql:8.0.31://testDB
   jpa:
     hibernate:
       ddl-auto: create
     properties:
       hibernate:
-        hibernate.default_batch_fetch_size: 100
+        format_sql: true
+        default_batch_fetch_size: 100
       jakarta:
         persistence:
           sharedCache:
             mode: ALL
+      show-sql: true
     open-in-view: false
   data:
     redis:

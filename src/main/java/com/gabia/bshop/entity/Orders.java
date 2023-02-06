@@ -26,7 +26,7 @@ import lombok.ToString;
         name = "orders",
         indexes = {})
 @Entity
-public class Orders {
+public class Orders extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
