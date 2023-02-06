@@ -3,6 +3,7 @@ package com.gabia.bshop.integration.service;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
+import com.gabia.bshop.dto.response.OrdersInfoPageResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
@@ -143,7 +144,7 @@ class OrderServiceTest extends IntegrationTest {
 
         PageRequest pageable = PageRequest.of(0, 10);
         //when
-        OrderInfoPageResponse orderInfo = orderService.findOrdersPagination(member1.getId(),
+        OrdersInfoPageResponse orderInfo = orderService.findOrdersPagination(member1.getId(),
                 pageable);
         //then
         Assertions.assertThat(orderInfo.resultCount()).isEqualTo(2);
@@ -223,7 +224,7 @@ class OrderServiceTest extends IntegrationTest {
         PageRequest pageable = PageRequest.of(0, 10);
 
         //when
-        OrderInfoPageResponse orderInfo = orderService.findOrdersPagination(member1.getId(), pageable);
+        OrdersInfoPageResponse orderInfo = orderService.findOrdersPagination(member1.getId(), pageable);
 
         //then
         Assertions.assertThat(orderInfo.resultCount()).isEqualTo(1);

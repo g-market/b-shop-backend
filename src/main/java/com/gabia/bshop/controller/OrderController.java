@@ -1,6 +1,7 @@
 package com.gabia.bshop.controller;
 
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
+import com.gabia.bshop.dto.response.OrdersInfoPageResponse;
 import com.gabia.bshop.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +21,7 @@ public class OrderController {
 
     // TODO: 인가 적용
     @GetMapping("/order-infos")
-    public ResponseEntity<OrderInfoPageResponse> orderPagination(final Pageable pageable) {
+    public ResponseEntity<OrdersInfoPageResponse> orderPagination(final Pageable pageable) {
         final Long memberId = 6L;
 
         validatePageElementSize(pageable);
