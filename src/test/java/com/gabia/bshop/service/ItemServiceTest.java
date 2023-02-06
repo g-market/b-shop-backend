@@ -106,7 +106,7 @@ class ItemServiceTest {
 		Pageable pageable = PageRequest.of(0, 10);
 		List<ItemDto> itemDtoList = itemList.stream().map(ItemMapper.INSTANCE::itemToDto).toList();
 		// then
-		assertEquals(itemDtoList, itemService.findListItems(pageable));
+		assertEquals(itemDtoList, itemService.findItems(pageable));
 	}
 
 	@Test

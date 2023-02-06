@@ -5,6 +5,7 @@ import java.util.Objects;
 
 import org.hibernate.annotations.SQLDelete;
 
+import com.gabia.bshop.dto.ItemDto;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 
 import jakarta.persistence.Column;
@@ -85,19 +86,13 @@ public class Item extends BaseEntity {
 		this.category = category;
 	}
 
-	public void update(
-		final String name,
-		final Category category,
-		final String description,
-		final int basePrice,
-		final ItemStatus itemStatus,
-		final LocalDateTime openAt) {
-		this.name = name;
-		this.category = category;
-		this.description = description;
-		this.basePrice = basePrice;
-		this.itemStatus = itemStatus;
-		this.openAt = openAt;
+	public void update(final ItemDto itemDto, final Category category) {
+		updateName(itemDto.name());
+		updateCategory(category);
+		updatePrice(itemDto.basePrice());
+		updateDescription(itemDto.description());
+		updateItemStatus(itemDto.itemStatus());
+		updateOpenAt(itemDto.openAt());
 	}
 
 	@Override
@@ -115,5 +110,41 @@ public class Item extends BaseEntity {
 	@Override
 	public int hashCode() {
 		return Objects.hash(getId());
+	}
+
+	private void updateName(final String name) {
+		if (name != null) {
+			this.name = name;
+		}
+	}
+
+	private void updateCategory(Category category) {
+		if (category != null) {
+			this.category = category;
+		}
+	}
+
+	private void updatePrice(int basePrice) {
+		if ((Integer)basePrice != null) {
+			this.basePrice = basePrice;
+		}
+	}
+
+	private void updateDescription(String description) {
+		if (description != null) {
+			this.description = description;
+		}
+	}
+
+	private void updateItemStatus(ItemStatus itemStatus) {
+		if (itemStatus != null) {
+			this.itemStatus = itemStatus;
+		}
+	}
+
+	private void updateOpenAt(LocalDateTime openAt) {
+		if (openAt != null) {
+			this.openAt = openAt;
+		}
 	}
 }

@@ -36,7 +36,7 @@ public class ItemService {
 	/*
 	상품 목록 조회
 	*/
-	public List<ItemDto> findListItems(final Pageable page) {
+	public List<ItemDto> findItems(final Pageable page) {
 		final Page<Item> itemPage = itemRepository.findAll(page);
 		return itemPage.stream().map(ItemMapper.INSTANCE::itemToDto).toList();
 	}
@@ -69,13 +69,7 @@ public class ItemService {
 		final Category category =
 			categoryRepository.findById(categoryId).orElseThrow(EntityNotFoundException::new);
 
-		item.update(
-			itemDto.name(),
-			category,
-			itemDto.description(),
-			itemDto.basePrice(),
-			itemDto.itemStatus(),
-			itemDto.openAt());
+		item.update(itemDto, category);
 
 		return ItemMapper.INSTANCE.itemToDto(itemRepository.save(item));
 	}

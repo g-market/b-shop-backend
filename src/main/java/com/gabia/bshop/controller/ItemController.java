@@ -30,7 +30,7 @@ public class ItemController {
 
 	@GetMapping("/items")
 	public ResponseEntity<List<ItemDto>> pageItem(Pageable pageable) {
-		return ResponseEntity.ok().body(itemService.findListItems(pageable));
+		return ResponseEntity.ok().body(itemService.findItems(pageable));
 	}
 
 	@PostMapping("/items")
