@@ -1,6 +1,7 @@
 /* Licensed under Apache Corp */
 package com.gabia.bshop;
 
+import com.gabia.bshop.integration.IntegrationTest;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
