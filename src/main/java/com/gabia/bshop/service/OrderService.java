@@ -1,6 +1,7 @@
 package com.gabia.bshop.service;
 
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
+import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.Orders;
@@ -34,9 +35,22 @@ public class OrderService {
                 .orElseThrow(() -> new EntityNotFoundException("해당하는 id의 회원이 존재하지 않습니다."));
 
         final List<Orders> orders = orderRepository.findByMemberIdPagination(memberId, pageable);
-        final List<OrderItem> orderItems = orderItemRepository.findByOrderIds(orders.stream().map(o -> o.getId()).collect(Collectors.toList()));
-        final List<ItemImage> itemImagesWithItem = itemImageRepository.findWithItemByItemIds(orderItems.stream().map(oi -> oi.getItem().getId()).collect(Collectors.toList()));
+        final List<OrderItem> orderItems = orderItemRepository.findByOrderIds(orders.stream()
+                .map(o -> o.getId())
+                .collect(Collectors.toList()));
+        final List<ItemImage> itemImagesWithItem = itemImageRepository.findWithItemByItemIds(orderItems.stream()
+                .map(oi -> oi.getItem().getId())
+                .collect(Collectors.toList()));
 
         return OrderInfoMapper.INSTANCE.orderInfoRelatedEntitiesToOrderInfoPageResponse(orders, orderItems, itemImagesWithItem);
+    }
+
+    @Transactional(readOnly = true)
+    public OrderInfoSingleResponse findSingleOrderInfo(final Long orderId) {
+        final List<OrderItem> orderInfo = orderItemRepository.findWithOrdersAndItemByOrderId(orderId);
+        final List<String> thumbnailUrls = itemImageRepository.findUrlByItemIds(orderInfo.stream()
+                .map(oi -> oi.getItem().getId())
+                .collect(Collectors.toList()));
+        return OrderInfoMapper.INSTANCE.orderInfoSingleDTOResponse(orderInfo, thumbnailUrls);
     }
 }
