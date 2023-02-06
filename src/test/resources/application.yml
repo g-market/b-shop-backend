@@ -2,16 +2,25 @@ spring:
   profiles:
     active: test
   datasource:
-    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
-    url: jdbc:tc:mysql:8.0.31://testDB
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://localhost:3306/bshop_db
+    username: root
+    password: 1234
   jpa:
     hibernate:
       ddl-auto: create
     properties:
       hibernate:
-        format_sql: true
-        default_batch_fetch_size: 100
-    show-sql: true
+        hibernate.default_batch_fetch_size: 100
+      jakarta:
+        persistence:
+          sharedCache:
+            mode: ALL
+    open-in-view: false
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
 
 logging:
   level:
@@ -19,13 +28,15 @@ logging:
 
 hiworks:
   client:
-    id: testid
-    secret: testsecret
+    id: clientId
+    secret: secret
+    admin-id: adminId
+    admin-secret: adminSecret
   url:
-    accessToken: https://api.hiworks.com/open/auth/accesstoken
-    user: https://api.hiworks.com/user/v2/me
+    accessToken: http://localhost:8888/login/oauth/access_token
+    user: http://localhost:8888/user
 
 token:
-  access-expired-time: 12345678
-  refresh-expired-time: 123456789
+  access-expired-time: 3600000
+  refresh-expired-time: 1209600000
   secret: testkey1234567891011121314151617181920
