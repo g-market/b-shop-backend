@@ -16,7 +16,7 @@ import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OptionsRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
-import com.gabia.bshop.repository.OrderRepository;
+import com.gabia.bshop.repository.OrdersRepository;
 import jakarta.annotation.PostConstruct;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,7 +37,7 @@ public class DataInit {
     private final ItemImageRepository itemImageRepository;
     private final OptionsRepository optionsRepository;
     private final OrderItemRepository orderItemRepository;
-    private final OrderRepository orderRepository;
+    private final OrdersRepository orderRepository;
 
 
     @PostConstruct
