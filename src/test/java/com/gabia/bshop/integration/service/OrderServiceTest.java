@@ -3,6 +3,7 @@ package com.gabia.bshop.integration.service;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
+import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
@@ -205,7 +206,6 @@ class OrderServiceTest extends IntegrationTest {
                 .orderCount(1)
                 .price(11111L)
                 .build();
-
         ItemImage itemImage1 = ItemImage.builder()
                 .item(item1)
                 .url(UUID.randomUUID().toString())
@@ -227,5 +227,100 @@ class OrderServiceTest extends IntegrationTest {
 
         //then
         Assertions.assertThat(orderInfo.resultCount()).isEqualTo(1);
+    }
+
+
+    @Test
+    void 주문내역_상세조회를_요청하면_올바른_주문정보가_반환되어야한다() {
+        //given
+        LocalDateTime now = LocalDateTime.now();
+        Member member1 = Member.builder()
+                .name("1_test_name")
+                .email("1_ckdals1234@naver.com")
+                .hiworksId("1_asdfasdf")
+                .phoneNumber("01000000001")
+                .role(MemberRole.NORMAL)
+                .grade(MemberGrade.BRONZE)
+                .build();
+        Category category1 = Category.builder()
+                .name("카테고리1")
+                .build();
+        Item item1 = Item.builder()
+                .category(category1)
+                .name("temp_item_name1")
+                .description("temp_item_1_description " + UUID.randomUUID().toString())
+                .basePrice(11111)
+                .itemStatus(ItemStatus.PUBLIC)
+                .openAt(now)
+                .deleted(true)
+                .build();
+        Item item2 = Item.builder()
+                .category(category1)
+                .name("temp_item_name2")
+                .description("temp_item_2_description " + UUID.randomUUID().toString())
+                .basePrice(22222)
+                .itemStatus(ItemStatus.PUBLIC)
+                .openAt(now)
+                .deleted(false)
+                .build();
+        Orders order1 = Orders.builder()
+                .member(member1)
+                .status(OrderStatus.PENDING)
+                .totalPrice(55555L)
+                .build();
+        OrderItem orderItem1 = OrderItem.builder()
+                .item(item1)
+                .order(order1)
+                .orderCount(1)
+                .price(11111L)
+                .build();
+        OrderItem orderItem2 = OrderItem.builder()
+                .item(item2)
+                .order(order1)
+                .orderCount(2)
+                .price(22222L)
+                .build();
+        ItemImage itemImage1 = ItemImage.builder()
+                .item(item1)
+                .url(UUID.randomUUID().toString())
+                .build();
+        ItemImage itemImage2 = ItemImage.builder()
+                .item(item1)
+                .url(UUID.randomUUID().toString())
+                .build();
+        ItemImage itemImage3 = ItemImage.builder()
+                .item(item2)
+                .url(UUID.randomUUID().toString())
+                .build();
+        ItemImage itemImage4 = ItemImage.builder()
+                .item(item2)
+                .url(UUID.randomUUID().toString())
+                .build();
+        memberRepository.save(member1);
+        categoryRepository.save(category1);
+        itemRepository.saveAll(List.of(item1, item2));
+        itemImageRepository.saveAll(List.of(itemImage1, itemImage2, itemImage3, itemImage4));
+        orderRepository.saveAll(List.of(order1));
+        orderItemRepository.saveAll(List.of(orderItem1, orderItem2));
+
+        //when
+        OrderInfoSingleResponse singleOrderInfo = orderService.findSingleOrderInfo(order1.getId());
+
+        //then
+        Assertions.assertThat(singleOrderInfo.orderId()).isEqualTo(order1.getId());
+        Assertions.assertThat(singleOrderInfo.itemOrderTotalCount()).isEqualTo(2);
+        Assertions.assertThat(singleOrderInfo.orderStatus()).isEqualTo(order1.getStatus());
+        Assertions.assertThat(singleOrderInfo.orderItems().get(0).orderItemId()).isEqualTo(orderItem1.getId());
+        Assertions.assertThat(singleOrderInfo.orderItems().get(1).orderItemId()).isEqualTo(orderItem2.getId());
+        Assertions.assertThat(singleOrderInfo.orderItems().get(0).itemId()).isEqualTo(item1.getId());
+        Assertions.assertThat(singleOrderInfo.orderItems().get(1).itemId()).isEqualTo(item2.getId());
+        Assertions.assertThat(singleOrderInfo.orderItems().get(0).itemName()).isEqualTo(item1.getName());
+        Assertions.assertThat(singleOrderInfo.orderItems().get(1).itemName()).isEqualTo(item2.getName());
+        Assertions.assertThat(singleOrderInfo.orderItems().get(0).orderCount()).isEqualTo(orderItem1.getOrderCount());
+        Assertions.assertThat(singleOrderInfo.orderItems().get(1).orderCount()).isEqualTo(orderItem2.getOrderCount());
+        Assertions.assertThat(singleOrderInfo.orderItems().get(0).price()).isEqualTo(orderItem1.getPrice());
+        Assertions.assertThat(singleOrderInfo.orderItems().get(1).price()).isEqualTo(orderItem2.getPrice());
+        Assertions.assertThat(singleOrderInfo.orderItems().get(0).thumbnailImage()).isEqualTo(itemImage1.getUrl());
+        Assertions.assertThat(singleOrderInfo.orderItems().get(1).thumbnailImage()).isEqualTo(itemImage3.getUrl());
     }
 }
