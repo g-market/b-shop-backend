@@ -5,13 +5,11 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -34,8 +32,6 @@ import jakarta.persistence.EntityNotFoundException;
 @SpringBootTest
 class ItemServiceTest {
 
-	Item item1;
-	Item item2;
 	List<Item> itemList;
 	@Mock
 	private CategoryRepository categoryRepository;
@@ -44,11 +40,12 @@ class ItemServiceTest {
 	@InjectMocks
 	private ItemService itemService;
 
-	@BeforeEach
-	void beforeEach() {
-		// given
+	@Test
+	void 상품_조회() {
+		//given
 		Category category = Category.builder().id(1L).name("name").build();
-		item1 =
+
+		Item item1 =
 			Item.builder()
 				.id(1L)
 				.category(category)
@@ -60,7 +57,7 @@ class ItemServiceTest {
 				.openAt(LocalDateTime.now())
 				.build();
 
-		item2 =
+		Item item2 =
 			Item.builder()
 				.id(2L)
 				.category(category)
@@ -72,29 +69,11 @@ class ItemServiceTest {
 				.openAt(LocalDateTime.now())
 				.build();
 
-		itemList = new ArrayList<>();
-		itemList.add(item1);
-		itemList.add(item2);
-		Pageable pageable = PageRequest.of(0, 10);
-
-		Page<Item> itemPage = new PageImpl<>(Collections.unmodifiableList(itemList));
-
+		// when
 		when(categoryRepository.findById(1L)).thenReturn(Optional.ofNullable(category));
-
-		// 존재하는 상품
 		when(itemRepository.findById(1L)).thenReturn(Optional.ofNullable(item1));
 		when(itemRepository.findById(2L)).thenReturn(Optional.ofNullable(item2));
 
-		// PageResult
-		when(itemRepository.findAll(pageable)).thenReturn(itemPage);
-
-		// 존재하지 않는 상품
-		when(itemRepository.findById(3L)).thenThrow(EntityNotFoundException.class);
-		when(categoryRepository.findById(2L)).thenThrow(EntityNotFoundException.class);
-	}
-
-	@Test
-	void 상품_조회() {
 		// then
 		assertEquals(1L, itemService.findItem(1L).id());
 		assertEquals(2L, itemService.findItem(2L).id());
@@ -103,8 +82,42 @@ class ItemServiceTest {
 	@Test
 	void 상품_목록_조회() {
 		// givn
+		Category category = Category.builder().id(1L).name("name").build();
+
+		Item item1 =
+			Item.builder()
+				.id(1L)
+				.category(category)
+				.name("item")
+				.itemStatus(ItemStatus.PUBLIC)
+				.basePrice(10000)
+				.description("description")
+				.deleted(false)
+				.openAt(LocalDateTime.now())
+				.build();
+
+		Item item2 =
+			Item.builder()
+				.id(2L)
+				.category(category)
+				.name("item2")
+				.itemStatus(ItemStatus.PUBLIC)
+				.basePrice(10000)
+				.description("description")
+				.deleted(false)
+				.openAt(LocalDateTime.now())
+				.build();
+
+		itemList = List.of(item1, item2);
+
 		Pageable pageable = PageRequest.of(0, 10);
 		List<ItemDto> itemDtoList = itemList.stream().map(ItemMapper.INSTANCE::itemToDto).toList();
+
+		Page<Item> itemPage = new PageImpl<>(Collections.unmodifiableList(itemList));
+
+		// when
+		when(itemRepository.findAll(pageable)).thenReturn(itemPage);
+
 		// then
 		assertEquals(itemDtoList, itemService.findItems(pageable));
 	}
@@ -113,7 +126,7 @@ class ItemServiceTest {
 	void 상품_정보_수정() {
 		// given
 		Category category = Category.builder().id(1L).name("name").build();
-		Item item =
+		Item item2 =
 			Item.builder()
 				.id(2L)
 				.category(category)
@@ -125,23 +138,55 @@ class ItemServiceTest {
 				.openAt(LocalDateTime.now())
 				.build();
 
-		ItemDto itemDto = ItemMapper.INSTANCE.itemToDto(item);
+		ItemDto itemDto = ItemMapper.INSTANCE.itemToDto(item2);
 
 		// when
-		when(itemRepository.save(item)).thenReturn(item);
+		when(itemRepository.save(item2)).thenReturn(item2);
 
 		// then
-		ItemDto changeedItem = itemService.updateItem(itemDto);
+		ItemDto changedItem = itemService.updateItem(itemDto);
 
 		assertAll(
-			() -> assertEquals(20000, changeedItem.basePrice()),
-			() -> assertEquals("changed", changeedItem.description()));
+			() -> assertEquals(20000, changedItem.basePrice()),
+			() -> assertEquals("changed", changedItem.description()));
+	}
+
+	@Test
+	void 상품_생성() {
+		// given
+		Category category = Category.builder().id(1L).name("name").build();
+
+		Item item =
+			Item.builder()
+				.id(1L)
+				.category(category)
+				.name("item")
+				.itemStatus(ItemStatus.PUBLIC)
+				.basePrice(20000)
+				.description("item1")
+				.deleted(false)
+				.openAt(LocalDateTime.now())
+				.build();
+
+		// when
+		when(categoryRepository.findById(1L)).thenReturn(Optional.ofNullable(category));
+		when(itemRepository.save(item)).thenReturn(item);
+		ItemDto itemDto = itemService.createItem(ItemMapper.INSTANCE.itemToDto(item));
+
+		// then
+		assertAll(
+			() -> assertEquals(itemDto.categoryDto().id(), item.getCategory().getId()),
+			() -> assertEquals(itemDto.name(), item.getName()),
+			() -> assertEquals(itemDto.basePrice(), item.getBasePrice()),
+			() -> assertEquals(itemDto.description(), item.getDescription())
+		);
+
 	}
 
 	@Test
 	void 상품_수정_실패_상품_없음() {
 		// given
-		Category category = Category.builder().id(1L).name("name").build(); // 존재하지 않는 카테고리
+		Category category = Category.builder().id(1L).name("name").build();
 
 		Item item =
 			Item.builder()
@@ -158,7 +203,7 @@ class ItemServiceTest {
 		ItemDto itemDto = ItemMapper.INSTANCE.itemToDto(item);
 
 		// when
-		when(itemRepository.save(item)).thenReturn(item);
+		when(itemRepository.findById(3L)).thenThrow(EntityNotFoundException.class);
 
 		// then
 		Assertions.assertThrows(
@@ -188,7 +233,7 @@ class ItemServiceTest {
 		ItemDto itemDto = ItemMapper.INSTANCE.itemToDto(item);
 
 		// when
-		when(itemRepository.save(item)).thenReturn(item);
+		when(categoryRepository.findById(2L)).thenThrow(EntityNotFoundException.class);
 
 		// then
 		Assertions.assertThrows(
@@ -200,13 +245,56 @@ class ItemServiceTest {
 
 	@Test
 	void 상품_제거_성공() {
-		itemService.deleteItem(1L);
-		itemService.deleteItem(2L);
+		// given
+		Long itemId1 = 1L;
+		Long itemId2 = 2L;
+
+		Category category = Category.builder().id(1L).name("name").build(); // 존재하지 않는 카테고리
+
+		Item item1 =
+			Item.builder()
+				.id(itemId1)
+				.category(category)
+				.name("item2")
+				.itemStatus(ItemStatus.PUBLIC)
+				.basePrice(20000)
+				.description("changed")
+				.deleted(false)
+				.openAt(LocalDateTime.now())
+				.build();
+
+		Item item2 =
+			Item.builder()
+				.id(itemId2)
+				.category(category)
+				.name("item2")
+				.itemStatus(ItemStatus.PUBLIC)
+				.basePrice(20000)
+				.description("changed")
+				.deleted(false)
+				.openAt(LocalDateTime.now())
+				.build();
+
+		// when
+		when(itemRepository.findById(itemId1)).thenReturn(Optional.ofNullable(item1));
+		when(itemRepository.findById(itemId2)).thenReturn(Optional.ofNullable(item2));
+
+		itemService.deleteItem(itemId1);
+		itemService.deleteItem(itemId2);
+
+		// then
 		verify(itemRepository, times(2)).deleteById(anyLong());
 	}
 
 	@Test
 	void 상품_제거_실패() {
+		// given
+		Long itemId = 3L; // 존재하지 않는 상품
+
+		// when
+		when(itemRepository.findById(3L)).thenThrow(EntityNotFoundException.class);
+
+		// then
 		Assertions.assertThrows(
 			EntityNotFoundException.class,
 			() -> {

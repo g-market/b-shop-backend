@@ -49,8 +49,7 @@ public class ItemService {
 
 		final Long categoryId = itemDto.categoryDto().id();
 
-		final Category category =
-			categoryRepository.findById(categoryId).orElseThrow(EntityNotFoundException::new);
+		categoryRepository.findById(categoryId).orElseThrow(EntityNotFoundException::new);
 
 		Item item = ItemMapper.INSTANCE.itemDtoToEntity(itemDto);
 
