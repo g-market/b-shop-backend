@@ -6,6 +6,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.exception.UnAuthorizedException;
+import com.gabia.bshop.security.MemberPayload;
 import com.gabia.bshop.util.AuthTokenExtractor;
 import org.junit.jupiter.api.Test;
 

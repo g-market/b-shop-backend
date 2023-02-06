@@ -1,4 +1,4 @@
-package com.gabia.bshop.security.provider;
+package com.gabia.bshop.security;
 
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import lombok.Builder;
