@@ -126,6 +126,19 @@ class ItemServiceTest {
 	void 상품_정보_수정() {
 		// given
 		Category category = Category.builder().id(1L).name("name").build();
+
+		Item item1 =
+			Item.builder()
+			.id(2L)
+			.category(category)
+			.name("item2")
+			.itemStatus(ItemStatus.PUBLIC)
+			.basePrice(10000)
+			.description("before")
+			.deleted(false)
+			.openAt(LocalDateTime.now())
+			.build();
+
 		Item item2 =
 			Item.builder()
 				.id(2L)
@@ -141,6 +154,8 @@ class ItemServiceTest {
 		ItemDto itemDto = ItemMapper.INSTANCE.itemToDto(item2);
 
 		// when
+		when(categoryRepository.findById(1L)).thenReturn(Optional.ofNullable(category));
+		when(itemRepository.findById(2L)).thenReturn(Optional.ofNullable(item1));
 		when(itemRepository.save(item2)).thenReturn(item2);
 
 		// then
