@@ -1,9 +1,8 @@
 package com.gabia.bshop.config;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.options;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,39 +17,39 @@ import org.springframework.test.web.servlet.MockMvc;
 @AutoConfigureMockMvc
 class WebConfigTest {
 
-    private static final String CORS_ALLOWED_METHODS = "GET,POST,HEAD,PUT,PATCH,DELETE,TRACE,OPTIONS";
-    private static final String CORS_ALLOWED_HEADERS = String.join(", ", HttpHeaders.LOCATION,
-            HttpHeaders.SET_COOKIE);
-    private static final String MAIN_SERVER_DOMAIN = "https://gabia-shop.app";
+	private static final String CORS_ALLOWED_METHODS = "GET,POST,HEAD,PUT,PATCH,DELETE,TRACE,OPTIONS";
+	private static final String CORS_ALLOWED_HEADERS = String.join(", ", HttpHeaders.LOCATION,
+		HttpHeaders.SET_COOKIE);
+	private static final String MAIN_SERVER_DOMAIN = "https://gabia-shop.app";
 
-    @Autowired
-    private MockMvc mockMvc;
+	@Autowired
+	private MockMvc mockMvc;
 
-    @ParameterizedTest
-    @ValueSource(strings = {MAIN_SERVER_DOMAIN, "http://localhost:5173", "http://localhost:5174"})
-    void 특정_Origin에_CORS가_허용되어있다(String origin) throws Exception {
-        mockMvc.perform(
-                        options("/members/me")
-                                .header(HttpHeaders.ORIGIN, origin)
-                                .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET")
-                )
-                .andExpect(status().isOk())
-                .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin))
-                .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS,
-                        CORS_ALLOWED_METHODS))
-                .andExpect(header().string(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS,
-                        CORS_ALLOWED_HEADERS))
-                .andDo(print());
-    }
+	@ParameterizedTest
+	@ValueSource(strings = {MAIN_SERVER_DOMAIN, "http://localhost:5173", "http://localhost:5174"})
+	void 특정_Origin에_CORS가_허용되어있다(String origin) throws Exception {
+		mockMvc.perform(
+				options("/members/me")
+					.header(HttpHeaders.ORIGIN, origin)
+					.header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET")
+			)
+			.andExpect(status().isOk())
+			.andExpect(header().string(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin))
+			.andExpect(header().string(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS,
+				CORS_ALLOWED_METHODS))
+			.andExpect(header().string(HttpHeaders.ACCESS_CONTROL_EXPOSE_HEADERS,
+				CORS_ALLOWED_HEADERS))
+			.andDo(print());
+	}
 
-    @Test
-    void CORS가_허용되지_않은_Origin에서_Preflight_요청을_보내면_허용하지_않는다() throws Exception {
-        mockMvc.perform(
-                        options("/members/me")
-                                .header(HttpHeaders.ORIGIN, "http://not-allowed-origin.com")
-                                .header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET")
-                )
-                .andExpect(status().isForbidden())
-                .andDo(print());
-    }
+	@Test
+	void CORS가_허용되지_않은_Origin에서_Preflight_요청을_보내면_허용하지_않는다() throws Exception {
+		mockMvc.perform(
+				options("/members/me")
+					.header(HttpHeaders.ORIGIN, "http://not-allowed-origin.com")
+					.header(HttpHeaders.ACCESS_CONTROL_REQUEST_METHOD, "GET")
+			)
+			.andExpect(status().isForbidden())
+			.andDo(print());
+	}
 }

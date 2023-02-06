@@ -4,10 +4,10 @@ import lombok.Builder;
 
 @Builder
 public record MemberResponse(
-        Long id,
-        String email,
-        String name,
-        String hiworksId
+	Long id,
+	String email,
+	String name,
+	String hiworksId
 ) {
 
 }
