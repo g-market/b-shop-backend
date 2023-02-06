@@ -1,5 +1,6 @@
 package com.gabia.bshop.service;
 
+import com.gabia.bshop.dto.request.OrderInfoSearchRequest;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
 import com.gabia.bshop.entity.ItemImage;
@@ -52,5 +53,18 @@ public class OrderService {
                 .map(oi -> oi.getItem().getId())
                 .collect(Collectors.toList()));
         return OrderInfoMapper.INSTANCE.orderInfoSingleDTOResponse(orderInfo, thumbnailUrls);
+    }
+
+    @Transactional(readOnly = true)
+    public OrderInfoPageResponse findAdminOrdersPagination(final OrderInfoSearchRequest orderInfoSearchRequest, final Pageable pageable) {
+        final List<Orders> orders = orderRepository.findAllByPeriodPagination(orderInfoSearchRequest.startAt(), orderInfoSearchRequest.endAt(), pageable);
+        final List<OrderItem> orderItems = orderItemRepository.findByOrderIds(orders.stream()
+                .map(o -> o.getId())
+                .collect(Collectors.toList()));
+        final List<ItemImage> itemImagesWithItem = itemImageRepository.findWithItemByItemIds(orderItems.stream()
+                .map(oi -> oi.getItem().getId())
+                .collect(Collectors.toList()));
+
+        return OrderInfoMapper.INSTANCE.orderInfoRelatedEntitiesToOrderInfoPageResponse(orders, orderItems, itemImagesWithItem);
     }
 }
