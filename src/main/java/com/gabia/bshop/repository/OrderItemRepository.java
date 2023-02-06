@@ -4,7 +4,6 @@ import com.gabia.bshop.entity.OrderItem;
 import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
@@ -12,4 +11,11 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
             + "where oi.item.id "
             + "in (:orderIds)")
     List<OrderItem> findByOrderIds(List<Long> orderIds);
+
+    @Query("select oi from OrderItem oi "
+            + "join fetch oi.item "
+            + "join fetch oi.order "
+            + "where oi.order.id =:orderId "
+            + "order by oi.item.id")
+    List<OrderItem> findWithOrdersAndItemByOrderId(Long orderId);
 }
