@@ -1,5 +1,7 @@
 package com.gabia.bshop.entity;
 
+import static com.gabia.bshop.entity.enumtype.MemberRole.ADMIN;
+
 import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import jakarta.persistence.*;
@@ -61,6 +63,45 @@ public class Member extends BaseEntity {
         this.hiworksId = hiworksId;
     }
 
+    public void update(final Member updateMember) {
+        updateHiworksId(updateMember.hiworksId);
+        updateEmail(updateMember.email);
+        updateName(updateMember.name);
+    }
+
+    public void updatePhoneNumber(final String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    // TODO: 사전에 가격을 정하던지, Grade 변경 메서드 추후 리팩터링 필요
+    public void updateGrade(final MemberGrade grade) {
+        if (grade != null) {
+            this.grade = grade;
+        }
+    }
+
+    private void updateHiworksId(final String hiworksId) {
+        if (hiworksId != null) {
+            this.hiworksId = hiworksId;
+        }
+    }
+
+    private void updateEmail(final String email) {
+        if (email != null) {
+            this.email = email;
+        }
+    }
+
+    private void updateName(final String name) {
+        if (name != null) {
+            this.name = name;
+        }
+    }
+
+    public boolean isAdmin() {
+        return role == ADMIN;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {
@@ -70,7 +111,7 @@ public class Member extends BaseEntity {
             return false;
         }
         final Member member = (Member) o;
-        return getId().equals(member.getId());
+        return Objects.equals(id, member.getId());
     }
 
     @Override
