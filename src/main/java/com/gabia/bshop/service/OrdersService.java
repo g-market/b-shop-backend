@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gabia.bshop.dto.response.OrdersInfoPageResponse;
+import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.Orders;
@@ -32,7 +32,7 @@ public class OrdersService {
 	private final MemberRepository memberRepository;
 
 	@Transactional(readOnly = true)
-	public OrdersInfoPageResponse findOrdersPagination(final Long memberId, final Pageable pageable) {
+	public OrderInfoPageResponse findOrdersPagination(final Long memberId, final Pageable pageable) {
 		memberRepository.findById(memberId)
 			.orElseThrow(() -> new EntityNotFoundException("해당하는 id의 회원이 존재하지 않습니다."));
 

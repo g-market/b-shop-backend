@@ -129,15 +129,15 @@ class ItemServiceTest {
 
 		Item item1 =
 			Item.builder()
-			.id(2L)
-			.category(category)
-			.name("item2")
-			.itemStatus(ItemStatus.PUBLIC)
-			.basePrice(10000)
-			.description("before")
-			.deleted(false)
-			.openAt(LocalDateTime.now())
-			.build();
+				.id(2L)
+				.category(category)
+				.name("item2")
+				.itemStatus(ItemStatus.PUBLIC)
+				.basePrice(10000)
+				.description("before")
+				.deleted(false)
+				.openAt(LocalDateTime.now())
+				.build();
 
 		Item item2 =
 			Item.builder()
@@ -198,10 +198,10 @@ class ItemServiceTest {
 
 	}
 
-    @Test
-    void 상품_수정_실패_상품_없음() {
-        // given
-        Category category = Category.builder().id(1L).name("name").build(); // 존재하지 않는 카테고리
+	@Test
+	void 상품_수정_실패_상품_없음() {
+		// given
+		Category category = Category.builder().id(1L).name("name").build(); // 존재하지 않는 카테고리
 
 		Item item =
 			Item.builder()
@@ -217,8 +217,8 @@ class ItemServiceTest {
 
 		ItemDto itemDto = ItemMapper.INSTANCE.itemToDto(item);
 
-        // when
-        when(itemRepository.save(item)).thenReturn(item);
+		// when
+		when(itemRepository.save(item)).thenReturn(item);
 
 		// then
 		Assertions.assertThrows(

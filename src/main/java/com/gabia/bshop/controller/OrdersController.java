@@ -5,7 +5,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gabia.bshop.dto.response.OrdersInfoPageResponse;
+import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.service.OrdersService;
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +21,7 @@ public class OrdersController {
 
 	// TODO: 인가 적용
 	@GetMapping("/order-infos")
-	public ResponseEntity<OrdersInfoPageResponse> orderPagination(final Pageable pageable) {
+	public ResponseEntity<OrderInfoPageResponse> orderPagination(final Pageable pageable) {
 		final Long memberId = 6L;
 
 		validatePageElementSize(pageable);

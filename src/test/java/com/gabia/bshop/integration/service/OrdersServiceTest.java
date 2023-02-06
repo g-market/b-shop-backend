@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gabia.bshop.dto.response.OrdersInfoPageResponse;
+import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
@@ -54,7 +54,7 @@ class OrdersServiceTest extends IntegrationTest {
 	private ItemImageRepository itemImageRepository;
 
 	@Autowired
-	private OrdersService orderService;
+	private OrdersService ordersService;
 
 	@Test
 	void 주문을_한_회원이_주문목록_조회를_수행하면_주문내역들이_조회되어야한다() {
@@ -143,7 +143,7 @@ class OrdersServiceTest extends IntegrationTest {
 
 		PageRequest pageable = PageRequest.of(0, 10);
 		//when
-		OrdersInfoPageResponse orderInfo = orderService.findOrdersPagination(member1.getId(),
+		OrderInfoPageResponse orderInfo = ordersService.findOrdersPagination(member1.getId(),
 			pageable);
 		//then
 		Assertions.assertThat(orderInfo.resultCount()).isEqualTo(2);
@@ -166,7 +166,7 @@ class OrdersServiceTest extends IntegrationTest {
 		Long invalidMemberId = 12375819347689L;
 		PageRequest pageable = PageRequest.of(0, 10);
 		//when & then
-		Assertions.assertThatThrownBy(() -> orderService.findOrdersPagination(invalidMemberId, pageable))
+		Assertions.assertThatThrownBy(() -> ordersService.findOrdersPagination(invalidMemberId, pageable))
 			.isInstanceOf(EntityNotFoundException.class);
 	}
 
@@ -223,7 +223,7 @@ class OrdersServiceTest extends IntegrationTest {
 		PageRequest pageable = PageRequest.of(0, 10);
 
 		//when
-		OrdersInfoPageResponse orderInfo = orderService.findOrdersPagination(member1.getId(), pageable);
+		OrderInfoPageResponse orderInfo = ordersService.findOrdersPagination(member1.getId(), pageable);
 
 		//then
 		Assertions.assertThat(orderInfo.resultCount()).isEqualTo(1);
