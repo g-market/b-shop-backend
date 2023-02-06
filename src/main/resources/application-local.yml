@@ -30,8 +30,6 @@ hiworks:
   client:
     id: normalId
     secret: normalSecret
-    admin-id: adminId
-    admin-secret: adminSecret
   url:
     accessToken: https://api.hiworks.com/open/auth/accesstoken
     user: https://api.hiworks.com/user/v2/me
