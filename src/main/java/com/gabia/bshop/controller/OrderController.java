@@ -1,12 +1,14 @@
 package com.gabia.bshop.controller;
 
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
+import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
 import com.gabia.bshop.service.OrderService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 @Slf4j
@@ -20,11 +22,18 @@ public class OrderController {
 
     // TODO: 인가 적용
     @GetMapping("/order-infos")
-    public ResponseEntity<OrderInfoPageResponse> orderPagination(final Pageable pageable) {
+    public ResponseEntity<OrderInfoPageResponse> orderInfoPagination(final Pageable pageable) {
         final Long memberId = 6L;
 
         validatePageElementSize(pageable);
         return ResponseEntity.ok(orderService.findOrdersPagination(memberId, pageable));
+    }
+
+    //TODO: 인가 적용
+    @GetMapping("/order-infos/{orderId}")
+    public ResponseEntity<OrderInfoSingleResponse> singleOrderInfo(@PathVariable("orderId") final Long orderId) {
+        final OrderInfoSingleResponse singleOrderInfo = orderService.findSingleOrderInfo( orderId);
+        return ResponseEntity.ok(singleOrderInfo);
     }
 
     private void validatePageElementSize(final Pageable pageable) {
