@@ -6,11 +6,11 @@ package com.gabia.bshop.dto.response;
  * @author jaime
  */
 public record LoggedInMemberResponse(
-        Long id,
-        String email,
-        String phoneNumber,
-        String name,
-        String hiworksId
+	Long id,
+	String email,
+	String phoneNumber,
+	String name,
+	String hiworksId
 ) {
 
 }

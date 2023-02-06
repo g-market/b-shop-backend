@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Login {
 
-    boolean required() default true;
+	boolean required() default true;
 
-    boolean admin() default false;
+	boolean admin() default false;
 }
