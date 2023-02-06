@@ -198,10 +198,10 @@ class ItemServiceTest {
 
 	}
 
-	@Test
-	void 상품_수정_실패_상품_없음() {
-		// given
-		Category category = Category.builder().id(1L).name("name").build();
+    @Test
+    void 상품_수정_실패_상품_없음() {
+        // given
+        Category category = Category.builder().id(1L).name("name").build(); // 존재하지 않는 카테고리
 
 		Item item =
 			Item.builder()
@@ -217,8 +217,8 @@ class ItemServiceTest {
 
 		ItemDto itemDto = ItemMapper.INSTANCE.itemToDto(item);
 
-		// when
-		when(itemRepository.findById(3L)).thenThrow(EntityNotFoundException.class);
+        // when
+        when(itemRepository.save(item)).thenReturn(item);
 
 		// then
 		Assertions.assertThrows(
