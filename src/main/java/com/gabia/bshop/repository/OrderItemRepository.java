@@ -8,7 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
     @Query("select oi from OrderItem oi "
-            + "where oi.item.id "
+            + "where oi.order.id "
             + "in (:orderIds)")
     List<OrderItem> findByOrderIds(List<Long> orderIds);
 
