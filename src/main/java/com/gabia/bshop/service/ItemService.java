@@ -53,7 +53,6 @@ public class ItemService {
 			categoryRepository.findById(categoryId).orElseThrow(EntityNotFoundException::new);
 
 		Item item = ItemMapper.INSTANCE.itemDtoToEntity(itemDto);
-		item.addCategory(category);
 
 		return ItemMapper.INSTANCE.itemToDto(itemRepository.save(item));
 	}
