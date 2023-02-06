@@ -1,5 +1,6 @@
 package com.gabia.bshop.controller;
 
+import com.gabia.bshop.dto.request.OrderInfoSearchRequest;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
 import com.gabia.bshop.service.OrderService;
@@ -29,11 +30,19 @@ public class OrderController {
         return ResponseEntity.ok(orderService.findOrdersPagination(memberId, pageable));
     }
 
-    //TODO: 인가 적용
+    // TODO: 인가 적용
     @GetMapping("/order-infos/{orderId}")
     public ResponseEntity<OrderInfoSingleResponse> singleOrderInfo(@PathVariable("orderId") final Long orderId) {
         final OrderInfoSingleResponse singleOrderInfo = orderService.findSingleOrderInfo( orderId);
         return ResponseEntity.ok(singleOrderInfo);
+    }
+
+    // TODO: admin 인가
+    @GetMapping("/order-infos")
+    public ResponseEntity adminOrderInfos(final OrderInfoSearchRequest orderInfoSearchRequest, final Pageable pageable) {
+        final OrderInfoPageResponse adminOrdersPagination = orderService.findAdminOrdersPagination(
+                orderInfoSearchRequest, pageable);
+        return ResponseEntity.ok(adminOrdersPagination);
     }
 
     private void validatePageElementSize(final Pageable pageable) {
