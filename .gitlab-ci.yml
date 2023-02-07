@@ -1,0 +1,39 @@
+stages:
+  - build
+  - test
+#  - deploy
+
+build:
+  only:
+#    - merge_requests
+#    - develop
+  image: openjdk:17-alpine
+  stage: build
+  script:
+    - ./gradlew clean
+    - ./gradlew -x test
+  artifacts:
+    paths:
+      - build/libs/*.jar
+    expire_in: 10 min
+
+test:
+#  only:
+#    - merge_requests
+#    - develop
+  variables:
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+    # Instruct Testcontainers to use the daemon of DinD.
+    DOCKER_HOST: "tcp://docker:2375"
+    # Improve performance with overlayfs.
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+
+  image: openjdk:17-alpine
+  stage: test
+  tags:
+    - gitlab-runner
+  services:
+    - name: docker:dind
+  script:
+    - ./gradlew test
