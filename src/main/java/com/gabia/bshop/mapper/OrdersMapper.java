@@ -18,25 +18,26 @@ public interface OrdersMapper {
 
     @Mappings({
             @Mapping(source = "memberId", target = "member.id"),
-            @Mapping(target = "status", defaultValue = "PENDING"),
+            @Mapping(source = "status", target = "status", defaultValue = "ACCEPTED"),
             @Mapping(target = "id", ignore = true),
-            @Mapping(target = "totalPrice", ignore = true)
+            @Mapping(target = "totalPrice", ignore = true),
     })
     Orders ordersCreateDtoToEntity(OrdersCreateRequestDto ordersCreateRequestDto);
+
+    @Mapping(source = "member.id", target = "memberId")
+    OrdersCreateResponseDto ordersCreateResponseDto(Orders orders);
+
+    @Mappings({
+        @Mapping(source = "id", target = "item.id"),
+        @Mapping(target = "order", ignore = true),
+        @Mapping(target = "price", ignore = true)
+    })
+    OrderItem orderDtoToOrderItem(OrdersDto ordersDto);
 
     @Mapping(source = "item.id", target = "id")
     OrdersDto orderItemToOrdersDto(OrderItem orderItem);
 
+    List<OrderItem> orderDtoListToOrderItemList(List<OrdersDto> orderDtoList);
+
     List<OrdersDto> orderItemListToOrderDtoList(List<OrderItem> orderItemList);
-
-    default OrdersCreateResponseDto orderCreateEntityToOrdersCreateResponseDto(Orders orders,
-            List<OrderItem> orderItemList) {
-
-        return OrdersCreateResponseDto.builder()
-                .itemList(orderItemListToOrderDtoList(orderItemList))
-                .memberId(orders.getMember().getId())
-                .status(orders.getStatus())
-                .totalPrice(orders.getTotalPrice())
-                .build();
-    }
 }

@@ -7,6 +7,6 @@ import lombok.Builder;
 @Builder
 public record OrdersCreateRequestDto(
         Long memberId,
-        List<OrdersDto> itemList,
+        List<OrdersDto> orderItems,
         OrderStatus status
 ) {}

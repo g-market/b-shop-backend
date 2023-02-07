@@ -72,6 +72,10 @@ public class Options extends BaseEntity {
         this.stockQuantity = restStock;
     }
 
+    public void addStockQuantity(final int orderCount) {
+        this.stockQuantity += orderCount;
+    }
+
     @Override
     public boolean equals(final Object o) {
         if (this == o) {

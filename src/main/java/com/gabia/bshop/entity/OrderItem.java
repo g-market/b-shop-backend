@@ -38,6 +38,10 @@ public class OrderItem extends BaseEntity {
     @JoinColumn(name = "order_id", nullable = false)
     private Orders order;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "option_id", nullable = false)
+    private Long option_id;
+
     @Column(nullable = false)
     private int orderCount;
 
@@ -49,11 +53,13 @@ public class OrderItem extends BaseEntity {
             final Long id,
             final Item item,
             final Orders order,
+            final Long option_id,
             final int orderCount,
             final long price) {
         this.id = id;
         this.item = item;
         this.order = order;
+        this.option_id = option_id;
         this.orderCount = orderCount;
         this.price = price;
     }
@@ -71,6 +77,10 @@ public class OrderItem extends BaseEntity {
         orders.calculateTotalPrice(orderItem, count);
 
         return orderItem;
+    }
+
+    public void cancel() {
+        this.item.cancel(this.orderCount);
     }
 
     @Override

@@ -39,11 +39,11 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class OrdersService {
 
-	private final OrdersRepository ordersRepository;
-	private final OrderItemRepository orderItemRepository;
+    private final OrdersRepository ordersRepository;
+    private final OrderItemRepository orderItemRepository;
     private final ItemRepository itemRepository;
-	private final ItemImageRepository itemImageRepository;
-	private final MemberRepository memberRepository;
+    private final ItemImageRepository itemImageRepository;
+    private final MemberRepository memberRepository;
     private final OptionsRepository optionsRepository;
 
 	@Transactional(readOnly = true)
@@ -66,37 +66,33 @@ public class OrdersService {
      */
     public OrdersCreateResponseDto createOrder(OrdersCreateRequestDto ordersCreateRequestDto) {
 
-        Member member = memberRepository.findById(ordersCreateRequestDto.memberId())
+        memberRepository.findById(ordersCreateRequestDto.memberId())
                 .orElseThrow(EntityNotFoundException::new);
         Orders orders = OrdersMapper.INSTANCE.ordersCreateDtoToEntity(ordersCreateRequestDto);
-        orders.setMember(member);
 
-        List<OrderItem> orderItemEntityList = ordersCreateRequestDto.itemList()
+        List<OrderItem> orderItemEntityList = ordersCreateRequestDto.orderItems()
                 .stream()
-                .map(ol -> {
-                    Item itemEntity = itemRepository.findById(ol.id()).get();
-                    Options options = optionsRepository.findByItem_Id(ol.id());
-                    return OrderItem.createOrderItem(itemEntity, options, orders, ol.orderCount());
+                .map(oi -> {
+                    Item item = itemRepository.findById(oi.id()).get();
+                    Options options = optionsRepository.findByItem_Id(oi.id());
+                    return OrderItem.createOrderItem(item, options, orders, oi.orderCount());
                 })
                 .collect(Collectors.toList());
 
-        ordersRepository.save(orders);
-        orderItemRepository.saveAll(orderItemEntityList);
+        orders.createOrder(orderItemEntityList);
 
-        return OrdersMapper.INSTANCE.orderCreateEntityToOrdersCreateResponseDto(orders,
-                orderItemEntityList);
+        ordersRepository.save(orders);
+       
+        return OrdersMapper.INSTANCE.ordersCreateResponseDto(orders);
     }
 
     /**
-     * 주문 제거
+     * 주문 취소(제거)
      */
-    public void deleteOrder(Long id) {
+    public void cancelOrder(Long id) {
         Orders orders = ordersRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("존재하지 않는 주문 ID 입니다."));
 
-        List<OrderItem> orderItemList = orderItemRepository.findAllByOrderId(id);
-
-        orderItemRepository.deleteAll(orderItemList);
-        ordersRepository.delete(orders);
+        orders.cancel();
     }
 }
