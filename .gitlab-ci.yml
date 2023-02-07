@@ -4,8 +4,6 @@ stages:
 #  - deploy
 
 build:
-  only:
-    - merge_requests
   rules:
     -  if : '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
   image: openjdk:17-alpine
@@ -19,8 +17,6 @@ build:
     expire_in: 10 min
 
 test:
-  only:
-    - merge_requests
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
   variables:
