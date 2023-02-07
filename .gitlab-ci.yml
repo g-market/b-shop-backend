@@ -4,9 +4,10 @@ stages:
 #  - deploy
 
 build:
-#  only:
-#    - merge_requests
-#    - develop
+  only:
+    - merge_requests
+  rules:
+    -  if : '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
   image: openjdk:17-alpine
   stage: build
   script:
@@ -18,9 +19,10 @@ build:
     expire_in: 10 min
 
 test:
-#  only:
-#    - merge_requests
-#    - develop
+  only:
+    - merge_requests
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
   variables:
     GRADLE_OPTS: "-Dorg.gradle.daemon=false"
     # Instruct Testcontainers to use the daemon of DinD.
