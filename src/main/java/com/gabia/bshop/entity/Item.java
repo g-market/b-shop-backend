@@ -1,8 +1,11 @@
 package com.gabia.bshop.entity;
 
+import com.gabia.bshop.entity.enumtype.ItemStatus;
+import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
-
+import lombok.*;
 import org.hibernate.annotations.SQLDelete;
 
 import com.gabia.bshop.dto.ItemDto;
@@ -62,6 +65,9 @@ public class Item extends BaseEntity {
     @Column(nullable = false)
     private boolean deleted;
 
+    @OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+    private List<Options> optionsList;
+
     @Builder
     private Item(
             final Long id,
@@ -71,7 +77,8 @@ public class Item extends BaseEntity {
             final int basePrice,
             final ItemStatus itemStatus,
             final LocalDateTime openAt,
-            final boolean deleted) {
+            final boolean deleted,
+            final List<Options> optionsList) {
         this.id = id;
         this.name = name;
         this.category = category;
@@ -80,6 +87,7 @@ public class Item extends BaseEntity {
         this.itemStatus = itemStatus;
         this.openAt = openAt;
         this.deleted = deleted;
+        this.optionsList = optionsList;
     }
 
 	public void update(final ItemDto itemDto, final Category category) {
