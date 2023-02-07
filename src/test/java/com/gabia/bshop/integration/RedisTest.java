@@ -1,5 +1,5 @@
 /* Licensed under Apache Corp */
-package com.gabia.bshop;
+package com.gabia.bshop.integration;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

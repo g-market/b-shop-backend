@@ -1,4 +1,3 @@
-/* Licensed under Apache Corp */
 package com.gabia.bshop;
 
 import org.junit.jupiter.api.Test;
