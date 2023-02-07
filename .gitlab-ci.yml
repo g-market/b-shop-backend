@@ -45,7 +45,7 @@ test:
 #https://docs.gitlab.com/ee/ci/testing/test_coverage_visualization.html
 coverage:
   rules:
-    -  if : '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
   stage: coverage
   image: registry.gitlab.com/haynes/jacoco2cobertura:1.0.7
   script:
