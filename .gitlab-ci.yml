@@ -1,6 +1,7 @@
 stages:
   - build
   - test
+  - coverage
 #  - deploy
 
 build:
@@ -35,3 +36,25 @@ test:
     - name: docker:dind
   script:
     - ./gradlew test
+  artifacts:
+    paths:
+      - build/reports/jacoco/test/jacoco*.xml
+    reports:
+      junit: build/test-results/test/**/TEST-*.xml
+
+#https://docs.gitlab.com/ee/ci/testing/test_coverage_visualization.html
+coverage:
+  stage: coverage
+  image: registry.gitlab.com/haynes/jacoco2cobertura:1.0.7
+  script:
+    - python /opt/cover2cover.py build/reports/jacoco/test/jacoco*.xml $CI_PROJECT_DIR/src/main/java/ > build/cobertura.xml
+  needs: ["test"]
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: build/cobertura.xml
+
+
+
+

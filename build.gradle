@@ -3,6 +3,7 @@ plugins {
     id 'org.springframework.boot' version '3.0.2'
     id 'io.spring.dependency-management' version '1.1.0'
     id 'checkstyle'
+    id 'jacoco'
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -58,11 +59,68 @@ dependencies {
     // mapstruct
     implementation 'org.mapstruct:mapstruct:1.4.2.Final'
     annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+
+    //jacoco
+
 }
 
 tasks.named('test') {
     useJUnitPlatform()
+    finalizedBy 'jacocoTestReport'
 }
+
+// ============================ jacoco ===========================
+jacoco {
+    toolVersion = '0.8.8'
+}
+
+jacocoTestReport {
+    reports {
+        html.enabled true
+        xml.enabled true
+        csv.enabled false
+    }
+
+    afterEvaluate {
+        classDirectories.setFrom(files(classDirectories.files.collect {
+            fileTree(dir: it, exclude: [
+                    "**/BshopApplication.class",
+                    "**/entity/**",
+                    "**/config/**",
+                    "**/mapper/**",
+                    "**/dto/**",
+                    "**/util/**"
+            ])
+        }))
+    }
+    dependsOn test // jacocoTestReport 에 test라는 종속성을 추가
+    finalizedBy 'jacocoTestCoverageVerification'
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            element = 'CLASS'
+            enabled = false;
+
+            limit {
+                counter = 'LINE'
+                value = 'COVEREDRATIO'
+                minimum = 0.50
+            }
+
+            excludes = [
+                    "**/BshopApplication.class",
+                    "**/entity/**",
+                    "**/config/**",
+                    "**/mapper/**",
+                    "**/dto/**",
+                    "**/util/**"
+            ]
+        }
+    }
+}
+
 
 // ============================ check style =======================
 tasks.withType(Checkstyle) {
