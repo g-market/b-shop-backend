@@ -4,14 +4,14 @@ stages:
 #  - deploy
 
 build:
-  only:
+#  only:
 #    - merge_requests
 #    - develop
   image: openjdk:17-alpine
   stage: build
   script:
     - ./gradlew clean
-    - ./gradlew -x test
+    - ./gradlew build -x test
   artifacts:
     paths:
       - build/libs/*.jar
