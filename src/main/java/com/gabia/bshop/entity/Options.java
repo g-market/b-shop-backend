@@ -38,9 +38,6 @@ public class Options extends BaseEntity {
 	private String description;
 
 	@Column(nullable = false)
-	private int optionLevel;
-
-	@Column(nullable = false)
 	private int optionPrice;
 
 	@Column(nullable = false)
@@ -57,7 +54,6 @@ public class Options extends BaseEntity {
 		this.id = id;
 		this.item = item;
 		this.description = description;
-		this.optionLevel = optionLevel;
 		this.optionPrice = optionPrice;
 		this.stockQuantity = stockQuantity;
 	}

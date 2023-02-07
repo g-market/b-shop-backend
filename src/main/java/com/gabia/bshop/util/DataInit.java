@@ -11,6 +11,7 @@ import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.Member;
+import com.gabia.bshop.entity.Options;
 import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.Orders;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
@@ -368,35 +369,54 @@ public class DataInit {
 
 		orderRepository.saveAll(List.of(order1, order2, order3, order4));
 
+		Options option1 = Options.builder()
+			.optionPrice(12345)
+			.stockQuantity(1000)
+			.description(UUID.randomUUID().toString())
+			.item(item1)
+			.build();
+		Options option2 = Options.builder()
+			.optionPrice(2222)
+			.stockQuantity(1040)
+			.description(UUID.randomUUID().toString())
+			.item(item2)
+			.build();
+		optionsRepository.saveAll(List.of(option1, option2));
+
 		OrderItem orderItem1OfOrder1 = OrderItem.builder()
 			.item(item1)
 			.order(order1)
 			.orderCount(1)
 			.price(11111L)
+			.option(option1)
 			.build();
 		OrderItem orderItem2OfOrder2 = OrderItem.builder()
 			.item(item1)
 			.order(order2)
 			.orderCount(1)
 			.price(11111L)
+			.option(option1)
 			.build();
 		OrderItem orderItem3OfOrder2 = OrderItem.builder()
 			.item(item2)
 			.order(order2)
 			.orderCount(1)
 			.price(22222L)
+			.option(option2)
 			.build();
 		OrderItem orderItem4OfOrder3 = OrderItem.builder()
 			.item(item2)
 			.order(order3)
 			.orderCount(1)
 			.price(22222L)
+			.option(option2)
 			.build();
 		OrderItem orderItem5OfOrder4 = OrderItem.builder()
 			.item(item2)
 			.order(order4)
 			.orderCount(2)
 			.price(22222L)
+			.option(option2)
 			.build();
 
 		orderItemRepository.saveAll(

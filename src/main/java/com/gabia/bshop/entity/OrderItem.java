@@ -10,6 +10,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -38,6 +39,10 @@ public class OrderItem extends BaseEntity {
 	@JoinColumn(name = "order_id", nullable = false)
 	private Orders order;
 
+	@OneToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "option_id", nullable = false)
+	private Options option;
+
 	@Column(nullable = false)
 	private int orderCount;
 
@@ -50,11 +55,13 @@ public class OrderItem extends BaseEntity {
 		final Item item,
 		final Orders order,
 		final int orderCount,
+		final Options option,
 		final long price) {
 		this.id = id;
 		this.item = item;
 		this.order = order;
 		this.orderCount = orderCount;
+		this.option = option;
 		this.price = price;
 	}
 
