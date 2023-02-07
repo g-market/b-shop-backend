@@ -7,6 +7,7 @@ import java.util.UUID;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,6 +34,7 @@ import com.gabia.bshop.service.OrdersService;
 import jakarta.persistence.EntityNotFoundException;
 
 @Transactional
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class OrdersServiceTest extends IntegrationTest {
 
 	@Autowired
@@ -74,7 +76,7 @@ class OrdersServiceTest extends IntegrationTest {
 		Item item1 = Item.builder()
 			.category(category1)
 			.name("temp_item_name1")
-			.description("temp_item_1_description " + UUID.randomUUID().toString())
+			.description("temp_item_1_description " + UUID.randomUUID())
 			.basePrice(11111)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
@@ -83,7 +85,7 @@ class OrdersServiceTest extends IntegrationTest {
 		Item item2 = Item.builder()
 			.category(category1)
 			.name("temp_item_name1")
-			.description("temp_item_1_description " + UUID.randomUUID().toString())
+			.description("temp_item_1_description " + UUID.randomUUID())
 			.basePrice(22222)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
@@ -188,7 +190,7 @@ class OrdersServiceTest extends IntegrationTest {
 		Item item1 = Item.builder()
 			.category(category1)
 			.name("temp_item_name1")
-			.description("temp_item_1_description " + UUID.randomUUID().toString())
+			.description("temp_item_1_description " + UUID.randomUUID())
 			.basePrice(11111)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
