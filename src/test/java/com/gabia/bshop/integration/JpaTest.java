@@ -1,5 +1,5 @@
 /* Licensed under Apache Corp */
-package com.gabia.bshop;
+package com.gabia.bshop.integration;
 
 import static org.assertj.core.api.Assertions.*;
 
