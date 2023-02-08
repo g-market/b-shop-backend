@@ -46,8 +46,7 @@ public class Orders extends BaseEntity {
 	private long totalPrice;
 
 	@Builder
-	private Orders(
-		final Long id, final Member member, final OrderStatus status, final long totalPrice) {
+	private Orders(final Long id, final Member member, final OrderStatus status, final long totalPrice) {
 		this.id = id;
 		this.member = member;
 		this.status = status;
@@ -55,14 +54,14 @@ public class Orders extends BaseEntity {
 	}
 
 	@Override
-	public boolean equals(final Object o) {
-		if (this == o) {
+	public boolean equals(final Object that) {
+		if (this == that) {
 			return true;
 		}
-		if (o == null || getClass() != o.getClass()) {
+		if (that == null || getClass() != that.getClass()) {
 			return false;
 		}
-		final Orders orders = (Orders)o;
+		final Orders orders = (Orders)that;
 		return getId().equals(orders.getId());
 	}
 

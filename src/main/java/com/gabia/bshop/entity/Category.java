@@ -17,9 +17,7 @@ import lombok.ToString;
 @ToString(exclude = {})
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@Table(
-	name = "category",
-	indexes = {})
+@Table(name = "category", indexes = {})
 @Entity
 public class Category {
 
@@ -37,14 +35,14 @@ public class Category {
 	}
 
 	@Override
-	public boolean equals(final Object o) {
-		if (this == o) {
+	public boolean equals(Object that) {
+		if (this == that) {
 			return true;
 		}
-		if (o == null || getClass() != o.getClass()) {
+		if (that == null || getClass() != that.getClass()) {
 			return false;
 		}
-		final Category category = (Category)o;
+		Category category = (Category)that;
 		return getId().equals(category.getId());
 	}
 

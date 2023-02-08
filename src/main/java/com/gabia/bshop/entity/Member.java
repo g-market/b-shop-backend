@@ -1,5 +1,7 @@
 package com.gabia.bshop.entity;
 
+import static com.gabia.bshop.entity.enumtype.MemberRole.*;
+
 import java.util.Objects;
 
 import com.gabia.bshop.entity.enumtype.MemberGrade;
@@ -38,7 +40,7 @@ public class Member extends BaseEntity {
 	@Column(columnDefinition = "char(11)", unique = true)
 	private String phoneNumber;
 
-	@Column(columnDefinition = "varchar(15)", nullable = false)
+	@Column(columnDefinition = "varchar(100)", nullable = false)
 	private String name;
 
 	@Enumerated(value = EnumType.STRING)
@@ -53,14 +55,8 @@ public class Member extends BaseEntity {
 	private String hiworksId;
 
 	@Builder
-	private Member(
-		final Long id,
-		final String email,
-		final String phoneNumber,
-		final String name,
-		final MemberRole role,
-		final MemberGrade grade,
-		final String hiworksId) {
+	private Member(final Long id, final String email, final String phoneNumber, final String name,
+		final MemberRole role, final MemberGrade grade, final String hiworksId) {
 		this.id = id;
 		this.email = email;
 		this.phoneNumber = phoneNumber;
@@ -70,16 +66,55 @@ public class Member extends BaseEntity {
 		this.hiworksId = hiworksId;
 	}
 
+	public void update(final Member updateMember) {
+		updateHiworksId(updateMember.hiworksId);
+		updateEmail(updateMember.email);
+		updateName(updateMember.name);
+	}
+
+	public void updatePhoneNumber(final String phoneNumber) {
+		this.phoneNumber = phoneNumber;
+	}
+
+	// TODO: 사전에 가격을 정하던지, Grade 변경 메서드 추후 리팩터링 필요
+	public void updateGrade(final MemberGrade grade) {
+		if (grade != null) {
+			this.grade = grade;
+		}
+	}
+
+	private void updateHiworksId(final String hiworksId) {
+		if (hiworksId != null) {
+			this.hiworksId = hiworksId;
+		}
+	}
+
+	private void updateEmail(final String email) {
+		if (email != null) {
+			this.email = email;
+		}
+	}
+
+	private void updateName(final String name) {
+		if (name != null) {
+			this.name = name;
+		}
+	}
+
+	public boolean isAdmin() {
+		return role == ADMIN;
+	}
+
 	@Override
-	public boolean equals(final Object o) {
-		if (this == o) {
+	public boolean equals(final Object that) {
+		if (this == that) {
 			return true;
 		}
-		if (o == null || getClass() != o.getClass()) {
+		if (that == null || getClass() != that.getClass()) {
 			return false;
 		}
-		final Member member = (Member)o;
-		return getId().equals(member.getId());
+		final Member member = (Member)that;
+		return Objects.equals(id, member.getId());
 	}
 
 	@Override

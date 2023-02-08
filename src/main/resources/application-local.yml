@@ -35,6 +35,6 @@ hiworks:
     user: https://api.hiworks.com/user/v2/me
 
 token:
-  access-expired-time: 123456789
-  refresh-expired-time: 123456780
-  secret: abcdefghijklmnopqrstuv.secret.key
+  access-expired-time: 3600000
+  refresh-expired-time: 1209600000
+  secret: localSecretKey1234567891011121314151617181920
