@@ -40,7 +40,7 @@ public class Member extends BaseEntity {
 	@Column(columnDefinition = "char(11)", unique = true)
 	private String phoneNumber;
 
-	@Column(columnDefinition = "varchar(15)", nullable = false)
+	@Column(columnDefinition = "varchar(100)", nullable = false)
 	private String name;
 
 	@Enumerated(value = EnumType.STRING)
@@ -55,14 +55,8 @@ public class Member extends BaseEntity {
 	private String hiworksId;
 
 	@Builder
-	private Member(
-		final Long id,
-		final String email,
-		final String phoneNumber,
-		final String name,
-		final MemberRole role,
-		final MemberGrade grade,
-		final String hiworksId) {
+	private Member(final Long id, final String email, final String phoneNumber, final String name,
+		final MemberRole role, final MemberGrade grade, final String hiworksId) {
 		this.id = id;
 		this.email = email;
 		this.phoneNumber = phoneNumber;
