@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -16,6 +17,7 @@ import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.Member;
+import com.gabia.bshop.entity.Options;
 import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.Orders;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
@@ -27,6 +29,7 @@ import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.MemberRepository;
+import com.gabia.bshop.repository.OptionsRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrdersRepository;
 import com.gabia.bshop.service.OrdersService;
@@ -50,6 +53,9 @@ class OrdersServiceTest extends IntegrationTest {
 	private OrdersRepository orderRepository;
 
 	@Autowired
+	private OptionsRepository optionsRepository;
+
+	@Autowired
 	private OrderItemRepository orderItemRepository;
 
 	@Autowired
@@ -58,8 +64,9 @@ class OrdersServiceTest extends IntegrationTest {
 	@Autowired
 	private OrdersService ordersService;
 
+	@DisplayName("주문을_한_회원이_주문목록_조회를_수행하면_주문내역들이_조회되어야한다")
 	@Test
-	void 주문을_한_회원이_주문목록_조회를_수행하면_주문내역들이_조회되어야한다() {
+	void findOrderList() {
 		//given
 		LocalDateTime now = LocalDateTime.now();
 		Member member1 = Member.builder()
@@ -91,31 +98,48 @@ class OrdersServiceTest extends IntegrationTest {
 			.openAt(now)
 			.deleted(false)
 			.build();
+		Options options1 = Options.builder()
+			.item(item1)
+			.description("temp_options_1_description")
+			.optionLevel(1)
+			.optionPrice(0)
+			.stockQuantity(10)
+			.build();
+		Options options2 = Options.builder()
+			.item(item2)
+			.description("temp_options_2_description")
+			.optionLevel(1)
+			.optionPrice(1000)
+			.stockQuantity(5)
+			.build();
 		Orders order1 = Orders.builder()
 			.member(member1)
-			.status(OrderStatus.PENDING)
+			.status(OrderStatus.ACCEPTED)
 			.totalPrice(11111L)
 			.build();
 		OrderItem orderItem1_order1 = OrderItem.builder()
 			.item(item1)
 			.order(order1)
+			.option(options1)
 			.orderCount(1)
 			.price(11111L)
 			.build();
 		Orders order2 = Orders.builder()
 			.member(member1)
-			.status(OrderStatus.PENDING)
+			.status(OrderStatus.ACCEPTED)
 			.totalPrice(33333L)
 			.build();
 		OrderItem orderItem2_order2 = OrderItem.builder()
 			.item(item1)
 			.order(order2)
+			.option(options1)
 			.orderCount(1)
 			.price(11111L)
 			.build();
 		OrderItem orderItem3_order2 = OrderItem.builder()
 			.item(item2)
 			.order(order2)
+			.option(options2)
 			.orderCount(1)
 			.price(22222L)
 			.build();
@@ -141,7 +165,9 @@ class OrdersServiceTest extends IntegrationTest {
 		itemRepository.saveAll(List.of(item1, item2));
 		itemImageRepository.saveAll(List.of(itemImage1, itemImage2, itemImage3, itemImage4));
 		orderRepository.saveAll(List.of(order1, order2));
-		orderItemRepository.saveAll(List.of(orderItem1_order1, orderItem2_order2, orderItem3_order2));
+		optionsRepository.saveAll(List.of(options1, options2));
+		orderItemRepository.saveAll(
+			List.of(orderItem1_order1, orderItem2_order2, orderItem3_order2));
 
 		PageRequest pageable = PageRequest.of(0, 10);
 		//when
@@ -150,30 +176,39 @@ class OrdersServiceTest extends IntegrationTest {
 		//then
 		Assertions.assertThat(orderInfo.resultCount()).isEqualTo(2);
 		Assertions.assertThat(orderInfo.orderInfos().get(0).orderId()).isEqualTo(order1.getId());
-		Assertions.assertThat(orderInfo.orderInfos().get(0).thumbnailImage()).isEqualTo(itemImage1.getUrl());
-		Assertions.assertThat(orderInfo.orderInfos().get(0).representativeName()).isEqualTo(item1.getName());
+		Assertions.assertThat(orderInfo.orderInfos().get(0).thumbnailImage())
+			.isEqualTo(itemImage1.getUrl());
+		Assertions.assertThat(orderInfo.orderInfos().get(0).representativeName())
+			.isEqualTo(item1.getName());
 		Assertions.assertThat(orderInfo.orderInfos().get(0).itemTotalCount()).isEqualTo(1);
-		Assertions.assertThat(orderInfo.orderInfos().get(0).orderStatus()).isEqualTo(order1.getStatus());
+		Assertions.assertThat(orderInfo.orderInfos().get(0).orderStatus())
+			.isEqualTo(order1.getStatus());
 
 		Assertions.assertThat(orderInfo.orderInfos().get(1).orderId()).isEqualTo(order2.getId());
-		Assertions.assertThat(orderInfo.orderInfos().get(1).thumbnailImage()).isEqualTo(itemImage3.getUrl());
-		Assertions.assertThat(orderInfo.orderInfos().get(1).representativeName()).isEqualTo(item2.getName());
+		Assertions.assertThat(orderInfo.orderInfos().get(1).thumbnailImage())
+			.isEqualTo(itemImage3.getUrl());
+		Assertions.assertThat(orderInfo.orderInfos().get(1).representativeName())
+			.isEqualTo(item2.getName());
 		Assertions.assertThat(orderInfo.orderInfos().get(1).itemTotalCount()).isEqualTo(2);
-		Assertions.assertThat(orderInfo.orderInfos().get(1).orderStatus()).isEqualTo(order2.getStatus());
+		Assertions.assertThat(orderInfo.orderInfos().get(1).orderStatus())
+			.isEqualTo(order2.getStatus());
 	}
 
+	@DisplayName("존재하지_않는_회원이_주문목록_조회를_요청하면_오류가_발생해야한다")
 	@Test
-	void 존재하지_않는_회원이_주문목록_조회를_요청하면_오류가_발생해야한다() {
+	void findOrderListInvalidIdFail() {
 		//given
 		Long invalidMemberId = 12375819347689L;
 		PageRequest pageable = PageRequest.of(0, 10);
 		//when & then
-		Assertions.assertThatThrownBy(() -> ordersService.findOrdersPagination(invalidMemberId, pageable))
+		Assertions.assertThatThrownBy(
+				() -> ordersService.findOrdersPagination(invalidMemberId, pageable))
 			.isInstanceOf(EntityNotFoundException.class);
 	}
 
+	@DisplayName("주문_후_삭제된_상품도_주문목록에서_조회되어야한다")
 	@Test
-	void 주문_후_삭제된_상품도_주문목록에서_조회되어야한다() {
+	void findOrderListCancelledItem() {
 		//given
 		LocalDateTime now = LocalDateTime.now();
 		Member member1 = Member.builder()
@@ -196,14 +231,23 @@ class OrdersServiceTest extends IntegrationTest {
 			.openAt(now)
 			.deleted(true)
 			.build();
+		Options options1 = Options.builder()
+			.id(1L)
+			.item(item1)
+			.description("description")
+			.optionLevel(1)
+			.optionPrice(0)
+			.stockQuantity(10)
+			.build();
 		Orders order1 = Orders.builder()
 			.member(member1)
-			.status(OrderStatus.PENDING)
+			.status(OrderStatus.ACCEPTED)
 			.totalPrice(11111L)
 			.build();
 		OrderItem orderItem1_order1 = OrderItem.builder()
 			.item(item1)
 			.order(order1)
+			.option(options1)
 			.orderCount(1)
 			.price(11111L)
 			.build();
@@ -225,7 +269,8 @@ class OrdersServiceTest extends IntegrationTest {
 		PageRequest pageable = PageRequest.of(0, 10);
 
 		//when
-		OrderInfoPageResponse orderInfo = ordersService.findOrdersPagination(member1.getId(), pageable);
+		OrderInfoPageResponse orderInfo = ordersService.findOrdersPagination(member1.getId(),
+			pageable);
 
 		//then
 		Assertions.assertThat(orderInfo.resultCount()).isEqualTo(1);

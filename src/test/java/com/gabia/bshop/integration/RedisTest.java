@@ -7,8 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import com.gabia.bshop.integration.IntegrationTest;
-
 @SpringBootTest
 public class RedisTest extends IntegrationTest {
 

@@ -4,6 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record OrderItemDto(
-        Long id,
-        int orderCount
-) {}
+	Long id,
+	int orderCount
+) {
+}

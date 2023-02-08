@@ -4,6 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record MemberDto(
-        Long id,
-        String email
-) {}
+	Long id,
+	String email
+) {
+}

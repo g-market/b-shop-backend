@@ -11,6 +11,7 @@ import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.Member;
+import com.gabia.bshop.entity.Options;
 import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.Orders;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
@@ -167,7 +168,7 @@ public class DataInit {
 		Item item1 = Item.builder()
 			.category(category1)
 			.name("temp_item_name1")
-			.description("temp_item_1_description " + UUID.randomUUID().toString())
+			.description("temp_item_1_description " + UUID.randomUUID())
 			.basePrice(11111)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
@@ -176,7 +177,7 @@ public class DataInit {
 		Item item2 = Item.builder()
 			.category(category1)
 			.name("temp_item_name2")
-			.description("temp_item_2_description " + UUID.randomUUID().toString())
+			.description("temp_item_2_description " + UUID.randomUUID())
 			.basePrice(22222)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
@@ -185,7 +186,7 @@ public class DataInit {
 		Item item3 = Item.builder()
 			.category(category1)
 			.name("temp_item_name3")
-			.description("temp_item_3_description " + UUID.randomUUID().toString())
+			.description("temp_item_3_description " + UUID.randomUUID())
 			.basePrice(33333)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
@@ -194,7 +195,7 @@ public class DataInit {
 		Item item4 = Item.builder()
 			.category(category1)
 			.name("temp_item_name4")
-			.description("temp_item_4_description " + UUID.randomUUID().toString())
+			.description("temp_item_4_description " + UUID.randomUUID())
 			.basePrice(44444)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
@@ -203,7 +204,7 @@ public class DataInit {
 		Item item5 = Item.builder()
 			.category(category1)
 			.name("temp_item_name5")
-			.description("temp_item_5_description " + UUID.randomUUID().toString())
+			.description("temp_item_5_description " + UUID.randomUUID())
 			.basePrice(55555)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
@@ -212,7 +213,7 @@ public class DataInit {
 		Item item6 = Item.builder()
 			.category(category1)
 			.name("temp_item_name6")
-			.description("temp_item_6_description " + UUID.randomUUID().toString())
+			.description("temp_item_6_description " + UUID.randomUUID())
 			.basePrice(66666)
 			.itemStatus(ItemStatus.PRIVATE)
 			.openAt(now.minusDays(1L))
@@ -221,7 +222,7 @@ public class DataInit {
 		Item item7 = Item.builder()
 			.category(category1)
 			.name("temp_item_name7")
-			.description("temp_item_7_description " + UUID.randomUUID().toString())
+			.description("temp_item_7_description " + UUID.randomUUID())
 			.basePrice(77777)
 			.itemStatus(ItemStatus.PRIVATE)
 			.openAt(now.minusDays(1L))
@@ -230,7 +231,7 @@ public class DataInit {
 		Item item8 = Item.builder()
 			.category(category1)
 			.name("temp_item_name8")
-			.description("temp_item_8_description " + UUID.randomUUID().toString())
+			.description("temp_item_8_description " + UUID.randomUUID())
 			.basePrice(88888)
 			.itemStatus(ItemStatus.RESERVED)
 			.openAt(now.plusDays(1L))
@@ -239,7 +240,7 @@ public class DataInit {
 		Item item9 = Item.builder()
 			.category(category1)
 			.name("temp_item_name9")
-			.description("temp_item_9_description " + UUID.randomUUID().toString())
+			.description("temp_item_9_description " + UUID.randomUUID())
 			.basePrice(99999)
 			.itemStatus(ItemStatus.RESERVED)
 			.openAt(now.plusDays(1L))
@@ -248,7 +249,7 @@ public class DataInit {
 		Item item10 = Item.builder()
 			.category(category1)
 			.name("temp_item_name10")
-			.description("temp_item_10_description " + UUID.randomUUID().toString())
+			.description("temp_item_10_description " + UUID.randomUUID())
 			.basePrice(12345)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
@@ -257,6 +258,24 @@ public class DataInit {
 
 		itemRepository.saveAll(
 			List.of(item1, item2, item3, item4, item5, item6, item7, item8, item9, item10));
+
+		Options options1 = Options.builder()
+			.item(item1)
+			.description("description")
+			.optionLevel(1)
+			.optionPrice(0)
+			.stockQuantity(10)
+			.build();
+
+		Options options2 = Options.builder()
+			.item(item2)
+			.description("description")
+			.optionLevel(1)
+			.optionPrice(1000)
+			.stockQuantity(5)
+			.build();
+
+		optionsRepository.saveAll(List.of(options1, options2));
 
 		ItemImage itemImage1 = ItemImage.builder()
 			.item(item1)
@@ -340,18 +359,20 @@ public class DataInit {
 			.build();
 
 		itemImageRepository.saveAll(
-			List.of(itemImage1, itemImage2, itemImage3, itemImage4, itemImage5, itemImage6, itemImage7, itemImage8,
-				itemImage9, itemImage10, itemImage11, itemImage12, itemImage13, itemImage14, itemImage15, itemImage16,
+			List.of(itemImage1, itemImage2, itemImage3, itemImage4, itemImage5, itemImage6,
+				itemImage7, itemImage8,
+				itemImage9, itemImage10, itemImage11, itemImage12, itemImage13, itemImage14,
+				itemImage15, itemImage16,
 				itemImage17, itemImage18, itemImage19, itemImage20));
 
 		Orders order1 = Orders.builder()
 			.member(member6)
-			.status(OrderStatus.PENDING)
+			.status(OrderStatus.ACCEPTED)
 			.totalPrice(11111L)
 			.build();
 		Orders order2 = Orders.builder()
 			.member(member6)
-			.status(OrderStatus.PENDING)
+			.status(OrderStatus.ACCEPTED)
 			.totalPrice(33333L)
 			.build();
 		Orders order3 = Orders.builder()
@@ -371,35 +392,41 @@ public class DataInit {
 		OrderItem orderItem1_order1 = OrderItem.builder()
 			.item(item1)
 			.order(order1)
+			.option(options1)
 			.orderCount(1)
 			.price(11111L)
 			.build();
 		OrderItem orderItem2_order2 = OrderItem.builder()
 			.item(item1)
 			.order(order2)
+			.option(options1)
 			.orderCount(1)
 			.price(11111L)
 			.build();
 		OrderItem orderItem3_order2 = OrderItem.builder()
 			.item(item2)
 			.order(order2)
+			.option(options1)
 			.orderCount(1)
 			.price(22222L)
 			.build();
 		OrderItem orderItem4_order3 = OrderItem.builder()
 			.item(item2)
 			.order(order3)
+			.option(options2)
 			.orderCount(1)
 			.price(22222L)
 			.build();
 		OrderItem orderItem5_order4 = OrderItem.builder()
 			.item(item2)
 			.order(order4)
+			.option(options2)
 			.orderCount(2)
 			.price(22222L)
 			.build();
 
 		orderItemRepository.saveAll(
-			List.of(orderItem1_order1, orderItem2_order2, orderItem3_order2, orderItem4_order3, orderItem5_order4));
+			List.of(orderItem1_order1, orderItem2_order2, orderItem3_order2, orderItem4_order3,
+				orderItem5_order4));
 	}
 }
