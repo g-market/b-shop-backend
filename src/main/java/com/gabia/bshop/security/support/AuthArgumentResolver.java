@@ -9,6 +9,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
 
 import com.gabia.bshop.security.CurrentMember;
+import com.gabia.bshop.security.MemberPayload;
 import com.gabia.bshop.security.provider.JwtProvider;
 
 import lombok.RequiredArgsConstructor;
@@ -21,7 +22,9 @@ public class AuthArgumentResolver implements HandlerMethodArgumentResolver {
 
 	@Override
 	public boolean supportsParameter(final MethodParameter parameter) {
-		return parameter.hasParameterAnnotation(CurrentMember.class);
+		boolean hasAnnotation = parameter.hasParameterAnnotation(CurrentMember.class);
+		boolean hasMemberPayload = MemberPayload.class.isAssignableFrom(parameter.getParameterType());
+		return hasAnnotation && hasMemberPayload;
 	}
 
 	@Override
