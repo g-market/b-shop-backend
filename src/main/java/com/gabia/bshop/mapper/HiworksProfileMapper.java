@@ -12,10 +12,11 @@ import com.gabia.bshop.entity.enumtype.MemberRole;
 public interface HiworksProfileMapper {
 
 	HiworksProfileMapper INSTANCE = Mappers.getMapper(HiworksProfileMapper.class);
+	String EMAIL_PROVIDER = "@gabia.com";
 
-	default Member toEntity(HiworksProfileResponse hiworksProfileResponse) {
+	default Member toNormalMember(HiworksProfileResponse hiworksProfileResponse) {
 		return Member.builder()
-			.email(hiworksProfileResponse.email())
+			.email(hiworksProfileResponse.email() + EMAIL_PROVIDER)
 			.name(hiworksProfileResponse.name())
 			.role(MemberRole.NORMAL)
 			.grade(MemberGrade.BRONZE)

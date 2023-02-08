@@ -86,7 +86,7 @@ public class AuthService {
 	}
 
 	private Member addOrUpdateMember(final HiworksProfileResponse hiworksProfileResponse) {
-		final Member requestedMember = HiworksProfileMapper.INSTANCE.toEntity(hiworksProfileResponse);
+		final Member requestedMember = HiworksProfileMapper.INSTANCE.toNormalMember(hiworksProfileResponse);
 		final Member member = memberRepository.findByHiworksId(hiworksProfileResponse.hiworksId())
 			.orElseGet(() -> memberRepository.save(requestedMember));
 		member.update(requestedMember);
