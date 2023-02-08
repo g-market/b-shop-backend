@@ -2,7 +2,7 @@ package com.gabia.bshop.dto.response;
 
 public record LoginResponse(
 	String token,
-	boolean regiseterCompleted,
-	LoginMemberResponse loginMemberResoponse
+	boolean registerCompleted,
+	LoginMemberResponse loginMemberResponse
 ) {
 }
