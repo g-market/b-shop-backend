@@ -85,10 +85,10 @@ public class JwtProvider {
 
 	public MemberPayload getPayload(final String authorizationHeader) {
 		final String token = authTokenExtractor.extractToken(authorizationHeader, TOKEN_TYPE);
-		Claims body = getClaimsJws(token).getBody();
+		final Claims body = getClaimsJws(token).getBody();
 		try {
-			Long id = body.get("id", Long.class);
-			MemberRole role = MemberRole.valueOf(body.get("role", String.class));
+			final Long id = body.get("id", Long.class);
+			final MemberRole role = MemberRole.valueOf(body.get("role", String.class));
 			return MemberPayload.builder()
 				.id(id)
 				.role(role)
