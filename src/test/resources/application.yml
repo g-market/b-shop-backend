@@ -11,17 +11,21 @@ spring:
       hibernate:
         format_sql: true
         default_batch_fetch_size: 100
+      jakarta:
+        persistence:
+          sharedCache:
+            mode: ALL
     show-sql: true
-  open-in-view: false
+    open-in-view: false
 
-#logging:
-#  level:
-#    org.hibernate.SQL: debug
+logging:
+  level:
+    org.hibernate.SQL: debug
 
 hiworks:
   client:
-    id: testid
-    secret: testsecret
+    id: clientId
+    secret: clientSecret
   url:
     accessToken: https://api.hiworks.com/open/auth/accesstoken
     user: https://api.hiworks.com/user/v2/me
