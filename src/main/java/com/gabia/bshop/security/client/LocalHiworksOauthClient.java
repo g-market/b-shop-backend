@@ -6,8 +6,11 @@ import lombok.Builder;
 
 @Builder
 public record LocalHiworksOauthClient(
-	String clientId, String secret, String accessTokenUrl, String profileUrl)
-	implements HiworksOauthClient {
+	String clientId,
+	String secret,
+	String accessTokenUrl,
+	String profileUrl
+) implements HiworksOauthClient {
 
 	@Override
 	public String getAccessToken(final String authCode) {

@@ -10,7 +10,7 @@ public class CustomException extends RuntimeException {
 	private final HttpStatus status;
 	private final ErrorResponse errorResponse;
 
-	protected CustomException(HttpStatus status, String message) {
+	protected CustomException(final HttpStatus status, final String message) {
 		this.status = status;
 		this.errorResponse = new ErrorResponse(message);
 	}

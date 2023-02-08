@@ -11,7 +11,7 @@ class MemberPayloadSupportTest {
 
 	@Test
 	void MemberPayLoad_Null값이_들어오면_null을_반환한다() {
-		// givne
+		// given
 		final MemberPayload memberPayload = null;
 
 		// when
@@ -23,7 +23,7 @@ class MemberPayloadSupportTest {
 
 	@Test
 	void MemberPayLoad값이_들어오면_memberId을_반환한다() {
-		// givne
+		// given
 		final MemberPayload memberPayload = new MemberPayload(1L, MemberRole.NORMAL);
 
 		// when

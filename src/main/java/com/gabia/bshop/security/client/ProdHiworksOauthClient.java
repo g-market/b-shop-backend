@@ -27,8 +27,13 @@ import lombok.Builder;
 
 @Builder
 public record ProdHiworksOauthClient(
-	String clientId, String clientSecret, String accessTokenUrl, String profileUrl,
-	ObjectMapper objectMapper, HttpClient httpClient) implements HiworksOauthClient {
+	String clientId,
+	String clientSecret,
+	String accessTokenUrl,
+	String profileUrl,
+	ObjectMapper objectMapper,
+	HttpClient httpClient
+) implements HiworksOauthClient {
 
 	private static final String GRANT_TYPE = "authorization_code";
 	private static final String ACCESS_TYPE = "offline";

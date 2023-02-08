@@ -9,7 +9,11 @@ import lombok.Builder;
 
 @Builder
 @RedisHash(value = "refresh_token")
-public record RefreshToken(@Id String refreshToken, Long memberId, LocalDateTime expiredAt) {
+public record RefreshToken(
+	@Id String refreshToken,
+	Long memberId,
+	LocalDateTime expiredAt
+) {
 
 	public boolean isExpired() {
 		return expiredAt.isBefore(LocalDateTime.now());
