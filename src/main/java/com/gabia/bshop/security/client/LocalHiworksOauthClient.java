@@ -12,17 +12,19 @@ public record LocalHiworksOauthClient(
 	String profileUrl
 ) implements HiworksOauthClient {
 
+	private static final String NORMAL_MEMBER_PREFIX = "normal";
+	private static final String ADMIN_MEMBER_PREFIX = "admin";
 	private static final int NORMAL_BEGIN_INDEX = 6;
-	private static final int NORMAL_END_INDEX = 6;
-	private static final int ADMIN_BEGIN_INDEX = 6;
-	private static final int ADMIN_END_INDEX = 6;
+	private static final int NORMAL_END_INDEX = 8;
+	private static final int ADMIN_BEGIN_INDEX = 5;
+	private static final int ADMIN_END_INDEX = 7;
 
 	@Override
 	public String getAccessToken(final String authCode) {
-		if (authCode.startsWith("normal")) {
-			return "normal" + authCode.substring(NORMAL_BEGIN_INDEX, NORMAL_END_INDEX);
+		if (authCode.startsWith(NORMAL_MEMBER_PREFIX)) {
+			return NORMAL_MEMBER_PREFIX + authCode.substring(NORMAL_BEGIN_INDEX, NORMAL_END_INDEX);
 		}
-		return "admin" + authCode.substring(ADMIN_BEGIN_INDEX, ADMIN_END_INDEX);
+		return ADMIN_MEMBER_PREFIX + authCode.substring(ADMIN_BEGIN_INDEX, ADMIN_END_INDEX);
 	}
 
 	@Override
