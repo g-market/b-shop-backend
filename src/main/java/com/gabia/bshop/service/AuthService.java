@@ -52,7 +52,8 @@ public class AuthService {
 		final HiworksProfileResponse hiworksProfileResponse = getAdminHiworksProfileResponse(authCode);
 		final String hiworksId = hiworksProfileResponse.hiworksId();
 		final Member member = memberRepository.findByHiworksId(hiworksId)
-			.orElseThrow(() -> new EntityNotFoundException(MessageFormat.format("{0}로 등록된 사용자가 존재하지 않습니다.", hiworksId)));
+			.orElseThrow(
+				() -> new EntityNotFoundException(MessageFormat.format("{0}로 등록된 사용자가 존재하지 않습니다.", hiworksId)));
 		if (!member.isAdmin()) {
 			throw new UnAuthorizedException("관리자로 등록된 사용자가 아닙니다.");
 		}

@@ -1,7 +1,6 @@
 package com.gabia.bshop.config;
 
 import java.net.http.HttpClient;
-import java.time.Duration;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;

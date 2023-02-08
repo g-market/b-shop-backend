@@ -3,6 +3,7 @@ package com.gabia.bshop.security.client;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.gabia.bshop.dto.response.HiworksProfileResponse;
@@ -29,24 +30,31 @@ class LocalHiworksOauthClientTest {
 	}
 
 	@Test
-	void accessToken을_사용하여_하이웍스_ProfileResponse를_생성한다() {
+	@DisplayName("하이웍스 AccessToken을 사용하여 Normal 사용자 ProfileResponse를 생성한다")
+	void givenAccessToken_whenGetProfileUsingAccessToken_thenCreateNormalMemberProfile() {
 		// given
 		final String normalAccessToken = localHiworksOauthClient.getAccessToken(normalAuthCode);
-		final String adminAccessToken = localHiworksOauthClient.getAccessToken(adminAuthCode);
-
 		// when
 		final HiworksProfileResponse normalProfile = localHiworksOauthClient.getProfile(
 			normalAccessToken);
-		final HiworksProfileResponse adminProfile = localHiworksOauthClient.getProfile(
-			adminAccessToken);
-
 		// then
 		assertThat(normalProfile.hiworksId()).isEqualTo("normal01");
 		assertThat(normalProfile.email()).isEqualTo("normal01@gabia.com");
 		assertThat(normalProfile.name()).isEqualTo("normal01");
+	}
 
+	@Test
+	@DisplayName("하이웍스 AccessToken을 사용하여 Admin 사용자 ProfileResponse를 생성한다")
+	void givenAccessToken_whenGetProfileUsingAccessToken_thenCreateAdminMemberProfile() {
+		// given
+		final String adminAccessToken = localHiworksOauthClient.getAccessToken(adminAuthCode);
+		// when
+		final HiworksProfileResponse adminProfile = localHiworksOauthClient.getProfile(
+			adminAccessToken);
+		// then
 		assertThat(adminProfile.hiworksId()).isEqualTo("admin01");
 		assertThat(adminProfile.email()).isEqualTo("admin01@gabia.com");
 		assertThat(adminProfile.name()).isEqualTo("admin01");
 	}
+
 }
