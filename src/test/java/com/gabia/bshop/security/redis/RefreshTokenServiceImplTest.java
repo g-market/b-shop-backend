@@ -47,10 +47,9 @@ class RefreshTokenServiceImplTest {
 			.expiredAt(LocalDateTime.now())
 			.memberId(memberId)
 			.build();
-		// when
 		given(refreshTokenRepository.findById(refreshToken.refreshToken())).willReturn(
 			Optional.empty());
-		// then
+		// when & then
 		assertThatThrownBy(() -> refreshTokenRedisService.findToken(refreshToken.refreshToken()))
 			.isInstanceOf(UnAuthorizedException.class);
 	}
@@ -63,10 +62,9 @@ class RefreshTokenServiceImplTest {
 			.expiredAt(LocalDateTime.now())
 			.memberId(memberId)
 			.build();
-		// when
 		given(refreshTokenRepository.findById(refreshToken.refreshToken())).willReturn(
 			Optional.empty());
-		// then
+		// when & then
 		assertThatThrownBy(() -> refreshTokenRedisService.findToken(refreshToken.refreshToken()))
 			.isInstanceOf(UnAuthorizedException.class);
 	}
