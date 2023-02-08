@@ -99,23 +99,6 @@ public class Item extends BaseEntity {
 		updateOpenAt(itemDto.openAt());
 	}
 
-	@Override
-	public boolean equals(final Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		final Item item = (Item)o;
-		return getId().equals(item.getId());
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(getId());
-	}
-
 	private void updateName(final String name) {
 		if (name != null) {
 			this.name = name;
@@ -150,5 +133,22 @@ public class Item extends BaseEntity {
 		if (openAt != null) {
 			this.openAt = openAt;
 		}
+	}
+
+	@Override
+	public boolean equals(Object that) {
+		if (this == that) {
+			return true;
+		}
+		if (that == null || getClass() != that.getClass()) {
+			return false;
+		}
+		Item item = (Item)that;
+		return getId().equals(item.getId());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getId());
 	}
 }
