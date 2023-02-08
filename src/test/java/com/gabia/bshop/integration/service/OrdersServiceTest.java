@@ -263,6 +263,7 @@ class OrdersServiceTest extends IntegrationTest {
 		memberRepository.save(member1);
 		categoryRepository.save(category1);
 		itemRepository.saveAll(List.of(item1));
+		optionsRepository.save(options1);
 		itemImageRepository.saveAll(List.of(itemImage1, itemImage2));
 		orderRepository.saveAll(List.of(order1));
 		orderItemRepository.saveAll(List.of(orderItem1_order1));
