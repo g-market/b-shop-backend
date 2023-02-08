@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.Mockito.*;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -67,7 +66,7 @@ class AuthServiceTest {
 			.willReturn(hiworksProfileResponse);
 		given(memberRepository.findByHiworksId(hiworksProfileResponse.hiworksId()))
 			.willReturn(Optional.empty());
-		given(memberRepository.save(HiworksProfileMapper.INSTANCE.toEntity(hiworksProfileResponse)))
+		given(memberRepository.save(HiworksProfileMapper.INSTANCE.toNormalMember(hiworksProfileResponse)))
 			.willReturn(member);
 		given(jwtProvider.createAccessToken(member.getId(), member.getRole()))
 			.willReturn(applicationToken);
@@ -86,7 +85,7 @@ class AuthServiceTest {
 			() -> verify(hiworksOauthClient).getAccessToken(authCode),
 			() -> verify(hiworksOauthClient).getProfile(accessToken),
 			() -> verify(memberRepository).findByHiworksId(hiworksProfileResponse.hiworksId()),
-			() -> verify(memberRepository).save(HiworksProfileMapper.INSTANCE.toEntity(hiworksProfileResponse)),
+			() -> verify(memberRepository).save(HiworksProfileMapper.INSTANCE.toNormalMember(hiworksProfileResponse)),
 			() -> verify(jwtProvider).createAccessToken(memberId, member.getRole()),
 			() -> verify(refreshTokenProvider).createToken(memberId),
 			() -> verify(refreshTokenService).save(refreshToken)
