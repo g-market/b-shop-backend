@@ -147,6 +147,7 @@ class OrdersServiceTest {
                 .id(1L)
                 .item(item1)
                 .order(orders)
+                .option(options1)
                 .orderCount(1)
                 .price(item1.getBasePrice() + options1.getOptionPrice())
                 .build();
@@ -155,6 +156,7 @@ class OrdersServiceTest {
                 .id(2L)
                 .item(item2)
                 .order(orders)
+                .option(options2)
                 .orderCount(1)
                 .price(item2.getBasePrice() + options2.getOptionPrice())
                 .build();
@@ -181,11 +183,11 @@ class OrdersServiceTest {
 
         //then
         assertAll(
-                () -> assertEquals(returnDto.orderItems(), ordersDtoList),
-                () -> assertEquals(returnDto.totalPrice(),
-                        orderItemList.stream().mapToLong(OrderItem::getPrice).sum()),
-                () -> assertEquals(returnDto.memberId(), ordersCreateRequestDto.memberId()),
-                () -> assertEquals(returnDto.status(), ordersCreateRequestDto.status())
+                () -> assertEquals(ordersDtoList, returnDto.orderItems()),
+                () -> assertEquals(orderItemList.stream().mapToLong(OrderItem::getPrice).sum(),
+                        returnDto.totalPrice()),
+                () -> assertEquals(ordersCreateRequestDto.memberId(), returnDto.memberId()),
+                () -> assertEquals(ordersCreateRequestDto.status(), returnDto.status())
         );
     }
 
@@ -218,6 +220,7 @@ class OrdersServiceTest {
         OrderItem orderItem1 = OrderItem.builder()
                 .id(1L)
                 .item(item1)
+                .option(options1)
                 .orderCount(5)
                 .build();
 
@@ -257,5 +260,3 @@ class OrdersServiceTest {
                 () -> ordersService.cancelOrder(nonId));
     }
 }
-
-
