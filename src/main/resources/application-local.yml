@@ -28,12 +28,11 @@ logging:
 ---
 hiworks:
   client:
-    id: normalId
-    secret: normalSecret
+    id: hiworks-client-id
+    secret: hiworks-client-secret
   url:
     accessToken: https://api.hiworks.com/open/auth/accesstoken
     user: https://api.hiworks.com/user/v2/me
-
 
 token:
   access-expired-time: 3600000
