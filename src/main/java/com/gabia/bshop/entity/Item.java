@@ -1,6 +1,7 @@
 package com.gabia.bshop.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 import org.hibernate.annotations.SQLDelete;
@@ -18,6 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -42,6 +44,13 @@ public class Item extends BaseEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id", nullable = false)
 	private Category category;
+
+	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
+	private List<Options> optionsList;
+	
+	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
+	private List<ItemImage> itemImageList;
+
 
 	@Column(columnDefinition = "varchar(255)", nullable = false)
 	private String name;
