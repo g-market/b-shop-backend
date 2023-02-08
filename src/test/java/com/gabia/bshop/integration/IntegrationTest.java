@@ -13,8 +13,7 @@ public abstract class IntegrationTest {
 
 	private static final String REDIS_VERSION = "redis:6.2.7";
 	private static final int REDIS_PORT = 6379;
-	@ClassRule
-	static MySQLContainer<?> MY_SQL_CONTAINER;
+
 	@ClassRule
 	static GenericContainer<?> REDIS_CONTAINER;
 
@@ -29,7 +28,6 @@ public abstract class IntegrationTest {
 	@DynamicPropertySource
 	private static void properties(DynamicPropertyRegistry registry) {
 		registry.add("spring.data.redis.host", REDIS_CONTAINER::getHost);
-		registry.add("spring.data.redis.port", () -> REDIS_CONTAINER.getMappedPort(REDIS_PORT).toString());
-		// registry.add("spring.datasource.url", () -> "jdbc:tc:mysql:8.0.31://testDB");
+		registry.add("spring.data.redis.port", () -> "" + REDIS_CONTAINER.getMappedPort(REDIS_PORT));
 	}
 }
