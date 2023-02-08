@@ -1,5 +1,7 @@
 package com.gabia.bshop.service;
 
+import java.text.MessageFormat;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -48,8 +50,9 @@ public class AuthService {
 
 	public AdminLoginResponse loginAdmin(final String authCode) {
 		final HiworksProfileResponse hiworksProfileResponse = getAdminHiworksProfileResponse(authCode);
-		final Member member = memberRepository.findByHiworksId(hiworksProfileResponse.hiworksId())
-			.orElseThrow(() -> new EntityNotFoundException("관리자로 등록되지 않으셨습니다."));
+		final String hiworksId = hiworksProfileResponse.hiworksId();
+		final Member member = memberRepository.findByHiworksId(hiworksId)
+			.orElseThrow(() -> new EntityNotFoundException(MessageFormat.format("{0}로 등록된 사용자가 존재하지 않습니다.", hiworksId)));
 		if (!member.isAdmin()) {
 			throw new UnAuthorizedException("관리자로 등록된 사용자가 아닙니다.");
 		}
