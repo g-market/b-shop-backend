@@ -20,13 +20,13 @@ class WebConfigTest {
 	private static final String CORS_ALLOWED_METHODS = "GET,POST,HEAD,PUT,PATCH,DELETE,TRACE,OPTIONS";
 	private static final String CORS_ALLOWED_HEADERS = String.join(", ", HttpHeaders.LOCATION,
 		HttpHeaders.SET_COOKIE);
-	private static final String MAIN_SERVER_DOMAIN = "https://gabia-shop.app";
+	private static final String MAIN_SERVER_DOMAIN = "https://b-shop.app";
 
 	@Autowired
 	private MockMvc mockMvc;
 
 	@ParameterizedTest
-	@ValueSource(strings = {MAIN_SERVER_DOMAIN, "http://localhost:5173", "http://localhost:5174"})
+	@ValueSource(strings = {MAIN_SERVER_DOMAIN, "http://localhost:80", "http://b-shop.com"})
 	void 특정_Origin에_CORS가_허용되어있다(String origin) throws Exception {
 		mockMvc.perform(
 				options("/members/me")

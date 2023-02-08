@@ -1,5 +1,6 @@
 package com.gabia.bshop.entity;
 
+import com.gabia.bshop.dto.ItemDto;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;

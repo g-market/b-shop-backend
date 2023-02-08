@@ -1,4 +1,3 @@
-<<<<<<<< HEAD:src/main/java/com/gabia/bshop/controller/OrdersController.java
 package com.gabia.bshop.controller;
 
 import org.springframework.data.domain.Pageable;
@@ -7,7 +6,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
-import com.gabia.bshop.service.OrdersService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -36,5 +34,3 @@ public class OrdersController {
 		}
 	}
 }
-========
->>>>>>>> 4b8cca2 (rename: order -> orders 로 rename 변경):src/main/java/com/gabia/bshop/controller/OrderController.java

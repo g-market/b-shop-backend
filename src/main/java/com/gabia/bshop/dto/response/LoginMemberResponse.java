@@ -5,6 +5,10 @@ package com.gabia.bshop.dto.response;
  * @see com.gabia.bshop.controller.MemberController
  * @author jaime
  */
-public record LoginMemberResponse(Long id, String hiworksId, String name) {
+public record LoginMemberResponse(
+	Long id,
+	String hiworksId,
+	String name
+) {
 
 }

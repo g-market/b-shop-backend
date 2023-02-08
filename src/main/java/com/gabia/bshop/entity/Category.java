@@ -33,7 +33,7 @@ public class Category {
         if (this == that) {
             return true;
         }
-        if (o == null || getClass() != that.getClass()) {
+        if (that == null || getClass() != that.getClass()) {
             return false;
         }
         Category category = (Category) that;

@@ -16,7 +16,7 @@ public record HiworksTokenResponse(
 	Long officeNo,
 
 	@JsonProperty("user_no")
-	Long user_no
+	Long userNo
 ) {
 
 }

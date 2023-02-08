@@ -20,7 +20,7 @@ public class WebConfig implements WebMvcConfigurer {
 
 	private static final String CORS_ALLOWED_METHODS = "GET,POST,HEAD,PUT,PATCH,DELETE,TRACE,OPTIONS";
 	private static final String FRONTEND_LOCALHOST = "http://localhost:80";
-	private static final String FROTNED_LOCAL_DOMAIN = "http://b-shop.com";
+	private static final String FRONTEND_LOCAL_DOMAIN = "http://b-shop.com";
 	private static final String MAIN_SERVER_DOMAIN = "https://b-shop.app";
 
 	private final List<HandlerInterceptor> interceptors;
@@ -35,7 +35,7 @@ public class WebConfig implements WebMvcConfigurer {
 	public void addCorsMappings(final CorsRegistry registry) {
 		registry.addMapping("/**")
 			.allowedMethods(CORS_ALLOWED_METHODS.split(","))
-			.allowedOrigins(MAIN_SERVER_DOMAIN, FRONTEND_LOCALHOST, FROTNED_LOCAL_DOMAIN)
+			.allowedOrigins(MAIN_SERVER_DOMAIN, FRONTEND_LOCALHOST, FRONTEND_LOCAL_DOMAIN)
 			.allowCredentials(true)
 			.exposedHeaders(HttpHeaders.LOCATION, HttpHeaders.SET_COOKIE);
 	}
