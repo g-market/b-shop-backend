@@ -19,7 +19,6 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ProdOAuthClientConfig {
 
-	public static final int CONNECT_DURATION_SECS = 5;
 	private final ObjectMapper objectMapper;
 
 	@Bean
@@ -41,9 +40,8 @@ public class ProdOAuthClientConfig {
 	@Bean
 	public HttpClient httpClient() {
 		return HttpClient.newBuilder()
-			.version(HttpClient.Version.HTTP_1_1)
+			.version(HttpClient.Version.HTTP_2)
 			.followRedirects(HttpClient.Redirect.NORMAL)
-			.connectTimeout(Duration.ofSeconds(CONNECT_DURATION_SECS))
 			.build();
 	}
 }
