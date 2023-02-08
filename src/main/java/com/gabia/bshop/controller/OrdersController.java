@@ -16,7 +16,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 public class OrdersController {
 
-	private final static int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
+	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
 	private final OrdersService orderService;
 
 	// TODO: 인가 적용
