@@ -46,8 +46,7 @@ public class Orders extends BaseEntity {
 	private long totalPrice;
 
 	@Builder
-	private Orders(
-		final Long id, final Member member, final OrderStatus status, final long totalPrice) {
+	private Orders(final Long id, final Member member, final OrderStatus status, final long totalPrice) {
 		this.id = id;
 		this.member = member;
 		this.status = status;
