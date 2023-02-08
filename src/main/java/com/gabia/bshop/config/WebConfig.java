@@ -19,7 +19,7 @@ import lombok.RequiredArgsConstructor;
 public class WebConfig implements WebMvcConfigurer {
 
 	private static final String CORS_ALLOWED_METHODS = "GET,POST,HEAD,PUT,PATCH,DELETE,TRACE,OPTIONS";
-	private static final String FRONTEND_LOCALHOST = "http://localhost";
+	private static final String FRONTEND_LOCALHOST = "http://127.0.0.1";
 	private static final String FRONTEND_LOCAL_DOMAIN = "http://b-shop.com";
 	private static final String MAIN_SERVER_DOMAIN = "https://b-shop.app";
 

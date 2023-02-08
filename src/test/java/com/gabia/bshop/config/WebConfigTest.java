@@ -26,8 +26,8 @@ class WebConfigTest {
 	private MockMvc mockMvc;
 
 	@ParameterizedTest
-	@ValueSource(strings = {MAIN_SERVER_DOMAIN, "http://b-shop.com"})
-	void 특정_Origin에_CORS가_허용되어있다(String origin) throws Exception {
+	@ValueSource(strings = {MAIN_SERVER_DOMAIN, "http://127.0.0.1", "http://b-shop.com"})
+	void 특정_Origin에_CORS가_허용되어있다(final String origin) throws Exception {
 		mockMvc.perform(
 				options("/members/me")
 					.header(HttpHeaders.ORIGIN, origin)
