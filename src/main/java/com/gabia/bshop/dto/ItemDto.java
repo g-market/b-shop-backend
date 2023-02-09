@@ -1,6 +1,7 @@
 package com.gabia.bshop.dto;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
@@ -11,9 +12,9 @@ import lombok.Builder;
 public record ItemDto(
 	Long id,
 
-	OptionDto optionDto,
+	List<OptionDto> optionDtoList,
 
-	ItemImageDto itemImageDto,
+	List<ItemImageDto> itemImageDtoList,
 
 	CategoryDto categoryDto,
 

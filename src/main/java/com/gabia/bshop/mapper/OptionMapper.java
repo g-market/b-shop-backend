@@ -10,7 +10,7 @@ import com.gabia.bshop.entity.Options;
 public interface OptionMapper {
 	OptionMapper INSTANCE = Mappers.getMapper(OptionMapper.class);
 
-	Options OptionsDtoToEntity(OptionDto optionDto);
+	Options OptionDtoToEntity(OptionDto optionDto);
 
-	OptionDto OptionsToDto(Options options);
+	OptionDto OptionToDto(Options options);
 }

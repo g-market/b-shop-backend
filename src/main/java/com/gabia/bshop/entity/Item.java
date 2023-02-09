@@ -51,7 +51,6 @@ public class Item extends BaseEntity {
 	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
 	private List<ItemImage> itemImageList;
 
-
 	@Column(columnDefinition = "varchar(255)", nullable = false)
 	private String name;
 
@@ -76,6 +75,8 @@ public class Item extends BaseEntity {
 		final Long id,
 		final String name,
 		final Category category,
+		final List<ItemImage> itemImageList,
+		final List<Options> optionsList,
 		final String description,
 		final int basePrice,
 		final ItemStatus itemStatus,
@@ -84,6 +85,8 @@ public class Item extends BaseEntity {
 		this.id = id;
 		this.name = name;
 		this.category = category;
+		this.itemImageList = itemImageList;
+		this.optionsList = optionsList;
 		this.description = description;
 		this.basePrice = basePrice;
 		this.itemStatus = itemStatus;
@@ -130,9 +133,7 @@ public class Item extends BaseEntity {
 	}
 
 	private void updatePrice(int basePrice) {
-		if ((Integer)basePrice != null) {
 			this.basePrice = basePrice;
-		}
 	}
 
 	private void updateDescription(String description) {

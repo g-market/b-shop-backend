@@ -44,6 +44,16 @@ public class ItemImage {
 		this.url = url;
 	}
 
+	public void setItem(Item item) {
+		updateItem(item);
+	}
+
+	private void updateItem(Item item) {
+		if (item != null) {
+			this.item = item;
+		}
+	}
+
 	@Override
 	public boolean equals(final Object o) {
 		if (this == o) {

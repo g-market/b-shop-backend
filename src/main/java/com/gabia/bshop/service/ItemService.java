@@ -9,20 +9,32 @@ import org.springframework.stereotype.Service;
 import com.gabia.bshop.dto.ItemDto;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
+import com.gabia.bshop.entity.ItemImage;
+import com.gabia.bshop.entity.Options;
+import com.gabia.bshop.mapper.ItemImageMapper;
 import com.gabia.bshop.mapper.ItemMapper;
+import com.gabia.bshop.mapper.OptionMapper;
 import com.gabia.bshop.repository.CategoryRepository;
+import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemRepository;
+import com.gabia.bshop.repository.OptionsRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service
 public class ItemService {
 	private final ItemRepository itemRepository;
 	private final CategoryRepository categoryRepository;
+
+	private final OptionsRepository optionsRepository;
+
+	private final ItemImageRepository itemImageRepository;
 
 	/*
 	상품 조회
@@ -49,11 +61,44 @@ public class ItemService {
 
 		final Long categoryId = itemDto.categoryDto().id();
 
+		// Validation
 		categoryRepository.findById(categoryId).orElseThrow(EntityNotFoundException::new);
 
-		Item item = ItemMapper.INSTANCE.itemDtoToEntity(itemDto);
+		final Item item = itemRepository.save(ItemMapper.INSTANCE.itemDtoToEntity(itemDto));
 
-		return ItemMapper.INSTANCE.itemToDto(itemRepository.save(item));
+		if (!itemDto.optionDtoList().isEmpty()) {
+			List<Options> optionsList = itemDto.optionDtoList().stream().map(optionDto -> {
+				Options option = OptionMapper.INSTANCE.OptionDtoToEntity(optionDto);
+				option.setItem(item);
+				return option;
+			}).toList();
+			optionsRepository.saveAll(optionsList);
+
+		} else {
+			Options option = Options.builder()
+				.description(itemDto.name()) // 기본 option은 item의 option과 동일
+				.optionLevel(1) //
+				.item(item)
+				.stockQuantity(0)
+				.optionPrice(0)
+				.build();
+			optionsRepository.save(option);
+		}
+
+		if (!itemDto.itemImageDtoList().isEmpty()) {
+			List<ItemImage> itemImageList = itemDto.itemImageDtoList().stream().map(itemImageDto -> {
+				/** TODO
+				 1. image url validation
+				 (option) 2. file to image url
+				**/
+				ItemImage itemImage = ItemImageMapper.INSTANCE.ItemImageDtoToEntity(itemImageDto);
+				itemImage.setItem(item);
+				return itemImage;
+			}).toList();
+			itemImageRepository.saveAll(itemImageList);
+		}
+
+		return ItemMapper.INSTANCE.itemToDto(item);
 	}
 
 	/*
@@ -80,4 +125,5 @@ public class ItemService {
 		final Item item = itemRepository.findById(id).orElseThrow(EntityNotFoundException::new);
 		itemRepository.deleteById(item.getId());
 	}
+
 }

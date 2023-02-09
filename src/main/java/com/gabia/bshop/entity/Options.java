@@ -2,6 +2,8 @@ package com.gabia.bshop.entity;
 
 import java.util.Objects;
 
+import com.gabia.bshop.dto.OptionDto;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -60,6 +62,31 @@ public class Options extends BaseEntity {
 		this.optionLevel = optionLevel;
 		this.optionPrice = optionPrice;
 		this.stockQuantity = stockQuantity;
+	}
+
+	public void update(OptionDto optionDto) {
+		updateDescription(optionDto);
+		updateOptionPrice(optionDto);
+		updateStockQuantity(optionDto);
+	}
+
+	public void setItem(Item item) {
+		if (item != null) {
+			this.item = item;
+		}
+	}
+
+	private void updateDescription(OptionDto optionDto) {
+		if (optionDto.description() != null)
+			this.description = optionDto.description();
+	}
+
+	private void updateOptionPrice(OptionDto optionDto) {
+		this.optionPrice = optionDto.optionPrice();
+	}
+
+	private void updateStockQuantity(OptionDto optionDto) {
+		this.stockQuantity = optionDto.stockQuantity();
 	}
 
 	@Override
