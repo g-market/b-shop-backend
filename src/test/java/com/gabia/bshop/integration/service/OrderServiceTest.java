@@ -31,14 +31,14 @@ import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OptionsRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
-import com.gabia.bshop.repository.OrdersRepository;
-import com.gabia.bshop.service.OrdersService;
+import com.gabia.bshop.repository.OrderRepository;
+import com.gabia.bshop.service.OrderService;
 
 import jakarta.persistence.EntityNotFoundException;
 
 @Transactional
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class OrdersServiceTest extends IntegrationTest {
+class OrderServiceTest extends IntegrationTest {
 
 	@Autowired
 	private MemberRepository memberRepository;
@@ -50,7 +50,7 @@ class OrdersServiceTest extends IntegrationTest {
 	private ItemRepository itemRepository;
 
 	@Autowired
-	private OrdersRepository orderRepository;
+	private OrderRepository orderRepository;
 
 	@Autowired
 	private OptionsRepository optionsRepository;
@@ -62,7 +62,7 @@ class OrdersServiceTest extends IntegrationTest {
 	private ItemImageRepository itemImageRepository;
 
 	@Autowired
-	private OrdersService ordersService;
+	private OrderService orderService;
 
 	@DisplayName("주문을_한_회원이_주문목록_조회를_수행하면_주문내역들이_조회되어야한다")
 	@Test
@@ -171,7 +171,7 @@ class OrdersServiceTest extends IntegrationTest {
 
 		PageRequest pageable = PageRequest.of(0, 10);
 		//when
-		OrderInfoPageResponse orderInfo = ordersService.findOrdersPagination(member1.getId(),
+		OrderInfoPageResponse orderInfo = orderService.findOrdersPagination(member1.getId(),
 			pageable);
 		//then
 		Assertions.assertThat(orderInfo.resultCount()).isEqualTo(2);
@@ -202,7 +202,7 @@ class OrdersServiceTest extends IntegrationTest {
 		PageRequest pageable = PageRequest.of(0, 10);
 		//when & then
 		Assertions.assertThatThrownBy(
-				() -> ordersService.findOrdersPagination(invalidMemberId, pageable))
+				() -> orderService.findOrdersPagination(invalidMemberId, pageable))
 			.isInstanceOf(EntityNotFoundException.class);
 	}
 
@@ -270,7 +270,7 @@ class OrdersServiceTest extends IntegrationTest {
 		PageRequest pageable = PageRequest.of(0, 10);
 
 		//when
-		OrderInfoPageResponse orderInfo = ordersService.findOrdersPagination(member1.getId(),
+		OrderInfoPageResponse orderInfo = orderService.findOrdersPagination(member1.getId(),
 			pageable);
 
 		//then

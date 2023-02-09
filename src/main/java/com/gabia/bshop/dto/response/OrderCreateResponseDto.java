@@ -2,16 +2,16 @@ package com.gabia.bshop.dto.response;
 
 import java.util.List;
 
-import com.gabia.bshop.dto.OrdersDto;
+import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
 
 import lombok.Builder;
 
 @Builder
-public record OrdersCreateResponseDto(
+public record OrderCreateResponseDto(
 	Long id,
 	Long memberId,
-	List<OrdersDto> orderItems,
+	List<OrderItemDto> orderItemDtoList,
 	OrderStatus status,
 	long totalPrice
 ) {

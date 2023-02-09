@@ -77,9 +77,9 @@ public class Orders extends BaseEntity {
 	}
 
 	public void checkOrderStatus() {
-		if (this.status.equals(OrderStatus.COMPLETED)) {
+		if (this.status == OrderStatus.COMPLETED) {
 			throw new IllegalStateException("상품의 상태가 완료된 상태입니다.");
-		} else if (this.status.equals(OrderStatus.CANCELLED)) {
+		} else if (this.status == OrderStatus.CANCELLED) {
 			throw new IllegalStateException("상품이 이미 취소된 상태입니다.");
 		}
 	}

@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gabia.bshop.dto.request.OrdersCreateRequestDto;
+import com.gabia.bshop.dto.request.OrderCreateRequestDto;
+import com.gabia.bshop.dto.response.OrderCreateResponseDto;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
-import com.gabia.bshop.dto.response.OrdersCreateResponseDto;
-import com.gabia.bshop.service.OrdersService;
+import com.gabia.bshop.service.OrderService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,18 +21,18 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-public class OrdersController {
+public class OrderController {
 
 	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
-	private final OrdersService ordersService;
+	private final OrderService orderService;
 
 	// TODO: 인가 적용
 	@GetMapping("/order-infos")
-	public ResponseEntity<OrderInfoPageResponse> orderPagination(final Pageable pageable) {
+	public ResponseEntity<OrderInfoPageResponse> findOrders(final Pageable pageable) {
 		final Long memberId = 6L;
 
 		validatePageElementSize(pageable);
-		return ResponseEntity.ok(ordersService.findOrdersPagination(memberId, pageable));
+		return ResponseEntity.ok(orderService.findOrdersPagination(memberId, pageable));
 	}
 
 	private void validatePageElementSize(final Pageable pageable) {
@@ -42,22 +42,15 @@ public class OrdersController {
 		}
 	}
 
-	/**
-	 * 주문 생성
-	 */
 	@PostMapping("/orders")
-	public ResponseEntity<OrdersCreateResponseDto> createOrder(
-		@RequestBody OrdersCreateRequestDto ordersCreateRequestDto) {
-		OrdersCreateResponseDto result = ordersService.createOrder(ordersCreateRequestDto);
-		return ResponseEntity.ok().body(result);
+	public ResponseEntity<OrderCreateResponseDto> createOrder(
+		@RequestBody final OrderCreateRequestDto orderCreateRequestDto) {
+		return ResponseEntity.ok().body(orderService.createOrder(orderCreateRequestDto));
 	}
 
-	/**
-	 * 주문 취소
-	 */
 	@DeleteMapping("/orders/{id}")
-	public ResponseEntity<Void> deleteOrder(@PathVariable Long id) {
-		ordersService.cancelOrder(id);
+	public ResponseEntity<Void> cancelOrder(@PathVariable final Long id) {
+		orderService.cancelOrder(id);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }

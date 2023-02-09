@@ -64,7 +64,7 @@ public class Options extends BaseEntity {
 		this.stockQuantity = stockQuantity;
 	}
 
-	public void removeStockQuantity(final int orderCount) {
+	public void decreaseStockQuantity(final int orderCount) {
 		int restStock = this.stockQuantity - orderCount;
 		if (restStock < 0) {
 			throw new OutOfStockException("상품의 재고가 부족합니다.(현재 재고 수량: " + this.stockQuantity + ")");
@@ -72,7 +72,7 @@ public class Options extends BaseEntity {
 		this.stockQuantity = restStock;
 	}
 
-	public void addStockQuantity(final int orderCount) {
+	public void increaseStockQuantity(final int orderCount) {
 		this.stockQuantity += orderCount;
 	}
 

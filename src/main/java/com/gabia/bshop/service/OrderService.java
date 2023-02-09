@@ -7,22 +7,22 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gabia.bshop.dto.request.OrdersCreateRequestDto;
+import com.gabia.bshop.dto.request.OrderCreateRequestDto;
+import com.gabia.bshop.dto.response.OrderCreateResponseDto;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
-import com.gabia.bshop.dto.response.OrdersCreateResponseDto;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.Options;
 import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.Orders;
 import com.gabia.bshop.mapper.OrderInfoMapper;
-import com.gabia.bshop.mapper.OrdersMapper;
+import com.gabia.bshop.mapper.OrderMapper;
 import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OptionsRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
-import com.gabia.bshop.repository.OrdersRepository;
+import com.gabia.bshop.repository.OrderRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -31,9 +31,9 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class OrdersService {
+public class OrderService {
 
-	private final OrdersRepository ordersRepository;
+	private final OrderRepository orderRepository;
 	private final OrderItemRepository orderItemRepository;
 	private final ItemRepository itemRepository;
 	private final ItemImageRepository itemImageRepository;
@@ -46,7 +46,7 @@ public class OrdersService {
 		memberRepository.findById(memberId)
 			.orElseThrow(() -> new EntityNotFoundException("해당하는 id의 회원이 존재하지 않습니다."));
 
-		final List<Orders> orders = ordersRepository.findByMemberIdPagination(memberId, pageable);
+		final List<Orders> orders = orderRepository.findByMemberIdPagination(memberId, pageable);
 		final List<OrderItem> orderItems = orderItemRepository.findByOrderIds(
 			orders.stream().map(o -> o.getId()).collect(Collectors.toList()));
 		final List<ItemImage> itemImagesWithItem = itemImageRepository.findWithItemByItemIds(
@@ -60,13 +60,13 @@ public class OrdersService {
 	/**
 	 * 주문 생성
 	 */
-	public OrdersCreateResponseDto createOrder(OrdersCreateRequestDto ordersCreateRequestDto) {
+	public OrderCreateResponseDto createOrder(final OrderCreateRequestDto orderCreateRequestDto) {
 
-		memberRepository.findById(ordersCreateRequestDto.memberId())
+		memberRepository.findById(orderCreateRequestDto.memberId())
 			.orElseThrow(EntityNotFoundException::new);
-		Orders orders = OrdersMapper.INSTANCE.ordersCreateDtoToEntity(ordersCreateRequestDto);
+		Orders orders = OrderMapper.INSTANCE.ordersCreateDtoToEntity(orderCreateRequestDto);
 
-		List<OrderItem> orderItemEntityList = ordersCreateRequestDto.orderItems()
+		List<OrderItem> orderItemEntityList = orderCreateRequestDto.orderItemDtoList()
 			.stream()
 			.map(oi -> {
 				Item item = itemRepository.findById(oi.id()).get();
@@ -77,16 +77,16 @@ public class OrdersService {
 
 		orders.createOrder(orderItemEntityList);
 
-		ordersRepository.save(orders);
+		orderRepository.save(orders);
 
-		return OrdersMapper.INSTANCE.ordersCreateResponseDto(orders);
+		return OrderMapper.INSTANCE.ordersCreateResponseDto(orders);
 	}
 
 	/**
 	 * 주문 취소(제거)
 	 */
-	public void cancelOrder(Long id) {
-		Orders orders = ordersRepository.findById(id)
+	public void cancelOrder(final Long id) {
+		Orders orders = orderRepository.findById(id)
 			.orElseThrow(() -> new EntityNotFoundException("존재하지 않는 주문 ID 입니다."));
 
 		orders.cancel();

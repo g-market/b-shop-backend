@@ -16,9 +16,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.PageRequest;
 
-import com.gabia.bshop.dto.OrdersDto;
-import com.gabia.bshop.dto.request.OrdersCreateRequestDto;
-import com.gabia.bshop.dto.response.OrdersCreateResponseDto;
+import com.gabia.bshop.dto.OrderItemDto;
+import com.gabia.bshop.dto.request.OrderCreateRequestDto;
+import com.gabia.bshop.dto.response.OrderCreateResponseDto;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.Member;
@@ -29,11 +29,11 @@ import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
-import com.gabia.bshop.mapper.OrdersMapper;
+import com.gabia.bshop.mapper.OrderMapper;
 import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OptionsRepository;
-import com.gabia.bshop.repository.OrdersRepository;
+import com.gabia.bshop.repository.OrderRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -45,10 +45,10 @@ import jakarta.persistence.EntityNotFoundException;
  */
 
 @ExtendWith(MockitoExtension.class)
-class OrdersServiceTest {
+class OrderServiceTest {
 
 	@Mock
-	private OrdersRepository ordersRepository;
+	private OrderRepository orderRepository;
 
 	@Mock
 	private MemberRepository memberRepository;
@@ -60,7 +60,7 @@ class OrdersServiceTest {
 	private OptionsRepository optionsRepository;
 
 	@InjectMocks
-	private OrdersService ordersService;
+	private OrderService orderService;
 
 	@DisplayName("존재하지_않는_회원ID로_주문목록_조회를_요청하면_오류가_발생한다")
 	@Test
@@ -71,7 +71,7 @@ class OrdersServiceTest {
 			.thenThrow(EntityNotFoundException.class);
 		//when & then
 		Assertions.assertThatThrownBy(
-				() -> ordersService.findOrdersPagination(invalidMemberId, PageRequest.of(0, 10)))
+				() -> orderService.findOrdersPagination(invalidMemberId, PageRequest.of(0, 10)))
 			.isInstanceOf(EntityNotFoundException.class);
 	}
 
@@ -159,13 +159,13 @@ class OrdersServiceTest {
 
 		List<OrderItem> orderItemList = List.of(orderItem1, orderItem2);
 
-		List<OrdersDto> ordersDtoList = OrdersMapper.INSTANCE.orderItemListToOrderDtoList(
+		List<OrderItemDto> orderDtoList = OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(
 			orderItemList);
 
-		OrdersCreateRequestDto ordersCreateRequestDto = OrdersCreateRequestDto.builder()
+		OrderCreateRequestDto orderCreateRequestDto = OrderCreateRequestDto.builder()
 			.memberId(1L)
 			.status(OrderStatus.ACCEPTED)
-			.orderItems(ordersDtoList)
+			.OrderItemDtoList(orderDtoList)
 			.build();
 
 		when(memberRepository.findById(1L)).thenReturn(Optional.ofNullable(member));
@@ -175,15 +175,15 @@ class OrdersServiceTest {
 		when(optionsRepository.findByItem_Id(2L)).thenReturn(options2);
 
 		//when
-		OrdersCreateResponseDto returnDto = ordersService.createOrder(ordersCreateRequestDto);
+		OrderCreateResponseDto returnDto = orderService.createOrder(orderCreateRequestDto);
 
 		//then
 		assertAll(
-			() -> assertEquals(ordersDtoList, returnDto.orderItems()),
+			() -> assertEquals(orderDtoList, returnDto.OrderItemDtoList()),
 			() -> assertEquals(orderItemList.stream().mapToLong(OrderItem::getPrice).sum(),
 				returnDto.totalPrice()),
-			() -> assertEquals(ordersCreateRequestDto.memberId(), returnDto.memberId()),
-			() -> assertEquals(ordersCreateRequestDto.status(), returnDto.status())
+			() -> assertEquals(orderCreateRequestDto.memberId(), returnDto.memberId()),
+			() -> assertEquals(orderCreateRequestDto.status(), returnDto.status())
 		);
 	}
 
@@ -229,10 +229,10 @@ class OrdersServiceTest {
 			.orderItems(orderItemList)
 			.build();
 
-		when(ordersRepository.findById(1L)).thenReturn(Optional.ofNullable(orders));
+		when(orderRepository.findById(1L)).thenReturn(Optional.ofNullable(orders));
 
 		//when
-		ordersService.cancelOrder(1L);
+		orderService.cancelOrder(1L);
 
 		//then
 		assertAll(
@@ -248,10 +248,10 @@ class OrdersServiceTest {
 		//given
 		Long nonId = 9999L;
 
-		when(ordersRepository.findById(nonId)).thenThrow(EntityNotFoundException.class);
+		when(orderRepository.findById(nonId)).thenThrow(EntityNotFoundException.class);
 
 		//when & then
-		Assertions.assertThatThrownBy(() -> ordersService.cancelOrder(nonId))
+		Assertions.assertThatThrownBy(() -> orderService.cancelOrder(nonId))
 			.isInstanceOf(EntityNotFoundException.class);
 	}
 }

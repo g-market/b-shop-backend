@@ -74,14 +74,14 @@ public class OrderItem extends BaseEntity {
 			.price((item.getBasePrice() + options.getOptionPrice()))
 			.build();
 
-		options.removeStockQuantity(count);
+		options.decreaseStockQuantity(count);
 		orders.calculateTotalPrice(orderItem, count);
 
 		return orderItem;
 	}
 
 	public void cancel() {
-		option.addStockQuantity(this.orderCount);
+		option.increaseStockQuantity(this.orderCount);
 	}
 
 	@Override
