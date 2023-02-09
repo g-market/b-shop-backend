@@ -1,9 +1,11 @@
 package com.gabia.bshop.entity;
 
+import java.util.List;
 import java.util.Objects;
 
 import com.gabia.bshop.entity.enumtype.OrderStatus;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,6 +16,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -45,12 +48,40 @@ public class Orders extends BaseEntity {
 	@Column(nullable = false)
 	private long totalPrice;
 
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+	private List<OrderItem> orderItems;
+
 	@Builder
-	private Orders(final Long id, final Member member, final OrderStatus status, final long totalPrice) {
+	private Orders(
+		final Long id, final Member member, final OrderStatus status, final long totalPrice,
+		final List<OrderItem> orderItems) {
 		this.id = id;
 		this.member = member;
 		this.status = status;
 		this.totalPrice = totalPrice;
+		this.orderItems = orderItems;
+	}
+
+	public void createOrder(List<OrderItem> orderItemEntityList) {
+		this.orderItems = orderItemEntityList;
+	}
+
+	public void calculateTotalPrice(final OrderItem orderItem, final int count) {
+		this.totalPrice += orderItem.getPrice() * count;
+	}
+
+	public void cancel() {
+		checkOrderStatus();
+		this.orderItems.forEach(OrderItem::cancel);
+		this.status = OrderStatus.CANCELLED;
+	}
+
+	public void checkOrderStatus() {
+		if (this.status == OrderStatus.COMPLETED) {
+			throw new IllegalStateException("상품의 상태가 완료된 상태입니다.");
+		} else if (this.status == OrderStatus.CANCELLED) {
+			throw new IllegalStateException("상품이 이미 취소된 상태입니다.");
+		}
 	}
 
 	@Override
