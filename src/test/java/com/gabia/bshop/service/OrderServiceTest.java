@@ -165,7 +165,7 @@ class OrderServiceTest {
 		OrderCreateRequestDto orderCreateRequestDto = OrderCreateRequestDto.builder()
 			.memberId(1L)
 			.status(OrderStatus.ACCEPTED)
-			.OrderItemDtoList(orderDtoList)
+			.orderItemDtoList(orderDtoList)
 			.build();
 
 		when(memberRepository.findById(1L)).thenReturn(Optional.ofNullable(member));
@@ -179,7 +179,7 @@ class OrderServiceTest {
 
 		//then
 		assertAll(
-			() -> assertEquals(orderDtoList, returnDto.OrderItemDtoList()),
+			() -> assertEquals(orderDtoList, returnDto.orderItemDtoList()),
 			() -> assertEquals(orderItemList.stream().mapToLong(OrderItem::getPrice).sum(),
 				returnDto.totalPrice()),
 			() -> assertEquals(orderCreateRequestDto.memberId(), returnDto.memberId()),
