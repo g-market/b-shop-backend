@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -19,7 +20,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import com.gabia.bshop.dto.ItemDto;
+import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
@@ -41,7 +42,8 @@ class ItemServiceTest {
 	private ItemService itemService;
 
 	@Test
-	void 상품_조회() {
+	@DisplayName("상품을_조회한다")
+	void findItem() {
 		//given
 		Category category = Category.builder().id(1L).name("name").build();
 
@@ -111,7 +113,7 @@ class ItemServiceTest {
 		itemList = List.of(item1, item2);
 
 		Pageable pageable = PageRequest.of(0, 10);
-		List<ItemDto> itemDtoList = itemList.stream().map(ItemMapper.INSTANCE::itemToDto).toList();
+		List<ItemRequestDto> itemDtoList = itemList.stream().map(ItemMapper.INSTANCE::itemToDto).toList();
 
 		Page<Item> itemPage = new PageImpl<>(Collections.unmodifiableList(itemList));
 
@@ -119,7 +121,7 @@ class ItemServiceTest {
 		when(itemRepository.findAll(pageable)).thenReturn(itemPage);
 
 		// then
-		assertEquals(itemDtoList, itemService.findItems(pageable));
+		assertEquals(itemDtoList, itemService.findItemList(pageable));
 	}
 
 	@Test
@@ -151,7 +153,7 @@ class ItemServiceTest {
 				.openAt(LocalDateTime.now())
 				.build();
 
-		ItemDto itemDto = ItemMapper.INSTANCE.itemToDto(item2);
+		ItemRequestDto itemDto = ItemMapper.INSTANCE.itemToDto(item2);
 
 		// when
 		when(categoryRepository.findById(1L)).thenReturn(Optional.ofNullable(category));
@@ -159,7 +161,7 @@ class ItemServiceTest {
 		when(itemRepository.save(item2)).thenReturn(item2);
 
 		// then
-		ItemDto changedItem = itemService.updateItem(itemDto);
+		ItemRequestDto changedItem = itemService.updateItem(itemDto);
 
 		assertAll(
 			() -> assertEquals(20000, changedItem.basePrice()),
@@ -186,7 +188,7 @@ class ItemServiceTest {
 		// when
 		when(categoryRepository.findById(1L)).thenReturn(Optional.ofNullable(category));
 		when(itemRepository.save(item)).thenReturn(item);
-		ItemDto itemDto = itemService.createItem(ItemMapper.INSTANCE.itemToDto(item));
+		ItemResponse itemDto = itemService.createItem(ItemMapper.INSTANCE.itemToItemRequest(item));
 
 		// then
 		assertAll(
@@ -215,7 +217,7 @@ class ItemServiceTest {
 				.openAt(LocalDateTime.now())
 				.build();
 
-		ItemDto itemDto = ItemMapper.INSTANCE.itemToDto(item);
+		ItemRequestDto itemDto = ItemMapper.INSTANCE.itemToDto(item);
 
 		// when
 		when(itemRepository.save(item)).thenReturn(item);
@@ -245,7 +247,7 @@ class ItemServiceTest {
 				.openAt(LocalDateTime.now())
 				.build();
 
-		ItemDto itemDto = ItemMapper.INSTANCE.itemToDto(item);
+		ItemRequestDto itemDto = ItemMapper.INSTANCE.itemToDto(item);
 
 		// when
 		when(categoryRepository.findById(2L)).thenThrow(EntityNotFoundException.class);

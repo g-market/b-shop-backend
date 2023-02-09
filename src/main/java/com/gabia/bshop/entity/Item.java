@@ -6,10 +6,11 @@ import java.util.Objects;
 
 import org.hibernate.annotations.SQLDelete;
 
-import com.gabia.bshop.dto.ItemDto;
+import com.gabia.bshop.dto.request.ItemRequest;
+import com.gabia.bshop.dto.request.ItemRequestDto;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
+import com.gabia.bshop.mapper.CategoryMapper;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -71,9 +72,6 @@ public class Item extends BaseEntity {
 	@Column(nullable = false)
 	private boolean deleted;
 
-	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
-	private List<Options> optionsList;
-
 	@Builder
 	private Item(
 		final Long id,
@@ -85,8 +83,7 @@ public class Item extends BaseEntity {
 		final int basePrice,
 		final ItemStatus itemStatus,
 		final LocalDateTime openAt,
-		final boolean deleted,
-		final List<Options> optionsList) {
+		final boolean deleted) {
 		this.id = id;
 		this.name = name;
 		this.category = category;
@@ -97,18 +94,7 @@ public class Item extends BaseEntity {
 		this.itemStatus = itemStatus;
 		this.openAt = openAt;
 		this.deleted = deleted;
-		this.optionsList = optionsList;
 	}
-
-	public void update(final ItemDto itemDto, final Category category) {
-		updateName(itemDto.name());
-		updateCategory(category);
-		updatePrice(itemDto.basePrice());
-		updateDescription(itemDto.description());
-		updateItemStatus(itemDto.itemStatus());
-		updateOpenAt(itemDto.openAt());
-	}
-
 	private void updateName(final String name) {
 		if (name != null) {
 			this.name = name;
@@ -122,7 +108,7 @@ public class Item extends BaseEntity {
 	}
 
 	private void updatePrice(int basePrice) {
-			this.basePrice = basePrice;
+		this.basePrice = basePrice;
 	}
 
 	private void updateDescription(String description) {
@@ -142,6 +128,19 @@ public class Item extends BaseEntity {
 			this.openAt = openAt;
 		}
 	}
+
+
+
+	public void update(final ItemRequest itemDto) {
+		updateName(itemDto.name());
+		updatePrice(itemDto.basePrice());
+		updateDescription(itemDto.description());
+		updateItemStatus(itemDto.itemStatus());
+		updateOpenAt(itemDto.openAt());
+		updateItemStatus(itemDto.itemStatus());
+	}
+
+
 
 	@Override
 	public boolean equals(Object that) {

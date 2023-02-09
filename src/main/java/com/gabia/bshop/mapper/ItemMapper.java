@@ -5,7 +5,8 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
-import com.gabia.bshop.dto.ItemDto;
+import com.gabia.bshop.dto.request.ItemRequest;
+import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Item;
 
 @Mapper(componentModel = "spring")
@@ -18,12 +19,19 @@ public interface ItemMapper {
 		@Mapping(source = "itemImageDtoList", target = "itemImageList"),
 		@Mapping(source = "optionDtoList", target = "optionsList")
 	})
-	Item itemDtoToEntity(ItemDto itemDto);
+	Item itemDtoToEntity(ItemRequest itemDto);
 
 	@Mappings({
 		@Mapping(source = "category", target = "categoryDto"),
 		@Mapping(source = "itemImageList", target = "itemImageDtoList"),
 		@Mapping(source = "optionsList", target = "optionDtoList")
 	})
-	ItemDto itemToDto(Item item);
+	ItemResponse itemToItemResponse(Item item);
+
+	@Mappings({
+		@Mapping(source = "category", target = "categoryDto"),
+		@Mapping(source = "itemImageList", target = "itemImageDtoList"),
+		@Mapping(source = "optionsList", target = "optionDtoList")
+	})
+	ItemRequest itemToItemRequest(Item item);
 }
