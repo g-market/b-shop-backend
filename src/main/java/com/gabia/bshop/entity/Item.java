@@ -9,6 +9,7 @@ import org.hibernate.annotations.SQLDelete;
 import com.gabia.bshop.dto.ItemDto;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -70,6 +71,9 @@ public class Item extends BaseEntity {
 	@Column(nullable = false)
 	private boolean deleted;
 
+	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+	private List<Options> optionsList;
+
 	@Builder
 	private Item(
 		final Long id,
@@ -81,7 +85,8 @@ public class Item extends BaseEntity {
 		final int basePrice,
 		final ItemStatus itemStatus,
 		final LocalDateTime openAt,
-		final boolean deleted) {
+		final boolean deleted,
+		final List<Options> optionsList) {
 		this.id = id;
 		this.name = name;
 		this.category = category;
@@ -92,6 +97,7 @@ public class Item extends BaseEntity {
 		this.itemStatus = itemStatus;
 		this.openAt = openAt;
 		this.deleted = deleted;
+		this.optionsList = optionsList;
 	}
 
 	public void update(final ItemDto itemDto, final Category category) {
@@ -101,23 +107,6 @@ public class Item extends BaseEntity {
 		updateDescription(itemDto.description());
 		updateItemStatus(itemDto.itemStatus());
 		updateOpenAt(itemDto.openAt());
-	}
-
-	@Override
-	public boolean equals(final Object o) {
-		if (this == o) {
-			return true;
-		}
-		if (o == null || getClass() != o.getClass()) {
-			return false;
-		}
-		final Item item = (Item)o;
-		return getId().equals(item.getId());
-	}
-
-	@Override
-	public int hashCode() {
-		return Objects.hash(getId());
 	}
 
 	private void updateName(final String name) {
@@ -152,5 +141,22 @@ public class Item extends BaseEntity {
 		if (openAt != null) {
 			this.openAt = openAt;
 		}
+	}
+
+	@Override
+	public boolean equals(Object that) {
+		if (this == that) {
+			return true;
+		}
+		if (that == null || getClass() != that.getClass()) {
+			return false;
+		}
+		Item item = (Item)that;
+		return getId().equals(item.getId());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getId());
 	}
 }

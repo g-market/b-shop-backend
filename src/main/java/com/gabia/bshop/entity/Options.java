@@ -2,6 +2,7 @@ package com.gabia.bshop.entity;
 
 import java.util.Objects;
 
+import com.gabia.bshop.exception.OutOfStockException;
 import com.gabia.bshop.dto.OptionDto;
 
 import jakarta.persistence.Column;
@@ -64,6 +65,18 @@ public class Options extends BaseEntity {
 		this.stockQuantity = stockQuantity;
 	}
 
+	public void decreaseStockQuantity(final int orderCount) {
+		int restStock = this.stockQuantity - orderCount;
+		if (restStock < 0) {
+			throw new OutOfStockException("상품의 재고가 부족합니다.(현재 재고 수량: " + this.stockQuantity + ")");
+		}
+		this.stockQuantity = restStock;
+	}
+
+	public void increaseStockQuantity(final int orderCount) {
+		this.stockQuantity += orderCount;
+	}
+
 	public void update(OptionDto optionDto) {
 		updateDescription(optionDto);
 		updateOptionPrice(optionDto);
@@ -90,14 +103,14 @@ public class Options extends BaseEntity {
 	}
 
 	@Override
-	public boolean equals(final Object o) {
-		if (this == o) {
+	public boolean equals(final Object that) {
+		if (this == that) {
 			return true;
 		}
-		if (o == null || getClass() != o.getClass()) {
+		if (that == null || getClass() != that.getClass()) {
 			return false;
 		}
-		final Options options = (Options)o;
+		final Options options = (Options)that;
 		return getId().equals(options.getId());
 	}
 

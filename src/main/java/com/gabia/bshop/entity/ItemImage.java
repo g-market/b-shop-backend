@@ -55,14 +55,14 @@ public class ItemImage {
 	}
 
 	@Override
-	public boolean equals(final Object o) {
-		if (this == o) {
+	public boolean equals(final Object that) {
+		if (this == that) {
 			return true;
 		}
-		if (o == null || getClass() != o.getClass()) {
+		if (that == null || getClass() != that.getClass()) {
 			return false;
 		}
-		final ItemImage itemImage = (ItemImage)o;
+		final ItemImage itemImage = (ItemImage)that;
 		return getId().equals(itemImage.getId());
 	}
 
