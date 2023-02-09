@@ -1,6 +1,7 @@
 package com.gabia.bshop.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 import org.hibernate.annotations.SQLDelete;
@@ -8,6 +9,7 @@ import org.hibernate.annotations.SQLDelete;
 import com.gabia.bshop.dto.ItemDto;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -18,6 +20,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -46,7 +49,7 @@ public class Item extends BaseEntity {
 	@Column(columnDefinition = "varchar(255)", nullable = false)
 	private String name;
 
-	@Column(columnDefinition = "varchar(1000)", nullable = false)
+	@Column(columnDefinition = "text", nullable = false)
 	private String description;
 
 	@Column(nullable = false)
@@ -62,6 +65,9 @@ public class Item extends BaseEntity {
 	@Column(nullable = false)
 	private boolean deleted;
 
+	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+	private List<Options> optionsList;
+
 	@Builder
 	private Item(
 		final Long id,
@@ -71,7 +77,8 @@ public class Item extends BaseEntity {
 		final int basePrice,
 		final ItemStatus itemStatus,
 		final LocalDateTime openAt,
-		final boolean deleted) {
+		final boolean deleted,
+		final List<Options> optionsList) {
 		this.id = id;
 		this.name = name;
 		this.category = category;
@@ -80,6 +87,7 @@ public class Item extends BaseEntity {
 		this.itemStatus = itemStatus;
 		this.openAt = openAt;
 		this.deleted = deleted;
+		this.optionsList = optionsList;
 	}
 
 	public void update(final ItemDto itemDto, final Category category) {

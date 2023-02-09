@@ -6,4 +6,5 @@ import com.gabia.bshop.entity.Options;
 
 public interface OptionsRepository extends JpaRepository<Options, Long> {
 
+	Options findByItem_Id(Long id);
 }
