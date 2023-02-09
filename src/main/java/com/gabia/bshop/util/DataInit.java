@@ -24,7 +24,7 @@ import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OptionsRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
-import com.gabia.bshop.repository.OrdersRepository;
+import com.gabia.bshop.repository.OrderRepository;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +40,7 @@ public class DataInit {
 	private final ItemImageRepository itemImageRepository;
 	private final OptionsRepository optionsRepository;
 	private final OrderItemRepository orderItemRepository;
-	private final OrdersRepository orderRepository;
+	private final OrderRepository orderRepository;
 
 	@PostConstruct
 	public void init() {
