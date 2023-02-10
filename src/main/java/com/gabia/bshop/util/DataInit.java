@@ -275,7 +275,15 @@ public class DataInit {
 			.stockQuantity(5)
 			.build();
 
-		optionsRepository.saveAll(List.of(options1, options2));
+		Options options3 = Options.builder()
+			.item(item2)
+			.description("description")
+			.optionLevel(1)
+			.optionPrice(2000)
+			.stockQuantity(5)
+			.build();
+
+		optionsRepository.saveAll(List.of(options1, options2, options3));
 
 		ItemImage itemImage1 = ItemImage.builder()
 			.item(item1)
