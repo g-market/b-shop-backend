@@ -44,12 +44,12 @@ public enum ErrorCode {
 	// 403(Forbidden)
 	NOT_ADMIN_EXCEPTION(FORBIDDEN, "관리자가 아닙니다."),
 
-	// 404(NotFound)
-
 	// 409(Conflict)
 	ITEM_OPTION_OUT_OF_STOCK_EXCEPTION(CONFLICT, "상품의 재고가 부족합니다."),
 	ORDER_STATUS_ALREADY_COMPLETED_EXCEPTION(CONFLICT, "상품의 상태가 완료된 상태입니다."),
 	ORDER_STATUS_ALREADY_CANCELED_EXCEPTION(CONFLICT, "상품의 상태가 완료된 상태입니다."),
+	// TODO: 숫자가 들어가서 이를 어떻게 처리할지...
+	MAX_PAGE_ELEMENT_REQUEST_SIZE_EXCEPTION(CONFLICT, "한 페이지의 최대 100개까지 조회가 가능합니다."),
 
 	// 500(Internal Server Error)
 	OAUTH_PROCESSING_EXCEPTION(INTERNAL_SERVER_ERROR, "Oauth 진행 중 예상치 못한 문제가 생겼습니다."),

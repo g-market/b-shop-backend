@@ -1,5 +1,7 @@
 package com.gabia.bshop.service;
 
+import static com.gabia.bshop.exception.ErrorCode.*;
+
 import java.text.MessageFormat;
 
 import org.springframework.stereotype.Service;
@@ -11,6 +13,7 @@ import com.gabia.bshop.dto.response.IssuedTokensResponse;
 import com.gabia.bshop.dto.response.LoginResult;
 import com.gabia.bshop.entity.Member;
 import com.gabia.bshop.entity.enumtype.MemberRole;
+import com.gabia.bshop.exception.ForbiddenException;
 import com.gabia.bshop.exception.UnAuthorizedException;
 import com.gabia.bshop.mapper.HiworksProfileMapper;
 import com.gabia.bshop.repository.MemberRepository;
@@ -52,10 +55,10 @@ public class AuthService {
 		final HiworksProfileResponse hiworksProfileResponse = getAdminHiworksProfileResponse(authCode);
 		final String hiworksId = hiworksProfileResponse.hiworksId();
 		final Member member = memberRepository.findByHiworksId(hiworksId)
-			.orElseThrow(
-				() -> new EntityNotFoundException(MessageFormat.format("{0}로 등록된 사용자가 존재하지 않습니다.", hiworksId)));
+			.orElseThrow(() -> new EntityNotFoundException(
+				MessageFormat.format("hiworksId: {0}로 등록된 사용자가 존재하지 않습니다.", hiworksId)));
 		if (!member.isAdmin()) {
-			throw new UnAuthorizedException("관리자로 등록된 사용자가 아닙니다.");
+			throw new ForbiddenException(NOT_ADMIN_EXCEPTION);
 		}
 		final String applicationAccessToken = jwtProvider.createAccessToken(member.getId(), member.getRole());
 		return new AdminLoginResponse(applicationAccessToken);
@@ -67,7 +70,8 @@ public class AuthService {
 		checkExpired(refreshTokenValue, refreshToken);
 		final Long memberId = refreshToken.memberId();
 		final MemberRole memberRole = memberRepository.findById(memberId)
-			.orElseThrow(() -> new EntityNotFoundException("회원을 찾을 수 없습니다."))
+			.orElseThrow(() -> new EntityNotFoundException(
+				MessageFormat.format("memberId: {0}로 등록된 사용자가 존재하지 않습니다.", memberId)))
 			.getRole();
 		final String newAccessToken = jwtProvider.createAccessToken(memberId, memberRole);
 		final RefreshToken newRefreshToken = refreshTokenProvider.createToken(memberId);
@@ -99,8 +103,9 @@ public class AuthService {
 
 	private void checkExpired(final String refreshToken, final RefreshToken tokenInfo) {
 		if (tokenInfo.isExpired()) {
+			// TODO: 트랜잭션 보장하는지 체크해야함(예외 터트리는데 보장할까?)
 			refreshTokenService.delete(refreshToken);
-			throw new UnAuthorizedException("리프레시 토큰이 만료됐습니다.");
+			throw new UnAuthorizedException(REFRESH_TOKEN_EXPIRED_EXCEPTION);
 		}
 	}
 }

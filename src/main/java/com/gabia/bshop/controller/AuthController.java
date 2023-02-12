@@ -1,5 +1,6 @@
 package com.gabia.bshop.controller;
 
+import static com.gabia.bshop.exception.ErrorCode.*;
 import static com.gabia.bshop.security.provider.RefreshTokenCookieProvider.*;
 
 import org.springframework.http.HttpHeaders;
@@ -73,7 +74,7 @@ public class AuthController {
 
 	private void validateRefreshTokenExists(final String refreshToken) {
 		if (refreshToken == null) {
-			throw new UnAuthorizedException("리프레시 토큰이 만료됐습니다.");
+			throw new UnAuthorizedException(REFRESH_TOKEN_NOT_EXIST_EXCEPTION);
 		}
 	}
 }

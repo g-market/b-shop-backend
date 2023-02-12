@@ -1,11 +1,12 @@
 package com.gabia.bshop.security.redis;
 
+import static com.gabia.bshop.exception.ErrorCode.*;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gabia.bshop.exception.UnAuthorizedException;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -19,7 +20,7 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 	public RefreshToken save(final RefreshToken refreshToken) {
 		refreshTokenRepository.findById(refreshToken.refreshToken())
 			.ifPresent(it -> {
-				throw new UnAuthorizedException("예상보다 더 많은 리프레시 토큰이 서버에 반영됐습니다.");
+				throw new UnAuthorizedException(REFRESH_TOKEN_DUPLICATED_SAVED_EXCEPTION);
 			});
 		return refreshTokenRepository.save(refreshToken);
 	}
@@ -28,16 +29,14 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 	@Transactional(readOnly = true)
 	public RefreshToken findToken(final String savedTokenValue) {
 		return refreshTokenRepository.findById(savedTokenValue)
-			.orElseThrow(() -> new UnAuthorizedException("서버에 존재하지 않는 리프레시 토큰입니다."));
+			.orElseThrow(() -> new UnAuthorizedException(REFRESH_TOKEN_NOT_FOUND_EXCEPTION));
 	}
 
 	@Override
 	@Transactional
 	public void delete(final String savedTokenValue) {
 		final RefreshToken refreshToken = refreshTokenRepository.findById(savedTokenValue)
-			.orElseThrow(() -> new EntityNotFoundException(
-				"사용자 고유 refreshToken : " + savedTokenValue
-					+ "로 등록된 리프테쉬 토큰이 없습니다."));
+			.orElseThrow(() -> new UnAuthorizedException(REFRESH_TOKEN_NOT_FOUND_EXCEPTION));
 		refreshTokenRepository.delete(refreshToken);
 	}
 }

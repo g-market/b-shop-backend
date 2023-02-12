@@ -1,5 +1,7 @@
 package com.gabia.bshop.service;
 
+import java.text.MessageFormat;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,7 +34,8 @@ public class MemberService {
 
 	private Member findMember(final Long memberId) {
 		return memberRepository.findById(memberId)
-			.orElseThrow(() -> new EntityNotFoundException("회원이 조회되지 않습니다."));
+			.orElseThrow(() -> new EntityNotFoundException(
+				MessageFormat.format("memberId: {0}로 등록된 사용자가 존재하지 않습니다.", memberId)));
 	}
 
 	private boolean isNotLoggedIn(final Long loggedInId) {
