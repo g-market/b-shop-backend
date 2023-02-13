@@ -10,10 +10,10 @@ import org.springframework.stereotype.Component;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
+import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.Member;
-import com.gabia.bshop.entity.Options;
 import com.gabia.bshop.entity.OrderItem;
-import com.gabia.bshop.entity.Orders;
+import com.gabia.bshop.entity.Order;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
@@ -259,7 +259,7 @@ public class DataInit {
 		itemRepository.saveAll(
 			List.of(item1, item2, item3, item4, item5, item6, item7, item8, item9, item10));
 
-		Options options1 = Options.builder()
+		ItemOption itemOption1 = ItemOption.builder()
 			.item(item1)
 			.description("description")
 			.optionLevel(1)
@@ -267,7 +267,7 @@ public class DataInit {
 			.stockQuantity(10)
 			.build();
 
-		Options options2 = Options.builder()
+		ItemOption itemOption2 = ItemOption.builder()
 			.item(item2)
 			.description("description")
 			.optionLevel(1)
@@ -275,7 +275,7 @@ public class DataInit {
 			.stockQuantity(5)
 			.build();
 
-		Options options3 = Options.builder()
+		ItemOption options3 = ItemOption.builder()
 			.item(item2)
 			.description("description")
 			.optionLevel(1)
@@ -283,7 +283,7 @@ public class DataInit {
 			.stockQuantity(5)
 			.build();
 
-		Options options4 = Options.builder()
+		ItemOption options4 = ItemOption.builder()
 			.item(item6)
 			.description("description")
 			.optionLevel(1)
@@ -291,7 +291,7 @@ public class DataInit {
 			.stockQuantity(5)
 			.build();
 
-		Options options5 = Options.builder()
+		ItemOption options5 = ItemOption.builder()
 			.item(item6)
 			.description("description")
 			.optionLevel(1)
@@ -389,23 +389,23 @@ public class DataInit {
 				itemImage15, itemImage16,
 				itemImage17, itemImage18, itemImage19, itemImage20));
 
-		Orders order1 = Orders.builder()
+		Order order1 = Order.builder()
 			.member(member6)
 			.status(OrderStatus.ACCEPTED)
 			.totalPrice(11111L)
 			.build();
-		Orders order2 = Orders.builder()
+		Order order2 = Order.builder()
 			.member(member6)
 			.status(OrderStatus.ACCEPTED)
 			.totalPrice(33333L)
 			.build();
-		Orders order3 = Orders.builder()
+		Order order3 = Order.builder()
 			.member(member7)
 			.status(OrderStatus.ACCEPTED)
 			.totalPrice(22222L)
 			.build();
 
-		Orders order4 = Orders.builder()
+		Order order4 = Order.builder()
 			.member(member7)
 			.status(OrderStatus.COMPLETED)
 			.totalPrice(44444L)
@@ -416,35 +416,35 @@ public class DataInit {
 		OrderItem orderItem1_order1 = OrderItem.builder()
 			.item(item1)
 			.order(order1)
-			.option(options1)
+			.option(itemOption1)
 			.orderCount(1)
 			.price(11111L)
 			.build();
 		OrderItem orderItem2_order2 = OrderItem.builder()
 			.item(item1)
 			.order(order2)
-			.option(options1)
+			.option(itemOption1)
 			.orderCount(1)
 			.price(11111L)
 			.build();
 		OrderItem orderItem3_order2 = OrderItem.builder()
 			.item(item2)
 			.order(order2)
-			.option(options1)
+			.option(itemOption2)
 			.orderCount(1)
 			.price(22222L)
 			.build();
 		OrderItem orderItem4_order3 = OrderItem.builder()
 			.item(item2)
 			.order(order3)
-			.option(options2)
+			.option(itemOption2)
 			.orderCount(1)
 			.price(22222L)
 			.build();
 		OrderItem orderItem5_order4 = OrderItem.builder()
 			.item(item2)
 			.order(order4)
-			.option(options2)
+			.option(itemOption2)
 			.orderCount(2)
 			.price(22222L)
 			.build();

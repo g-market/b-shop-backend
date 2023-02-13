@@ -13,14 +13,14 @@ import org.mapstruct.factory.Mappers;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse.OrderInfo;
 import com.gabia.bshop.entity.ItemImage;
+import com.gabia.bshop.entity.Order;
 import com.gabia.bshop.entity.OrderItem;
-import com.gabia.bshop.entity.Orders;
 
 @Mapper(componentModel = "spring")
 public interface OrderInfoMapper {
 	OrderInfoMapper INSTANCE = Mappers.getMapper(OrderInfoMapper.class);
 
-	default OrderInfoPageResponse orderInfoRelatedEntitiesToOrderInfoPageResponse(final List<Orders> orders,
+	default OrderInfoPageResponse orderInfoRelatedEntitiesToOrderInfoPageResponse(final List<Order> orders,
 		final List<OrderItem> orderItemList, final List<ItemImage> itemImagesWithItem) {
 
 		// 주문 별 상품 종류 개수 수집
