@@ -40,7 +40,7 @@ public class OrderItem extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "option_id", nullable = false)
-	private Options option;
+	private ItemOption option;
 
 	@Column(nullable = false)
 	private int orderCount;
@@ -53,7 +53,7 @@ public class OrderItem extends BaseEntity {
 		final Long id,
 		final Item item,
 		final Orders order,
-		final Options option,
+		final ItemOption option,
 		final int orderCount,
 		final long price) {
 		this.id = id;
@@ -64,17 +64,17 @@ public class OrderItem extends BaseEntity {
 		this.price = price;
 	}
 
-	public static OrderItem createOrderItem(final Item item, final Options options,
+	public static OrderItem createOrderItem(final Item item, final ItemOption itemOption,
 		final Orders orders, final int count) {
 		OrderItem orderItem = OrderItem.builder()
 			.item(item)
 			.order(orders)
-			.option(options)
+			.option(itemOption)
 			.orderCount(count)
-			.price((item.getBasePrice() + options.getOptionPrice()))
+			.price((item.getBasePrice() + itemOption.getOptionPrice()))
 			.build();
 
-		options.decreaseStockQuantity(count);
+		itemOption.decreaseStockQuantity(count);
 		orders.calculateTotalPrice(orderItem, count);
 
 		return orderItem;

@@ -14,8 +14,8 @@ import com.gabia.bshop.dto.response.OrderCreateResponseDto;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
+import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.Member;
-import com.gabia.bshop.entity.Options;
 import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.Orders;
 import com.gabia.bshop.exception.NotFoundException;
@@ -24,7 +24,7 @@ import com.gabia.bshop.mapper.OrderMapper;
 import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.MemberRepository;
-import com.gabia.bshop.repository.OptionsRepository;
+import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
 
@@ -41,7 +41,7 @@ public class OrderService {
 	private final ItemRepository itemRepository;
 	private final ItemImageRepository itemImageRepository;
 	private final MemberRepository memberRepository;
-	private final OptionsRepository optionsRepository;
+	private final ItemOptionRepository itemOptionRepository;
 
 	@Transactional(readOnly = true)
 	public OrderInfoPageResponse findOrdersPagination(final Long memberId, final Pageable pageable) {
@@ -69,8 +69,8 @@ public class OrderService {
 			.stream()
 			.map(oi -> {
 				Item item = itemRepository.findById(oi.id()).get();
-				Options options = optionsRepository.findByItem_Id(oi.id());
-				return OrderItem.createOrderItem(item, options, orders, oi.orderCount());
+				ItemOption itemOption = itemOptionRepository.findByItem_Id(oi.id());
+				return OrderItem.createOrderItem(item, itemOption, orders, oi.orderCount());
 			})
 			.collect(Collectors.toList());
 

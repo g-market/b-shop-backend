@@ -16,8 +16,8 @@ import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
+import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.Member;
-import com.gabia.bshop.entity.Options;
 import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.Orders;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
@@ -30,7 +30,7 @@ import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.MemberRepository;
-import com.gabia.bshop.repository.OptionsRepository;
+import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
 import com.gabia.bshop.service.OrderService;
@@ -52,7 +52,7 @@ class OrderServiceTest extends IntegrationTest {
 	private OrderRepository orderRepository;
 
 	@Autowired
-	private OptionsRepository optionsRepository;
+	private ItemOptionRepository itemOptionRepository;
 
 	@Autowired
 	private OrderItemRepository orderItemRepository;
@@ -97,14 +97,14 @@ class OrderServiceTest extends IntegrationTest {
 			.openAt(now)
 			.deleted(false)
 			.build();
-		Options options1 = Options.builder()
+		ItemOption itemOption1 = ItemOption.builder()
 			.item(item1)
 			.description("temp_options_1_description")
 			.optionLevel(1)
 			.optionPrice(0)
 			.stockQuantity(10)
 			.build();
-		Options options2 = Options.builder()
+		ItemOption itemOption2 = ItemOption.builder()
 			.item(item2)
 			.description("temp_options_2_description")
 			.optionLevel(1)
@@ -119,7 +119,7 @@ class OrderServiceTest extends IntegrationTest {
 		OrderItem orderItem1_order1 = OrderItem.builder()
 			.item(item1)
 			.order(order1)
-			.option(options1)
+			.option(itemOption1)
 			.orderCount(1)
 			.price(11111L)
 			.build();
@@ -131,14 +131,14 @@ class OrderServiceTest extends IntegrationTest {
 		OrderItem orderItem2_order2 = OrderItem.builder()
 			.item(item1)
 			.order(order2)
-			.option(options1)
+			.option(itemOption1)
 			.orderCount(1)
 			.price(11111L)
 			.build();
 		OrderItem orderItem3_order2 = OrderItem.builder()
 			.item(item2)
 			.order(order2)
-			.option(options2)
+			.option(itemOption2)
 			.orderCount(1)
 			.price(22222L)
 			.build();
@@ -164,7 +164,7 @@ class OrderServiceTest extends IntegrationTest {
 		itemRepository.saveAll(List.of(item1, item2));
 		itemImageRepository.saveAll(List.of(itemImage1, itemImage2, itemImage3, itemImage4));
 		orderRepository.saveAll(List.of(order1, order2));
-		optionsRepository.saveAll(List.of(options1, options2));
+		itemOptionRepository.saveAll(List.of(itemOption1, itemOption2));
 		orderItemRepository.saveAll(
 			List.of(orderItem1_order1, orderItem2_order2, orderItem3_order2));
 
@@ -230,7 +230,7 @@ class OrderServiceTest extends IntegrationTest {
 			.openAt(now)
 			.deleted(true)
 			.build();
-		Options options1 = Options.builder()
+		ItemOption itemOption1 = ItemOption.builder()
 			.id(1L)
 			.item(item1)
 			.description("description")
@@ -246,7 +246,7 @@ class OrderServiceTest extends IntegrationTest {
 		OrderItem orderItem1_order1 = OrderItem.builder()
 			.item(item1)
 			.order(order1)
-			.option(options1)
+			.option(itemOption1)
 			.orderCount(1)
 			.price(11111L)
 			.build();
@@ -262,7 +262,7 @@ class OrderServiceTest extends IntegrationTest {
 		memberRepository.save(member1);
 		categoryRepository.save(category1);
 		itemRepository.saveAll(List.of(item1));
-		optionsRepository.save(options1);
+		itemOptionRepository.save(itemOption1);
 		itemImageRepository.saveAll(List.of(itemImage1, itemImage2));
 		orderRepository.saveAll(List.of(order1));
 		orderItemRepository.saveAll(List.of(orderItem1_order1));
