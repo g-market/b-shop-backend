@@ -66,7 +66,7 @@ public class Item extends BaseEntity {
 	private boolean deleted;
 
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
-	private List<Options> optionsList;
+	private List<ItemOption> itemOptionList;
 
 	@Builder
 	private Item(
@@ -78,7 +78,7 @@ public class Item extends BaseEntity {
 		final ItemStatus itemStatus,
 		final LocalDateTime openAt,
 		final boolean deleted,
-		final List<Options> optionsList) {
+		final List<ItemOption> itemOptionList) {
 		this.id = id;
 		this.name = name;
 		this.category = category;
@@ -87,7 +87,7 @@ public class Item extends BaseEntity {
 		this.itemStatus = itemStatus;
 		this.openAt = openAt;
 		this.deleted = deleted;
-		this.optionsList = optionsList;
+		this.itemOptionList = itemOptionList;
 	}
 
 	public void update(final ItemDto itemDto, final Category category) {
