@@ -27,8 +27,8 @@ hiworks:
     id: clientId
     secret: clientSecret
   url:
-    accessToken: https://api.hiworks.com/open/auth/accesstoken
-    user: https://api.hiworks.com/user/v2/me
+    accessToken: http://localhost:8888/login/oauth/access_token
+    user: http://localhost:8888/user
 
 token:
   access-expired-time: 12345678
