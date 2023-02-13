@@ -24,7 +24,7 @@ import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.Member;
 import com.gabia.bshop.entity.OrderItem;
-import com.gabia.bshop.entity.Orders;
+import com.gabia.bshop.entity.Order;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
@@ -133,7 +133,7 @@ class OrderServiceTest {
 			.stockQuantity(5)
 			.build();
 
-		Orders orders = Orders.builder()
+		Order order = Order.builder()
 			.id(1L)
 			.member(member)
 			.status(OrderStatus.ACCEPTED)
@@ -142,7 +142,7 @@ class OrderServiceTest {
 		OrderItem orderItem1 = OrderItem.builder()
 			.id(1L)
 			.item(item1)
-			.order(orders)
+			.order(order)
 			.option(itemOption1)
 			.orderCount(1)
 			.price(item1.getBasePrice() + itemOption1.getOptionPrice())
@@ -151,7 +151,7 @@ class OrderServiceTest {
 		OrderItem orderItem2 = OrderItem.builder()
 			.id(2L)
 			.item(item2)
-			.order(orders)
+			.order(order)
 			.option(itemOption2)
 			.orderCount(1)
 			.price(item2.getBasePrice() + itemOption2.getOptionPrice())
@@ -222,14 +222,14 @@ class OrderServiceTest {
 
 		List<OrderItem> orderItemList = List.of(orderItem1);
 
-		Orders orders = Orders.builder()
+		Order order = Order.builder()
 			.id(1L)
 			.status(OrderStatus.ACCEPTED)
 			.totalPrice(20000)
 			.orderItems(orderItemList)
 			.build();
 
-		when(orderRepository.findById(1L)).thenReturn(Optional.ofNullable(orders));
+		when(orderRepository.findById(1L)).thenReturn(Optional.ofNullable(order));
 
 		//when
 		orderService.cancelOrder(1L);
@@ -237,7 +237,7 @@ class OrderServiceTest {
 		//then
 		assertAll(
 			() -> assertEquals(15, itemOption1.getStockQuantity(), "주문을 취소하면 재고가 다시 추가되어야 한다."),
-			() -> assertEquals(OrderStatus.CANCELLED, orders.getStatus(),
+			() -> assertEquals(OrderStatus.CANCELLED, order.getStatus(),
 				"주문을 취소하면 주문상태가 CANCELLED로 변경되어야 한다.")
 		);
 	}

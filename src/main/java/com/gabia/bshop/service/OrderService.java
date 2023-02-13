@@ -16,8 +16,8 @@ import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.Member;
+import com.gabia.bshop.entity.Order;
 import com.gabia.bshop.entity.OrderItem;
-import com.gabia.bshop.entity.Orders;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.OrderInfoMapper;
 import com.gabia.bshop.mapper.OrderMapper;
@@ -47,7 +47,7 @@ public class OrderService {
 	public OrderInfoPageResponse findOrdersPagination(final Long memberId, final Pageable pageable) {
 		findMemberById(memberId);
 
-		final List<Orders> orders = orderRepository.findByMemberIdPagination(memberId, pageable);
+		final List<Order> orders = orderRepository.findByMemberIdPagination(memberId, pageable);
 		final List<OrderItem> orderItems = orderItemRepository.findByOrderIds(
 			orders.stream().map(o -> o.getId()).collect(Collectors.toList()));
 		final List<ItemImage> itemImagesWithItem = itemImageRepository.findWithItemByItemIds(
@@ -63,31 +63,31 @@ public class OrderService {
 	 */
 	public OrderCreateResponseDto createOrder(final OrderCreateRequestDto orderCreateRequestDto) {
 		findMemberById(orderCreateRequestDto.memberId());
-		Orders orders = OrderMapper.INSTANCE.ordersCreateDtoToEntity(orderCreateRequestDto);
+		Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(orderCreateRequestDto);
 
 		List<OrderItem> orderItemEntityList = orderCreateRequestDto.orderItemDtoList()
 			.stream()
 			.map(oi -> {
 				Item item = itemRepository.findById(oi.id()).get();
 				ItemOption itemOption = itemOptionRepository.findByItem_Id(oi.id());
-				return OrderItem.createOrderItem(item, itemOption, orders, oi.orderCount());
+				return OrderItem.createOrderItem(item, itemOption, order, oi.orderCount());
 			})
 			.collect(Collectors.toList());
 
-		orders.createOrder(orderItemEntityList);
+		order.createOrder(orderItemEntityList);
 
-		orderRepository.save(orders);
+		orderRepository.save(order);
 
-		return OrderMapper.INSTANCE.ordersCreateResponseDto(orders);
+		return OrderMapper.INSTANCE.ordersCreateResponseDto(order);
 	}
 
 	/**
 	 * 주문 취소(제거)
 	 */
 	public void cancelOrder(final Long id) {
-		Orders orders = findOrderById(id);
+		Order order = findOrderById(id);
 
-		orders.cancel();
+		order.cancel();
 	}
 
 	private Member findMemberById(final Long memberId) {
@@ -95,7 +95,7 @@ public class OrderService {
 			.orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND_EXCEPTION, memberId));
 	}
 
-	private Orders findOrderById(final Long orderId) {
+	private Order findOrderById(final Long orderId) {
 		return orderRepository.findById(orderId)
 			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
 	}

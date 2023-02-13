@@ -12,8 +12,8 @@ import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.Member;
+import com.gabia.bshop.entity.Order;
 import com.gabia.bshop.entity.OrderItem;
-import com.gabia.bshop.entity.Orders;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
@@ -365,23 +365,23 @@ public class DataInit {
 				itemImage15, itemImage16,
 				itemImage17, itemImage18, itemImage19, itemImage20));
 
-		Orders order1 = Orders.builder()
+		Order order1 = Order.builder()
 			.member(member6)
 			.status(OrderStatus.ACCEPTED)
 			.totalPrice(11111L)
 			.build();
-		Orders order2 = Orders.builder()
+		Order order2 = Order.builder()
 			.member(member6)
 			.status(OrderStatus.ACCEPTED)
 			.totalPrice(33333L)
 			.build();
-		Orders order3 = Orders.builder()
+		Order order3 = Order.builder()
 			.member(member7)
 			.status(OrderStatus.ACCEPTED)
 			.totalPrice(22222L)
 			.build();
 
-		Orders order4 = Orders.builder()
+		Order order4 = Order.builder()
 			.member(member7)
 			.status(OrderStatus.COMPLETED)
 			.totalPrice(44444L)

@@ -18,8 +18,8 @@ import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.Member;
+import com.gabia.bshop.entity.Order;
 import com.gabia.bshop.entity.OrderItem;
-import com.gabia.bshop.entity.Orders;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
@@ -111,7 +111,7 @@ class OrderServiceTest extends IntegrationTest {
 			.optionPrice(1000)
 			.stockQuantity(5)
 			.build();
-		Orders order1 = Orders.builder()
+		Order order1 = Order.builder()
 			.member(member1)
 			.status(OrderStatus.ACCEPTED)
 			.totalPrice(11111L)
@@ -123,7 +123,7 @@ class OrderServiceTest extends IntegrationTest {
 			.orderCount(1)
 			.price(11111L)
 			.build();
-		Orders order2 = Orders.builder()
+		Order order2 = Order.builder()
 			.member(member1)
 			.status(OrderStatus.ACCEPTED)
 			.totalPrice(33333L)
@@ -238,7 +238,7 @@ class OrderServiceTest extends IntegrationTest {
 			.optionPrice(0)
 			.stockQuantity(10)
 			.build();
-		Orders order1 = Orders.builder()
+		Order order1 = Order.builder()
 			.member(member1)
 			.status(OrderStatus.ACCEPTED)
 			.totalPrice(11111L)
