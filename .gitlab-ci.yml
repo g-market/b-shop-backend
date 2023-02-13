@@ -10,7 +10,7 @@ build:
   image: openjdk:17-alpine
   stage: build
   before_script:
-    - mv $APPLICATION_YAML "src/main/resources/application.yml"
+    - echo "$APPLICATION_YAML" > "src/main/resources/application.yml"
   script:
     - ./gradlew clean
     - ./gradlew build -x test
