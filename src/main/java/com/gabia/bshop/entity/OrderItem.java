@@ -64,14 +64,14 @@ public class OrderItem extends BaseEntity {
 		this.price = price;
 	}
 
-	public static OrderItem createOrderItem(final Item item, final Options options,
+	public static OrderItem createOrderItem(final Options options,
 		final Orders orders, final int count) {
 		OrderItem orderItem = OrderItem.builder()
-			.item(item)
+			.item(options.getItem())
 			.order(orders)
 			.option(options)
 			.orderCount(count)
-			.price((item.getBasePrice() + options.getOptionPrice()))
+			.price((options.getItem().getBasePrice() + options.getOptionPrice()))
 			.build();
 
 		options.decreaseStockQuantity(count);
