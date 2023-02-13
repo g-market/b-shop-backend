@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.gabia.bshop.exception.UnAuthorizedException;
+import com.gabia.bshop.exception.UnAuthorizedRefreshTokenException;
 import com.gabia.bshop.integration.IntegrationTest;
 import com.gabia.bshop.security.redis.RefreshToken;
 import com.gabia.bshop.security.redis.RefreshTokenRepository;
@@ -64,7 +64,7 @@ class RefreshTokenServiceImplTest extends IntegrationTest {
 	void 존재하지_않는_리프레시_토큰을_조회한다() {
 		// when & then
 		assertThatThrownBy(() -> refreshTokenService.findToken(tokenValue))
-			.isInstanceOf(UnAuthorizedException.class);
+			.isInstanceOf(UnAuthorizedRefreshTokenException.class);
 	}
 
 	@Test
@@ -93,6 +93,6 @@ class RefreshTokenServiceImplTest extends IntegrationTest {
 		// when & then
 		refreshTokenService.save(refreshToken);
 		assertThatThrownBy(() -> refreshTokenService.save(refreshToken))
-			.isInstanceOf(UnAuthorizedException.class);
+			.isInstanceOf(UnAuthorizedRefreshTokenException.class);
 	}
 }
