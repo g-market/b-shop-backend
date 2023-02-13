@@ -15,6 +15,7 @@ import com.gabia.bshop.dto.response.OrderCreateResponseDto;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.service.OrderService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -44,7 +45,7 @@ public class OrderController {
 
 	@PostMapping("/orders")
 	public ResponseEntity<OrderCreateResponseDto> createOrder(
-		@RequestBody final OrderCreateRequestDto orderCreateRequestDto) {
+		@RequestBody @Valid final OrderCreateRequestDto orderCreateRequestDto) {
 		return ResponseEntity.ok().body(orderService.createOrder(orderCreateRequestDto));
 	}
 
