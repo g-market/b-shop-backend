@@ -21,10 +21,10 @@ public interface OrderInfoMapper {
 	OrderInfoMapper INSTANCE = Mappers.getMapper(OrderInfoMapper.class);
 
 	default OrderInfoPageResponse orderInfoRelatedEntitiesToOrderInfoPageResponse(final List<Orders> orders,
-		final List<OrderItem> orderItems, final List<ItemImage> itemImagesWithItem) {
+		final List<OrderItem> orderItemList, final List<ItemImage> itemImagesWithItem) {
 
 		// 주문 별 상품 종류 개수 수집
-		final Map<Long, Integer> itemCountPerOrder = orderItems.stream()
+		final Map<Long, Integer> itemCountPerOrder = orderItemList.stream()
 			.collect(groupingBy(oi -> oi.getOrder().getId(), summingInt(OrderItem::getOrderCount)));
 
 		return new OrderInfoPageResponse(orders.size(),
