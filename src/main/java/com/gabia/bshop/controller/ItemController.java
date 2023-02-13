@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -14,8 +13,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.gabia.bshop.dto.request.ItemChangeRequest;
 import com.gabia.bshop.dto.request.ItemRequest;
-import com.gabia.bshop.dto.request.ItemRequestDto;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.service.ItemService;
 
@@ -42,8 +41,9 @@ public class ItemController {
 	}
 
 	@PatchMapping("/items/{id}")
-	public ResponseEntity<ItemResponse> updateItem(@RequestBody ItemRequest itemRequest, @PathVariable String id) {
-		return ResponseEntity.ok().body(itemService.updateItem(itemRequest));
+	public ResponseEntity<ItemResponse> updateItem(@RequestBody ItemChangeRequest itemChangeRequest,
+		@PathVariable Long id) {
+		return ResponseEntity.ok().body(itemService.updateItem(id, itemChangeRequest));
 	}
 
 	@DeleteMapping("/items/{id}")

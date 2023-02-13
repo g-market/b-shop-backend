@@ -3,7 +3,7 @@ package com.gabia.bshop.dto;
 import lombok.Builder;
 
 @Builder
-public record OptionDto(
+public record ItemOptionDto(
 	Long id,
 	String description,
 	int optionPrice,

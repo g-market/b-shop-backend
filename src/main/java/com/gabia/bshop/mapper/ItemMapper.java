@@ -5,6 +5,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
+import com.gabia.bshop.dto.request.ItemChangeRequest;
 import com.gabia.bshop.dto.request.ItemRequest;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Item;
@@ -17,21 +18,26 @@ public interface ItemMapper {
 	@Mappings({
 		@Mapping(source = "categoryDto", target = "category"),
 		@Mapping(source = "itemImageDtoList", target = "itemImageList"),
-		@Mapping(source = "optionDtoList", target = "optionsList")
+		@Mapping(source = "itemOptionDtoList", target = "itemOptionList")
 	})
 	Item itemDtoToEntity(ItemRequest itemDto);
 
 	@Mappings({
 		@Mapping(source = "category", target = "categoryDto"),
 		@Mapping(source = "itemImageList", target = "itemImageDtoList"),
-		@Mapping(source = "optionsList", target = "optionDtoList")
+		@Mapping(source = "itemOptionList", target = "itemOptionDtoList")
 	})
 	ItemResponse itemToItemResponse(Item item);
 
 	@Mappings({
 		@Mapping(source = "category", target = "categoryDto"),
 		@Mapping(source = "itemImageList", target = "itemImageDtoList"),
-		@Mapping(source = "optionsList", target = "optionDtoList")
+		@Mapping(source = "itemOptionList", target = "itemOptionDtoList")
 	})
 	ItemRequest itemToItemRequest(Item item);
+
+	@Mappings({
+		@Mapping(source = "category", target = "categoryDto"),
+	})
+	ItemChangeRequest itemToItemChangeRequest(Item item);
 }

@@ -5,16 +5,12 @@ import java.util.List;
 
 import com.gabia.bshop.dto.CategoryDto;
 import com.gabia.bshop.dto.ItemImageDto;
-import com.gabia.bshop.dto.ItemOptionDto;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 
-import jakarta.validation.constraints.NotNull;
 import lombok.Builder;
 
 @Builder
-public record ItemRequest(
-	List<ItemOptionDto> itemOptionDtoList,
-	List<ItemImageDto> itemImageDtoList,
+public record ItemChangeRequest(
 	CategoryDto categoryDto,
 	String name,
 	String description,

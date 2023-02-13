@@ -6,10 +6,8 @@ import java.util.Objects;
 
 import org.hibernate.annotations.SQLDelete;
 
-import com.gabia.bshop.dto.request.ItemRequest;
-import com.gabia.bshop.dto.request.ItemRequestDto;
+import com.gabia.bshop.dto.request.ItemChangeRequest;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
-import com.gabia.bshop.mapper.CategoryMapper;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -69,6 +67,8 @@ public class Item extends BaseEntity {
 
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
 	private List<ItemOption> itemOptionList;
+	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+	private List<ItemImage> itemImageList;
 
 	@Builder
 	private Item(
@@ -80,7 +80,8 @@ public class Item extends BaseEntity {
 		final ItemStatus itemStatus,
 		final LocalDateTime openAt,
 		final boolean deleted,
-		final List<ItemOption> itemOptionList) {
+		final List<ItemOption> itemOptionList,
+		final List<ItemImage> itemImageList) {
 		this.id = id;
 		this.name = name;
 		this.category = category;
@@ -90,26 +91,12 @@ public class Item extends BaseEntity {
 		this.openAt = openAt;
 		this.deleted = deleted;
 		this.itemOptionList = itemOptionList;
-	}
-
-	public void update(final ItemDto itemDto, final Category category) {
-		updateName(itemDto.name());
-		updateCategory(category);
-		updatePrice(itemDto.basePrice());
-		updateDescription(itemDto.description());
-		updateItemStatus(itemDto.itemStatus());
-		updateOpenAt(itemDto.openAt());
+		this.itemImageList = itemImageList;
 	}
 
 	private void updateName(final String name) {
 		if (name != null) {
 			this.name = name;
-		}
-	}
-
-	private void updateCategory(Category category) {
-		if (category != null) {
-			this.category = category;
 		}
 	}
 
@@ -135,18 +122,21 @@ public class Item extends BaseEntity {
 		}
 	}
 
-
-
-	public void update(final ItemRequest itemDto) {
-		updateName(itemDto.name());
-		updatePrice(itemDto.basePrice());
-		updateDescription(itemDto.description());
-		updateItemStatus(itemDto.itemStatus());
-		updateOpenAt(itemDto.openAt());
-		updateItemStatus(itemDto.itemStatus());
+	private void updateCategory(Category category) {
+		if (category != null) {
+			this.category = category;
+		}
 	}
 
-
+	public void update(final ItemChangeRequest itemChangeRequest, final Category category) {
+		updateName(itemChangeRequest.name());
+		updatePrice(itemChangeRequest.basePrice());
+		updateDescription(itemChangeRequest.description());
+		updateItemStatus(itemChangeRequest.itemStatus());
+		updateOpenAt(itemChangeRequest.openAt());
+		updateItemStatus(itemChangeRequest.itemStatus());
+		updateCategory(category);
+	}
 
 	@Override
 	public boolean equals(Object that) {

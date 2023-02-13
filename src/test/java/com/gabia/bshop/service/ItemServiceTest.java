@@ -20,9 +20,11 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import com.gabia.bshop.dto.request.ItemChangeRequest;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
+import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.ItemMapper;
@@ -114,7 +116,7 @@ class ItemServiceTest {
 		itemList = List.of(item1, item2);
 
 		Pageable pageable = PageRequest.of(0, 10);
-		List<ItemRequestDto> itemDtoList = itemList.stream().map(ItemMapper.INSTANCE::itemToDto).toList();
+		List<ItemResponse> itemDtoList = itemList.stream().map(ItemMapper.INSTANCE::itemToItemResponse).toList();
 
 		Page<Item> itemPage = new PageImpl<>(Collections.unmodifiableList(itemList));
 
@@ -154,7 +156,7 @@ class ItemServiceTest {
 				.openAt(LocalDateTime.now())
 				.build();
 
-		ItemRequestDto itemDto = ItemMapper.INSTANCE.itemToDto(item2);
+		ItemChangeRequest itemDto = ItemMapper.INSTANCE.itemToItemChangeRequest(item2);
 
 		// when
 		when(categoryRepository.findById(1L)).thenReturn(Optional.ofNullable(category));
@@ -162,7 +164,7 @@ class ItemServiceTest {
 		when(itemRepository.save(item2)).thenReturn(item2);
 
 		// then
-		ItemRequestDto changedItem = itemService.updateItem(itemDto);
+		ItemResponse changedItem = itemService.updateItem(item2.getId(), itemDto);
 
 		assertAll(
 			() -> assertEquals(20000, changedItem.basePrice()),
@@ -186,9 +188,22 @@ class ItemServiceTest {
 				.openAt(LocalDateTime.now())
 				.build();
 
+
+		Item returnItem = Item.builder()
+			.id(1L)
+			.category(category)
+			.name("item")
+			.itemStatus(ItemStatus.PUBLIC)
+			.basePrice(20000)
+			.description("item1")
+			.deleted(false)
+			.openAt(LocalDateTime.now())
+			.build();
+
 		// when
 		when(categoryRepository.findById(1L)).thenReturn(Optional.ofNullable(category));
-		when(itemRepository.save(item)).thenReturn(item);
+		when(itemRepository.save(any())).thenReturn(returnItem);
+
 		ItemResponse itemDto = itemService.createItem(ItemMapper.INSTANCE.itemToItemRequest(item));
 
 		// then
@@ -218,7 +233,7 @@ class ItemServiceTest {
 				.openAt(LocalDateTime.now())
 				.build();
 
-		ItemRequestDto itemDto = ItemMapper.INSTANCE.itemToDto(item);
+		ItemChangeRequest itemChangeRequest = ItemMapper.INSTANCE.itemToItemChangeRequest(item);
 
 		// when
 		when(itemRepository.save(item)).thenReturn(item);
@@ -227,7 +242,7 @@ class ItemServiceTest {
 		Assertions.assertThrows(
 			NotFoundException.class,
 			() -> {
-				itemService.updateItem(itemDto);
+				itemService.updateItem(item.getId(), itemChangeRequest);
 			});
 	}
 
@@ -248,7 +263,7 @@ class ItemServiceTest {
 				.openAt(LocalDateTime.now())
 				.build();
 
-		ItemRequestDto itemDto = ItemMapper.INSTANCE.itemToDto(item);
+		ItemChangeRequest itemChangeRequest = ItemMapper.INSTANCE.itemToItemChangeRequest(item);
 
 		// when
 		when(categoryRepository.findById(2L)).thenThrow(EntityNotFoundException.class);
@@ -257,7 +272,7 @@ class ItemServiceTest {
 		Assertions.assertThrows(
 			NotFoundException.class,
 			() -> {
-				itemService.updateItem(itemDto);
+				itemService.updateItem(item.getId(), itemChangeRequest);
 			});
 	}
 
@@ -276,32 +291,16 @@ class ItemServiceTest {
 				.name("item2")
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(20000)
-				.description("changed")
+				.description("delete test item")
 				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
-
-		Item item2 =
-			Item.builder()
-				.id(itemId2)
-				.category(category)
-				.name("item2")
-				.itemStatus(ItemStatus.PUBLIC)
-				.basePrice(20000)
-				.description("changed")
-				.deleted(false)
-				.openAt(LocalDateTime.now())
-				.build();
-
 		// when
 		when(itemRepository.findById(itemId1)).thenReturn(Optional.ofNullable(item1));
-		when(itemRepository.findById(itemId2)).thenReturn(Optional.ofNullable(item2));
-
 		itemService.deleteItem(itemId1);
-		itemService.deleteItem(itemId2);
 
 		// then
-		verify(itemRepository, times(2)).deleteById(anyLong());
+		verify(itemRepository, times(1)).delete(any());
 	}
 
 	@Test
@@ -310,11 +309,11 @@ class ItemServiceTest {
 		Long itemId = 3L; // 존재하지 않는 상품
 
 		// when
-		when(itemRepository.findById(3L)).thenThrow(EntityNotFoundException.class);
+		when(itemRepository.findById(3L)).thenThrow(NotFoundException.class);
 
 		// then
 		Assertions.assertThrows(
-			EntityNotFoundException.class,
+			NotFoundException.class,
 			() -> {
 				itemService.deleteItem(3L);
 			});

@@ -8,21 +8,20 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import com.gabia.bshop.dto.request.ItemChangeRequest;
 import com.gabia.bshop.dto.request.ItemRequest;
-import com.gabia.bshop.dto.request.ItemRequestDto;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
-import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.entity.ItemImage;
-import com.gabia.bshop.entity.Options;
+import com.gabia.bshop.entity.ItemOption;
+import com.gabia.bshop.exception.ConflictException;
+import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.ItemImageMapper;
 import com.gabia.bshop.mapper.ItemMapper;
-import com.gabia.bshop.mapper.OptionMapper;
+import com.gabia.bshop.mapper.ItemOptionMapper;
 import com.gabia.bshop.repository.CategoryRepository;
-import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemRepository;
-import com.gabia.bshop.repository.OptionsRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -30,32 +29,34 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
-@Transactional
+@Transactional()
 @Service
 public class ItemService {
 	private final ItemRepository itemRepository;
 	private final CategoryRepository categoryRepository;
 
 	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
+	private static final String NO_IMAGE_URL = "TO_BE_CHANGE";
 	/**
-	* 상품 조회
-	* 1. fetch join
-	** */
+	 * 상품 조회
+	 * 1. fetch join
+	 ** */
 	public ItemResponse findItem(final Long id) {
-		final Item item = itemRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+		final Item item = itemRepository.findById(id).orElseThrow(
+			() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, id)
+		);
 
 		return ItemMapper.INSTANCE.itemToItemResponse(item);
 	}
 
 	/**
-	* 상품 목록 조회
-	* 1. fetch join
-	**/
+	 * 상품 목록 조회
+	 * 1. fetch join
+	 **/
 	public List<ItemResponse> findItemList(final Pageable page) {
 
 		if (page.getPageSize() > MAX_PAGE_ELEMENT_REQUEST_SIZE) {
-			throw new IllegalArgumentException(
-				String.format("상품은 한 번에 %d개 까지만 조회할 수 있습니다.", MAX_PAGE_ELEMENT_REQUEST_SIZE));
+			throw new ConflictException(MAX_PAGE_ELEMENT_REQUEST_SIZE_EXCEPTION, MAX_PAGE_ELEMENT_REQUEST_SIZE);
 		}
 
 		final Page<Item> itemPage = itemRepository.findAll(page);
@@ -65,52 +66,55 @@ public class ItemService {
 	/*
 	상품 생성
 	*/
+	@SuppressWarnings("checkstyle:WhitespaceAround")
 	@Transactional
 	public ItemResponse createItem(final ItemRequest itemDto) {
 
 		/**
 		 * 1. Category 조회
-		* */
+		 * */
 		final Long categoryId = itemDto.categoryDto().id();
-		final Category category = categoryRepository.findById(categoryId).orElseThrow(EntityNotFoundException::new);
+		final Category category = findCategoryById(categoryId);
 
 		/**
 		 * 2. Option 생성
 		 * */
-		List<Options> optionList = null;
-		if (!itemDto.optionDtoList().isEmpty()) {
-			optionList = itemDto.optionDtoList().stream().map(OptionMapper.INSTANCE::OptionDtoToEntity).toList();
-			// optionsRepository.saveAll(optionsList);
+		List<ItemOption> itemOptionList = null;
+		if (itemDto.itemOptionDtoList() != null && !itemDto.itemOptionDtoList().isEmpty()) {
+			itemOptionList = itemDto.itemOptionDtoList()
+				.stream()
+				.map(ItemOptionMapper.INSTANCE::ItemOptionDtoToEntity)
+				.toList();
 		} else {
-			Options option = Options.builder()
+			ItemOption itemOption = ItemOption.builder()
 				.description(itemDto.name()) // 기본 option은 item의 option과 동일
-				.optionLevel(1)
 				.stockQuantity(0)
 				.optionPrice(0)
 				.build();
-			optionList = List.of(option);
+			itemOptionList = List.of(itemOption);
 		}
 
 		/**
 		 * 3. Image 생성
+		 * TODO : Image 가 없으면 NO_IMAGE_URL
 		 **/
 		List<ItemImage> itemImageList = null;
-		if (!itemDto.itemImageDtoList().isEmpty()) {
-			itemImageList = itemDto.itemImageDtoList().stream().map(itemImageDto -> {
-				/** TODO
-				 1. image url validation
-				 (option) 2. file to image url
-				**/
-				ItemImage itemImage = ItemImageMapper.INSTANCE.ItemImageDtoToEntity(itemImageDto);
-				return itemImage;
-			}).toList();
+		if (itemDto.itemImageDtoList() != null && !itemDto.itemImageDtoList().isEmpty()) {
+			/** TODO
+			 1. image url Validation
+			 2. (option) file to image url
+			 **/
+			itemImageList = itemDto.itemImageDtoList()
+				.stream()
+				.map(ItemImageMapper.INSTANCE::ItemImageDtoToEntity)
+				.toList();
+		}else{
+			ItemImage itemImage = ItemImage.builder()
+				.url(NO_IMAGE_URL)
+				.build();
+			itemImageList = List.of(itemImage);
 		}
 
-		findCategoryById(categoryId);
-
-		Item item = ItemMapper.INSTANCE.itemDtoToEntity(itemDto);
-
-		return ItemMapper.INSTANCE.itemToDto(itemRepository.save(item));
 		/**
 		 * 4. Item 생성
 		 **/
@@ -121,43 +125,41 @@ public class ItemService {
 			.basePrice(itemDto.basePrice())
 			.openAt(itemDto.openAt())
 			.itemImageList(itemImageList)
-			.optionsList(optionList)
+			.itemOptionList(itemOptionList)
 			.category(category)
 			.deleted(false)
 			.build();
 
-
-		return ItemMapper.INSTANCE.itemToItemResponse(item);
+		return ItemMapper.INSTANCE.itemToItemResponse(itemRepository.save(item));
 	}
 
 	/**
-	상품 수정
-	 1. 상품의 옵션을 수정 ?
-	 2. 상품의 카테고리 수정 ?
-	 3. 상품의 이미지 수정 ?
-	**/
+	 상품 수정
+	 1. 상품의 옵션을 수정 -> TODO : itemOption CRUD 기능 구현
+	 2. 상품의 카테고리 수정 -> Category 변경
+	 3. 상품의 이미지 수정 ->  TODO : image CRUD 기능 구현
+	 **/
 	@Transactional
-	public ItemDto updateItem(final ItemDto itemDto) {
-		final Long itemId = itemDto.id();
+	public ItemResponse updateItem(final Long itemId, final ItemChangeRequest itemChangeRequest) {
 		Item item = findItemById(itemId);
-		final Long categoryId = itemDto.categoryDto().id();
+		final Long categoryId = itemChangeRequest.categoryDto().id();
 
 		final Category category = findCategoryById(categoryId);
 
-		item.update(itemDto, category);
+		item.update(itemChangeRequest, category);
 
-		return ItemMapper.INSTANCE.itemToDto(itemRepository.save(item));
+		return ItemMapper.INSTANCE.itemToItemResponse(itemRepository.save(item));
 	}
 
 	/**
-	상품 삭제
+	 상품 삭제
 	 1. 상품 삭제
 	 2. 연관된 엔티티 삭제
-	*/
+	 **/
 	@Transactional
 	public void deleteItem(final Long id) {
 		final Item item = findItemById(id);
-		itemRepository.deleteById(item.getId());
+		itemRepository.delete(item);
 	}
 
 	private Item findItemById(final Long itemId) {

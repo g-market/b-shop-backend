@@ -5,7 +5,7 @@ import java.util.List;
 
 import com.gabia.bshop.dto.CategoryDto;
 import com.gabia.bshop.dto.ItemImageDto;
-import com.gabia.bshop.dto.OptionDto;
+import com.gabia.bshop.dto.ItemOptionDto;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 
 /**
@@ -18,13 +18,9 @@ import com.gabia.bshop.entity.enumtype.ItemStatus;
  **/
 public record ItemResponse(
 	Long id,
-
-	List<OptionDto> optionDtoList,
-
+	List<ItemOptionDto> itemOptionDtoList,
 	List<ItemImageDto> itemImageDtoList,
-
 	CategoryDto categoryDto,
-
 	String name,
 	String description,
 	int basePrice,

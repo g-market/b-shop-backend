@@ -100,14 +100,12 @@ class OrderServiceTest extends IntegrationTest {
 		ItemOption itemOption1 = ItemOption.builder()
 			.item(item1)
 			.description("temp_itemOption1_description")
-			.optionLevel(1)
 			.optionPrice(0)
 			.stockQuantity(10)
 			.build();
 		ItemOption itemOption2 = ItemOption.builder()
 			.item(item2)
 			.description("temp_itemOption2_description")
-			.optionLevel(1)
 			.optionPrice(1000)
 			.stockQuantity(5)
 			.build();
@@ -234,7 +232,6 @@ class OrderServiceTest extends IntegrationTest {
 			.id(1L)
 			.item(item1)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(0)
 			.stockQuantity(10)
 			.build();

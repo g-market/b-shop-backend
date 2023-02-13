@@ -262,7 +262,6 @@ public class DataInit {
 		ItemOption itemOption1 = ItemOption.builder()
 			.item(item1)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(0)
 			.stockQuantity(10)
 			.build();
@@ -270,7 +269,6 @@ public class DataInit {
 		ItemOption itemOption2 = ItemOption.builder()
 			.item(item2)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(1000)
 			.stockQuantity(5)
 			.build();

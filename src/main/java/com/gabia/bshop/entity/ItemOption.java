@@ -4,6 +4,7 @@ import static com.gabia.bshop.exception.ErrorCode.*;
 
 import java.util.Objects;
 
+import com.gabia.bshop.dto.ItemOptionDto;
 import com.gabia.bshop.exception.ConflictException;
 
 import jakarta.persistence.Column;
@@ -55,15 +56,25 @@ public class ItemOption extends BaseEntity {
 		final Long id,
 		final Item item,
 		final String description,
-		final int optionLevel,
 		final int optionPrice,
 		final int stockQuantity) {
 		this.id = id;
 		this.item = item;
 		this.description = description;
-		this.optionLevel = optionLevel;
 		this.optionPrice = optionPrice;
 		this.stockQuantity = stockQuantity;
+	}
+	private void updateDescription(ItemOptionDto optionDto) {
+		if (optionDto.description() != null)
+			this.description = optionDto.description();
+	}
+
+	private void updateOptionPrice(ItemOptionDto optionDto) {
+		this.optionPrice = optionDto.optionPrice();
+	}
+
+	private void updateStockQuantity(ItemOptionDto optionDto) {
+		this.stockQuantity = optionDto.stockQuantity();
 	}
 
 	public void decreaseStockQuantity(final int orderCount) {
@@ -78,7 +89,7 @@ public class ItemOption extends BaseEntity {
 		this.stockQuantity += orderCount;
 	}
 
-	public void update(OptionDto optionDto) {
+	public void update(ItemOptionDto optionDto) {
 		updateDescription(optionDto);
 		updateOptionPrice(optionDto);
 		updateStockQuantity(optionDto);
@@ -89,20 +100,6 @@ public class ItemOption extends BaseEntity {
 			this.item = item;
 		}
 	}
-
-	private void updateDescription(OptionDto optionDto) {
-		if (optionDto.description() != null)
-			this.description = optionDto.description();
-	}
-
-	private void updateOptionPrice(OptionDto optionDto) {
-		this.optionPrice = optionDto.optionPrice();
-	}
-
-	private void updateStockQuantity(OptionDto optionDto) {
-		this.stockQuantity = optionDto.stockQuantity();
-	}
-
 	@Override
 	public boolean equals(final Object that) {
 		if (this == that) {
