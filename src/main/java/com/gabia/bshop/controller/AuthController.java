@@ -17,7 +17,7 @@ import com.gabia.bshop.dto.response.AdminLoginResponse;
 import com.gabia.bshop.dto.response.IssuedTokensResponse;
 import com.gabia.bshop.dto.response.LoginResponse;
 import com.gabia.bshop.dto.response.LoginResult;
-import com.gabia.bshop.exception.UnAuthorizedException;
+import com.gabia.bshop.exception.UnAuthorizedRefreshTokenException;
 import com.gabia.bshop.mapper.LoginResponseMapper;
 import com.gabia.bshop.security.provider.RefreshTokenCookieProvider;
 import com.gabia.bshop.service.AuthService;
@@ -74,7 +74,7 @@ public class AuthController {
 
 	private void validateRefreshTokenExists(final String refreshToken) {
 		if (refreshToken == null) {
-			throw new UnAuthorizedException(REFRESH_TOKEN_NOT_EXIST_EXCEPTION);
+			throw new UnAuthorizedRefreshTokenException(REFRESH_TOKEN_NOT_EXIST_EXCEPTION);
 		}
 	}
 }

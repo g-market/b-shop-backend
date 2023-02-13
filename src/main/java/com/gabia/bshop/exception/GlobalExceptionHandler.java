@@ -43,7 +43,7 @@ public class GlobalExceptionHandler {
 			.body(e.getExceptionResponse());
 	}
 
-	@ExceptionHandler(UnAuthorizedException.class)
+	@ExceptionHandler(UnAuthorizedRefreshTokenException.class)
 	public ResponseEntity<ExceptionResponse> handleRefreshTokenException(final UnAuthorizedException e,
 		final HttpServletRequest request) {
 		log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getExceptionResponse().message());

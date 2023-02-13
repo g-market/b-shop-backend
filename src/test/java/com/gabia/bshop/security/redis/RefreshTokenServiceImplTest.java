@@ -12,7 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.gabia.bshop.exception.UnAuthorizedException;
+import com.gabia.bshop.exception.UnAuthorizedRefreshTokenException;
 
 @ExtendWith(MockitoExtension.class)
 class RefreshTokenServiceImplTest {
@@ -36,7 +36,7 @@ class RefreshTokenServiceImplTest {
 			Optional.of(refreshToken));
 		// when & then
 		assertThatThrownBy(() -> refreshTokenRedisService.save(refreshToken))
-			.isInstanceOf(UnAuthorizedException.class);
+			.isInstanceOf(UnAuthorizedRefreshTokenException.class);
 	}
 
 	@Test
@@ -51,7 +51,7 @@ class RefreshTokenServiceImplTest {
 			Optional.empty());
 		// when & then
 		assertThatThrownBy(() -> refreshTokenRedisService.findToken(refreshToken.refreshToken()))
-			.isInstanceOf(UnAuthorizedException.class);
+			.isInstanceOf(UnAuthorizedRefreshTokenException.class);
 	}
 
 	@Test
@@ -66,6 +66,6 @@ class RefreshTokenServiceImplTest {
 			Optional.empty());
 		// when & then
 		assertThatThrownBy(() -> refreshTokenRedisService.findToken(refreshToken.refreshToken()))
-			.isInstanceOf(UnAuthorizedException.class);
+			.isInstanceOf(UnAuthorizedRefreshTokenException.class);
 	}
 }

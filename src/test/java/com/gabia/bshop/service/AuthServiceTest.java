@@ -25,6 +25,7 @@ import com.gabia.bshop.entity.Member;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.exception.ForbiddenException;
 import com.gabia.bshop.exception.UnAuthorizedException;
+import com.gabia.bshop.exception.UnAuthorizedRefreshTokenException;
 import com.gabia.bshop.mapper.HiworksProfileMapper;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.security.client.HiworksOauthClient;
@@ -251,7 +252,7 @@ class AuthServiceTest {
 		// when, then
 		assertAll(
 			() -> assertThatThrownBy(() -> authService.issueAccessToken(refreshTokenValue))
-				.isExactlyInstanceOf(UnAuthorizedException.class),
+				.isExactlyInstanceOf(UnAuthorizedRefreshTokenException.class),
 			() -> verify(refreshTokenService).findToken(any()),
 			() -> verify(refreshTokenService).delete(refreshTokenValue)
 		);

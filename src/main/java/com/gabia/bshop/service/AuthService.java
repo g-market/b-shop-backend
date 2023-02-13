@@ -2,8 +2,6 @@ package com.gabia.bshop.service;
 
 import static com.gabia.bshop.exception.ErrorCode.*;
 
-import java.text.MessageFormat;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -15,7 +13,7 @@ import com.gabia.bshop.entity.Member;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.exception.ForbiddenException;
 import com.gabia.bshop.exception.NotFoundException;
-import com.gabia.bshop.exception.UnAuthorizedException;
+import com.gabia.bshop.exception.UnAuthorizedRefreshTokenException;
 import com.gabia.bshop.mapper.HiworksProfileMapper;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.security.client.HiworksOauthClient;
@@ -24,7 +22,6 @@ import com.gabia.bshop.security.provider.RefreshTokenProvider;
 import com.gabia.bshop.security.redis.RefreshToken;
 import com.gabia.bshop.security.redis.RefreshTokenService;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -102,9 +99,8 @@ public class AuthService {
 
 	private void checkExpired(final String refreshToken, final RefreshToken tokenInfo) {
 		if (tokenInfo.isExpired()) {
-			// TODO: 트랜잭션 보장하는지 체크해야함(예외 터트리는데 보장할까?)
 			refreshTokenService.delete(refreshToken);
-			throw new UnAuthorizedException(REFRESH_TOKEN_EXPIRED_EXCEPTION);
+			throw new UnAuthorizedRefreshTokenException(REFRESH_TOKEN_EXPIRED_EXCEPTION);
 		}
 	}
 }

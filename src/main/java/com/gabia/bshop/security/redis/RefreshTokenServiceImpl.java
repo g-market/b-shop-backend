@@ -5,7 +5,7 @@ import static com.gabia.bshop.exception.ErrorCode.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gabia.bshop.exception.UnAuthorizedException;
+import com.gabia.bshop.exception.UnAuthorizedRefreshTokenException;
 
 import lombok.RequiredArgsConstructor;
 
@@ -18,25 +18,32 @@ public class RefreshTokenServiceImpl implements RefreshTokenService {
 	@Override
 	@Transactional
 	public RefreshToken save(final RefreshToken refreshToken) {
-		refreshTokenRepository.findById(refreshToken.refreshToken())
-			.ifPresent(it -> {
-				throw new UnAuthorizedException(REFRESH_TOKEN_DUPLICATED_SAVED_EXCEPTION);
-			});
+		hasSameRefreshToken(refreshToken.refreshToken());
 		return refreshTokenRepository.save(refreshToken);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public RefreshToken findToken(final String savedTokenValue) {
-		return refreshTokenRepository.findById(savedTokenValue)
-			.orElseThrow(() -> new UnAuthorizedException(REFRESH_TOKEN_NOT_FOUND_EXCEPTION));
+		return findRefreshTokenById(savedTokenValue);
 	}
 
 	@Override
 	@Transactional
 	public void delete(final String savedTokenValue) {
-		final RefreshToken refreshToken = refreshTokenRepository.findById(savedTokenValue)
-			.orElseThrow(() -> new UnAuthorizedException(REFRESH_TOKEN_NOT_FOUND_EXCEPTION));
+		final RefreshToken refreshToken = findRefreshTokenById(savedTokenValue);
 		refreshTokenRepository.delete(refreshToken);
+	}
+
+	private void hasSameRefreshToken(final String key) {
+		refreshTokenRepository.findById(key)
+			.ifPresent(it -> {
+				throw new UnAuthorizedRefreshTokenException(REFRESH_TOKEN_DUPLICATED_SAVED_EXCEPTION);
+			});
+	}
+
+	private RefreshToken findRefreshTokenById(final String savedTokenValue) {
+		return refreshTokenRepository.findById(savedTokenValue)
+			.orElseThrow(() -> new UnAuthorizedRefreshTokenException(REFRESH_TOKEN_NOT_FOUND_EXCEPTION));
 	}
 }
