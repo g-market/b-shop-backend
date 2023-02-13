@@ -1,5 +1,7 @@
 package com.gabia.bshop.util;
 
+import static com.gabia.bshop.exception.ErrorCode.*;
+
 import org.springframework.stereotype.Component;
 
 import com.gabia.bshop.exception.UnAuthorizedException;
@@ -13,12 +15,12 @@ public class AuthTokenExtractor {
 
 	public String extractToken(final String authorizationHeader, final String tokenType) {
 		if (authorizationHeader == null) {
-			throw new UnAuthorizedException("토큰이 존재하지 않습니다.");
+			throw new UnAuthorizedException(TOKEN_NOT_EXIST_EXCEPTION);
 		}
 		final String[] splitHeaders = authorizationHeader.split(" ");
 		if (splitHeaders.length != VALID_AUTHORIZATION_HEADER_LENGTH
 			|| !splitHeaders[TOKEN_TYPE_INDEX].equalsIgnoreCase(tokenType)) {
-			throw new UnAuthorizedException("토큰이 잘못된 형식입니다.");
+			throw new UnAuthorizedException(TOKEN_INVALID_FORMAT_EXCEPTION);
 		}
 		return splitHeaders[ACCESS_TOKEN_INDEX];
 	}

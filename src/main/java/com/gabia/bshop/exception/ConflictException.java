@@ -1,10 +1,12 @@
 package com.gabia.bshop.exception;
 
-import org.springframework.http.HttpStatus;
+public class ConflictException extends ApplicationException {
 
-public class ConflictException extends CustomException {
+	public ConflictException(final ErrorCode errorCode) {
+		super(errorCode);
+	}
 
-	public ConflictException(final String message) {
-		super(HttpStatus.CONFLICT, message);
+	public ConflictException(final ErrorCode errorCode, final Object parameter) {
+		super(errorCode, parameter);
 	}
 }

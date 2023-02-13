@@ -1,9 +1,12 @@
 package com.gabia.bshop.entity;
 
+import static com.gabia.bshop.exception.ErrorCode.*;
+
 import java.util.List;
 import java.util.Objects;
 
 import com.gabia.bshop.entity.enumtype.OrderStatus;
+import com.gabia.bshop.exception.ConflictException;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -71,8 +74,17 @@ public class Orders extends BaseEntity {
 	}
 
 	public void cancel() {
+		checkOrderStatus();
 		this.orderItemList.forEach(OrderItem::cancel);
 		this.status = OrderStatus.CANCELLED;
+	}
+
+	public void checkOrderStatus() {
+		if (this.status == OrderStatus.COMPLETED) {
+			throw new ConflictException(ORDER_STATUS_ALREADY_COMPLETED_EXCEPTION);
+		} else if (this.status == OrderStatus.CANCELLED) {
+			throw new ConflictException(ORDER_STATUS_ALREADY_CANCELLED_EXCEPTION);
+		}
 	}
 
 	@Override

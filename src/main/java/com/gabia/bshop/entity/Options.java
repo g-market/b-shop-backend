@@ -1,5 +1,7 @@
 package com.gabia.bshop.entity;
 
+import static com.gabia.bshop.exception.ErrorCode.*;
+
 import java.util.Objects;
 
 import jakarta.persistence.Column;

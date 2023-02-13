@@ -1,5 +1,7 @@
 package com.gabia.bshop.security.provider;
 
+import static com.gabia.bshop.exception.ErrorCode.*;
+
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
@@ -94,7 +96,7 @@ public class JwtProvider {
 				.role(role)
 				.build();
 		} catch (RequiredTypeException | NullPointerException | IllegalArgumentException e) {
-			throw new UnAuthorizedException("토큰이 잘못된 형식입니다.");
+			throw new UnAuthorizedException(TOKEN_INVALID_FORMAT_EXCEPTION);
 		}
 	}
 }

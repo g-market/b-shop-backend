@@ -1,5 +1,7 @@
 package com.gabia.bshop.controller;
 
+import static com.gabia.bshop.exception.ErrorCode.*;
+
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gabia.bshop.dto.request.OrderCreateRequestDto;
 import com.gabia.bshop.dto.response.OrderCreateResponseDto;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
+import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.service.OrderService;
 
 import jakarta.validation.Valid;
@@ -38,8 +41,7 @@ public class OrderController {
 
 	private void validatePageElementSize(final Pageable pageable) {
 		if (pageable.getPageSize() > MAX_PAGE_ELEMENT_REQUEST_SIZE) {
-			throw new IllegalArgumentException(
-				String.format("상품은 한 번에 %d개 까지만 조회할 수 있습니다.", MAX_PAGE_ELEMENT_REQUEST_SIZE));
+			throw new ConflictException(MAX_PAGE_ELEMENT_REQUEST_SIZE_EXCEPTION, MAX_PAGE_ELEMENT_REQUEST_SIZE);
 		}
 	}
 

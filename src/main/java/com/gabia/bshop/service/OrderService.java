@@ -1,5 +1,7 @@
 package com.gabia.bshop.service;
 
+import static com.gabia.bshop.exception.ErrorCode.*;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,12 +13,14 @@ import com.gabia.bshop.dto.request.OrderCreateRequestDto;
 import com.gabia.bshop.dto.response.OrderCreateResponseDto;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.entity.ItemImage;
+import com.gabia.bshop.entity.Member;
 import com.gabia.bshop.entity.Options;
 import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.Orders;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
-import com.gabia.bshop.exception.OutOfStockException;
+import com.gabia.bshop.exception.ConflictException;
+import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.OrderInfoMapper;
 import com.gabia.bshop.mapper.OrderMapper;
 import com.gabia.bshop.repository.ItemImageRepository;
@@ -43,7 +47,7 @@ public class OrderService {
 
 	@Transactional(readOnly = true)
 	public OrderInfoPageResponse findOrdersPagination(final Long memberId, final Pageable pageable) {
-		memberRepository.findById(memberId).orElseThrow(() -> new EntityNotFoundException("해당하는 id의 회원이 존재하지 않습니다."));
+		findMemberById(memberId);
 
 		final List<Orders> orders = orderRepository.findByMemberIdPagination(memberId, pageable);
 		final List<OrderItem> orderItemList = orderItemRepository.findByOrderIds(
@@ -57,7 +61,7 @@ public class OrderService {
 
 	public OrderCreateResponseDto createOrder(final OrderCreateRequestDto orderCreateRequestDto) {
 
-		memberRepository.findById(orderCreateRequestDto.memberId()).orElseThrow(EntityNotFoundException::new);
+		findMemberById(orderCreateRequestDto.memberId());
 		Orders orders = OrderMapper.INSTANCE.ordersCreateDtoToEntity(orderCreateRequestDto);
 
 		// TODO: 하나의 item에 여러 option으로 주문할 경우 Query 성능 개선 검토
@@ -78,23 +82,34 @@ public class OrderService {
 	}
 
 	public void cancelOrder(final Long id) {
-		Orders orders = orderRepository.findById(id)
-			.orElseThrow(() -> new EntityNotFoundException("존재하지 않는 주문 ID 입니다."));
+		Orders orders = findOrderById(id);
 
 		validateOrderStatus(orders);
 		orders.cancel();
 	}
 
+	private Member findMemberById(final Long memberId) {
+		return memberRepository.findById(memberId)
+			.orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND_EXCEPTION, memberId));
+	}
+
+	private Orders findOrderById(final Long orderId) {
+		return orderRepository.findById(orderId)
+			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
+	}
+
+
 	public void validateItemStatus(Options options) {
 		if (options.getItem().getItemStatus() != ItemStatus.PUBLIC) {
-			throw new OutOfStockException("현재 판매하지 않는 상품 ID 입니다.");
+			//TODO: Exception 메세지("현재 판매하지 않는 상품입니다.") 추가 필요
+			throw new ConflictException(ITEM_NOT_FOUND_EXCEPTION, options.getItem().getId());
 		}
 	}
 
 	public void validateStockQuantity(Options options, int orderCount) {
 		int restStock = options.getStockQuantity() - orderCount;
 		if (restStock <= 0) {
-			throw new OutOfStockException("상품의 재고가 부족합니다.");
+			throw new ConflictException(ITEM_OPTION_OUT_OF_STOCK_EXCEPTION, options.getStockQuantity());
 		}
 	}
 
