@@ -15,6 +15,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	@Query("select o from Order o where o.member.id =:memberId order by o.createdAt")
 	List<Order> findByMemberIdPagination(Long memberId, Pageable pageable);
 
-    @Query("select o from Orders o where o.createdAt >= :startAt and o.createdAt <= :endAt  order by o.createdAt")
-    List<Orders> findAllByPeriodPagination(LocalDateTime startAt, LocalDateTime endAt, Pageable pageable);
+    @Query("select o from Order o where o.createdAt >= :startAt and o.createdAt <= :endAt  order by o.createdAt")
+    List<Order> findAllByPeriodPagination(LocalDateTime startAt, LocalDateTime endAt, Pageable pageable);
 }

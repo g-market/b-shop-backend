@@ -45,6 +45,15 @@ public class OrderController {
         final OrderInfoSingleResponse singleOrderInfo = orderService.findSingleOrderInfo(orderId);
         return ResponseEntity.ok(singleOrderInfo);
     }
+
+	// TODO: admin 인가
+	@GetMapping("/admin/order-infos")
+	public ResponseEntity<OrderInfoPageResponse> adminOrderInfos(final OrderInfoSearchRequest orderInfoSearchRequest,
+																 final Pageable pageable) {
+		final OrderInfoPageResponse adminOrdersPagination = orderService.findAdminOrdersPagination(
+				orderInfoSearchRequest, pageable);
+		return ResponseEntity.ok(adminOrdersPagination);
+	}
 	@PostMapping("/orders")
 	public ResponseEntity<OrderCreateResponseDto> createOrder(
 		@RequestBody final OrderCreateRequestDto orderCreateRequestDto) {
@@ -56,14 +65,6 @@ public class OrderController {
 		orderService.cancelOrder(id);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
-    // TODO: admin 인가
-    @GetMapping("/admin/order-infos")
-    public ResponseEntity<OrderInfoPageResponse> adminOrderInfos(final OrderInfoSearchRequest orderInfoSearchRequest,
-                                                                 final Pageable pageable) {
-        final OrderInfoPageResponse adminOrdersPagination = orderService.findAdminOrdersPagination(
-                orderInfoSearchRequest, pageable);
-        return ResponseEntity.ok(adminOrdersPagination);
-    }
 
     private void validatePageElementSize(final Pageable pageable) {
         if (pageable.getPageSize() > MAX_PAGE_ELEMENT_REQUEST_SIZE) {

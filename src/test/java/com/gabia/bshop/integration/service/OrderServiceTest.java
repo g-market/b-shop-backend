@@ -252,7 +252,6 @@ class OrderServiceTest extends IntegrationTest {
 			.orderCount(1)
 			.price(11111L)
 			.build();
-
 		ItemImage itemImage1 = ItemImage.builder()
 			.item(item1)
 			.url(UUID.randomUUID().toString())
@@ -261,6 +260,7 @@ class OrderServiceTest extends IntegrationTest {
 			.item(item1)
 			.url(UUID.randomUUID().toString())
 			.build();
+
 		memberRepository.save(member1);
 		categoryRepository.save(category1);
 		itemRepository.saveAll(List.of(item1));
@@ -312,20 +312,36 @@ class OrderServiceTest extends IntegrationTest {
                 .openAt(now)
                 .deleted(false)
                 .build();
-        Orders order1 = Orders.builder()
+		ItemOption itemOption1 = ItemOption.builder()
+				.item(item1)
+				.description("temp_itemOption1_description")
+				.optionLevel(1)
+				.optionPrice(0)
+				.stockQuantity(10)
+				.build();
+		ItemOption itemOption2 = ItemOption.builder()
+				.item(item2)
+				.description("temp_itemOption2_description")
+				.optionLevel(1)
+				.optionPrice(1000)
+				.stockQuantity(5)
+				.build();
+        Order order1 = Order.builder()
                 .member(member1)
-                .status(OrderStatus.PENDING)
+                .status(OrderStatus.ACCEPTED)
                 .totalPrice(55555L)
                 .build();
         OrderItem orderItem1 = OrderItem.builder()
                 .item(item1)
                 .order(order1)
+				.option(itemOption1)
                 .orderCount(1)
                 .price(11111L)
                 .build();
         OrderItem orderItem2 = OrderItem.builder()
                 .item(item2)
                 .order(order1)
+				.option(itemOption2)
                 .orderCount(2)
                 .price(22222L)
                 .build();
@@ -348,6 +364,7 @@ class OrderServiceTest extends IntegrationTest {
         memberRepository.save(member1);
         categoryRepository.save(category1);
         itemRepository.saveAll(List.of(item1, item2));
+		itemOptionRepository.saveAll(List.of(itemOption1,itemOption2));
         itemImageRepository.saveAll(List.of(itemImage1, itemImage2, itemImage3, itemImage4));
         orderRepository.saveAll(List.of(order1));
         orderItemRepository.saveAll(List.of(orderItem1, orderItem2));
@@ -400,38 +417,71 @@ class OrderServiceTest extends IntegrationTest {
                 .build();
         Item item2 = Item.builder()
                 .category(category1)
-                .name("temp_item_name1")
-                .description("temp_item_1_description " + UUID.randomUUID())
+                .name("temp_item_name2")
+                .description("temp_item_2_description " + UUID.randomUUID())
                 .basePrice(22222)
                 .itemStatus(ItemStatus.PUBLIC)
                 .openAt(now)
                 .deleted(false)
                 .build();
-        Orders order1 = Orders.builder()
+		Item item3 = Item.builder()
+				.category(category1)
+				.name("temp_item_name3")
+				.description("temp_item_3_description " + UUID.randomUUID())
+				.basePrice(33333)
+				.itemStatus(ItemStatus.PUBLIC)
+				.openAt(now)
+				.deleted(false)
+				.build();
+		ItemOption itemOption1 = ItemOption.builder()
+				.item(item1)
+				.description("description")
+				.optionLevel(1)
+				.optionPrice(0)
+				.stockQuantity(10)
+				.build();
+		ItemOption itemOption2 = ItemOption.builder()
+				.item(item2)
+				.description("description")
+				.optionLevel(1)
+				.optionPrice(1000)
+				.stockQuantity(5)
+				.build();
+		ItemOption itemOption3 = ItemOption.builder()
+				.item(item3)
+				.description("description")
+				.optionLevel(1)
+				.optionPrice(1000)
+				.stockQuantity(5)
+				.build();
+        Order order1 = Order.builder()
                 .member(member1)
-                .status(OrderStatus.PENDING)
+                .status(OrderStatus.ACCEPTED)
                 .totalPrice(11111L)
                 .build();
         OrderItem orderItem1_order1 = OrderItem.builder()
                 .item(item1)
                 .order(order1)
+				.option(itemOption1)
                 .orderCount(1)
                 .price(11111L)
                 .build();
-        Orders order2 = Orders.builder()
+        Order order2 = Order.builder()
                 .member(member1)
-                .status(OrderStatus.PENDING)
+                .status(OrderStatus.ACCEPTED)
                 .totalPrice(33333L)
                 .build();
         OrderItem orderItem2_order2 = OrderItem.builder()
                 .item(item1)
                 .order(order2)
+				.option(itemOption2)
                 .orderCount(1)
                 .price(11111L)
                 .build();
         OrderItem orderItem3_order2 = OrderItem.builder()
                 .item(item2)
                 .order(order2)
+				.option(itemOption3)
                 .orderCount(1)
                 .price(22222L)
                 .build();
@@ -454,7 +504,8 @@ class OrderServiceTest extends IntegrationTest {
 
         memberRepository.save(member1);
         categoryRepository.save(category1);
-        itemRepository.saveAll(List.of(item1, item2));
+        itemRepository.saveAll(List.of(item1, item2, item3));
+		itemOptionRepository.saveAll(List.of(itemOption1, itemOption2, itemOption3));
         itemImageRepository.saveAll(List.of(itemImage1, itemImage2, itemImage3, itemImage4));
         orderRepository.saveAll(List.of(order1, order2));
         orderItemRepository.saveAll(List.of(orderItem1_order1, orderItem2_order2, orderItem3_order2));
@@ -472,9 +523,9 @@ class OrderServiceTest extends IntegrationTest {
         Assertions.assertThat(orderInfo.orderInfos().get(0).orderStatus()).isEqualTo(order1.getStatus());
 
         Assertions.assertThat(orderInfo.orderInfos().get(1).orderId()).isEqualTo(order2.getId());
-        Assertions.assertThat(orderInfo.orderInfos().get(1).thumbnailImage()).isEqualTo(itemImage3.getUrl());
-        Assertions.assertThat(orderInfo.orderInfos().get(1).representativeName()).isEqualTo(item2.getName());
-        Assertions.assertThat(orderInfo.orderInfos().get(1).itemTotalCount()).isEqualTo(2);
+        Assertions.assertThat(orderInfo.orderInfos().get(1).thumbnailImage()).isEqualTo(itemImage1.getUrl());
+        Assertions.assertThat(orderInfo.orderInfos().get(1).representativeName()).isEqualTo(item1.getName());
+        Assertions.assertThat(orderInfo.orderInfos().get(1).itemTotalCount()).isEqualTo(1);
         Assertions.assertThat(orderInfo.orderInfos().get(1).orderStatus()).isEqualTo(order2.getStatus());
     }
 }
