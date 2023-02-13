@@ -9,6 +9,8 @@ build:
     -  if : '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
   image: openjdk:17-alpine
   stage: build
+  before_script:
+    - mv $APPLICATION_YAML "src/main/resources/application.yml"
   script:
     - ./gradlew clean
     - ./gradlew build -x test
@@ -36,6 +38,7 @@ test:
     - name: docker:dind
   script:
     - ./gradlew test
+  coverage: '/    - Instruction Coverage: ([0-9.]+)%/'
   artifacts:
     paths:
       - build/reports/jacoco/test/jacoco*.xml
@@ -56,7 +59,3 @@ coverage:
       coverage_report:
         coverage_format: cobertura
         path: build/cobertura.xml
-
-
-
-
