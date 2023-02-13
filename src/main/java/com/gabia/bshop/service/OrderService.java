@@ -15,8 +15,8 @@ import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.Member;
-import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.Order;
+import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
 import com.gabia.bshop.exception.ConflictException;
@@ -24,8 +24,8 @@ import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.OrderInfoMapper;
 import com.gabia.bshop.mapper.OrderMapper;
 import com.gabia.bshop.repository.ItemImageRepository;
-import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.ItemOptionRepository;
+import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
 
@@ -51,11 +51,11 @@ public class OrderService {
 
 		final List<Order> order = orderRepository.findByMemberIdPagination(memberId, pageable);
 		final List<OrderItem> orderItemList = orderItemRepository.findByOrderIds(
-			orders.stream().map(o -> o.getId()).collect(Collectors.toList()));
+			order.stream().map(o -> o.getId()).collect(Collectors.toList()));
 		final List<ItemImage> itemImagesWithItem = itemImageRepository.findWithItemByItemIds(
 			orderItemList.stream().map(oi -> oi.getItem().getId()).collect(Collectors.toList()));
 
-		return OrderInfoMapper.INSTANCE.orderInfoRelatedEntitiesToOrderInfoPageResponse(orders, orderItemList,
+		return OrderInfoMapper.INSTANCE.orderInfoRelatedEntitiesToOrderInfoPageResponse(order, orderItemList,
 			itemImagesWithItem);
 	}
 
@@ -65,12 +65,12 @@ public class OrderService {
 
 		// TODO: 하나의 item에 여러 option으로 주문할 경우 Query 성능 개선 검토
 		List<OrderItem> orderItemList = orderCreateRequestDto.orderItemDtoList().stream().map(oi -> {
-			ItemOption options = itemOptionRepository.findWithOptionAndItemById(oi.optionId(), oi.itemId())
+			ItemOption itemOption = itemOptionRepository.findWithOptionAndItemById(oi.optionId(), oi.itemId())
 				.orElseThrow(() -> new EntityNotFoundException("존재하지 않는 상품 옵션 ID 입니다."));
-			validateItemStatus(options);
-			validateStockQuantity(options, oi.orderCount());
+			validateItemStatus(itemOption);
+			validateStockQuantity(itemOption, oi.orderCount());
 
-			return OrderItem.createOrderItem(options, order, oi.orderCount());
+			return OrderItem.createOrderItem(itemOption, order, oi.orderCount());
 		}).collect(Collectors.toList());
 
 		order.createOrder(orderItemList);
@@ -96,7 +96,6 @@ public class OrderService {
 		return orderRepository.findById(orderId)
 			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
 	}
-
 
 	public void validateItemStatus(ItemOption itemOption) {
 		if (itemOption.getItem().getItemStatus() != ItemStatus.PUBLIC) {

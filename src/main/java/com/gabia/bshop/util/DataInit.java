@@ -12,17 +12,17 @@ import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.Member;
-import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.Order;
+import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemImageRepository;
+import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.MemberRepository;
-import com.gabia.bshop.repository.OptionsRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
 
@@ -38,7 +38,7 @@ public class DataInit {
 	private final CategoryRepository categoryRepository;
 	private final ItemRepository itemRepository;
 	private final ItemImageRepository itemImageRepository;
-	private final OptionsRepository optionsRepository;
+	private final ItemOptionRepository itemOptionRepository;
 	private final OrderItemRepository orderItemRepository;
 	private final OrderRepository orderRepository;
 
@@ -275,7 +275,7 @@ public class DataInit {
 			.stockQuantity(5)
 			.build();
 
-		ItemOption options3 = ItemOption.builder()
+		ItemOption itemOption3 = ItemOption.builder()
 			.item(item2)
 			.description("description")
 			.optionLevel(1)
@@ -283,7 +283,7 @@ public class DataInit {
 			.stockQuantity(5)
 			.build();
 
-		ItemOption options4 = ItemOption.builder()
+		ItemOption itemOption4 = ItemOption.builder()
 			.item(item6)
 			.description("description")
 			.optionLevel(1)
@@ -291,7 +291,7 @@ public class DataInit {
 			.stockQuantity(5)
 			.build();
 
-		ItemOption options5 = ItemOption.builder()
+		ItemOption itemOption5 = ItemOption.builder()
 			.item(item6)
 			.description("description")
 			.optionLevel(1)
@@ -299,7 +299,7 @@ public class DataInit {
 			.stockQuantity(10)
 			.build();
 
-		optionsRepository.saveAll(List.of(options1, options2, options3, options4, options5));
+		itemOptionRepository.saveAll(List.of(itemOption1, itemOption2, itemOption3, itemOption4, itemOption5));
 
 		ItemImage itemImage1 = ItemImage.builder()
 			.item(item1)

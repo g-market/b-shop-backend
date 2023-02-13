@@ -23,16 +23,16 @@ import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.Member;
-import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.Order;
+import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
 import com.gabia.bshop.mapper.OrderMapper;
+import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.MemberRepository;
-import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.OrderRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -182,7 +182,7 @@ class OrderServiceTest {
 				returnDto.totalPrice()),
 			() -> assertEquals(orderCreateRequestDto.memberId(), returnDto.memberId()),
 			() -> assertEquals(orderCreateRequestDto.status(), returnDto.status()),
-			() -> assertEquals(9, options1.getStockQuantity(), "주문을 하면 재고가 줄어들어야 한다.")
+			() -> assertEquals(9, itemOption1.getStockQuantity(), "주문을 하면 재고가 줄어들어야 한다.")
 		);
 	}
 
