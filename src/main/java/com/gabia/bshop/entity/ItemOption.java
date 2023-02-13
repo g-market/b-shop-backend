@@ -1,6 +1,10 @@
 package com.gabia.bshop.entity;
 
+import static com.gabia.bshop.exception.ErrorCode.*;
+
 import java.util.Objects;
+
+import com.gabia.bshop.exception.ConflictException;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,7 +28,7 @@ import lombok.ToString;
 	name = "options",
 	indexes = {})
 @Entity
-public class Options extends BaseEntity {
+public class ItemOption extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -38,13 +42,16 @@ public class Options extends BaseEntity {
 	private String description;
 
 	@Column(nullable = false)
+	private int optionLevel;
+
+	@Column(nullable = false)
 	private int optionPrice;
 
 	@Column(nullable = false)
 	private int stockQuantity;
 
 	@Builder
-	private Options(
+	private ItemOption(
 		final Long id,
 		final Item item,
 		final String description,
@@ -54,20 +61,33 @@ public class Options extends BaseEntity {
 		this.id = id;
 		this.item = item;
 		this.description = description;
+		this.optionLevel = optionLevel;
 		this.optionPrice = optionPrice;
 		this.stockQuantity = stockQuantity;
 	}
 
+	public void decreaseStockQuantity(final int orderCount) {
+		int restStock = this.stockQuantity - orderCount;
+		if (restStock < 0) {
+			throw new ConflictException(ITEM_OPTION_OUT_OF_STOCK_EXCEPTION, stockQuantity);
+		}
+		this.stockQuantity = restStock;
+	}
+
+	public void increaseStockQuantity(final int orderCount) {
+		this.stockQuantity += orderCount;
+	}
+
 	@Override
-	public boolean equals(final Object o) {
-		if (this == o) {
+	public boolean equals(final Object that) {
+		if (this == that) {
 			return true;
 		}
-		if (o == null || getClass() != o.getClass()) {
+		if (that == null || getClass() != that.getClass()) {
 			return false;
 		}
-		final Options options = (Options)o;
-		return getId().equals(options.getId());
+		final ItemOption itemOption = (ItemOption)that;
+		return getId().equals(itemOption.getId());
 	}
 
 	@Override

@@ -1,12 +1,15 @@
 package com.gabia.bshop.entity;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 import org.hibernate.annotations.SQLDelete;
 
+import com.gabia.bshop.dto.ItemDto;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -17,6 +20,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -61,6 +65,9 @@ public class Item extends BaseEntity {
 	@Column(nullable = false)
 	private boolean deleted;
 
+	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+	private List<ItemOption> itemOptionList;
+
 	@Builder
 	private Item(
 		final Long id,
@@ -70,7 +77,8 @@ public class Item extends BaseEntity {
 		final int basePrice,
 		final ItemStatus itemStatus,
 		final LocalDateTime openAt,
-		final boolean deleted) {
+		final boolean deleted,
+		final List<ItemOption> itemOptionList) {
 		this.id = id;
 		this.name = name;
 		this.category = category;
@@ -79,17 +87,63 @@ public class Item extends BaseEntity {
 		this.itemStatus = itemStatus;
 		this.openAt = openAt;
 		this.deleted = deleted;
+		this.itemOptionList = itemOptionList;
+	}
+
+	public void update(final ItemDto itemDto, final Category category) {
+		updateName(itemDto.name());
+		updateCategory(category);
+		updatePrice(itemDto.basePrice());
+		updateDescription(itemDto.description());
+		updateItemStatus(itemDto.itemStatus());
+		updateOpenAt(itemDto.openAt());
+	}
+
+	private void updateName(final String name) {
+		if (name != null) {
+			this.name = name;
+		}
+	}
+
+	private void updateCategory(Category category) {
+		if (category != null) {
+			this.category = category;
+		}
+	}
+
+	private void updatePrice(int basePrice) {
+		if ((Integer)basePrice != null) {
+			this.basePrice = basePrice;
+		}
+	}
+
+	private void updateDescription(String description) {
+		if (description != null) {
+			this.description = description;
+		}
+	}
+
+	private void updateItemStatus(ItemStatus itemStatus) {
+		if (itemStatus != null) {
+			this.itemStatus = itemStatus;
+		}
+	}
+
+	private void updateOpenAt(LocalDateTime openAt) {
+		if (openAt != null) {
+			this.openAt = openAt;
+		}
 	}
 
 	@Override
-	public boolean equals(final Object o) {
-		if (this == o) {
+	public boolean equals(Object that) {
+		if (this == that) {
 			return true;
 		}
-		if (o == null || getClass() != o.getClass()) {
+		if (that == null || getClass() != that.getClass()) {
 			return false;
 		}
-		final Item item = (Item)o;
+		Item item = (Item)that;
 		return getId().equals(item.getId());
 	}
 

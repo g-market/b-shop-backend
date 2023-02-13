@@ -10,7 +10,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -37,11 +36,11 @@ public class OrderItem extends BaseEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "order_id", nullable = false)
-	private Orders order;
+	private Order order;
 
-	@OneToOne(fetch = FetchType.LAZY)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "option_id", nullable = false)
-	private Options option;
+	private ItemOption option;
 
 	@Column(nullable = false)
 	private int orderCount;
@@ -53,27 +52,47 @@ public class OrderItem extends BaseEntity {
 	private OrderItem(
 		final Long id,
 		final Item item,
-		final Orders order,
+		final Order order,
+		final ItemOption option,
 		final int orderCount,
-		final Options option,
 		final long price) {
 		this.id = id;
 		this.item = item;
 		this.order = order;
-		this.orderCount = orderCount;
 		this.option = option;
+		this.orderCount = orderCount;
 		this.price = price;
 	}
 
+	public static OrderItem createOrderItem(final Item item, final ItemOption itemOption,
+		final Order order, final int count) {
+		OrderItem orderItem = OrderItem.builder()
+			.item(item)
+			.order(order)
+			.option(itemOption)
+			.orderCount(count)
+			.price((item.getBasePrice() + itemOption.getOptionPrice()))
+			.build();
+
+		itemOption.decreaseStockQuantity(count);
+		order.calculateTotalPrice(orderItem, count);
+
+		return orderItem;
+	}
+
+	public void cancel() {
+		option.increaseStockQuantity(this.orderCount);
+	}
+
 	@Override
-	public boolean equals(final Object o) {
-		if (this == o) {
+	public boolean equals(final Object that) {
+		if (this == that) {
 			return true;
 		}
-		if (o == null || getClass() != o.getClass()) {
+		if (that == null || getClass() != that.getClass()) {
 			return false;
 		}
-		final OrderItem orderItem = (OrderItem)o;
+		final OrderItem orderItem = (OrderItem)that;
 		return getId().equals(orderItem.getId());
 	}
 

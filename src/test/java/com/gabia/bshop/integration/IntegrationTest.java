@@ -1,24 +1,33 @@
 package com.gabia.bshop.integration;
 
+import org.junit.ClassRule;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.DynamicPropertyRegistry;
+import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
 @SpringBootTest
 @Testcontainers
 public abstract class IntegrationTest {
 
-	static final GenericContainer REDIS_CONTAINER;
 	private static final String REDIS_VERSION = "redis:6.2.7";
 	private static final int REDIS_PORT = 6379;
 
-	static {
-		REDIS_CONTAINER = new GenericContainer<>(DockerImageName.parse(REDIS_VERSION))
-			.withExposedPorts(REDIS_PORT);
-		REDIS_CONTAINER.start();
+	@ClassRule
+	static GenericContainer<?> REDIS_CONTAINER;
 
-		System.setProperty("spring.data.redis.host", REDIS_CONTAINER.getHost());
-		System.setProperty("spring.data.redis.port", REDIS_CONTAINER.getMappedPort(6379).toString());
+	static {
+
+		REDIS_CONTAINER = new GenericContainer<>(REDIS_VERSION)
+			.withExposedPorts(REDIS_PORT);
+
+		REDIS_CONTAINER.start();
+	}
+
+	@DynamicPropertySource
+	private static void properties(DynamicPropertyRegistry registry) {
+		registry.add("spring.data.redis.host", REDIS_CONTAINER::getHost);
+		registry.add("spring.data.redis.port", () -> "" + REDIS_CONTAINER.getMappedPort(REDIS_PORT));
 	}
 }

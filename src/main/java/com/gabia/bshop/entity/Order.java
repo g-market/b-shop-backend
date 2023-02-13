@@ -1,9 +1,14 @@
 package com.gabia.bshop.entity;
 
+import static com.gabia.bshop.exception.ErrorCode.*;
+
+import java.util.List;
 import java.util.Objects;
 
 import com.gabia.bshop.entity.enumtype.OrderStatus;
+import com.gabia.bshop.exception.ConflictException;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,6 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -28,7 +34,7 @@ import lombok.ToString;
 	name = "orders",
 	indexes = {})
 @Entity
-public class Orders extends BaseEntity {
+public class Order extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,25 +51,52 @@ public class Orders extends BaseEntity {
 	@Column(nullable = false)
 	private long totalPrice;
 
+	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+	private List<OrderItem> orderItems;
+
 	@Builder
-	private Orders(
-		final Long id, final Member member, final OrderStatus status, final long totalPrice) {
+	private Order(
+		final Long id, final Member member, final OrderStatus status, final long totalPrice,
+		final List<OrderItem> orderItems) {
 		this.id = id;
 		this.member = member;
 		this.status = status;
 		this.totalPrice = totalPrice;
+		this.orderItems = orderItems;
+	}
+
+	public void createOrder(List<OrderItem> orderItemEntityList) {
+		this.orderItems = orderItemEntityList;
+	}
+
+	public void calculateTotalPrice(final OrderItem orderItem, final int count) {
+		this.totalPrice += orderItem.getPrice() * count;
+	}
+
+	public void cancel() {
+		checkOrderStatus();
+		this.orderItems.forEach(OrderItem::cancel);
+		this.status = OrderStatus.CANCELLED;
+	}
+
+	public void checkOrderStatus() {
+		if (this.status == OrderStatus.COMPLETED) {
+			throw new ConflictException(ORDER_STATUS_ALREADY_COMPLETED_EXCEPTION);
+		} else if (this.status == OrderStatus.CANCELLED) {
+			throw new ConflictException(ORDER_STATUS_ALREADY_CANCELLED_EXCEPTION);
+		}
 	}
 
 	@Override
-	public boolean equals(final Object o) {
-		if (this == o) {
+	public boolean equals(final Object that) {
+		if (this == that) {
 			return true;
 		}
-		if (o == null || getClass() != o.getClass()) {
+		if (that == null || getClass() != that.getClass()) {
 			return false;
 		}
-		final Orders orders = (Orders)o;
-		return getId().equals(orders.getId());
+		final Order order = (Order)that;
+		return getId().equals(order.getId());
 	}
 
 	@Override

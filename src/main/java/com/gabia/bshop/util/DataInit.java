@@ -10,19 +10,19 @@ import org.springframework.stereotype.Component;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
+import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.Member;
-import com.gabia.bshop.entity.Options;
+import com.gabia.bshop.entity.Order;
 import com.gabia.bshop.entity.OrderItem;
-import com.gabia.bshop.entity.Orders;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemImageRepository;
+import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.MemberRepository;
-import com.gabia.bshop.repository.OptionsRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
 
@@ -38,88 +38,88 @@ public class DataInit {
 	private final CategoryRepository categoryRepository;
 	private final ItemRepository itemRepository;
 	private final ItemImageRepository itemImageRepository;
-	private final OptionsRepository optionsRepository;
+	private final ItemOptionRepository itemOptionRepository;
 	private final OrderItemRepository orderItemRepository;
 	private final OrderRepository orderRepository;
 
 	@PostConstruct
 	public void init() {
 		Member member1 = Member.builder()
-			.name("1_test_name")
-			.email("1_ckdals1234@naver.com")
-			.hiworksId("1_asdfasdf")
+			.name("admin01")
+			.email("admin01@gabia.com")
+			.hiworksId("admin01")
 			.phoneNumber("01000000001")
 			.role(MemberRole.ADMIN)
 			.grade(MemberGrade.DIAMOND)
 			.build();
 		Member member2 = Member.builder()
-			.name("2_test_name")
-			.email("2_ckdals1234@naver.com")
-			.hiworksId("2_asdfasdf")
+			.name("admin02")
+			.email("admin02@gabia.com")
+			.hiworksId("admin02")
 			.phoneNumber("01000000002")
 			.role(MemberRole.ADMIN)
 			.grade(MemberGrade.DIAMOND)
 			.build();
 		Member member3 = Member.builder()
-			.name("3_test_name")
-			.email("3_ckdals1234@naver.com")
-			.hiworksId("3_asdfasdf")
+			.name("admin03")
+			.email("admin03@gabia.com")
+			.hiworksId("admin03")
 			.phoneNumber("01000000003")
 			.role(MemberRole.ADMIN)
 			.grade(MemberGrade.DIAMOND)
 			.build();
 		Member member4 = Member.builder()
-			.name("4_test_name")
-			.email("4_ckdals1234@naver.com")
-			.hiworksId("4_asdfasdf")
+			.name("admin04")
+			.email("admin04@gabia.com")
+			.hiworksId("admin04")
 			.phoneNumber("01000000004")
 			.role(MemberRole.ADMIN)
 			.grade(MemberGrade.DIAMOND)
 			.build();
 		Member member5 = Member.builder()
-			.name("5_test_name")
-			.email("5_ckdals1234@naver.com")
-			.hiworksId("5_asdfasdf")
+			.name("admin05")
+			.email("admin05@gabia.com")
+			.hiworksId("admin05")
 			.phoneNumber("01000000005")
 			.role(MemberRole.ADMIN)
 			.grade(MemberGrade.DIAMOND)
 			.build();
 		Member member6 = Member.builder()
-			.name("6_test_name")
-			.email("6_ckdals1234@naver.com")
-			.hiworksId("6_asdfasdf")
+			.name("normal06")
+			.email("normal06@gabia.com")
+			.hiworksId("normal06")
 			.phoneNumber("01000000006")
 			.role(MemberRole.NORMAL)
 			.grade(MemberGrade.BRONZE)
 			.build();
 		Member member7 = Member.builder()
-			.name("7_test_name")
-			.email("7_ckdals1234@naver.com")
-			.hiworksId("7_asdfasdf")
+			.name("normal07")
+			.email("normal07@gabia.com")
+			.hiworksId("normal07")
 			.phoneNumber("01000000007")
 			.role(MemberRole.NORMAL)
 			.grade(MemberGrade.SILVER)
 			.build();
 		Member member8 = Member.builder()
-			.name("8_test_name")
-			.email("8_ckdals1234@naver.com")
-			.hiworksId("8_asdfasdf")
+			.name("normal08")
+			.email("normal08@gabia.com")
+			.hiworksId("normal08")
 			.phoneNumber("01000000008")
 			.role(MemberRole.NORMAL)
 			.grade(MemberGrade.GOLD)
 			.build();
 		Member member9 = Member.builder()
-			.name("9_test_name")
-			.email("9_ckdals1234@naver.com")
-			.hiworksId("9_asdfasdf")
+			.name("normal09")
+			.email("normal09@gabia.com")
+			.hiworksId("normal09")
 			.phoneNumber("01000000009")
 			.role(MemberRole.NORMAL)
 			.grade(MemberGrade.PLATINUM)
 			.build();
 		Member member10 = Member.builder()
-			.name("10_test_name")
-			.email("10_ckdals1234@naver.com")
-			.hiworksId("10_asdfasdf")
+			.name("normal10")
+			.email("normal10@gabia.com")
+			.hiworksId("normal10")
 			.phoneNumber("01000000010")
 			.role(MemberRole.NORMAL)
 			.grade(MemberGrade.DIAMOND)
@@ -259,6 +259,24 @@ public class DataInit {
 		itemRepository.saveAll(
 			List.of(item1, item2, item3, item4, item5, item6, item7, item8, item9, item10));
 
+		ItemOption itemOption1 = ItemOption.builder()
+			.item(item1)
+			.description("description")
+			.optionLevel(1)
+			.optionPrice(0)
+			.stockQuantity(10)
+			.build();
+
+		ItemOption itemOption2 = ItemOption.builder()
+			.item(item2)
+			.description("description")
+			.optionLevel(1)
+			.optionPrice(1000)
+			.stockQuantity(5)
+			.build();
+
+		itemOptionRepository.saveAll(List.of(itemOption1, itemOption2));
+
 		ItemImage itemImage1 = ItemImage.builder()
 			.item(item1)
 			.url(UUID.randomUUID().toString())
@@ -341,27 +359,29 @@ public class DataInit {
 			.build();
 
 		itemImageRepository.saveAll(
-			List.of(itemImage1, itemImage2, itemImage3, itemImage4, itemImage5, itemImage6, itemImage7, itemImage8,
-				itemImage9, itemImage10, itemImage11, itemImage12, itemImage13, itemImage14, itemImage15, itemImage16,
+			List.of(itemImage1, itemImage2, itemImage3, itemImage4, itemImage5, itemImage6,
+				itemImage7, itemImage8,
+				itemImage9, itemImage10, itemImage11, itemImage12, itemImage13, itemImage14,
+				itemImage15, itemImage16,
 				itemImage17, itemImage18, itemImage19, itemImage20));
 
-		Orders order1 = Orders.builder()
+		Order order1 = Order.builder()
 			.member(member6)
-			.status(OrderStatus.PENDING)
+			.status(OrderStatus.ACCEPTED)
 			.totalPrice(11111L)
 			.build();
-		Orders order2 = Orders.builder()
+		Order order2 = Order.builder()
 			.member(member6)
-			.status(OrderStatus.PENDING)
+			.status(OrderStatus.ACCEPTED)
 			.totalPrice(33333L)
 			.build();
-		Orders order3 = Orders.builder()
+		Order order3 = Order.builder()
 			.member(member7)
 			.status(OrderStatus.ACCEPTED)
 			.totalPrice(22222L)
 			.build();
 
-		Orders order4 = Orders.builder()
+		Order order4 = Order.builder()
 			.member(member7)
 			.status(OrderStatus.COMPLETED)
 			.totalPrice(44444L)
@@ -369,61 +389,44 @@ public class DataInit {
 
 		orderRepository.saveAll(List.of(order1, order2, order3, order4));
 
-		Options option1 = Options.builder()
-			.optionPrice(12345)
-			.stockQuantity(1000)
-			.description(UUID.randomUUID().toString())
-			.item(item1)
-			.build();
-		Options option2 = Options.builder()
-			.optionPrice(2222)
-			.stockQuantity(1040)
-			.description(UUID.randomUUID().toString())
-			.item(item2)
-			.build();
-		optionsRepository.saveAll(List.of(option1, option2));
-
-		OrderItem orderItem1OfOrder1 = OrderItem.builder()
+		OrderItem orderItem1 = OrderItem.builder()
 			.item(item1)
 			.order(order1)
+			.option(itemOption1)
 			.orderCount(1)
 			.price(11111L)
-			.option(option1)
 			.build();
-		OrderItem orderItem2OfOrder2 = OrderItem.builder()
+		OrderItem orderItem2 = OrderItem.builder()
 			.item(item1)
 			.order(order2)
+			.option(itemOption1)
 			.orderCount(1)
 			.price(11111L)
-			.option(option1)
 			.build();
-		OrderItem orderItem3OfOrder2 = OrderItem.builder()
+		OrderItem orderItem3 = OrderItem.builder()
 			.item(item2)
 			.order(order2)
+			.option(itemOption1)
 			.orderCount(1)
 			.price(22222L)
-			.option(option2)
 			.build();
-		OrderItem orderItem4OfOrder3 = OrderItem.builder()
+		OrderItem orderItem4 = OrderItem.builder()
 			.item(item2)
 			.order(order3)
+			.option(itemOption2)
 			.orderCount(1)
 			.price(22222L)
-			.option(option2)
 			.build();
-		OrderItem orderItem5OfOrder4 = OrderItem.builder()
+		OrderItem orderItem5 = OrderItem.builder()
 			.item(item2)
 			.order(order4)
+			.option(itemOption2)
 			.orderCount(2)
 			.price(22222L)
-			.option(option2)
 			.build();
 
 		orderItemRepository.saveAll(
-			List.of(orderItem1OfOrder1,
-				orderItem2OfOrder2,
-				orderItem3OfOrder2,
-				orderItem4OfOrder3,
-				orderItem5OfOrder4));
+			List.of(orderItem1, orderItem2, orderItem3, orderItem4,
+				orderItem5));
 	}
 }
