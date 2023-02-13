@@ -34,7 +34,7 @@ import lombok.ToString;
 	name = "orders",
 	indexes = {})
 @Entity
-public class Orders extends BaseEntity {
+public class Order extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,7 +55,7 @@ public class Orders extends BaseEntity {
 	private List<OrderItem> orderItems;
 
 	@Builder
-	private Orders(
+	private Order(
 		final Long id, final Member member, final OrderStatus status, final long totalPrice,
 		final List<OrderItem> orderItems) {
 		this.id = id;
@@ -95,8 +95,8 @@ public class Orders extends BaseEntity {
 		if (that == null || getClass() != that.getClass()) {
 			return false;
 		}
-		final Orders orders = (Orders)that;
-		return getId().equals(orders.getId());
+		final Order order = (Order)that;
+		return getId().equals(order.getId());
 	}
 
 	@Override

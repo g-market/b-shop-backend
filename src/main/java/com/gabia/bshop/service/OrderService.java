@@ -14,17 +14,17 @@ import com.gabia.bshop.dto.response.OrderCreateResponseDto;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
+import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.Member;
-import com.gabia.bshop.entity.Options;
+import com.gabia.bshop.entity.Order;
 import com.gabia.bshop.entity.OrderItem;
-import com.gabia.bshop.entity.Orders;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.OrderInfoMapper;
 import com.gabia.bshop.mapper.OrderMapper;
 import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.MemberRepository;
-import com.gabia.bshop.repository.OptionsRepository;
+import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
 
@@ -41,13 +41,13 @@ public class OrderService {
 	private final ItemRepository itemRepository;
 	private final ItemImageRepository itemImageRepository;
 	private final MemberRepository memberRepository;
-	private final OptionsRepository optionsRepository;
+	private final ItemOptionRepository itemOptionRepository;
 
 	@Transactional(readOnly = true)
 	public OrderInfoPageResponse findOrdersPagination(final Long memberId, final Pageable pageable) {
 		findMemberById(memberId);
 
-		final List<Orders> orders = orderRepository.findByMemberIdPagination(memberId, pageable);
+		final List<Order> orders = orderRepository.findByMemberIdPagination(memberId, pageable);
 		final List<OrderItem> orderItems = orderItemRepository.findByOrderIds(
 			orders.stream().map(o -> o.getId()).collect(Collectors.toList()));
 		final List<ItemImage> itemImagesWithItem = itemImageRepository.findWithItemByItemIds(
@@ -63,31 +63,31 @@ public class OrderService {
 	 */
 	public OrderCreateResponseDto createOrder(final OrderCreateRequestDto orderCreateRequestDto) {
 		findMemberById(orderCreateRequestDto.memberId());
-		Orders orders = OrderMapper.INSTANCE.ordersCreateDtoToEntity(orderCreateRequestDto);
+		Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(orderCreateRequestDto);
 
 		List<OrderItem> orderItemEntityList = orderCreateRequestDto.orderItemDtoList()
 			.stream()
 			.map(oi -> {
 				Item item = itemRepository.findById(oi.id()).get();
-				Options options = optionsRepository.findByItem_Id(oi.id());
-				return OrderItem.createOrderItem(item, options, orders, oi.orderCount());
+				ItemOption itemOption = itemOptionRepository.findByItem_Id(oi.id());
+				return OrderItem.createOrderItem(item, itemOption, order, oi.orderCount());
 			})
 			.collect(Collectors.toList());
 
-		orders.createOrder(orderItemEntityList);
+		order.createOrder(orderItemEntityList);
 
-		orderRepository.save(orders);
+		orderRepository.save(order);
 
-		return OrderMapper.INSTANCE.ordersCreateResponseDto(orders);
+		return OrderMapper.INSTANCE.ordersCreateResponseDto(order);
 	}
 
 	/**
 	 * 주문 취소(제거)
 	 */
 	public void cancelOrder(final Long id) {
-		Orders orders = findOrderById(id);
+		Order order = findOrderById(id);
 
-		orders.cancel();
+		order.cancel();
 	}
 
 	private Member findMemberById(final Long memberId) {
@@ -95,7 +95,7 @@ public class OrderService {
 			.orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND_EXCEPTION, memberId));
 	}
 
-	private Orders findOrderById(final Long orderId) {
+	private Order findOrderById(final Long orderId) {
 		return orderRepository.findById(orderId)
 			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
 	}

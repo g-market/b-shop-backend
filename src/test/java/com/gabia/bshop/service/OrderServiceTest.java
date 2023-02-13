@@ -21,10 +21,10 @@ import com.gabia.bshop.dto.request.OrderCreateRequestDto;
 import com.gabia.bshop.dto.response.OrderCreateResponseDto;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
+import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.Member;
-import com.gabia.bshop.entity.Options;
 import com.gabia.bshop.entity.OrderItem;
-import com.gabia.bshop.entity.Orders;
+import com.gabia.bshop.entity.Order;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
@@ -32,7 +32,7 @@ import com.gabia.bshop.entity.enumtype.OrderStatus;
 import com.gabia.bshop.mapper.OrderMapper;
 import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.MemberRepository;
-import com.gabia.bshop.repository.OptionsRepository;
+import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.OrderRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -57,7 +57,7 @@ class OrderServiceTest {
 	private ItemRepository itemRepository;
 
 	@Mock
-	private OptionsRepository optionsRepository;
+	private ItemOptionRepository itemOptionRepository;
 
 	@InjectMocks
 	private OrderService orderService;
@@ -115,7 +115,7 @@ class OrderServiceTest {
 				.openAt(LocalDateTime.now())
 				.build();
 
-		Options options1 = Options.builder()
+		ItemOption itemOption1 = ItemOption.builder()
 			.id(1L)
 			.item(item1)
 			.description("description")
@@ -124,7 +124,7 @@ class OrderServiceTest {
 			.stockQuantity(10)
 			.build();
 
-		Options options2 = Options.builder()
+		ItemOption itemOption2 = ItemOption.builder()
 			.id(2L)
 			.item(item2)
 			.description("description")
@@ -133,7 +133,7 @@ class OrderServiceTest {
 			.stockQuantity(5)
 			.build();
 
-		Orders orders = Orders.builder()
+		Order order = Order.builder()
 			.id(1L)
 			.member(member)
 			.status(OrderStatus.ACCEPTED)
@@ -142,19 +142,19 @@ class OrderServiceTest {
 		OrderItem orderItem1 = OrderItem.builder()
 			.id(1L)
 			.item(item1)
-			.order(orders)
-			.option(options1)
+			.order(order)
+			.option(itemOption1)
 			.orderCount(1)
-			.price(item1.getBasePrice() + options1.getOptionPrice())
+			.price(item1.getBasePrice() + itemOption1.getOptionPrice())
 			.build();
 
 		OrderItem orderItem2 = OrderItem.builder()
 			.id(2L)
 			.item(item2)
-			.order(orders)
-			.option(options2)
+			.order(order)
+			.option(itemOption2)
 			.orderCount(1)
-			.price(item2.getBasePrice() + options2.getOptionPrice())
+			.price(item2.getBasePrice() + itemOption2.getOptionPrice())
 			.build();
 
 		List<OrderItem> orderItemList = List.of(orderItem1, orderItem2);
@@ -171,8 +171,8 @@ class OrderServiceTest {
 		when(memberRepository.findById(1L)).thenReturn(Optional.ofNullable(member));
 		when(itemRepository.findById(1L)).thenReturn(Optional.ofNullable(item1));
 		when(itemRepository.findById(2L)).thenReturn(Optional.ofNullable(item2));
-		when(optionsRepository.findByItem_Id(1L)).thenReturn(options1);
-		when(optionsRepository.findByItem_Id(2L)).thenReturn(options2);
+		when(itemOptionRepository.findByItem_Id(1L)).thenReturn(itemOption1);
+		when(itemOptionRepository.findByItem_Id(2L)).thenReturn(itemOption2);
 
 		//when
 		OrderCreateResponseDto returnDto = orderService.createOrder(orderCreateRequestDto);
@@ -191,7 +191,7 @@ class OrderServiceTest {
 	@Test
 	void cancelOrder() {
 		//given
-		Options options1 = Options.builder()
+		ItemOption itemOption1 = ItemOption.builder()
 			.id(1L)
 			.description("description")
 			.optionLevel(1)
@@ -199,7 +199,7 @@ class OrderServiceTest {
 			.stockQuantity(10)
 			.build();
 
-		List<Options> options = List.of(options1);
+		List<ItemOption> options = List.of(itemOption1);
 
 		Item item1 =
 			Item.builder()
@@ -210,34 +210,34 @@ class OrderServiceTest {
 				.description("description")
 				.deleted(false)
 				.openAt(LocalDateTime.now())
-				.optionsList(options)
+				.itemOptionList(options)
 				.build();
 
 		OrderItem orderItem1 = OrderItem.builder()
 			.id(1L)
 			.item(item1)
-			.option(options1)
+			.option(itemOption1)
 			.orderCount(5)
 			.build();
 
 		List<OrderItem> orderItemList = List.of(orderItem1);
 
-		Orders orders = Orders.builder()
+		Order order = Order.builder()
 			.id(1L)
 			.status(OrderStatus.ACCEPTED)
 			.totalPrice(20000)
 			.orderItems(orderItemList)
 			.build();
 
-		when(orderRepository.findById(1L)).thenReturn(Optional.ofNullable(orders));
+		when(orderRepository.findById(1L)).thenReturn(Optional.ofNullable(order));
 
 		//when
 		orderService.cancelOrder(1L);
 
 		//then
 		assertAll(
-			() -> assertEquals(15, options1.getStockQuantity(), "주문을 취소하면 재고가 다시 추가되어야 한다."),
-			() -> assertEquals(OrderStatus.CANCELLED, orders.getStatus(),
+			() -> assertEquals(15, itemOption1.getStockQuantity(), "주문을 취소하면 재고가 다시 추가되어야 한다."),
+			() -> assertEquals(OrderStatus.CANCELLED, order.getStatus(),
 				"주문을 취소하면 주문상태가 CANCELLED로 변경되어야 한다.")
 		);
 	}
