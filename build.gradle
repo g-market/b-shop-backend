@@ -137,6 +137,6 @@ tasks.withType(Checkstyle) {
 }
 
 checkstyle {
-    configFile = file("./checkstyle/naver-checkstyle-rules.xml")
-    configProperties = ["suppressionFile": "./checkstyle/naver-checkstyle-suppressions.xml"]
+    configFile = file("${rootDir}/checkstyle/naver-checkstyle-rules.xml")
+    configProperties = ["suppressionFile": "${rootDir}/checkstyle/naver-checkstyle-suppressions.xml"]
 }
