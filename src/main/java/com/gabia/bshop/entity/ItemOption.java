@@ -28,7 +28,7 @@ import lombok.ToString;
 	name = "options",
 	indexes = {})
 @Entity
-public class Options extends BaseEntity {
+public class ItemOption extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -51,7 +51,7 @@ public class Options extends BaseEntity {
 	private int stockQuantity;
 
 	@Builder
-	private Options(
+	private ItemOption(
 		final Long id,
 		final Item item,
 		final String description,
@@ -86,8 +86,8 @@ public class Options extends BaseEntity {
 		if (that == null || getClass() != that.getClass()) {
 			return false;
 		}
-		final Options options = (Options)that;
-		return getId().equals(options.getId());
+		final ItemOption itemOption = (ItemOption)that;
+		return getId().equals(itemOption.getId());
 	}
 
 	@Override
