@@ -24,6 +24,7 @@ import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
+import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.integration.IntegrationTest;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemImageRepository;
@@ -33,8 +34,6 @@ import com.gabia.bshop.repository.OptionsRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
 import com.gabia.bshop.service.OrderService;
-
-import jakarta.persistence.EntityNotFoundException;
 
 @Transactional
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -203,7 +202,7 @@ class OrderServiceTest extends IntegrationTest {
 		//when & then
 		Assertions.assertThatThrownBy(
 				() -> orderService.findOrdersPagination(invalidMemberId, pageable))
-			.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(NotFoundException.class);
 	}
 
 	@DisplayName("주문_후_삭제된_상품도_주문목록에서_조회되어야한다")
