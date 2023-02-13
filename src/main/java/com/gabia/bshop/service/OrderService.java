@@ -1,5 +1,7 @@
 package com.gabia.bshop.service;
 
+import static com.gabia.bshop.exception.ErrorCode.*;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -15,6 +17,7 @@ import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.Options;
 import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.Orders;
+import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.OrderInfoMapper;
 import com.gabia.bshop.mapper.OrderMapper;
 import com.gabia.bshop.repository.ItemImageRepository;
@@ -87,7 +90,7 @@ public class OrderService {
 	 */
 	public void cancelOrder(final Long id) {
 		Orders orders = orderRepository.findById(id)
-			.orElseThrow(() -> new EntityNotFoundException("존재하지 않는 주문 ID 입니다."));
+			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, id));
 
 		orders.cancel();
 	}

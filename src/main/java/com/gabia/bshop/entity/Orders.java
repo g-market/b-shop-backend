@@ -83,7 +83,7 @@ public class Orders extends BaseEntity {
 		if (this.status == OrderStatus.COMPLETED) {
 			throw new ConflictException(ORDER_STATUS_ALREADY_COMPLETED_EXCEPTION);
 		} else if (this.status == OrderStatus.CANCELLED) {
-			throw new ConflictException(ORDER_STATUS_ALREADY_CANCELED_EXCEPTION);
+			throw new ConflictException(ORDER_STATUS_ALREADY_CANCELLED_EXCEPTION);
 		}
 	}
 

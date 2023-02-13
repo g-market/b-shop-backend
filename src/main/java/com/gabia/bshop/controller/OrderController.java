@@ -40,7 +40,7 @@ public class OrderController {
 
 	private void validatePageElementSize(final Pageable pageable) {
 		if (pageable.getPageSize() > MAX_PAGE_ELEMENT_REQUEST_SIZE) {
-			throw new ConflictException(MAX_PAGE_ELEMENT_REQUEST_SIZE_EXCEPTION);
+			throw new ConflictException(MAX_PAGE_ELEMENT_REQUEST_SIZE_EXCEPTION, MAX_PAGE_ELEMENT_REQUEST_SIZE);
 		}
 	}
 

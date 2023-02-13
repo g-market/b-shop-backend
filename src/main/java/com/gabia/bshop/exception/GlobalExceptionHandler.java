@@ -38,7 +38,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(ApplicationException.class)
 	public ResponseEntity<ExceptionResponse> handleApplicationException(final ApplicationException e) {
-		log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getMessage());
+		log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getExceptionResponse().message());
 		return ResponseEntity.status(e.getHttpStatus())
 			.body(e.getExceptionResponse());
 	}
@@ -46,8 +46,8 @@ public class GlobalExceptionHandler {
 	@ExceptionHandler(UnAuthorizedException.class)
 	public ResponseEntity<ExceptionResponse> handleRefreshTokenException(final UnAuthorizedException e,
 		final HttpServletRequest request) {
-		log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getMessage());
-		final ExceptionResponse responseBody = new ExceptionResponse(e.getMessage());
+		log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getExceptionResponse().message());
+		final ExceptionResponse responseBody = new ExceptionResponse(e.getExceptionResponse().message());
 		final Cookie cookie = WebUtils.getCookie(request, REFRESH_TOKEN);
 		if (cookie != null) {
 			final ResponseCookie responseCookie = refreshTokenCookieProvider.createLogoutCookie();
@@ -70,8 +70,8 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<ExceptionResponse> handleInvalidValueException(final DataIntegrityViolationException e) {
 		log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getMessage());
 
-		return ResponseEntity.badRequest().
-			body(new ExceptionResponse(REQUEST_DUPLICATED_MESSAGE));
+		return ResponseEntity.badRequest()
+			.body(new ExceptionResponse(REQUEST_DUPLICATED_MESSAGE));
 	}
 
 	@ExceptionHandler(HttpMessageNotReadableException.class)

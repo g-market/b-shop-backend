@@ -14,6 +14,7 @@ import com.gabia.bshop.dto.response.LoginResult;
 import com.gabia.bshop.entity.Member;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.exception.ForbiddenException;
+import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.exception.UnAuthorizedException;
 import com.gabia.bshop.mapper.HiworksProfileMapper;
 import com.gabia.bshop.repository.MemberRepository;
@@ -55,8 +56,7 @@ public class AuthService {
 		final HiworksProfileResponse hiworksProfileResponse = getAdminHiworksProfileResponse(authCode);
 		final String hiworksId = hiworksProfileResponse.hiworksId();
 		final Member member = memberRepository.findByHiworksId(hiworksId)
-			.orElseThrow(() -> new EntityNotFoundException(
-				MessageFormat.format("hiworksId: {0}로 등록된 사용자가 존재하지 않습니다.", hiworksId)));
+			.orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND_EXCEPTION, hiworksId));
 		if (!member.isAdmin()) {
 			throw new ForbiddenException(NOT_ADMIN_EXCEPTION);
 		}
@@ -70,8 +70,7 @@ public class AuthService {
 		checkExpired(refreshTokenValue, refreshToken);
 		final Long memberId = refreshToken.memberId();
 		final MemberRole memberRole = memberRepository.findById(memberId)
-			.orElseThrow(() -> new EntityNotFoundException(
-				MessageFormat.format("memberId: {0}로 등록된 사용자가 존재하지 않습니다.", memberId)))
+			.orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND_EXCEPTION, memberId))
 			.getRole();
 		final String newAccessToken = jwtProvider.createAccessToken(memberId, memberRole);
 		final RefreshToken newRefreshToken = refreshTokenProvider.createToken(memberId);

@@ -44,20 +44,26 @@ public enum ErrorCode {
 	// 403(Forbidden)
 	NOT_ADMIN_EXCEPTION(FORBIDDEN, "관리자가 아닙니다."),
 
+	// 404(Not Found)
+	MEMBER_NOT_FOUND_EXCEPTION(NOT_FOUND, "hiworksId: {0}로 등록된 사용자가 존재하지 않습니다."),
+	ORDER_NOT_FOUND_EXCEPTION(NOT_FOUND, "orderId: {0}는 존재하지 않는 주문 ID 입니다."),
+	ITEM_NOT_FOUND_EXCEPTION(NOT_FOUND, "itemId: {0}는 존재하지 않는 아이템 입니다."),
+	CATEGORY_NOT_FOUND_EXCEPTION(NOT_FOUND, "categoryId: {0}는 존재하지 않는 카테고리 입니다."),
+	IMAGE_NOT_FOUND_EXCEPTION(NOT_FOUND, "imageId: {0}는 존재하지 않는 이미지 입니다."),
+	GRADE_NOT_FOUND_EXCEPTION(NOT_FOUND, "gradeId: {0}는 존재하지 않는 회원등급 입니다."),
+
 	// 409(Conflict)
-	ITEM_OPTION_OUT_OF_STOCK_EXCEPTION(CONFLICT, "상품의 재고가 부족합니다."),
+	ITEM_OPTION_OUT_OF_STOCK_EXCEPTION(CONFLICT, "상품의 재고가 부족합니다.(현재 재고 수량은 {0}개 입니다.)"),
 	ORDER_STATUS_ALREADY_COMPLETED_EXCEPTION(CONFLICT, "상품의 상태가 완료된 상태입니다."),
-	ORDER_STATUS_ALREADY_CANCELED_EXCEPTION(CONFLICT, "상품의 상태가 완료된 상태입니다."),
-	// TODO: 숫자가 들어가서 이를 어떻게 처리할지...
-	MAX_PAGE_ELEMENT_REQUEST_SIZE_EXCEPTION(CONFLICT, "한 페이지의 최대 100개까지 조회가 가능합니다."),
+	ORDER_STATUS_ALREADY_CANCELLED_EXCEPTION(CONFLICT, "상품의 상태가 취소된 상태입니다."),
+	MAX_PAGE_ELEMENT_REQUEST_SIZE_EXCEPTION(CONFLICT, "한 페이지의 최대 {0}개까지 조회가 가능합니다."),
 
 	// 500(Internal Server Error)
 	OAUTH_PROCESSING_EXCEPTION(INTERNAL_SERVER_ERROR, "Oauth 진행 중 예상치 못한 문제가 생겼습니다."),
 	OAUTH_JSON_PARSING_EXCEPTION(INTERNAL_SERVER_ERROR, "Oauth 진행 중 데이터 파싱에 실패했습니다."),
 
 	// 503(Service Temporarily Unavailable)
-	HIWORKS_SERVER_ERROR_EXCEPTION(SERVICE_UNAVAILABLE, "하이웍스 서버에 문제가 있습니다."),
-	;
+	HIWORKS_SERVER_ERROR_EXCEPTION(SERVICE_UNAVAILABLE, "하이웍스 서버에 문제가 있습니다.");
 
 	private final HttpStatus httpStatus;
 	private final String message;
