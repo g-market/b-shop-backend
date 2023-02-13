@@ -159,31 +159,30 @@ class OrderServiceTest {
 
 		List<OrderItem> orderItemList = List.of(orderItem1, orderItem2);
 
-		List<OrderItemDto> orderDtoList = OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(
-			orderItemList);
+		List<OrderItemDto> orderItemDtoList =
+			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(orderItemList);
 
 		OrderCreateRequestDto orderCreateRequestDto = OrderCreateRequestDto.builder()
 			.memberId(1L)
 			.status(OrderStatus.ACCEPTED)
-			.orderItemDtoList(orderDtoList)
+			.orderItemDtoList(orderItemDtoList)
 			.build();
 
 		when(memberRepository.findById(1L)).thenReturn(Optional.ofNullable(member));
-		when(itemRepository.findById(1L)).thenReturn(Optional.ofNullable(item1));
-		when(itemRepository.findById(2L)).thenReturn(Optional.ofNullable(item2));
-		when(optionsRepository.findByItem_Id(1L)).thenReturn(options1);
-		when(optionsRepository.findByItem_Id(2L)).thenReturn(options2);
+		when(optionsRepository.findWithOptionAndItemById(1L, 1L)).thenReturn(Optional.ofNullable(options1));
+		when(optionsRepository.findWithOptionAndItemById(2L, 2L)).thenReturn(Optional.ofNullable(options2));
 
 		//when
 		OrderCreateResponseDto returnDto = orderService.createOrder(orderCreateRequestDto);
 
 		//then
 		assertAll(
-			() -> assertEquals(orderDtoList, returnDto.orderItemDtoList()),
+			() -> assertEquals(orderItemDtoList, returnDto.orderItemDtoList()),
 			() -> assertEquals(orderItemList.stream().mapToLong(OrderItem::getPrice).sum(),
 				returnDto.totalPrice()),
 			() -> assertEquals(orderCreateRequestDto.memberId(), returnDto.memberId()),
-			() -> assertEquals(orderCreateRequestDto.status(), returnDto.status())
+			() -> assertEquals(orderCreateRequestDto.status(), returnDto.status()),
+			() -> assertEquals(9, options1.getStockQuantity(), "주문을 하면 재고가 줄어들어야 한다.")
 		);
 	}
 
@@ -226,7 +225,7 @@ class OrderServiceTest {
 			.id(1L)
 			.status(OrderStatus.ACCEPTED)
 			.totalPrice(20000)
-			.orderItems(orderItemList)
+			.orderItemList(orderItemList)
 			.build();
 
 		when(orderRepository.findById(1L)).thenReturn(Optional.ofNullable(orders));
