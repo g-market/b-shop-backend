@@ -9,7 +9,7 @@ import com.gabia.bshop.security.client.HiworksOauthClient;
 import com.gabia.bshop.security.client.LocalHiworksOauthClient;
 
 @Configuration
-@Profile({"local", "test"})
+@Profile("local")
 public class LocalOAuthClientConfig {
 
 	@Bean
