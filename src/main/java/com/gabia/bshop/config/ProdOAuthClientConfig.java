@@ -14,7 +14,7 @@ import com.gabia.bshop.security.client.ProdHiworksOauthClient;
 import lombok.RequiredArgsConstructor;
 
 @Configuration
-@Profile({"dev", "prod"})
+@Profile({"dev", "prod", "test"})
 @RequiredArgsConstructor
 public class ProdOAuthClientConfig {
 
