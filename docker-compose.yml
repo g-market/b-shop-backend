@@ -1,22 +1,22 @@
 # docker-compose up -d
 # docker-compose down -v
-version: "3.8"                         # 파일 규격 버전
-services: # 이 항목 밑에 실행하려는 컨테이너들을 정의
-  b-shop-redis: # 서비스명
-    container_name: b-shop-redis       # 컨테이너 명
+version: "3.8"
+services:
+  b-shop-redis:
+    container_name: b-shop-redis
     image: redis:6.2.7
     environment:
       - TZ=Asia/Seoul
     ports:
-      - "6379:6379"
+      - ${REDIS_PORT}:6379
   b-shop-database:
     container_name: b-shop-database
     image: mysql:8.0.31
     environment:
-      - MYSQL_DATABASE=bshop_db
-      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=${DB_NAME}
+      - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
       - TZ=Asia/Seoul
     volumes:
       - ./database/config:/etc/mysql/conf.d
     ports:
-      - "3306:3306"      # 접근 포트 설정 (컨테이너 외부:컨테이너 내부)
+      - ${DB_PORT}:3306
