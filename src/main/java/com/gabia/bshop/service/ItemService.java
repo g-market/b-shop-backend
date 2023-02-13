@@ -1,5 +1,7 @@
 package com.gabia.bshop.service;
 
+import static com.gabia.bshop.exception.ErrorCode.*;
+
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -9,11 +11,11 @@ import org.springframework.stereotype.Service;
 import com.gabia.bshop.dto.ItemDto;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
+import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.ItemMapper;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemRepository;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
@@ -28,7 +30,7 @@ public class ItemService {
 	상품 조회
 	* */
 	public ItemDto findItem(final Long id) {
-		final Item item = itemRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+		final Item item = findItemById(id);
 
 		return ItemMapper.INSTANCE.itemToDto(item);
 	}
@@ -49,7 +51,7 @@ public class ItemService {
 
 		final Long categoryId = itemDto.categoryDto().id();
 
-		categoryRepository.findById(categoryId).orElseThrow(EntityNotFoundException::new);
+		findCategoryById(categoryId);
 
 		Item item = ItemMapper.INSTANCE.itemDtoToEntity(itemDto);
 
@@ -61,11 +63,11 @@ public class ItemService {
 	*/
 	@Transactional
 	public ItemDto updateItem(final ItemDto itemDto) {
-		Item item = itemRepository.findById(itemDto.id()).orElseThrow(EntityNotFoundException::new);
+		final Long itemId = itemDto.id();
+		Item item = findItemById(itemId);
 		final Long categoryId = itemDto.categoryDto().id();
 
-		final Category category =
-			categoryRepository.findById(categoryId).orElseThrow(EntityNotFoundException::new);
+		final Category category = findCategoryById(categoryId);
 
 		item.update(itemDto, category);
 
@@ -77,7 +79,17 @@ public class ItemService {
 	*/
 	@Transactional
 	public void deleteItem(final Long id) {
-		final Item item = itemRepository.findById(id).orElseThrow(EntityNotFoundException::new);
+		final Item item = findItemById(id);
 		itemRepository.deleteById(item.getId());
+	}
+
+	private Item findItemById(final Long itemId) {
+		return itemRepository.findById(itemId)
+			.orElseThrow(() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, itemId));
+	}
+
+	private Category findCategoryById(final Long categoryId) {
+		return categoryRepository.findById(categoryId)
+			.orElseThrow(() -> new NotFoundException(CATEGORY_NOT_FOUND_EXCEPTION, categoryId));
 	}
 }

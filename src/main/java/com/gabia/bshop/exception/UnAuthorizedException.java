@@ -1,10 +1,8 @@
 package com.gabia.bshop.exception;
 
-import org.springframework.http.HttpStatus;
+public class UnAuthorizedException extends ApplicationException {
 
-public class UnAuthorizedException extends CustomException {
-
-	public UnAuthorizedException(final String message) {
-		super(HttpStatus.UNAUTHORIZED, message);
+	public UnAuthorizedException(final ErrorCode errorCode) {
+		super(errorCode);
 	}
 }

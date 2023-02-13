@@ -1,10 +1,13 @@
 package com.gabia.bshop.security.support;
 
+import static com.gabia.bshop.exception.ErrorCode.*;
+
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import com.gabia.bshop.exception.ForbiddenException;
 import com.gabia.bshop.exception.UnAuthorizedException;
 import com.gabia.bshop.security.Login;
 import com.gabia.bshop.security.MemberPayload;
@@ -42,14 +45,14 @@ public class AuthInterceptor implements HandlerInterceptor {
 	private void validateAuthorization(final HttpServletRequest request) {
 		final String authorizationHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 		if (!jwtProvider.isValidToken(authorizationHeader)) {
-			throw new UnAuthorizedException("토큰이 만료됐습니다.");
+			throw new UnAuthorizedException(TOKEN_EXPIRED_EXCEPTION);
 		}
 	}
 
 	private void validateAdminRequired(final HttpServletRequest request, final Object handler) {
 		Login auth = getLoginAnnotation(handler);
 		if (auth != null && auth.admin() && isNotAdmin(request)) {
-			throw new UnAuthorizedException("관리자가 아닙니다.");
+			throw new ForbiddenException(NOT_ADMIN_EXCEPTION);
 		}
 	}
 
@@ -62,7 +65,7 @@ public class AuthInterceptor implements HandlerInterceptor {
 	private void validateTokenRequired(final Object handler) {
 		Login auth = getLoginAnnotation(handler);
 		if (auth != null && auth.required()) {
-			throw new UnAuthorizedException("토큰이 존재하지 않습니다.");
+			throw new UnAuthorizedException(TOKEN_NOT_EXIST_EXCEPTION);
 		}
 	}
 

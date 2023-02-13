@@ -1,5 +1,7 @@
 package com.gabia.bshop.service;
 
+import static com.gabia.bshop.exception.ErrorCode.*;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,9 +14,11 @@ import com.gabia.bshop.dto.response.OrderCreateResponseDto;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
+import com.gabia.bshop.entity.Member;
 import com.gabia.bshop.entity.Options;
 import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.Orders;
+import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.OrderInfoMapper;
 import com.gabia.bshop.mapper.OrderMapper;
 import com.gabia.bshop.repository.ItemImageRepository;
@@ -24,7 +28,6 @@ import com.gabia.bshop.repository.OptionsRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,10 +44,8 @@ public class OrderService {
 	private final OptionsRepository optionsRepository;
 
 	@Transactional(readOnly = true)
-	public OrderInfoPageResponse findOrdersPagination(final Long memberId,
-		final Pageable pageable) {
-		memberRepository.findById(memberId)
-			.orElseThrow(() -> new EntityNotFoundException("해당하는 id의 회원이 존재하지 않습니다."));
+	public OrderInfoPageResponse findOrdersPagination(final Long memberId, final Pageable pageable) {
+		findMemberById(memberId);
 
 		final List<Orders> orders = orderRepository.findByMemberIdPagination(memberId, pageable);
 		final List<OrderItem> orderItems = orderItemRepository.findByOrderIds(
@@ -61,9 +62,7 @@ public class OrderService {
 	 * 주문 생성
 	 */
 	public OrderCreateResponseDto createOrder(final OrderCreateRequestDto orderCreateRequestDto) {
-
-		memberRepository.findById(orderCreateRequestDto.memberId())
-			.orElseThrow(EntityNotFoundException::new);
+		findMemberById(orderCreateRequestDto.memberId());
 		Orders orders = OrderMapper.INSTANCE.ordersCreateDtoToEntity(orderCreateRequestDto);
 
 		List<OrderItem> orderItemEntityList = orderCreateRequestDto.orderItemDtoList()
@@ -86,10 +85,20 @@ public class OrderService {
 	 * 주문 취소(제거)
 	 */
 	public void cancelOrder(final Long id) {
-		Orders orders = orderRepository.findById(id)
-			.orElseThrow(() -> new EntityNotFoundException("존재하지 않는 주문 ID 입니다."));
+		Orders orders = findOrderById(id);
 
 		orders.cancel();
 	}
+
+	private Member findMemberById(final Long memberId) {
+		return memberRepository.findById(memberId)
+			.orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND_EXCEPTION, memberId));
+	}
+
+	private Orders findOrderById(final Long orderId) {
+		return orderRepository.findById(orderId)
+			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
+	}
+
 }
 

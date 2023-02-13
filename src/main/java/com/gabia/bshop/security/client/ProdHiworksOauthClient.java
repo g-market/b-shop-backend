@@ -1,5 +1,7 @@
 package com.gabia.bshop.security.client;
 
+import static com.gabia.bshop.exception.ErrorCode.*;
+
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -20,8 +22,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabia.bshop.dto.response.HiworksProfileResponse;
 import com.gabia.bshop.dto.response.HiworksTokenResponse;
-import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.exception.InternalServerException;
+import com.gabia.bshop.exception.UnAuthorizedException;
 
 import lombok.Builder;
 
@@ -37,7 +39,7 @@ public record ProdHiworksOauthClient(
 
 	private static final String GRANT_TYPE = "authorization_code";
 	private static final String ACCESS_TYPE = "offline";
-	private static final String ERROR_CODE = "ERR";
+	private static final String ERROR_STATUS_MESSAGE = "ERR";
 
 	@Override
 	public String getAccessToken(final String authCode) {
@@ -46,10 +48,10 @@ public record ProdHiworksOauthClient(
 			final HttpResponse<String> accessTokenResponse = requestAccessToken(formData);
 			return parseAccessToken(accessTokenResponse);
 		} catch (IOException e) {
-			throw new InternalServerException("Oauth 진행 중 예상치 못한 문제가 생겼습니다.");
+			throw new InternalServerException(OAUTH_PROCESSING_EXCEPTION);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-			throw new InternalServerException("Oauth 진행 중 예상치 못한 문제가 생겼습니다.");
+			throw new InternalServerException(OAUTH_PROCESSING_EXCEPTION);
 		}
 	}
 
@@ -94,7 +96,7 @@ public record ProdHiworksOauthClient(
 		try {
 			return new URI(accessTokenUrl);
 		} catch (URISyntaxException e) {
-			throw new InternalServerException("Oauth 진행 중 예상치 못한 문제가 생겼습니다.");
+			throw new InternalServerException(OAUTH_PROCESSING_EXCEPTION);
 		}
 	}
 
@@ -106,18 +108,18 @@ public record ProdHiworksOauthClient(
 				objectMapper.readValue(jsonObject.get("data").toString(), HiworksTokenResponse.class);
 			return hiworksTokenResponse.accessToken();
 		} catch (JsonProcessingException e) {
-			throw new InternalServerException("Oauth 진행 중 데이터 파싱에 실패했습니다.");
+			throw new InternalServerException(OAUTH_JSON_PARSING_EXCEPTION);
 		}
 	}
 
 	private void validateAccessTokenSuccess(final HttpResponse<String> response) {
 		final JSONObject jsonObject = new JSONObject(response.body());
-		if (jsonObject.get("code").equals(ERROR_CODE)) {
-			throw new ConflictException("잘못된 하이웍스 로그인 요청입니다.");
+		if (jsonObject.get("code").equals(ERROR_STATUS_MESSAGE)) {
+			throw new UnAuthorizedException(HIWORKS_AUTH_CODE_INVALID_EXCEPTION);
 		}
 		final HttpStatus status = HttpStatus.resolve(response.statusCode());
 		if (status.is5xxServerError()) {
-			throw new InternalServerException("하이웍스 서버에 문제가 있습니다.");
+			throw new InternalServerException(HIWORKS_SERVER_ERROR_EXCEPTION);
 		}
 	}
 
@@ -127,10 +129,10 @@ public record ProdHiworksOauthClient(
 			final HttpResponse<String> profileResponse = requestProfile(accessToken);
 			return parseProfile(profileResponse);
 		} catch (IOException e) {
-			throw new InternalServerException("Oauth 진행 중 예상치 못한 문제가 생겼습니다.");
+			throw new InternalServerException(OAUTH_PROCESSING_EXCEPTION);
 		} catch (InterruptedException e) {
 			Thread.currentThread().interrupt();
-			throw new InternalServerException("Oauth 진행 중 예상치 못한 문제가 생겼습니다.");
+			throw new InternalServerException(OAUTH_PROCESSING_EXCEPTION);
 		}
 	}
 
@@ -151,7 +153,7 @@ public record ProdHiworksOauthClient(
 		try {
 			return objectMapper.readValue(profileResponse.body(), HiworksProfileResponse.class);
 		} catch (JsonProcessingException e) {
-			throw new InternalServerException("Oauth 진행 중 데이터 파싱에 실패했습니다.");
+			throw new InternalServerException(OAUTH_JSON_PARSING_EXCEPTION);
 		}
 	}
 }
