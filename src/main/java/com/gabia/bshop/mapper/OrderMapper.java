@@ -10,8 +10,8 @@ import org.mapstruct.factory.Mappers;
 import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.dto.request.OrderCreateRequestDto;
 import com.gabia.bshop.dto.response.OrderCreateResponseDto;
-import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.Order;
+import com.gabia.bshop.entity.OrderItem;
 
 @Mapper(componentModel = "spring")
 public interface OrderMapper {
