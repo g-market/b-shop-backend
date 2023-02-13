@@ -1,5 +1,7 @@
 package com.gabia.bshop.service;
 
+import static com.gabia.bshop.exception.ErrorCode.*;
+
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -11,6 +13,7 @@ import com.gabia.bshop.dto.request.ItemRequestDto;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
+import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.Options;
 import com.gabia.bshop.mapper.ItemImageMapper;
@@ -21,7 +24,6 @@ import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.OptionsRepository;
 
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -104,6 +106,11 @@ public class ItemService {
 			}).toList();
 		}
 
+		findCategoryById(categoryId);
+
+		Item item = ItemMapper.INSTANCE.itemDtoToEntity(itemDto);
+
+		return ItemMapper.INSTANCE.itemToDto(itemRepository.save(item));
 		/**
 		 * 4. Item 생성
 		 **/
@@ -118,8 +125,8 @@ public class ItemService {
 			.category(category)
 			.deleted(false)
 			.build();
-		
-		
+
+
 		return ItemMapper.INSTANCE.itemToItemResponse(item);
 	}
 
@@ -130,12 +137,12 @@ public class ItemService {
 	 3. 상품의 이미지 수정 ?
 	**/
 	@Transactional
-	public ItemResponse updateItem(final Long itemId ,final ItemRequest itemDto) {
-		Item item = itemRepository.findById(itemId).orElseThrow(EntityNotFoundException::new);
+	public ItemDto updateItem(final ItemDto itemDto) {
+		final Long itemId = itemDto.id();
+		Item item = findItemById(itemId);
 		final Long categoryId = itemDto.categoryDto().id();
 
-		final Category category =
-			categoryRepository.findById(categoryId).orElseThrow(EntityNotFoundException::new);
+		final Category category = findCategoryById(categoryId);
 
 		item.update(itemDto, category);
 
@@ -149,8 +156,17 @@ public class ItemService {
 	*/
 	@Transactional
 	public void deleteItem(final Long id) {
-		final Item item = itemRepository.findById(id).orElseThrow(EntityNotFoundException::new);
-		itemRepository.delete(item);
+		final Item item = findItemById(id);
+		itemRepository.deleteById(item.getId());
 	}
 
+	private Item findItemById(final Long itemId) {
+		return itemRepository.findById(itemId)
+			.orElseThrow(() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, itemId));
+	}
+
+	private Category findCategoryById(final Long categoryId) {
+		return categoryRepository.findById(categoryId)
+			.orElseThrow(() -> new NotFoundException(CATEGORY_NOT_FOUND_EXCEPTION, categoryId));
+	}
 }

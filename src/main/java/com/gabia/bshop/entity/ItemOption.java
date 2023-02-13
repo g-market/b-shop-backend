@@ -1,9 +1,10 @@
 package com.gabia.bshop.entity;
 
+import static com.gabia.bshop.exception.ErrorCode.*;
+
 import java.util.Objects;
 
-import com.gabia.bshop.exception.OutOfStockException;
-import com.gabia.bshop.dto.OptionDto;
+import com.gabia.bshop.exception.ConflictException;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,7 +28,7 @@ import lombok.ToString;
 	name = "options",
 	indexes = {})
 @Entity
-public class Options extends BaseEntity {
+public class ItemOption extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,7 +51,7 @@ public class Options extends BaseEntity {
 	private int stockQuantity;
 
 	@Builder
-	private Options(
+	private ItemOption(
 		final Long id,
 		final Item item,
 		final String description,
@@ -68,7 +69,7 @@ public class Options extends BaseEntity {
 	public void decreaseStockQuantity(final int orderCount) {
 		int restStock = this.stockQuantity - orderCount;
 		if (restStock < 0) {
-			throw new OutOfStockException("상품의 재고가 부족합니다.(현재 재고 수량: " + this.stockQuantity + ")");
+			throw new ConflictException(ITEM_OPTION_OUT_OF_STOCK_EXCEPTION, stockQuantity);
 		}
 		this.stockQuantity = restStock;
 	}
@@ -110,8 +111,8 @@ public class Options extends BaseEntity {
 		if (that == null || getClass() != that.getClass()) {
 			return false;
 		}
-		final Options options = (Options)that;
-		return getId().equals(options.getId());
+		final ItemOption itemOption = (ItemOption)that;
+		return getId().equals(itemOption.getId());
 	}
 
 	@Override

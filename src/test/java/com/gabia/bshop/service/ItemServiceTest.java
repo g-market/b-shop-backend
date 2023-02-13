@@ -24,6 +24,7 @@ import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
+import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.ItemMapper;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemRepository;
@@ -224,7 +225,7 @@ class ItemServiceTest {
 
 		// then
 		Assertions.assertThrows(
-			EntityNotFoundException.class,
+			NotFoundException.class,
 			() -> {
 				itemService.updateItem(itemDto);
 			});
@@ -254,7 +255,7 @@ class ItemServiceTest {
 
 		// then
 		Assertions.assertThrows(
-			EntityNotFoundException.class,
+			NotFoundException.class,
 			() -> {
 				itemService.updateItem(itemDto);
 			});

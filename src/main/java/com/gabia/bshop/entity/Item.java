@@ -11,6 +11,7 @@ import com.gabia.bshop.dto.request.ItemRequestDto;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.mapper.CategoryMapper;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -47,12 +48,6 @@ public class Item extends BaseEntity {
 	@JoinColumn(name = "category_id", nullable = false)
 	private Category category;
 
-	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
-	private List<Options> optionsList;
-	
-	@OneToMany(mappedBy = "item", fetch = FetchType.LAZY)
-	private List<ItemImage> itemImageList;
-
 	@Column(columnDefinition = "varchar(255)", nullable = false)
 	private String name;
 
@@ -72,29 +67,40 @@ public class Item extends BaseEntity {
 	@Column(nullable = false)
 	private boolean deleted;
 
+	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+	private List<ItemOption> itemOptionList;
+
 	@Builder
 	private Item(
 		final Long id,
 		final String name,
 		final Category category,
-		final List<ItemImage> itemImageList,
-		final List<Options> optionsList,
 		final String description,
 		final int basePrice,
 		final ItemStatus itemStatus,
 		final LocalDateTime openAt,
-		final boolean deleted) {
+		final boolean deleted,
+		final List<ItemOption> itemOptionList) {
 		this.id = id;
 		this.name = name;
 		this.category = category;
-		this.itemImageList = itemImageList;
-		this.optionsList = optionsList;
 		this.description = description;
 		this.basePrice = basePrice;
 		this.itemStatus = itemStatus;
 		this.openAt = openAt;
 		this.deleted = deleted;
+		this.itemOptionList = itemOptionList;
 	}
+
+	public void update(final ItemDto itemDto, final Category category) {
+		updateName(itemDto.name());
+		updateCategory(category);
+		updatePrice(itemDto.basePrice());
+		updateDescription(itemDto.description());
+		updateItemStatus(itemDto.itemStatus());
+		updateOpenAt(itemDto.openAt());
+	}
+
 	private void updateName(final String name) {
 		if (name != null) {
 			this.name = name;

@@ -11,7 +11,7 @@ import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.dto.request.OrderCreateRequestDto;
 import com.gabia.bshop.dto.response.OrderCreateResponseDto;
 import com.gabia.bshop.entity.OrderItem;
-import com.gabia.bshop.entity.Orders;
+import com.gabia.bshop.entity.Order;
 
 @Mapper(componentModel = "spring")
 public interface OrderMapper {
@@ -25,13 +25,13 @@ public interface OrderMapper {
 		@Mapping(target = "id", ignore = true),
 		@Mapping(target = "totalPrice", ignore = true),
 	})
-	Orders ordersCreateDtoToEntity(OrderCreateRequestDto orderCreateRequestDto);
+	Order ordersCreateDtoToEntity(OrderCreateRequestDto orderCreateRequestDto);
 
 	@Mappings({
 		@Mapping(source = "member.id", target = "memberId"),
 		@Mapping(source = "orderItems", target = "orderItemDtoList")
 	})
-	OrderCreateResponseDto ordersCreateResponseDto(Orders orders);
+	OrderCreateResponseDto ordersCreateResponseDto(Order order);
 
 	@Mappings({
 		@Mapping(source = "id", target = "item.id"),
