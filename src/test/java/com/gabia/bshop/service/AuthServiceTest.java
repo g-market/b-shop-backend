@@ -1,5 +1,6 @@
 package com.gabia.bshop.service;
 
+import static com.gabia.bshop.exception.ErrorCode.*;
 import static com.gabia.bshop.fixture.MemberFixture.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +23,9 @@ import com.gabia.bshop.dto.response.IssuedTokensResponse;
 import com.gabia.bshop.dto.response.LoginResult;
 import com.gabia.bshop.entity.Member;
 import com.gabia.bshop.entity.enumtype.MemberRole;
+import com.gabia.bshop.exception.ForbiddenException;
 import com.gabia.bshop.exception.UnAuthorizedException;
+import com.gabia.bshop.exception.UnAuthorizedRefreshTokenException;
 import com.gabia.bshop.mapper.HiworksProfileMapper;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.security.client.HiworksOauthClient;
@@ -179,10 +182,10 @@ class AuthServiceTest {
 		given(memberRepository.findByHiworksId(hiworksProfileResponse.hiworksId()))
 			.willReturn(Optional.of(member));
 
-		// when, then
+		// when & then
 		assertAll(
 			() -> Assertions.assertThatThrownBy(() -> authService.loginAdmin(authCode))
-				.isExactlyInstanceOf(UnAuthorizedException.class),
+				.isExactlyInstanceOf(ForbiddenException.class),
 			() -> verify(hiworksOauthClient).getAccessToken(authCode),
 			() -> verify(hiworksOauthClient).getProfile(accessToken),
 			() -> verify(memberRepository).findByHiworksId(hiworksProfileResponse.hiworksId())
@@ -230,7 +233,7 @@ class AuthServiceTest {
 	void 저장되어_있지않은_리프레시_토큰으로_액세스_토큰_발급하려할_경우_예외_발생한다() {
 		// given
 		given(refreshTokenService.findToken(any()))
-			.willThrow(new UnAuthorizedException("서버에 존재하지 않는 리프레시 토큰입니다."));
+			.willThrow(new UnAuthorizedException(REFRESH_TOKEN_NOT_FOUND_EXCEPTION));
 
 		// when, then
 		assertThatThrownBy(() -> authService.issueAccessToken("refreshToken"))
@@ -249,7 +252,7 @@ class AuthServiceTest {
 		// when, then
 		assertAll(
 			() -> assertThatThrownBy(() -> authService.issueAccessToken(refreshTokenValue))
-				.isExactlyInstanceOf(UnAuthorizedException.class),
+				.isExactlyInstanceOf(UnAuthorizedRefreshTokenException.class),
 			() -> verify(refreshTokenService).findToken(any()),
 			() -> verify(refreshTokenService).delete(refreshTokenValue)
 		);
