@@ -20,7 +20,7 @@ public interface OrderMapper {
 
 	@Mappings({
 		@Mapping(source = "memberId", target = "member.id"),
-		@Mapping(source = "orderItemDtoList", target = "orderItems"),
+		@Mapping(source = "orderItemDtoList", target = "orderItemList"),
 		@Mapping(source = "status", target = "status", defaultValue = "ACCEPTED"),
 		@Mapping(target = "id", ignore = true),
 		@Mapping(target = "totalPrice", ignore = true),
@@ -29,23 +29,22 @@ public interface OrderMapper {
 
 	@Mappings({
 		@Mapping(source = "member.id", target = "memberId"),
-		@Mapping(source = "orderItems", target = "orderItemDtoList")
+		@Mapping(source = "orderItemList", target = "orderItemDtoList")
 	})
 	OrderCreateResponseDto ordersCreateResponseDto(Orders orders);
 
 	@Mappings({
-		@Mapping(source = "id", target = "item.id"),
+		@Mapping(source = "itemId", target = "item.id"),
 		@Mapping(source = "optionId", target = "option.id"),
+		@Mapping(target = "id", ignore = true),
 		@Mapping(target = "order", ignore = true),
 		@Mapping(target = "price", ignore = true),
 	})
-	OrderItem orderDtoToOrderItem(OrderItemDto orderDto);
+	OrderItem orderDtoToOrderItem(OrderItemDto orderItemDto);
 
-	@Mapping(source = "item.id", target = "id")
+	@Mapping(source = "item.id", target = "itemId")
 	@Mapping(source = "option.id", target = "optionId")
 	OrderItemDto orderItemToOrdersDto(OrderItem orderItem);
-
-	List<OrderItem> orderDtoListToOrderItemList(List<OrderItemDto> orderDtoList);
 
 	List<OrderItemDto> orderItemListToOrderItemDtoList(List<OrderItem> orderItemList);
 }
