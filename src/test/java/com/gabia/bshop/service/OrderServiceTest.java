@@ -29,6 +29,7 @@ import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
+import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.mapper.OrderMapper;
 import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.ItemRepository;
@@ -169,8 +170,8 @@ class OrderServiceTest {
 			.build();
 
 		when(memberRepository.findById(1L)).thenReturn(Optional.ofNullable(member));
-		when(itemOptionRepository.findWithOptionAndItemById(1L, 1L)).thenReturn(Optional.ofNullable(itemOption1));
-		when(itemOptionRepository.findWithOptionAndItemById(2L, 2L)).thenReturn(Optional.ofNullable(itemOption2));
+		when(itemOptionRepository.findWithOptionAndItemById(List.of(1L, 2L), List.of(1L, 2L))).thenReturn(
+			List.of(itemOption1, itemOption2));
 
 		//when
 		OrderCreateResponseDto returnDto = orderService.createOrder(orderCreateRequestDto);
@@ -184,6 +185,108 @@ class OrderServiceTest {
 			() -> assertEquals(orderCreateRequestDto.status(), returnDto.status()),
 			() -> assertEquals(9, itemOption1.getStockQuantity(), "주문을 하면 재고가 줄어들어야 한다.")
 		);
+	}
+
+	@DisplayName("유효하지 않은 아이템,옵션 ID가 들어오면 주문 생성에 실패한다.")
+	@Test
+	void createOrderFail() {
+		//given
+		Member member = Member.builder()
+			.id(1L)
+			.email("test@test.com")
+			.grade(MemberGrade.BRONZE)
+			.name("testName")
+			.phoneNumber("01000001111")
+			.hiworksId("hiworks")
+			.role(MemberRole.NORMAL)
+			.build();
+
+		Category category = Category.builder().id(1L).name("name").build();
+
+		Item item1 =
+			Item.builder()
+				.id(1L)
+				.category(category)
+				.name("item")
+				.itemStatus(ItemStatus.PUBLIC)
+				.basePrice(10000)
+				.description("description")
+				.deleted(false)
+				.openAt(LocalDateTime.now())
+				.build();
+
+		Item item2 =
+			Item.builder()
+				.id(2L)
+				.category(category)
+				.name("item")
+				.itemStatus(ItemStatus.PUBLIC)
+				.basePrice(10000)
+				.description("description")
+				.deleted(false)
+				.openAt(LocalDateTime.now())
+				.build();
+
+		ItemOption itemOption1 = ItemOption.builder()
+			.id(1L)
+			.item(item1)
+			.description("description")
+			.optionLevel(1)
+			.optionPrice(0)
+			.stockQuantity(10)
+			.build();
+
+		ItemOption itemOption2 = ItemOption.builder()
+			.id(2L)
+			.item(item2)
+			.description("description")
+			.optionLevel(1)
+			.optionPrice(1000)
+			.stockQuantity(5)
+			.build();
+
+		Order order = Order.builder()
+			.id(1L)
+			.member(member)
+			.status(OrderStatus.ACCEPTED)
+			.build();
+
+		OrderItem orderItem1 = OrderItem.builder()
+			.id(1L)
+			.item(item1)
+			.order(order)
+			.option(itemOption1)
+			.orderCount(1)
+			.price(item1.getBasePrice() + itemOption1.getOptionPrice())
+			.build();
+
+		OrderItem orderItem2 = OrderItem.builder()
+			.id(2L)
+			.item(item1)
+			.order(order)
+			.option(itemOption2)
+			.orderCount(1)
+			.price(item2.getBasePrice() + itemOption2.getOptionPrice())
+			.build();
+
+		List<OrderItem> orderItemList = List.of(orderItem1, orderItem2);
+
+		List<OrderItemDto> orderItemDtoList =
+			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(orderItemList);
+
+		OrderCreateRequestDto orderCreateRequestDto = OrderCreateRequestDto.builder()
+			.memberId(1L)
+			.status(OrderStatus.ACCEPTED)
+			.orderItemDtoList(orderItemDtoList)
+			.build();
+
+		when(memberRepository.findById(1L)).thenReturn(Optional.ofNullable(member));
+		when(itemOptionRepository.findWithOptionAndItemById(List.of(1L, 1L), List.of(1L, 2L))).thenReturn(
+			List.of(itemOption1, itemOption2));
+
+		//when & then
+		Assertions.assertThatThrownBy(() -> orderService.createOrder(orderCreateRequestDto))
+			.isInstanceOf(ConflictException.class);
 	}
 
 	@DisplayName("주문을 취소한다.")
@@ -253,4 +356,5 @@ class OrderServiceTest {
 		Assertions.assertThatThrownBy(() -> orderService.cancelOrder(nonId))
 			.isInstanceOf(EntityNotFoundException.class);
 	}
+
 }
