@@ -2,8 +2,6 @@ package com.gabia.bshop.controller;
 
 import static com.gabia.bshop.exception.ErrorCode.*;
 
-import com.gabia.bshop.dto.request.OrderInfoSearchRequest;
-import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +13,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gabia.bshop.dto.request.OrderCreateRequestDto;
+import com.gabia.bshop.dto.request.OrderInfoSearchRequest;
 import com.gabia.bshop.dto.response.OrderCreateResponseDto;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
+import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
 import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.service.OrderService;
 
@@ -39,21 +39,23 @@ public class OrderController {
 		validatePageElementSize(pageable);
 		return ResponseEntity.ok(orderService.findOrdersPagination(memberId, pageable));
 	}
-    // TODO: 인가 적용
-    @GetMapping("/order-infos/{orderId}")
-    public ResponseEntity<OrderInfoSingleResponse> singleOrderInfo(@PathVariable("orderId") final Long orderId) {
-        final OrderInfoSingleResponse singleOrderInfo = orderService.findSingleOrderInfo(orderId);
-        return ResponseEntity.ok(singleOrderInfo);
-    }
+
+	// TODO: 인가 적용
+	@GetMapping("/order-infos/{orderId}")
+	public ResponseEntity<OrderInfoSingleResponse> singleOrderInfo(@PathVariable("orderId") final Long orderId) {
+		final OrderInfoSingleResponse singleOrderInfo = orderService.findSingleOrderInfo(orderId);
+		return ResponseEntity.ok(singleOrderInfo);
+	}
 
 	// TODO: admin 인가
 	@GetMapping("/admin/order-infos")
 	public ResponseEntity<OrderInfoPageResponse> adminOrderInfos(final OrderInfoSearchRequest orderInfoSearchRequest,
-																 final Pageable pageable) {
+		final Pageable pageable) {
 		final OrderInfoPageResponse adminOrdersPagination = orderService.findAdminOrdersPagination(
-				orderInfoSearchRequest, pageable);
+			orderInfoSearchRequest, pageable);
 		return ResponseEntity.ok(adminOrdersPagination);
 	}
+
 	@PostMapping("/orders")
 	public ResponseEntity<OrderCreateResponseDto> createOrder(
 		@RequestBody final OrderCreateRequestDto orderCreateRequestDto) {
@@ -66,10 +68,10 @@ public class OrderController {
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
-    private void validatePageElementSize(final Pageable pageable) {
-        if (pageable.getPageSize() > MAX_PAGE_ELEMENT_REQUEST_SIZE) {
-            throw new ConflictException(MAX_PAGE_ELEMENT_REQUEST_SIZE_EXCEPTION, MAX_PAGE_ELEMENT_REQUEST_SIZE);
-        }
-    }
+	private void validatePageElementSize(final Pageable pageable) {
+		if (pageable.getPageSize() > MAX_PAGE_ELEMENT_REQUEST_SIZE) {
+			throw new ConflictException(MAX_PAGE_ELEMENT_REQUEST_SIZE_EXCEPTION, MAX_PAGE_ELEMENT_REQUEST_SIZE);
+		}
+	}
 
 }
