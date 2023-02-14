@@ -1,16 +1,12 @@
-package com.gabia.bshop.security.redis;
+package com.gabia.bshop.security;
 
 import java.time.LocalDateTime;
-
-import org.springframework.data.annotation.Id;
-import org.springframework.data.redis.core.RedisHash;
 
 import lombok.Builder;
 
 @Builder
-@RedisHash(value = "refresh_token")
 public record RefreshToken(
-	@Id String refreshToken,
+	String refreshToken,
 	Long memberId,
 	LocalDateTime expiredAt
 ) {

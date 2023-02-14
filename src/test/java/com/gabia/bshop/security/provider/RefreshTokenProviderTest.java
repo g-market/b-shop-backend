@@ -5,7 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 
-import com.gabia.bshop.security.redis.RefreshToken;
+import com.gabia.bshop.security.RefreshToken;
 
 class RefreshTokenProviderTest {
 

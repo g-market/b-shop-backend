@@ -1,6 +1,8 @@
-package com.gabia.bshop.security.redis;
+package com.gabia.bshop.repository;
 
-public interface RefreshTokenService {
+import com.gabia.bshop.security.RefreshToken;
+
+public interface RefreshTokenRepository {
 
 	RefreshToken save(RefreshToken refreshToken);
 
