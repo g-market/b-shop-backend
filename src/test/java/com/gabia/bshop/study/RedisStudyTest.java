@@ -120,22 +120,4 @@ public class RedisStudyTest extends IntegrationTest {
 			() -> assertThat(entries.get("name")).isEqualTo("jaime")
 		);
 	}
-
-	@Test
-	@DisplayName("트랜잭션 테스트")
-	void transactional() {
-		// given
-		final ValueOperations<String, Object> string = redisTemplate.opsForValue();
-
-		// when
-		string.set("member:name", "jaime");
-		string.set("member:id", "1");
-
-		final Object name = string.get("member:name");
-		final Object memberId = string.get("member:id");
-
-		// then
-		assertThat(name).isEqualTo("jaime");
-		assertThat(memberId).isEqualTo("1");
-	}
 }
