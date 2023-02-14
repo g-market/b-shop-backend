@@ -15,12 +15,11 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import com.gabia.bshop.exception.UnAuthorizedRefreshTokenException;
+import com.gabia.bshop.integration.IntegrationTest;
 import com.gabia.bshop.security.RefreshToken;
 
 @DisplayName("[Redis] RefreshToken Repository 테스트")
-// class TokenRepositoryImplTest extends IntegrationTest {
-@SpringBootTest
-class RefreshTokenRepositoryImplTest {
+class RefreshTokenRepositoryImplTest extends IntegrationTest {
 
 	private final String tokenValue = "tokenValue";
 	private final Long memberId = 1L;
