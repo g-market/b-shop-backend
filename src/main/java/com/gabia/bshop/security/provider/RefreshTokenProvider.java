@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.gabia.bshop.security.redis.RefreshToken;
+import com.gabia.bshop.security.RefreshToken;
 
 @Component
 public class RefreshTokenProvider {

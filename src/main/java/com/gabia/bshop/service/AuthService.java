@@ -16,11 +16,11 @@ import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.exception.UnAuthorizedRefreshTokenException;
 import com.gabia.bshop.mapper.HiworksProfileMapper;
 import com.gabia.bshop.repository.MemberRepository;
+import com.gabia.bshop.repository.RefreshTokenRepository;
+import com.gabia.bshop.security.RefreshToken;
 import com.gabia.bshop.security.client.HiworksOauthClient;
 import com.gabia.bshop.security.provider.JwtProvider;
 import com.gabia.bshop.security.provider.RefreshTokenProvider;
-import com.gabia.bshop.security.redis.RefreshToken;
-import com.gabia.bshop.security.redis.RefreshTokenService;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,7 +35,7 @@ public class AuthService {
 	private final MemberRepository memberRepository;
 	private final JwtProvider jwtProvider;
 	private final RefreshTokenProvider refreshTokenProvider;
-	private final RefreshTokenService refreshTokenService;
+	private final RefreshTokenRepository refreshTokenRepository;
 
 	@Transactional
 	public LoginResult login(final String authCode) {
@@ -45,7 +45,7 @@ public class AuthService {
 		final String applicationAccessToken = jwtProvider.createAccessToken(memberId,
 			member.getRole());
 		final RefreshToken refreshToken = refreshTokenProvider.createToken(memberId);
-		refreshTokenService.save(refreshToken);
+		refreshTokenRepository.save(refreshToken);
 		return new LoginResult(refreshToken.refreshToken(), applicationAccessToken, member);
 	}
 
@@ -63,7 +63,7 @@ public class AuthService {
 
 	@Transactional
 	public IssuedTokensResponse issueAccessToken(final String refreshTokenValue) {
-		final RefreshToken refreshToken = refreshTokenService.findToken(refreshTokenValue);
+		final RefreshToken refreshToken = refreshTokenRepository.findToken(refreshTokenValue);
 		checkExpired(refreshTokenValue, refreshToken);
 		final Long memberId = refreshToken.memberId();
 		final MemberRole memberRole = memberRepository.findById(memberId)
@@ -71,8 +71,8 @@ public class AuthService {
 			.getRole();
 		final String newAccessToken = jwtProvider.createAccessToken(memberId, memberRole);
 		final RefreshToken newRefreshToken = refreshTokenProvider.createToken(memberId);
-		refreshTokenService.save(newRefreshToken);
-		refreshTokenService.delete(refreshTokenValue);
+		refreshTokenRepository.save(newRefreshToken);
+		refreshTokenRepository.delete(refreshTokenValue);
 		return IssuedTokensResponse.builder()
 			.accessToken(newAccessToken)
 			.refreshToken(newRefreshToken.refreshToken())
@@ -99,7 +99,7 @@ public class AuthService {
 
 	private void checkExpired(final String refreshToken, final RefreshToken tokenInfo) {
 		if (tokenInfo.isExpired()) {
-			refreshTokenService.delete(refreshToken);
+			refreshTokenRepository.delete(refreshToken);
 			throw new UnAuthorizedRefreshTokenException(REFRESH_TOKEN_EXPIRED_EXCEPTION);
 		}
 	}

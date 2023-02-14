@@ -31,6 +31,6 @@ hiworks:
     user: http://localhost:8888/user
 
 token:
-  access-expired-time: 12345678
-  refresh-expired-time: 123456789
+  access-expired-time: 3600000  # 2시간
+  refresh-expired-time: 2420000000  # 28일
   secret: testkey1234567891011121314151617181920
