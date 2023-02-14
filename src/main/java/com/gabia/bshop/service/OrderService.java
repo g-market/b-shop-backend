@@ -62,16 +62,16 @@ public class OrderService {
 	//TODO: 인증 로직 추가 필요
 	public OrderCreateResponseDto createOrder(final OrderCreateRequestDto orderCreateRequestDto) {
 		findMemberById(orderCreateRequestDto.memberId());
-		Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(orderCreateRequestDto);
+		final Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(orderCreateRequestDto);
 
 		//DB에서 OptionItem 값 한번에 조회
-		List<ItemOption> findAllItemOptionList = itemOptionRepository.findWithOptionAndItemById(
-			orderCreateRequestDto.orderItemDtoList().stream().map(OrderItemDto::itemId).collect(Collectors.toList()),
-			orderCreateRequestDto.orderItemDtoList().stream().map(OrderItemDto::optionId).collect(Collectors.toList())
+		final List<ItemOption> findAllItemOptionList = itemOptionRepository.findWithOptionAndItemById(
+			orderCreateRequestDto.orderItemDtoList().stream().map(OrderItemDto::itemId).toList(),
+			orderCreateRequestDto.orderItemDtoList().stream().map(OrderItemDto::optionId).toList()
 		);
 
 		//유효한 ItemOption값 인지 검사
-		List<OrderItemDto> validItemOptionList = orderCreateRequestDto.orderItemDtoList().stream()
+		final List<OrderItemDto> validItemOptionList = orderCreateRequestDto.orderItemDtoList().stream()
 			.filter(oi -> findAllItemOptionList.stream().anyMatch(oi::equalsIds))
 			.toList();
 
@@ -80,7 +80,7 @@ public class OrderService {
 			throw new ConflictException(ITEM_ITEMOPTION_NOT_FOUND_EXCEPTION);
 		}
 
-		List<OrderItem> orderItemList = validItemOptionList.stream().map(oi -> {
+		final List<OrderItem> orderItemList = validItemOptionList.stream().map(oi -> {
 			ItemOption itemOption = findAllItemOptionList.stream()
 				.filter(oi::equalsIds)
 				.findFirst()
@@ -98,7 +98,7 @@ public class OrderService {
 	}
 
 	public void cancelOrder(final Long id) {
-		Order order = findOrderById(id);
+		final Order order = findOrderById(id);
 
 		validateOrderStatus(order);
 		order.cancel();
@@ -114,26 +114,25 @@ public class OrderService {
 			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
 	}
 
-	public void validateItemStatus(ItemOption itemOption) {
+	private void validateItemStatus(final ItemOption itemOption) {
 		if (itemOption.getItem().getItemStatus() != ItemStatus.PUBLIC) {
 			//TODO: 어떤 아이템이 판매되지 않는지 RETURN
 			throw new ConflictException(ITEM_STATUS_NOT_PUBLIC_EXCEPTION);
 		}
 	}
 
-	public void validateStockQuantity(ItemOption itemOption, int orderCount) {
-		int restStock = itemOption.getStockQuantity() - orderCount;
+	private void validateStockQuantity(final ItemOption itemOption, final int orderCount) {
+		final int restStock = itemOption.getStockQuantity() - orderCount;
 		if (restStock <= 0) {
 			throw new ConflictException(ITEM_OPTION_OUT_OF_STOCK_EXCEPTION, itemOption.getStockQuantity());
 		}
 	}
 
-	public void validateOrderStatus(Order order) {
+	private void validateOrderStatus(final Order order) {
 		if (order.getStatus() == OrderStatus.COMPLETED) {
-			throw new IllegalStateException("상품의 상태가 완료된 상태입니다.");
+			throw new ConflictException(ORDER_STATUS_ALREADY_COMPLETED_EXCEPTION);
 		} else if (order.getStatus() == OrderStatus.CANCELLED) {
-			throw new IllegalStateException("상품이 이미 취소된 상태입니다.");
+			throw new ConflictException(ORDER_STATUS_ALREADY_CANCELLED_EXCEPTION);
 		}
 	}
 }
-
