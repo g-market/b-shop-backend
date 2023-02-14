@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.dto.request.OrderCreateRequestDto;
 import com.gabia.bshop.dto.response.OrderCreateResponseDto;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
@@ -29,7 +30,6 @@ import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -63,18 +63,31 @@ public class OrderService {
 		findMemberById(orderCreateRequestDto.memberId());
 		Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(orderCreateRequestDto);
 
-		// TODO: 하나의 item에 여러 option으로 주문할 경우 Query 성능 개선 검토
-		List<OrderItem> orderItemList = orderCreateRequestDto.orderItemDtoList().stream().map(oi -> {
-			ItemOption itemOption = itemOptionRepository.findWithOptionAndItemById(oi.optionId(), oi.itemId())
-				.orElseThrow(() -> new EntityNotFoundException("존재하지 않는 상품 옵션 ID 입니다."));
-			validateItemStatus(itemOption);
-			validateStockQuantity(itemOption, oi.orderCount());
+		//DB에서 OptionItem 값 한번에 조회
+		List<ItemOption> findAllItemOptionList = itemOptionRepository.findWithOptionAndItemById(
+			orderCreateRequestDto.orderItemDtoList().stream().map(oi -> oi.itemId()).collect(Collectors.toList()),
+			orderCreateRequestDto.orderItemDtoList().stream().map(OrderItemDto::optionId).collect(Collectors.toList())
+		);
 
+		//유효한 ItemOption값 인지 검사
+		List<OrderItemDto> validItemOptionList = orderCreateRequestDto.orderItemDtoList().stream()
+			.filter(oi -> findAllItemOptionList.stream().anyMatch(oi::equalsIds))
+			.toList();
+
+		//요청 List와 검증한 List size가 일치하지 않다면
+		if (orderCreateRequestDto.orderItemDtoList().size() != validItemOptionList.size()) {
+			throw new ConflictException(ITEM_ITEMOPTION_NOT_FOUND_EXCEPTION);
+		}
+
+		List<OrderItem> orderItemList = validItemOptionList.stream().map(oi -> {
+			ItemOption itemOption = findAllItemOptionList.stream()
+				.filter(oi::equalsIds)
+				.findFirst()
+				.orElseThrow();
 			return OrderItem.createOrderItem(itemOption, order, oi.orderCount());
-		}).collect(Collectors.toList());
+		}).toList();
 
 		order.createOrder(orderItemList);
-
 		orderRepository.save(order);
 
 		return OrderMapper.INSTANCE.ordersCreateResponseDto(order);
