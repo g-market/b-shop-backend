@@ -413,35 +413,35 @@ public class DataInit {
 
 		orderRepository.saveAll(List.of(order1, order2, order3, order4));
 
-		OrderItem orderItem1_order1 = OrderItem.builder()
+		OrderItem orderItem1 = OrderItem.builder()
 			.item(item1)
 			.order(order1)
 			.option(itemOption1)
 			.orderCount(1)
 			.price(11111L)
 			.build();
-		OrderItem orderItem2_order2 = OrderItem.builder()
+		OrderItem orderItem2 = OrderItem.builder()
 			.item(item1)
 			.order(order2)
 			.option(itemOption1)
 			.orderCount(1)
 			.price(11111L)
 			.build();
-		OrderItem orderItem3_order2 = OrderItem.builder()
+		OrderItem orderItem3 = OrderItem.builder()
 			.item(item2)
 			.order(order2)
 			.option(itemOption2)
 			.orderCount(1)
 			.price(22222L)
 			.build();
-		OrderItem orderItem4_order3 = OrderItem.builder()
+		OrderItem orderItem4 = OrderItem.builder()
 			.item(item2)
 			.order(order3)
 			.option(itemOption2)
 			.orderCount(1)
 			.price(22222L)
 			.build();
-		OrderItem orderItem5_order4 = OrderItem.builder()
+		OrderItem orderItem5 = OrderItem.builder()
 			.item(item2)
 			.order(order4)
 			.option(itemOption2)
@@ -450,7 +450,7 @@ public class DataInit {
 			.build();
 
 		orderItemRepository.saveAll(
-			List.of(orderItem1_order1, orderItem2_order2, orderItem3_order2, orderItem4_order3,
-				orderItem5_order4));
+			List.of(orderItem1, orderItem2, orderItem3, orderItem4,
+				orderItem5));
 	}
 }
