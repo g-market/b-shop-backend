@@ -59,13 +59,14 @@ public class OrderService {
 			itemImagesWithItem);
 	}
 
+	//TODO: 인증 로직 추가 필요
 	public OrderCreateResponseDto createOrder(final OrderCreateRequestDto orderCreateRequestDto) {
 		findMemberById(orderCreateRequestDto.memberId());
 		Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(orderCreateRequestDto);
 
 		//DB에서 OptionItem 값 한번에 조회
 		List<ItemOption> findAllItemOptionList = itemOptionRepository.findWithOptionAndItemById(
-			orderCreateRequestDto.orderItemDtoList().stream().map(oi -> oi.itemId()).collect(Collectors.toList()),
+			orderCreateRequestDto.orderItemDtoList().stream().map(OrderItemDto::itemId).collect(Collectors.toList()),
 			orderCreateRequestDto.orderItemDtoList().stream().map(OrderItemDto::optionId).collect(Collectors.toList())
 		);
 
@@ -84,6 +85,9 @@ public class OrderService {
 				.filter(oi::equalsIds)
 				.findFirst()
 				.orElseThrow();
+			validateItemStatus(itemOption);
+			validateStockQuantity(itemOption, oi.orderCount());
+
 			return OrderItem.createOrderItem(itemOption, order, oi.orderCount());
 		}).toList();
 
@@ -112,8 +116,8 @@ public class OrderService {
 
 	public void validateItemStatus(ItemOption itemOption) {
 		if (itemOption.getItem().getItemStatus() != ItemStatus.PUBLIC) {
-			//TODO: Exception 메세지("현재 판매하지 않는 상품입니다.") 추가 필요
-			throw new ConflictException(ITEM_NOT_FOUND_EXCEPTION, itemOption.getItem().getId());
+			//TODO: 어떤 아이템이 판매되지 않는지 RETURN
+			throw new ConflictException(ITEM_STATUS_NOT_PUBLIC_EXCEPTION);
 		}
 	}
 
