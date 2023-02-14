@@ -21,7 +21,7 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
-	name = "options",
+	name = "item_option",
 	indexes = {})
 @Entity
 public class ItemOption extends BaseEntity {
