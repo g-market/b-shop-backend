@@ -8,10 +8,12 @@ import java.time.Duration;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseCookie;
 
+import com.gabia.bshop.fixture.TokenPropertiesFixture;
+
 class RefreshTokenCookieProviderTest {
 
 	private final RefreshTokenCookieProvider provider =
-		new RefreshTokenCookieProvider(1209600000L);
+		new RefreshTokenCookieProvider(TokenPropertiesFixture.VALID_TOKEN_PROPERTIES);
 
 	@Test
 	void 리프레시_토큰으로_쿠키를_생성한다() {
@@ -23,7 +25,7 @@ class RefreshTokenCookieProviderTest {
 		assertAll(
 			() -> assertThat(responseCookie.getValue()).isEqualTo(refreshTokenValue),
 			() -> assertThat(responseCookie.getMaxAge()).isEqualTo(
-				Duration.ofMillis(1209600000L))
+				Duration.ofMillis(TokenPropertiesFixture.VALID_REFRESH_EXPIRED_TIME))
 		);
 	}
 
