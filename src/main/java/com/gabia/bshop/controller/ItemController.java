@@ -19,7 +19,9 @@ import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.service.ItemService;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class ItemController {

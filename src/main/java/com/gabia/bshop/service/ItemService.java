@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gabia.bshop.dto.request.ItemChangeRequest;
 import com.gabia.bshop.dto.request.ItemRequest;
@@ -23,13 +24,12 @@ import com.gabia.bshop.mapper.ItemOptionMapper;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemRepository;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RequiredArgsConstructor
-@Transactional()
+@Transactional(readOnly = true)
 @Service
 public class ItemService {
 	private final ItemRepository itemRepository;
@@ -37,6 +37,7 @@ public class ItemService {
 
 	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
 	private static final String NO_IMAGE_URL = "TO_BE_CHANGE";
+
 	/**
 	 * 상품 조회
 	 * 1. fetch join
@@ -52,6 +53,7 @@ public class ItemService {
 	/**
 	 * 상품 목록 조회
 	 * 1. fetch join
+	 *
 	 **/
 	public List<ItemResponse> findItemList(final Pageable page) {
 
@@ -66,7 +68,6 @@ public class ItemService {
 	/*
 	상품 생성
 	*/
-	@SuppressWarnings("checkstyle:WhitespaceAround")
 	@Transactional
 	public ItemResponse createItem(final ItemRequest itemDto) {
 
@@ -108,7 +109,7 @@ public class ItemService {
 				.stream()
 				.map(ItemImageMapper.INSTANCE::ItemImageDtoToEntity)
 				.toList();
-		}else{
+		} else {
 			ItemImage itemImage = ItemImage.builder()
 				.url(NO_IMAGE_URL)
 				.build();

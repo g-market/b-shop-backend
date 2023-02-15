@@ -5,6 +5,7 @@ import static com.gabia.bshop.exception.ErrorCode.*;
 import java.util.Objects;
 
 import com.gabia.bshop.dto.ItemOptionDto;
+import com.gabia.bshop.dto.request.ItemOptionChangeRequest;
 import com.gabia.bshop.exception.ConflictException;
 
 import jakarta.persistence.Column;
@@ -43,9 +44,6 @@ public class ItemOption extends BaseEntity {
 	private String description;
 
 	@Column(nullable = false)
-	private int optionLevel;
-
-	@Column(nullable = false)
 	private int optionPrice;
 
 	@Column(nullable = false)
@@ -64,18 +62,20 @@ public class ItemOption extends BaseEntity {
 		this.optionPrice = optionPrice;
 		this.stockQuantity = stockQuantity;
 	}
-	private void updateDescription(ItemOptionDto optionDto) {
-		if (optionDto.description() != null)
-			this.description = optionDto.description();
+	private void updateDescription(ItemOptionChangeRequest changeRequest) {
+		if (changeRequest.description() != null)
+			this.description = changeRequest.description();
 	}
 
-	private void updateOptionPrice(ItemOptionDto optionDto) {
-		this.optionPrice = optionDto.optionPrice();
+	private void updateOptionPrice(ItemOptionChangeRequest changeRequest) {
+		this.optionPrice = changeRequest.optionPrice();
 	}
 
-	private void updateStockQuantity(ItemOptionDto optionDto) {
-		this.stockQuantity = optionDto.stockQuantity();
+
+	private void updateOptionStock(ItemOptionChangeRequest changeRequest) {
+		this.stockQuantity = changeRequest.optionPrice();
 	}
+
 
 	public void decreaseStockQuantity(final int orderCount) {
 		int restStock = this.stockQuantity - orderCount;
@@ -89,16 +89,10 @@ public class ItemOption extends BaseEntity {
 		this.stockQuantity += orderCount;
 	}
 
-	public void update(ItemOptionDto optionDto) {
-		updateDescription(optionDto);
-		updateOptionPrice(optionDto);
-		updateStockQuantity(optionDto);
-	}
-
-	public void setItem(Item item) {
-		if (item != null) {
-			this.item = item;
-		}
+	public void update(ItemOptionChangeRequest changeRequest) {
+		updateDescription(changeRequest);
+		updateOptionPrice(changeRequest);
+		updateOptionStock(changeRequest);
 	}
 	@Override
 	public boolean equals(final Object that) {
