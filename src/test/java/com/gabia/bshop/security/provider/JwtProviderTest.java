@@ -6,19 +6,20 @@ import org.junit.jupiter.api.Test;
 
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.exception.UnAuthorizedException;
+import com.gabia.bshop.fixture.TokenPropertiesFixture;
 import com.gabia.bshop.security.MemberPayload;
 import com.gabia.bshop.util.AuthTokenExtractor;
 
 class JwtProviderTest {
 
-	private final JwtProvider jwtProvider = JwtProvider.builder()
-		.authTokenExtractor(new AuthTokenExtractor())
-		.secretKey("TESTSECRETKEYTESTSECRETKEYTESTSECRETKEYTESTSECRETKEY")
-		.validityInMilliseconds(3600000)
-		.build();
+	private final JwtProvider jwtProvider;
 
-	private final FakeJwtProvider fakeJwtProvider = new FakeJwtProvider(
-		"TESTSECRETKEYTESTSECRETKEYTESTSECRETKEYTESTSECRETKEY", 3600000);
+	private final FakeJwtProvider fakeJwtProvider;
+
+	private JwtProviderTest() {
+		this.jwtProvider = new JwtProvider(new AuthTokenExtractor(), TokenPropertiesFixture.VALID_TOKEN_PROPERTIES);
+		this.fakeJwtProvider = new FakeJwtProvider(TokenPropertiesFixture.VALID_TOKEN_PROPERTIES);
+	}
 
 	@Test
 	void 토큰을_생성한다() {
@@ -43,10 +44,8 @@ class JwtProviderTest {
 	@Test
 	void 토큰의_유효기간이_지난_경우() {
 		// given
-		JwtProvider jwtProvider = JwtProvider.builder()
-			.authTokenExtractor(new AuthTokenExtractor())
-			.secretKey("TESTSECRETKEYTESTSECRETKEYTESTSECRETKEYTESTSECRETKEY")
-			.build();
+		JwtProvider jwtProvider = new JwtProvider(new AuthTokenExtractor(),
+			TokenPropertiesFixture.EXPIRED_ACCESS_TOKEN_PROPERTIES);
 		String accessToken = jwtProvider.createAccessToken(1L, MemberRole.NORMAL);
 		String authorizationHeader = "Bearer " + accessToken;
 
@@ -66,12 +65,8 @@ class JwtProviderTest {
 	@Test
 	void 토큰의_시크릿_키가_틀린_경우() {
 		// given
-		JwtProvider invalidJwtProvider = JwtProvider
-			.builder()
-			.authTokenExtractor(new AuthTokenExtractor())
-			.secretKey("INVALIDTESTSECRETKEYTESTSECRETKEYTESTSECRETKEYTESTSECRETKEY")
-			.validityInMilliseconds(3600000)
-			.build();
+		JwtProvider invalidJwtProvider = new JwtProvider(new AuthTokenExtractor(),
+			TokenPropertiesFixture.INVALID_TOKEN_PROPERTIES);
 		String token = invalidJwtProvider.createAccessToken(1L, MemberRole.NORMAL);
 		String authorizationHeader = "Bearer " + token;
 		// when & then
