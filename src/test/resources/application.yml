@@ -22,6 +22,14 @@ logging:
   level:
     org.hibernate.SQL: debug
 
+---
+server:
+  local:
+    domain: http://b-shop.com
+  prod:
+    domain: https://b-shop.com
+    url: https://123.456.789.1
+
 hiworks:
   client:
     id: clientId
