@@ -1,4 +1,4 @@
-package com.gabia.bshop.security.redis;
+package com.gabia.bshop.security;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -14,7 +14,7 @@ class RefreshTokenTest {
 		RefreshToken token = new RefreshToken("refreshToken", 1L,
 			LocalDateTime.now().minusDays(1));
 
-		// when, then
+		// when & then
 		assertThat(token.isExpired()).isTrue();
 	}
 }

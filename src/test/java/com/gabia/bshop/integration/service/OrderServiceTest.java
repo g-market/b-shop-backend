@@ -12,7 +12,9 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.data.domain.PageRequest;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gabia.bshop.dto.request.OrderInfoSearchRequest;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
+import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
@@ -250,7 +252,6 @@ class OrderServiceTest extends IntegrationTest {
 			.orderCount(1)
 			.price(11111L)
 			.build();
-
 		ItemImage itemImage1 = ItemImage.builder()
 			.item(item1)
 			.url(UUID.randomUUID().toString())
@@ -259,6 +260,7 @@ class OrderServiceTest extends IntegrationTest {
 			.item(item1)
 			.url(UUID.randomUUID().toString())
 			.build();
+
 		memberRepository.save(member1);
 		categoryRepository.save(category1);
 		itemRepository.saveAll(List.of(item1));
@@ -274,5 +276,256 @@ class OrderServiceTest extends IntegrationTest {
 
 		//then
 		Assertions.assertThat(orderInfo.resultCount()).isEqualTo(1);
+	}
+
+	@DisplayName("주문내역 상세조회를 요청하면 올바른 주문정보가 반환되어야한다.")
+	@Test
+	void findSingleOrderInfoTest() {
+		//given
+		LocalDateTime now = LocalDateTime.now();
+		Member member1 = Member.builder()
+			.name("1_test_name")
+			.email("1_ckdals1234@naver.com")
+			.hiworksId("1_asdfasdf")
+			.phoneNumber("01000000001")
+			.role(MemberRole.NORMAL)
+			.grade(MemberGrade.BRONZE)
+			.build();
+		Category category1 = Category.builder()
+			.name("카테고리1")
+			.build();
+		Item item1 = Item.builder()
+			.category(category1)
+			.name("temp_item_name1")
+			.description("temp_item_1_description " + UUID.randomUUID())
+			.basePrice(11111)
+			.itemStatus(ItemStatus.PUBLIC)
+			.openAt(now)
+			.deleted(true)
+			.build();
+		Item item2 = Item.builder()
+			.category(category1)
+			.name("temp_item_name2")
+			.description("temp_item_2_description " + UUID.randomUUID())
+			.basePrice(22222)
+			.itemStatus(ItemStatus.PUBLIC)
+			.openAt(now)
+			.deleted(false)
+			.build();
+		ItemOption itemOption1 = ItemOption.builder()
+			.item(item1)
+			.description("temp_itemOption1_description")
+			.optionLevel(1)
+			.optionPrice(0)
+			.stockQuantity(10)
+			.build();
+		ItemOption itemOption2 = ItemOption.builder()
+			.item(item2)
+			.description("temp_itemOption2_description")
+			.optionLevel(1)
+			.optionPrice(1000)
+			.stockQuantity(5)
+			.build();
+		Order order1 = Order.builder()
+			.member(member1)
+			.status(OrderStatus.ACCEPTED)
+			.totalPrice(55555L)
+			.build();
+		OrderItem orderItem1 = OrderItem.builder()
+			.item(item1)
+			.order(order1)
+			.option(itemOption1)
+			.orderCount(1)
+			.price(11111L)
+			.build();
+		OrderItem orderItem2 = OrderItem.builder()
+			.item(item2)
+			.order(order1)
+			.option(itemOption2)
+			.orderCount(2)
+			.price(22222L)
+			.build();
+		ItemImage itemImage1 = ItemImage.builder()
+			.item(item1)
+			.url(UUID.randomUUID().toString())
+			.build();
+		ItemImage itemImage2 = ItemImage.builder()
+			.item(item1)
+			.url(UUID.randomUUID().toString())
+			.build();
+		ItemImage itemImage3 = ItemImage.builder()
+			.item(item2)
+			.url(UUID.randomUUID().toString())
+			.build();
+		ItemImage itemImage4 = ItemImage.builder()
+			.item(item2)
+			.url(UUID.randomUUID().toString())
+			.build();
+		memberRepository.save(member1);
+		categoryRepository.save(category1);
+		itemRepository.saveAll(List.of(item1, item2));
+		itemOptionRepository.saveAll(List.of(itemOption1, itemOption2));
+		itemImageRepository.saveAll(List.of(itemImage1, itemImage2, itemImage3, itemImage4));
+		orderRepository.saveAll(List.of(order1));
+		orderItemRepository.saveAll(List.of(orderItem1, orderItem2));
+
+		//when
+		OrderInfoSingleResponse singleOrderInfo = orderService.findSingleOrderInfo(order1.getId());
+
+		//then
+		Assertions.assertThat(singleOrderInfo.orderId()).isEqualTo(order1.getId());
+		Assertions.assertThat(singleOrderInfo.itemOrderTotalCount()).isEqualTo(2);
+		Assertions.assertThat(singleOrderInfo.orderStatus()).isEqualTo(order1.getStatus());
+		Assertions.assertThat(singleOrderInfo.orderItems().get(0).orderItemId()).isEqualTo(orderItem1.getId());
+		Assertions.assertThat(singleOrderInfo.orderItems().get(1).orderItemId()).isEqualTo(orderItem2.getId());
+		Assertions.assertThat(singleOrderInfo.orderItems().get(0).itemId()).isEqualTo(item1.getId());
+		Assertions.assertThat(singleOrderInfo.orderItems().get(1).itemId()).isEqualTo(item2.getId());
+		Assertions.assertThat(singleOrderInfo.orderItems().get(0).itemName()).isEqualTo(item1.getName());
+		Assertions.assertThat(singleOrderInfo.orderItems().get(1).itemName()).isEqualTo(item2.getName());
+		Assertions.assertThat(singleOrderInfo.orderItems().get(0).orderCount()).isEqualTo(orderItem1.getOrderCount());
+		Assertions.assertThat(singleOrderInfo.orderItems().get(1).orderCount()).isEqualTo(orderItem2.getOrderCount());
+		Assertions.assertThat(singleOrderInfo.orderItems().get(0).price()).isEqualTo(orderItem1.getPrice());
+		Assertions.assertThat(singleOrderInfo.orderItems().get(1).price()).isEqualTo(orderItem2.getPrice());
+		Assertions.assertThat(singleOrderInfo.orderItems().get(0).thumbnailImage()).isEqualTo(itemImage1.getUrl());
+		Assertions.assertThat(singleOrderInfo.orderItems().get(1).thumbnailImage()).isEqualTo(itemImage3.getUrl());
+	}
+
+	@DisplayName("관리자 주문목록 조회를 수행하면 모든 유저의 주문내역들이 조회되어야한다")
+	@Test
+	void findAdminOrdersPaginationTest() {
+		//given
+		LocalDateTime now = LocalDateTime.now();
+		Member member1 = Member.builder()
+			.name("1_test_name")
+			.email("1_ckdals1234@naver.com")
+			.hiworksId("1_asdfasdf")
+			.phoneNumber("01000000001")
+			.role(MemberRole.NORMAL)
+			.grade(MemberGrade.BRONZE)
+			.build();
+		Category category1 = Category.builder()
+			.name("카테고리1")
+			.build();
+		Item item1 = Item.builder()
+			.category(category1)
+			.name("temp_item_name1")
+			.description("temp_item_1_description " + UUID.randomUUID())
+			.basePrice(11111)
+			.itemStatus(ItemStatus.PUBLIC)
+			.openAt(now)
+			.deleted(false)
+			.build();
+		Item item2 = Item.builder()
+			.category(category1)
+			.name("temp_item_name2")
+			.description("temp_item_2_description " + UUID.randomUUID())
+			.basePrice(22222)
+			.itemStatus(ItemStatus.PUBLIC)
+			.openAt(now)
+			.deleted(false)
+			.build();
+		Item item3 = Item.builder()
+			.category(category1)
+			.name("temp_item_name3")
+			.description("temp_item_3_description " + UUID.randomUUID())
+			.basePrice(33333)
+			.itemStatus(ItemStatus.PUBLIC)
+			.openAt(now)
+			.deleted(false)
+			.build();
+		ItemOption itemOption1 = ItemOption.builder()
+			.item(item1)
+			.description("description")
+			.optionLevel(1)
+			.optionPrice(0)
+			.stockQuantity(10)
+			.build();
+		ItemOption itemOption2 = ItemOption.builder()
+			.item(item2)
+			.description("description")
+			.optionLevel(1)
+			.optionPrice(1000)
+			.stockQuantity(5)
+			.build();
+		ItemOption itemOption3 = ItemOption.builder()
+			.item(item3)
+			.description("description")
+			.optionLevel(1)
+			.optionPrice(1000)
+			.stockQuantity(5)
+			.build();
+		Order order1 = Order.builder()
+			.member(member1)
+			.status(OrderStatus.ACCEPTED)
+			.totalPrice(11111L)
+			.build();
+		OrderItem orderItem1_order1 = OrderItem.builder()
+			.item(item1)
+			.order(order1)
+			.option(itemOption1)
+			.orderCount(1)
+			.price(11111L)
+			.build();
+		Order order2 = Order.builder()
+			.member(member1)
+			.status(OrderStatus.ACCEPTED)
+			.totalPrice(33333L)
+			.build();
+		OrderItem orderItem2_order2 = OrderItem.builder()
+			.item(item1)
+			.order(order2)
+			.option(itemOption2)
+			.orderCount(1)
+			.price(11111L)
+			.build();
+		OrderItem orderItem3_order2 = OrderItem.builder()
+			.item(item2)
+			.order(order2)
+			.option(itemOption3)
+			.orderCount(1)
+			.price(22222L)
+			.build();
+		ItemImage itemImage1 = ItemImage.builder()
+			.item(item1)
+			.url(UUID.randomUUID().toString())
+			.build();
+		ItemImage itemImage2 = ItemImage.builder()
+			.item(item1)
+			.url(UUID.randomUUID().toString())
+			.build();
+		ItemImage itemImage3 = ItemImage.builder()
+			.item(item2)
+			.url(UUID.randomUUID().toString())
+			.build();
+		ItemImage itemImage4 = ItemImage.builder()
+			.item(item2)
+			.url(UUID.randomUUID().toString())
+			.build();
+
+		memberRepository.save(member1);
+		categoryRepository.save(category1);
+		itemRepository.saveAll(List.of(item1, item2, item3));
+		itemOptionRepository.saveAll(List.of(itemOption1, itemOption2, itemOption3));
+		itemImageRepository.saveAll(List.of(itemImage1, itemImage2, itemImage3, itemImage4));
+		orderRepository.saveAll(List.of(order1, order2));
+		orderItemRepository.saveAll(List.of(orderItem1_order1, orderItem2_order2, orderItem3_order2));
+
+		PageRequest pageable = PageRequest.of(0, 10);
+		OrderInfoSearchRequest orderInfoSearchRequest = new OrderInfoSearchRequest(now.minusDays(1), now.plusDays(1));
+		//when
+		OrderInfoPageResponse orderInfo = orderService.findAdminOrdersPagination(orderInfoSearchRequest, pageable);
+		//then
+		Assertions.assertThat(orderInfo.resultCount()).isEqualTo(2);
+		Assertions.assertThat(orderInfo.orderInfos().get(0).orderId()).isEqualTo(order1.getId());
+		Assertions.assertThat(orderInfo.orderInfos().get(0).thumbnailImage()).isEqualTo(itemImage1.getUrl());
+		Assertions.assertThat(orderInfo.orderInfos().get(0).representativeName()).isEqualTo(item1.getName());
+		Assertions.assertThat(orderInfo.orderInfos().get(0).itemTotalCount()).isEqualTo(1);
+		Assertions.assertThat(orderInfo.orderInfos().get(0).orderStatus()).isEqualTo(order1.getStatus());
+
+		Assertions.assertThat(orderInfo.orderInfos().get(1).orderId()).isEqualTo(order2.getId());
+		Assertions.assertThat(orderInfo.orderInfos().get(1).thumbnailImage()).isEqualTo(itemImage1.getUrl());
+		Assertions.assertThat(orderInfo.orderInfos().get(1).representativeName()).isEqualTo(item1.getName());
+		Assertions.assertThat(orderInfo.orderInfos().get(1).itemTotalCount()).isEqualTo(1);
+		Assertions.assertThat(orderInfo.orderInfos().get(1).orderStatus()).isEqualTo(order2.getStatus());
 	}
 }

@@ -11,8 +11,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.dto.request.OrderCreateRequestDto;
+import com.gabia.bshop.dto.request.OrderInfoSearchRequest;
 import com.gabia.bshop.dto.response.OrderCreateResponseDto;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
+import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
+import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.Member;
@@ -49,13 +52,13 @@ public class OrderService {
 	public OrderInfoPageResponse findOrdersPagination(final Long memberId, final Pageable pageable) {
 		findMemberById(memberId);
 
-		final List<Order> order = orderRepository.findByMemberIdPagination(memberId, pageable);
-		final List<OrderItem> orderItemList = orderItemRepository.findByOrderIds(
-			order.stream().map(o -> o.getId()).collect(Collectors.toList()));
+		final List<Order> orderList = orderRepository.findByMemberIdPagination(memberId, pageable);
+		final List<OrderItem> orderItemList = findOrderItemListByOrderList(orderList);
 		final List<ItemImage> itemImagesWithItem = itemImageRepository.findWithItemByItemIds(
 			orderItemList.stream().map(oi -> oi.getItem().getId()).collect(Collectors.toList()));
 
-		return OrderInfoMapper.INSTANCE.orderInfoRelatedEntitiesToOrderInfoPageResponse(order, orderItemList,
+		return OrderInfoMapper.INSTANCE.orderInfoRelatedEntitiesToOrderInfoPageResponse(orderList,
+			orderItemList,
 			itemImagesWithItem);
 	}
 
@@ -110,6 +113,12 @@ public class OrderService {
 	private Order findOrderById(final Long orderId) {
 		return orderRepository.findById(orderId)
 			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
+	}
+
+	private List<OrderItem> findOrderItemListByOrderList(final List<Order> orderList) {
+		return orderItemRepository.findByOrderIds(orderList.stream()
+			.map(order -> order.getId())
+			.collect(Collectors.toList()));
 	}
 
 	private void validateItemStatus(final ItemOption itemOption) {
