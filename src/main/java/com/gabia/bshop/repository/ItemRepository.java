@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import com.gabia.bshop.entity.Item;
 
 public interface ItemRepository extends JpaRepository<Item, Long> {
-	@Query("select i from Item i where i.deleted = true")
+
 	Page<Item> findAll(Pageable page);
 
 	@Query("select i from Item i join fetch i.category join fetch i.itemImageList join fetch i.itemOptionList where i.id = :id")

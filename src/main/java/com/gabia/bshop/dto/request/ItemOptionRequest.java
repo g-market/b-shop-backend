@@ -10,8 +10,8 @@ public record ItemOptionRequest (
 	String description,
 
 	@PositiveOrZero(message = "가격은 0원 이상입니다.")
-	int optionPrice,
+	Integer optionPrice,
 	@PositiveOrZero(message = "재고는 0개 이상 보유할 수 있습니다.")
-	int stockQuantity
+	Integer stockQuantity
 ){
 }

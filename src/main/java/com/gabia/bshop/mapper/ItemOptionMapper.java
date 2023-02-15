@@ -17,6 +17,9 @@ public interface ItemOptionMapper {
 	@Mapping(target = "item", ignore = true)
 	ItemOption ItemOptionDtoToEntity(ItemOptionDto itemOptionDto);
 
+	@Mapping(source = "itemId", target = "item.id")
+	ItemOption ItemOptionRequestToEntity(ItemOptionRequest itemOptionRequest);
+
 	ItemOptionDto ItemOptionToDto(ItemOption itemOption);
 
 	@Mappings({

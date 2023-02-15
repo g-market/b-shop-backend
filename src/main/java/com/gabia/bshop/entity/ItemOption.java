@@ -4,7 +4,11 @@ import static com.gabia.bshop.exception.ErrorCode.*;
 
 import java.util.Objects;
 
-import com.gabia.bshop.dto.ItemOptionDto;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import com.gabia.bshop.dto.request.ItemOptionChangeRequest;
 import com.gabia.bshop.exception.ConflictException;
 
@@ -25,9 +29,11 @@ import lombok.ToString;
 
 @ToString(exclude = {"item"})
 @Getter
+@SQLDelete(sql = "update item_option set deleted = true where id = ?")
+@Where(clause = "deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
-	name = "options",
+	name = "item_option",
 	indexes = {})
 @Entity
 public class ItemOption extends BaseEntity {
@@ -49,6 +55,9 @@ public class ItemOption extends BaseEntity {
 	@Column(nullable = false)
 	private int stockQuantity;
 
+	@Column(nullable = false)
+	private boolean deleted = false;
+
 	@Builder
 	private ItemOption(
 		final Long id,
@@ -62,20 +71,24 @@ public class ItemOption extends BaseEntity {
 		this.optionPrice = optionPrice;
 		this.stockQuantity = stockQuantity;
 	}
-	private void updateDescription(ItemOptionChangeRequest changeRequest) {
-		if (changeRequest.description() != null)
-			this.description = changeRequest.description();
+
+	private void updateDescription(final String description) {
+		if (description != null) {
+			this.description = description;
+		}
 	}
 
-	private void updateOptionPrice(ItemOptionChangeRequest changeRequest) {
-		this.optionPrice = changeRequest.optionPrice();
+	private void updateOptionPrice(final Integer optionPrice) {
+		if (optionPrice != null) {
+			this.optionPrice = optionPrice;
+		}
 	}
 
-
-	private void updateOptionStock(ItemOptionChangeRequest changeRequest) {
-		this.stockQuantity = changeRequest.optionPrice();
+	private void updateOptionStock(final Integer stockQuantity) {
+		if (stockQuantity != null) {
+			this.stockQuantity = stockQuantity;
+		}
 	}
-
 
 	public void decreaseStockQuantity(final int orderCount) {
 		int restStock = this.stockQuantity - orderCount;
@@ -90,10 +103,11 @@ public class ItemOption extends BaseEntity {
 	}
 
 	public void update(ItemOptionChangeRequest changeRequest) {
-		updateDescription(changeRequest);
-		updateOptionPrice(changeRequest);
-		updateOptionStock(changeRequest);
+		updateDescription(changeRequest.description());
+		updateOptionPrice(changeRequest.optionPrice());
+		updateOptionStock(changeRequest.stockQuantity());
 	}
+
 	@Override
 	public boolean equals(final Object that) {
 		if (this == that) {

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import com.gabia.bshop.dto.request.ItemChangeRequest;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
@@ -31,6 +32,7 @@ import lombok.ToString;
 @ToString(exclude = {"category"})
 @Getter
 @SQLDelete(sql = "update item set deleted = true where id = ?")
+@Where(clause = "deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
 	name = "item",
@@ -63,11 +65,11 @@ public class Item extends BaseEntity {
 	private LocalDateTime openAt;
 
 	@Column(nullable = false)
-	private boolean deleted;
+	private boolean deleted = false;
 
-	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ItemOption> itemOptionList;
-	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
+	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ItemImage> itemImageList;
 
 	@Builder
@@ -100,8 +102,10 @@ public class Item extends BaseEntity {
 		}
 	}
 
-	private void updatePrice(int basePrice) {
-		this.basePrice = basePrice;
+	private void updatePrice(Integer basePrice) {
+		if (basePrice != null) {
+			this.basePrice = basePrice;
+		}
 	}
 
 	private void updateDescription(String description) {

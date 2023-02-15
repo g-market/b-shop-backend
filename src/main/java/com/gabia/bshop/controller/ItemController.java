@@ -42,10 +42,9 @@ public class ItemController {
 		return ResponseEntity.ok().body(itemService.createItem(itemRequest));
 	}
 
-	@PatchMapping("/items/{id}")
-	public ResponseEntity<ItemResponse> updateItem(@RequestBody ItemChangeRequest itemChangeRequest,
-		@PathVariable Long id) {
-		return ResponseEntity.ok().body(itemService.updateItem(id, itemChangeRequest));
+	@PatchMapping("/items")
+	public ResponseEntity<ItemResponse> updateItem(@RequestBody ItemChangeRequest itemChangeRequest) {
+		return ResponseEntity.ok().body(itemService.updateItem(itemChangeRequest));
 	}
 
 	@DeleteMapping("/items/{id}")

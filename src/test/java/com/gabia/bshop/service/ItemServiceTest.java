@@ -164,7 +164,7 @@ class ItemServiceTest {
 		when(itemRepository.save(item2)).thenReturn(item2);
 
 		// then
-		ItemResponse changedItem = itemService.updateItem(item2.getId(), itemDto);
+		ItemResponse changedItem = itemService.updateItem(itemDto);
 
 		assertAll(
 			() -> assertEquals(20000, changedItem.basePrice()),
@@ -242,7 +242,7 @@ class ItemServiceTest {
 		Assertions.assertThrows(
 			NotFoundException.class,
 			() -> {
-				itemService.updateItem(item.getId(), itemChangeRequest);
+				itemService.updateItem(itemChangeRequest);
 			});
 	}
 
@@ -272,7 +272,7 @@ class ItemServiceTest {
 		Assertions.assertThrows(
 			NotFoundException.class,
 			() -> {
-				itemService.updateItem(item.getId(), itemChangeRequest);
+				itemService.updateItem(itemChangeRequest);
 			});
 	}
 

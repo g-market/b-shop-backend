@@ -50,7 +50,7 @@ public class ItemOptionController {
 	}
 
 	@DeleteMapping("/items/options/{optionId}")
-	public ResponseEntity<Void> deleteItemOption(@PathVariable("id") Long optionId) {
+	public ResponseEntity<Void> deleteItemOption(@PathVariable("optionId") Long optionId) {
 		itemOptionService.deleteItemOption(optionId);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}

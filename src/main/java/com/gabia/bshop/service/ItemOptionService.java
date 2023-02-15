@@ -29,13 +29,13 @@ public class ItemOptionService {
 	private final ItemOptionRepository itemOptionRepository;
 
 	public ItemOptionResponse findItemOption(final Long optionId) {
-		ItemOption itemOption = findItemOptionById(optionId);
+		final ItemOption itemOption = findItemOptionById(optionId);
 
 		return ItemOptionMapper.INSTANCE.ItemOptionToResponse(itemOption);
 	}
 
 	public List<ItemOptionResponse> findOptionList(final Long itemId) {
-		List<ItemOption> itemOption = itemOptionRepository.findAllByItem_id(itemId);
+		final List<ItemOption> itemOption = itemOptionRepository.findAllByItem_id(itemId);
 		if (itemOption.isEmpty())
 			throw new NotFoundException(ITEM_OPTION_NOT_FOUND_EXCEPTION);
 
@@ -48,12 +48,7 @@ public class ItemOptionService {
 			() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, itemOptionRequest.itemId())
 		);
 
-		ItemOption itemOption = ItemOption.builder()
-			.item(item)
-			.description(itemOptionRequest.description())
-			.optionPrice(itemOptionRequest.optionPrice())
-			.stockQuantity(itemOptionRequest.stockQuantity())
-			.build();
+		final ItemOption itemOption = ItemOptionMapper.INSTANCE.ItemOptionRequestToEntity(itemOptionRequest);
 
 		return ItemOptionMapper.INSTANCE.ItemOptionToResponse(itemOptionRepository.save(itemOption));
 	}
@@ -66,7 +61,7 @@ public class ItemOptionService {
 	 */
 	@Transactional
 	public ItemOptionResponse changeItemOption(final ItemOptionChangeRequest itemOptionChangeRequest) {
-		ItemOption itemOption = findItemOptionById(itemOptionChangeRequest.itemOptionId());
+		final ItemOption itemOption = findItemOptionById(itemOptionChangeRequest.itemOptionId());
 
 		itemOption.update(itemOptionChangeRequest);
 
@@ -75,11 +70,11 @@ public class ItemOptionService {
 
 	@Transactional
 	public void deleteItemOption(final Long optionId) {
-		ItemOption itemOption = findItemOptionById(optionId);
+		final ItemOption itemOption = findItemOptionById(optionId);
 		itemOptionRepository.delete(itemOption);
 	}
 
-	private ItemOption findItemOptionById(Long itemOptionId) {
+	private ItemOption findItemOptionById(final Long itemOptionId) {
 		return itemOptionRepository.findById(itemOptionId)
 			.orElseThrow(() -> new NotFoundException(ITEM_OPTION_OUT_OF_STOCK_EXCEPTION, itemOptionId));
 	}

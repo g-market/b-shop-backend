@@ -38,6 +38,7 @@ public interface ItemMapper {
 
 	@Mappings({
 		@Mapping(source = "category", target = "categoryDto"),
+		@Mapping(source = "item.id", target = "itemId"),
 	})
 	ItemChangeRequest itemToItemChangeRequest(Item item);
 }

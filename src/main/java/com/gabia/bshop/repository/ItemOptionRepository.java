@@ -12,4 +12,6 @@ public interface ItemOptionRepository extends JpaRepository<ItemOption, Long> {
 
 	List<ItemOption> findAllByItem_id(Long id);
 
+	void deleteAllByItem_Id(Long id);
+
 }
