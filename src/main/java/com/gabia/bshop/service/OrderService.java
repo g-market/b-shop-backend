@@ -65,9 +65,9 @@ public class OrderService {
 		final Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(orderCreateRequestDto);
 
 		//DB에서 OptionItem 값 한번에 조회
-		final List<ItemOption> findAllItemOptionList = itemOptionRepository.findWithOptionAndItemById(
+		final List<ItemOption> findAllItemOptionList = itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(
 			orderCreateRequestDto.orderItemDtoList().stream().map(OrderItemDto::itemId).toList(),
-			orderCreateRequestDto.orderItemDtoList().stream().map(OrderItemDto::optionId).toList()
+			orderCreateRequestDto.orderItemDtoList().stream().map(OrderItemDto::itemOptionId).toList()
 		);
 
 		//유효한 ItemOption값 인지 검사
@@ -76,9 +76,7 @@ public class OrderService {
 			.toList();
 
 		//요청 List와 검증한 List size가 일치하지 않다면
-		if (orderCreateRequestDto.orderItemDtoList().size() != validItemOptionList.size()) {
-			throw new ConflictException(ITEM_ITEMOPTION_NOT_FOUND_EXCEPTION);
-		}
+		isEqualListSize(orderCreateRequestDto, validItemOptionList);
 
 		final List<OrderItem> orderItemList = validItemOptionList.stream().map(oi -> {
 			ItemOption itemOption = findAllItemOptionList.stream()
@@ -134,5 +132,13 @@ public class OrderService {
 		} else if (order.getStatus() == OrderStatus.CANCELLED) {
 			throw new ConflictException(ORDER_STATUS_ALREADY_CANCELLED_EXCEPTION);
 		}
+	}
+
+	private boolean isEqualListSize(final OrderCreateRequestDto orderCreateRequestDto,
+		final List<OrderItemDto> validItemOptionList) {
+		if (orderCreateRequestDto.orderItemDtoList().size() != validItemOptionList.size()) {
+			throw new ConflictException(ITEM_ITEMOPTION_NOT_FOUND_EXCEPTION);
+		}
+		return true;
 	}
 }
