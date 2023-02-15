@@ -2,6 +2,7 @@ package com.gabia.bshop.config;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
@@ -20,11 +21,18 @@ public class WebConfig implements WebMvcConfigurer {
 
 	private static final String CORS_ALLOWED_METHODS = "GET,POST,HEAD,PUT,PATCH,DELETE,TRACE,OPTIONS";
 	private static final String FRONTEND_LOCALHOST = "http://127.0.0.1";
-	private static final String FRONTEND_LOCAL_DOMAIN = "http://b-shop.com";
-	private static final String MAIN_SERVER_DOMAIN = "https://b-shop.app";
 
 	private final List<HandlerInterceptor> interceptors;
 	private final AuthArgumentResolver authArgumentResolver;
+
+	@Value("${server.local.domain}")
+	private String localDomain;
+
+	@Value("${server.prod.domain}")
+	private String productionDomain;
+
+	@Value("${server.prod.url}")
+	private String productionUrl;
 
 	@Override
 	public void addInterceptors(final InterceptorRegistry registry) {
@@ -35,7 +43,7 @@ public class WebConfig implements WebMvcConfigurer {
 	public void addCorsMappings(final CorsRegistry registry) {
 		registry.addMapping("/**")
 			.allowedMethods(CORS_ALLOWED_METHODS.split(","))
-			.allowedOrigins(MAIN_SERVER_DOMAIN, FRONTEND_LOCALHOST, FRONTEND_LOCAL_DOMAIN)
+			.allowedOrigins(localDomain, FRONTEND_LOCALHOST, productionDomain, productionUrl)
 			.allowCredentials(true)
 			.exposedHeaders(HttpHeaders.LOCATION, HttpHeaders.SET_COOKIE);
 	}
