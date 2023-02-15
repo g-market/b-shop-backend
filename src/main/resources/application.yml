@@ -44,3 +44,9 @@ token:
   access-expired-time: ${ACCESS-EXPIRED-TIME}
   refresh-expired-time: ${REFRESH-EXPIRED-TIME}
   secret: ${TOKEN-SECRET}
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: ${LOG-LEVEL}

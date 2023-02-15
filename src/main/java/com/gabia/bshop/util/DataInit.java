@@ -275,7 +275,31 @@ public class DataInit {
 			.stockQuantity(5)
 			.build();
 
-		itemOptionRepository.saveAll(List.of(itemOption1, itemOption2));
+		ItemOption itemOption3 = ItemOption.builder()
+			.item(item2)
+			.description("description")
+			.optionLevel(1)
+			.optionPrice(2000)
+			.stockQuantity(5)
+			.build();
+
+		ItemOption itemOption4 = ItemOption.builder()
+			.item(item6)
+			.description("description")
+			.optionLevel(1)
+			.optionPrice(2000)
+			.stockQuantity(5)
+			.build();
+
+		ItemOption itemOption5 = ItemOption.builder()
+			.item(item6)
+			.description("description")
+			.optionLevel(1)
+			.optionPrice(1999)
+			.stockQuantity(10)
+			.build();
+
+		itemOptionRepository.saveAll(List.of(itemOption1, itemOption2, itemOption3, itemOption4, itemOption5));
 
 		ItemImage itemImage1 = ItemImage.builder()
 			.item(item1)
@@ -406,7 +430,7 @@ public class DataInit {
 		OrderItem orderItem3 = OrderItem.builder()
 			.item(item2)
 			.order(order2)
-			.option(itemOption1)
+			.option(itemOption2)
 			.orderCount(1)
 			.price(22222L)
 			.build();

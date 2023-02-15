@@ -1,10 +1,6 @@
 package com.gabia.bshop.entity;
 
-import static com.gabia.bshop.exception.ErrorCode.*;
-
 import java.util.Objects;
-
-import com.gabia.bshop.exception.ConflictException;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -25,7 +21,7 @@ import lombok.ToString;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
-	name = "options",
+	name = "item_option",
 	indexes = {})
 @Entity
 public class ItemOption extends BaseEntity {
@@ -67,11 +63,7 @@ public class ItemOption extends BaseEntity {
 	}
 
 	public void decreaseStockQuantity(final int orderCount) {
-		int restStock = this.stockQuantity - orderCount;
-		if (restStock < 0) {
-			throw new ConflictException(ITEM_OPTION_OUT_OF_STOCK_EXCEPTION, stockQuantity);
-		}
-		this.stockQuantity = restStock;
+		this.stockQuantity -= orderCount;
 	}
 
 	public void increaseStockQuantity(final int orderCount) {
