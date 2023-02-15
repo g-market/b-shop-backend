@@ -9,18 +9,19 @@ import org.springframework.context.annotation.Profile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.gabia.bshop.security.client.HiworksOauthClient;
+import com.gabia.bshop.security.client.LocalHiworksOauthClient;
 import com.gabia.bshop.security.client.ProdHiworksOauthClient;
 
 import lombok.RequiredArgsConstructor;
 
-@Configuration
-@Profile({"dev", "prod", "test"})
 @RequiredArgsConstructor
-public class ProdOAuthClientConfig {
+@Configuration
+public class OauthClientConfig {
 
 	private final ObjectMapper objectMapper;
 
 	@Bean
+	@Profile({"dev", "prod", "test"})
 	public HiworksOauthClient productinoHiworksOauthClient(
 		@Value("${hiworks.client.id}") final String clientId,
 		@Value("${hiworks.client.secret}") final String secret,
@@ -37,6 +38,22 @@ public class ProdOAuthClientConfig {
 	}
 
 	@Bean
+	@Profile("local")
+	public HiworksOauthClient localHiworksOauthClient(
+		@Value("${hiworks.client.id}") final String clientId,
+		@Value("${hiworks.client.secret}") final String secret,
+		@Value("${hiworks.url.accessToken}") final String accessTokenUrl,
+		@Value("${hiworks.url.user}") final String profileUrl) {
+		return LocalHiworksOauthClient.builder()
+			.clientId(clientId)
+			.secret(secret)
+			.accessTokenUrl(accessTokenUrl)
+			.profileUrl(profileUrl)
+			.build();
+	}
+
+	@Bean
+	@Profile({"dev", "prod", "test"})
 	public HttpClient httpClient() {
 		return HttpClient.newBuilder()
 			.version(HttpClient.Version.HTTP_2)
