@@ -80,51 +80,69 @@ public class ItemService {
 		final Long categoryId = itemDto.categoryDto().id();
 		final Category category = findCategoryById(categoryId);
 
-		//2. Option 생성
-		List<ItemOption> itemOptionList = null;
+
+
+		// 2. Item 생성
+		final Item item = Item.builder()
+			.name(itemDto.name())
+			.description(itemDto.description())
+			.basePrice(itemDto.basePrice())
+			.category(category)
+			.openAt(getOpenedAt(itemDto.openAt()))
+			.itemStatus(getItemStatus(itemDto.itemStatus()))
+			.build();
+
+		// 3. Option 생성
+		// List<ItemOption> itemOptionList = null;
 		if (itemDto.itemOptionDtoList() != null && !itemDto.itemOptionDtoList().isEmpty()) {
-			itemOptionList = itemDto.itemOptionDtoList()
+			itemDto.itemOptionDtoList()
 				.stream()
-				.map(ItemOptionMapper.INSTANCE::ItemOptionDtoToEntity)
-				.toList();
+				.map(
+					itemOptionDto -> ItemOption.builder()
+						.item(item)
+						.description(itemOptionDto.description())
+						.stockQuantity(itemOptionDto.stockQuantity())
+						.optionPrice(itemOptionDto.optionPrice())
+						.build()
+				).forEach(item::addItemOption);
 		} else {
 			ItemOption itemOption = ItemOption.builder()
+				.item(item)
 				.description(itemDto.name()) // 기본 option은 item의 option과 동일
 				.stockQuantity(0)
 				.optionPrice(0)
 				.build();
-			itemOptionList = List.of(itemOption);
+			// itemOptionList = List.of(itemOption);
+			item.addItemOption(itemOption);
 		}
 
-		// 3. Image 생성
-		List<ItemImage> itemImageList = null;
+		// 4. Image 생성
+		// List<ItemImage> itemImageList = null;
 		if (itemDto.itemImageDtoList() != null && !itemDto.itemImageDtoList().isEmpty()) {
 			/** TODO
 			 1. image url Validation
 			 2. (option) file to image url
 			 **/
-			itemImageList = itemDto.itemImageDtoList()
+			itemDto.itemImageDtoList()
 				.stream()
-				.map(ItemImageMapper.INSTANCE::ItemImageDtoToEntity)
-				.toList();
+				.map(
+					itemImageDto -> ItemImage.builder()
+						.item(item)
+						.url(itemImageDto.url())
+						.build()
+				).forEach(item::addItemImage);
 		} else {
 			ItemImage itemImage = ItemImage.builder()
+				.item(item)
 				.url(NO_IMAGE_URL)
 				.build();
-			itemImageList = List.of(itemImage);
+			item.addItemImage(itemImage);
+			// itemImageList = List.of(itemImage);
 		}
 
-		// 4. Item 생성
-		final Item item = Item.builder()
-			.name(itemDto.name())
-			.description(itemDto.description())
-			.basePrice(itemDto.basePrice())
-			.itemImageList(itemImageList)
-			.itemOptionList(itemOptionList)
-			.category(category)
-			.openAt(getOpenedAt(itemDto.openAt()))
-			.itemStatus(getItemStatus(itemDto.itemStatus()))
-			.build();
+		// 5. option, image update
+		// item.updateOption(itemOptionList);
+		// item.updateImage(itemImageList);
 
 		return ItemMapper.INSTANCE.itemToItemResponse(itemRepository.save(item));
 	}
@@ -135,7 +153,8 @@ public class ItemService {
 	 2. 이름(name)
 	 3. 기본가격(basePrice)
 	 4. 설명(description)
-	 5.
+	 5. 오픈시간(openAt)
+	 6. 상태(status)
 	 **/
 	@Transactional
 	public ItemResponse updateItem(final ItemChangeRequest itemChangeRequest) {
@@ -151,14 +170,10 @@ public class ItemService {
 
 	/**
 	 상품 삭제
-	 1. 상품 삭제
-	 2. 연관된 엔티티 삭제
-	 3. TODO : 연관된 이미지 삭제
 	 **/
 	@Transactional
 	public void deleteItem(final Long id) {
 		final Item item = findItemById(id);
-		itemOptionRepository.deleteAllByItem_Id(id);
 		itemRepository.delete(item);
 	}
 

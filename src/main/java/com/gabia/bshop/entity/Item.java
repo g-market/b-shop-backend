@@ -1,6 +1,7 @@
 package com.gabia.bshop.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -68,9 +69,9 @@ public class Item extends BaseEntity {
 	private boolean deleted = false;
 
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<ItemOption> itemOptionList;
+	private List<ItemOption> itemOptionList = new ArrayList<>();
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<ItemImage> itemImageList;
+	private List<ItemImage> itemImageList = new ArrayList<>();
 
 	@Builder
 	private Item(
@@ -81,9 +82,7 @@ public class Item extends BaseEntity {
 		final int basePrice,
 		final ItemStatus itemStatus,
 		final LocalDateTime openAt,
-		final boolean deleted,
-		final List<ItemOption> itemOptionList,
-		final List<ItemImage> itemImageList) {
+		final boolean deleted) {
 		this.id = id;
 		this.name = name;
 		this.category = category;
@@ -92,8 +91,6 @@ public class Item extends BaseEntity {
 		this.itemStatus = itemStatus;
 		this.openAt = openAt;
 		this.deleted = deleted;
-		this.itemOptionList = itemOptionList;
-		this.itemImageList = itemImageList;
 	}
 
 	private void updateName(final String name) {
@@ -136,10 +133,25 @@ public class Item extends BaseEntity {
 		updateName(itemChangeRequest.name());
 		updatePrice(itemChangeRequest.basePrice());
 		updateDescription(itemChangeRequest.description());
-		updateItemStatus(itemChangeRequest.itemStatus());
 		updateOpenAt(itemChangeRequest.openAt());
 		updateItemStatus(itemChangeRequest.itemStatus());
 		updateCategory(category);
+	}
+
+	public void updateOption(List<ItemOption> itemOptionList) {
+		this.itemOptionList = itemOptionList;
+	}
+
+	public void updateImage(List<ItemImage> itemImageList) {
+		this.itemImageList = itemImageList;
+	}
+
+	public void addItemOption(ItemOption itemOption) {
+		this.itemOptionList.add(itemOption);
+	}
+
+	public void addItemImage(ItemImage itemImage) {
+		this.itemImageList.add(itemImage);
 	}
 
 	@Override

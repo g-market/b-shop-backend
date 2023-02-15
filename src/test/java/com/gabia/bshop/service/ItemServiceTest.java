@@ -85,7 +85,8 @@ class ItemServiceTest {
 	}
 
 	@Test
-	void 상품_목록_조회() {
+	@DisplayName("상품_목록을_조회한다")
+	void findItemList() {
 		// givn
 		Category category = Category.builder().id(1L).name("name").build();
 
@@ -120,15 +121,15 @@ class ItemServiceTest {
 
 		Page<Item> itemPage = new PageImpl<>(Collections.unmodifiableList(itemList));
 
-		// when
 		when(itemRepository.findAll(pageable)).thenReturn(itemPage);
 
-		// then
+		// when & then
 		assertEquals(itemDtoList, itemService.findItemList(pageable));
 	}
 
 	@Test
-	void 상품_정보_수정() {
+	@DisplayName("상품_수정")
+	void changeItem() {
 		// given
 		Category category = Category.builder().id(1L).name("name").build();
 
@@ -172,7 +173,8 @@ class ItemServiceTest {
 	}
 
 	@Test
-	void 상품_생성() {
+	@DisplayName("상품_생성")
+	void createItem() {
 		// given
 		Category category = Category.builder().id(1L).name("name").build();
 
@@ -217,7 +219,8 @@ class ItemServiceTest {
 	}
 
 	@Test
-	void 상품_수정_실패_상품_없음() {
+	@DisplayName("상품_수정_실패_상품_없음")
+	void failToDeleteItemWithNoitem() {
 		// given
 		Category category = Category.builder().id(1L).name("name").build(); // 존재하지 않는 카테고리
 
@@ -247,7 +250,8 @@ class ItemServiceTest {
 	}
 
 	@Test
-	void 상품_수정_실패_카테고리_없음() {
+	@DisplayName("상품_수정_실패_카테고리_없음")
+	void failToChangeItemWithoutCategory() {
 		// given
 		Category category = Category.builder().id(2L).name("name").build(); // 존재하지 않는 카테고리
 
@@ -277,7 +281,8 @@ class ItemServiceTest {
 	}
 
 	@Test
-	void 상품_제거_성공() {
+	@DisplayName("상품_제거_성공")
+	void itemDeleteSuccess() {
 		// given
 		Long itemId1 = 1L;
 		Long itemId2 = 2L;
@@ -304,7 +309,8 @@ class ItemServiceTest {
 	}
 
 	@Test
-	void 상품_제거_실패() {
+	@DisplayName("상품_제거_실패")
+	void failItemDelete() {
 		// given
 		Long itemId = 3L; // 존재하지 않는 상품
 

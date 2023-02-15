@@ -207,8 +207,8 @@ class OrderServiceTest {
 				.description("description")
 				.deleted(false)
 				.openAt(LocalDateTime.now())
-				.itemOptionList(options)
 				.build();
+		item1.addItemOption(itemOption1);
 
 		OrderItem orderItem1 = OrderItem.builder()
 			.id(1L)
