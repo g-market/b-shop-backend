@@ -13,7 +13,7 @@ public interface ItemOptionRepository extends JpaRepository<ItemOption, Long> {
 		select io from ItemOption io
 		join fetch io.item
 		where io.item.id in :itemIdList
-		and io.id in :optionIdList
+		and io.id in :itemOptionIdList
 		""")
-	List<ItemOption> findWithOptionAndItemById(List<Long> itemIdList, List<Long> optionIdList);
+	List<ItemOption> findWithItemByItemIdsAndItemOptionIds(List<Long> itemIdList, List<Long> itemOptionIdList);
 }

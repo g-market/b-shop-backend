@@ -170,7 +170,7 @@ class OrderServiceTest {
 			.build();
 
 		when(memberRepository.findById(1L)).thenReturn(Optional.ofNullable(member));
-		when(itemOptionRepository.findWithOptionAndItemById(List.of(1L, 2L), List.of(1L, 2L))).thenReturn(
+		when(itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(List.of(1L, 2L), List.of(1L, 2L))).thenReturn(
 			List.of(itemOption1, itemOption2));
 
 		//when
@@ -281,7 +281,7 @@ class OrderServiceTest {
 			.build();
 
 		when(memberRepository.findById(1L)).thenReturn(Optional.ofNullable(member));
-		when(itemOptionRepository.findWithOptionAndItemById(List.of(1L, 1L), List.of(1L, 2L))).thenReturn(
+		when(itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(List.of(1L, 1L), List.of(1L, 2L))).thenReturn(
 			List.of(itemOption1, itemOption2));
 
 		//when & then

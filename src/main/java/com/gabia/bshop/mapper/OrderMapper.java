@@ -35,7 +35,7 @@ public interface OrderMapper {
 
 	@Mappings({
 		@Mapping(source = "itemId", target = "item.id"),
-		@Mapping(source = "optionId", target = "option.id"),
+		@Mapping(source = "itemOptionId", target = "option.id"),
 		@Mapping(target = "id", ignore = true),
 		@Mapping(target = "order", ignore = true),
 		@Mapping(target = "price", ignore = true),
@@ -43,7 +43,7 @@ public interface OrderMapper {
 	OrderItem orderDtoToOrderItem(OrderItemDto orderItemDto);
 
 	@Mapping(source = "item.id", target = "itemId")
-	@Mapping(source = "option.id", target = "optionId")
+	@Mapping(source = "option.id", target = "itemOptionId")
 	OrderItemDto orderItemToOrdersDto(OrderItem orderItem);
 
 	List<OrderItemDto> orderItemListToOrderItemDtoList(List<OrderItem> orderItemList);
