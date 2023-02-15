@@ -2,11 +2,8 @@ package com.gabia.bshop.security.provider;
 
 import static com.gabia.bshop.exception.ErrorCode.*;
 
-import java.nio.charset.StandardCharsets;
-import java.security.Key;
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.gabia.bshop.entity.enumtype.MemberRole;
@@ -20,9 +17,9 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.RequiredTypeException;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.security.Keys;
-import lombok.Builder;
+import lombok.RequiredArgsConstructor;
 
+@RequiredArgsConstructor
 @Component
 public class JwtProvider {
 
@@ -30,21 +27,11 @@ public class JwtProvider {
 	private static final String ACCESS_TOKEN_SUBJECT = "AccessToken";
 
 	private final AuthTokenExtractor authTokenExtractor;
-	private final Key secretKey;
-	private final long validityInMilliseconds;
-
-	@Builder
-	private JwtProvider(final AuthTokenExtractor authTokenExtractor,
-		@Value("${token.access-expired-time}") final long validityInMilliseconds,
-		@Value("${token.secret}") final String secretKey) {
-		this.authTokenExtractor = authTokenExtractor;
-		this.validityInMilliseconds = validityInMilliseconds;
-		this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
-	}
+	private final TokenProperties tokenProperties;
 
 	public String createAccessToken(final Long id, final MemberRole role) {
 		final Date now = new Date();
-		final Date validity = new Date(now.getTime() + validityInMilliseconds);
+		final Date validity = new Date(now.getTime() + tokenProperties.getAccessExpiredTime());
 
 		return Jwts.builder()
 			.setSubject(ACCESS_TOKEN_SUBJECT)
@@ -52,7 +39,7 @@ public class JwtProvider {
 			.setExpiration(validity)
 			.claim("id", id)
 			.claim("role", role)
-			.signWith(secretKey, SignatureAlgorithm.HS256)
+			.signWith(tokenProperties.getSecretKey(), SignatureAlgorithm.HS256)
 			.compact();
 	}
 
@@ -68,7 +55,7 @@ public class JwtProvider {
 
 	private Jws<Claims> getClaimsJws(final String token) {
 		return Jwts.parserBuilder()
-			.setSigningKey(secretKey)
+			.setSigningKey(tokenProperties.getSecretKey())
 			.build()
 			.parseClaimsJws(token);
 	}
