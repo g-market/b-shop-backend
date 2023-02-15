@@ -11,6 +11,7 @@ public record OrderInfoPageResponse(
 
 	public record OrderInfo(
 		long orderId,
+		long itemId,
 		String thumbnailImage,
 		String representativeName,
 		int itemTotalCount,
