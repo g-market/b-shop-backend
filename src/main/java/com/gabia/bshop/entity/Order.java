@@ -52,21 +52,21 @@ public class Order extends BaseEntity {
 	private long totalPrice;
 
 	@OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-	private List<OrderItem> orderItems;
+	private List<OrderItem> orderItemList;
 
 	@Builder
 	private Order(
 		final Long id, final Member member, final OrderStatus status, final long totalPrice,
-		final List<OrderItem> orderItems) {
+		final List<OrderItem> orderItemList) {
 		this.id = id;
 		this.member = member;
 		this.status = status;
 		this.totalPrice = totalPrice;
-		this.orderItems = orderItems;
+		this.orderItemList = orderItemList;
 	}
 
-	public void createOrder(List<OrderItem> orderItemEntityList) {
-		this.orderItems = orderItemEntityList;
+	public void createOrder(List<OrderItem> orderItemList) {
+		this.orderItemList = orderItemList;
 	}
 
 	public void calculateTotalPrice(final OrderItem orderItem, final int count) {
@@ -75,7 +75,7 @@ public class Order extends BaseEntity {
 
 	public void cancel() {
 		checkOrderStatus();
-		this.orderItems.forEach(OrderItem::cancel);
+		this.orderItemList.forEach(OrderItem::cancel);
 		this.status = OrderStatus.CANCELLED;
 	}
 

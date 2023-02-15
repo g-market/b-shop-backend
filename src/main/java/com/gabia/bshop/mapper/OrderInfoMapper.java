@@ -22,12 +22,12 @@ public interface OrderInfoMapper {
 	OrderInfoMapper INSTANCE = Mappers.getMapper(OrderInfoMapper.class);
 
 	default OrderInfoPageResponse orderInfoRelatedEntitiesToOrderInfoPageResponse(final List<Order> orders,
-		final List<OrderItem> orderItems, final List<ItemImage> itemImagesWithItem) {
+		final List<OrderItem> orderItemList, final List<ItemImage> itemImagesWithItem) {
 
 		// 주문 별 상품 종류 개수 수집
-		final Map<Long, Integer> itemCountPerOrderId = orderItems.stream()
+		final Map<Long, Integer> itemCountPerOrderId = orderItemList.stream()
 			.collect(groupingBy(oi -> oi.getOrder().getId(), summingInt(OrderItem::getOrderCount)));
-		final Map<Long, OrderItem> orderItemsPerOrderId = orderItems.stream()
+		final Map<Long, OrderItem> orderItemsPerOrderId = orderItemList.stream()
 			.collect(Collectors.toMap(oi -> oi.getOrder().getId(), oi -> oi, (p1, p2) -> p2));
 		final Map<Long, ItemImage> itemImagePerItemId = itemImagesWithItem.stream()
 			.collect(Collectors.toMap(i -> i.getItem().getId(), i -> i));
