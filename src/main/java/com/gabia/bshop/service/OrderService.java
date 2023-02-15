@@ -78,15 +78,15 @@ public class OrderService {
 		//요청 List와 검증한 List size가 일치하지 않다면
 		isEqualListSize(orderCreateRequestDto, validItemOptionList);
 
-		final List<OrderItem> orderItemList = validItemOptionList.stream().map(oi -> {
-			ItemOption itemOption = findAllItemOptionList.stream()
-				.filter(oi::equalsIds)
+		final List<OrderItem> orderItemList = validItemOptionList.stream().map(orderItemDto -> {
+			final ItemOption itemOption = findAllItemOptionList.stream()
+				.filter(orderItemDto::equalsIds)
 				.findFirst()
 				.orElseThrow();
 			validateItemStatus(itemOption);
-			validateStockQuantity(itemOption, oi.orderCount());
+			validateStockQuantity(itemOption, orderItemDto.orderCount());
 
-			return OrderItem.createOrderItem(itemOption, order, oi.orderCount());
+			return OrderItem.createOrderItem(itemOption, order, orderItemDto.orderCount());
 		}).toList();
 
 		order.createOrder(orderItemList);
