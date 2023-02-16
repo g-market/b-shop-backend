@@ -3,6 +3,7 @@
 [![coverage report](http://mentoring-gitlab.gabia.com/mentee/mentee_2023.01/team/g-market/gabia_b_shop_backend/badges/develop/coverage.svg)](http://mentoring-gitlab.gabia.com/mentee/mentee_2023.01/team/g-market/gabia_b_shop_backend/-/commits/develop)
 
 ## 개발 환경
+- **JAVA 17**
 - **SpringBoot 3.0.2**
 - **MySQL 8.0.31**
 - **Docker 20.10.23**
