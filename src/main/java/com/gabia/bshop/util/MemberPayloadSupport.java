@@ -1,18 +1,16 @@
 package com.gabia.bshop.util;
 
+import java.util.Optional;
+
 import com.gabia.bshop.security.MemberPayload;
 
-import jakarta.annotation.Nullable;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class MemberPayloadSupport {
 
-	public static Long getLoggedInMemberId(@Nullable final MemberPayload loggedInMemberPayload) {
-		if (loggedInMemberPayload == null) {
-			return null;
-		}
-		return loggedInMemberPayload.id();
+	public static Long getLoggedInMemberId(final Optional<MemberPayload> memberPayload) {
+		return memberPayload.map(MemberPayload::id).orElse(null);
 	}
 }

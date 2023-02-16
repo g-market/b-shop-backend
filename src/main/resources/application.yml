@@ -1,3 +1,52 @@
+server:
+  port: ${SERVER-PORT}
+
 spring:
   profiles:
-    active: local
+    active: ${ACTIVE-PROFILE}
+  datasource:
+    url: ${DB-URL}
+    username: ${DB-USERNAME}
+    password: ${DB-PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: ${DDL-AUTO}
+    properties:
+      hibernate:
+        hibernate.default_batch_fetch_size: ${FETCH-SIZE}
+      jakarta:
+        persistence:
+          sharedCache:
+            mode: ALL
+    open-in-view: false
+  data:
+    redis:
+      host: ${REDIS-HOST}
+      port: ${REDIS-PORT}
+
+---
+server:
+  local:
+    domain: ${LOCAL-DOMAIN}
+  prod:
+    domain: ${PROD-DOMAIN}
+    url: ${PROD-URL}
+
+hiworks:
+  client:
+    id: ${CLIENT-ID}
+    secret: ${CLIENT-SECRET}
+  url:
+    accessToken: ${ACCESSTOKEN-URL}
+    user: ${USER-URL}
+
+token:
+  access-expired-time: ${ACCESS-EXPIRED-TIME}
+  refresh-expired-time: ${REFRESH-EXPIRED-TIME}
+  secret: ${TOKEN-SECRET}
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: ${LOG-LEVEL}

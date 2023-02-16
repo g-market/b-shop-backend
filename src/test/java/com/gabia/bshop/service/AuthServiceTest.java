@@ -28,11 +28,11 @@ import com.gabia.bshop.exception.UnAuthorizedException;
 import com.gabia.bshop.exception.UnAuthorizedRefreshTokenException;
 import com.gabia.bshop.mapper.HiworksProfileMapper;
 import com.gabia.bshop.repository.MemberRepository;
+import com.gabia.bshop.repository.RefreshTokenRepository;
+import com.gabia.bshop.security.RefreshToken;
 import com.gabia.bshop.security.client.HiworksOauthClient;
 import com.gabia.bshop.security.provider.JwtProvider;
 import com.gabia.bshop.security.provider.RefreshTokenProvider;
-import com.gabia.bshop.security.redis.RefreshToken;
-import com.gabia.bshop.security.redis.RefreshTokenService;
 
 @ExtendWith(MockitoExtension.class)
 class AuthServiceTest {
@@ -50,7 +50,7 @@ class AuthServiceTest {
 	@Mock
 	private RefreshTokenProvider refreshTokenProvider;
 	@Mock
-	private RefreshTokenService refreshTokenService;
+	private RefreshTokenRepository refreshTokenRepository;
 
 	@Test
 	void 하이웍스_인증_코드가_들어왔을때_회원정보가_없으면_회원정보를_저장하고_회원정보와_토큰을_반환한다() {
@@ -75,7 +75,7 @@ class AuthServiceTest {
 			.willReturn(applicationToken);
 		given(refreshTokenProvider.createToken(memberId))
 			.willReturn(refreshToken);
-		given(refreshTokenService.save(refreshToken)).willReturn(refreshToken);
+		given(refreshTokenRepository.save(refreshToken)).willReturn(refreshToken);
 
 		// when
 		LoginResult loginResult = authService.login(authCode);
@@ -91,7 +91,7 @@ class AuthServiceTest {
 			() -> verify(memberRepository).save(HiworksProfileMapper.INSTANCE.toNormalMember(hiworksProfileResponse)),
 			() -> verify(jwtProvider).createAccessToken(memberId, member.getRole()),
 			() -> verify(refreshTokenProvider).createToken(memberId),
-			() -> verify(refreshTokenService).save(refreshToken)
+			() -> verify(refreshTokenRepository).save(refreshToken)
 		);
 	}
 
@@ -116,7 +116,7 @@ class AuthServiceTest {
 			.willReturn(applicationToken);
 		given(refreshTokenProvider.createToken(memberId))
 			.willReturn(refreshToken);
-		given(refreshTokenService.save(refreshToken)).willReturn(refreshToken);
+		given(refreshTokenRepository.save(refreshToken)).willReturn(refreshToken);
 
 		// when
 		LoginResult loginResult = authService.login(authCode);
@@ -130,7 +130,7 @@ class AuthServiceTest {
 			() -> verify(memberRepository).findByHiworksId(hiworksProfileResponse.hiworksId()),
 			() -> verify(jwtProvider).createAccessToken(memberId, member.getRole()),
 			() -> verify(refreshTokenProvider).createToken(memberId),
-			() -> verify(refreshTokenService).save(refreshToken)
+			() -> verify(refreshTokenRepository).save(refreshToken)
 		);
 	}
 
@@ -201,13 +201,13 @@ class AuthServiceTest {
 		RefreshToken refreshToken = new RefreshToken(refreshTokenValue, memberId, expiredAt);
 		RefreshToken newRefreshToken = new RefreshToken(newRefreshTokenValue, memberId, expiredAt);
 
-		given(refreshTokenService.findToken(refreshTokenValue))
+		given(refreshTokenRepository.findToken(refreshTokenValue))
 			.willReturn(refreshToken);
 		given(refreshTokenProvider.createToken(memberId))
 			.willReturn(newRefreshToken);
-		given(refreshTokenService.save(eq(newRefreshToken)))
+		given(refreshTokenRepository.save(eq(newRefreshToken)))
 			.willReturn(newRefreshToken);
-		willDoNothing().given(refreshTokenService).delete(refreshTokenValue);
+		willDoNothing().given(refreshTokenRepository).delete(refreshTokenValue);
 
 		given(jwtProvider.createAccessToken(1L, MemberRole.NORMAL))
 			.willReturn(newAccessTokenValue);
@@ -221,18 +221,18 @@ class AuthServiceTest {
 		assertAll(
 			() -> assertThat(issuedTokensResponse.accessToken()).isEqualTo(newAccessTokenValue),
 			() -> assertThat(issuedTokensResponse.refreshToken()).isEqualTo(newRefreshTokenValue),
-			() -> verify(refreshTokenService).findToken(refreshTokenValue),
+			() -> verify(refreshTokenRepository).findToken(refreshTokenValue),
 			() -> verify(refreshTokenProvider).createToken(memberId),
-			() -> verify(refreshTokenService).save(eq(newRefreshToken)),
+			() -> verify(refreshTokenRepository).save(eq(newRefreshToken)),
 			() -> verify(jwtProvider).createAccessToken(1L, MemberRole.NORMAL),
-			() -> verify(refreshTokenService).delete(refreshTokenValue)
+			() -> verify(refreshTokenRepository).delete(refreshTokenValue)
 		);
 	}
 
 	@Test
 	void 저장되어_있지않은_리프레시_토큰으로_액세스_토큰_발급하려할_경우_예외_발생한다() {
 		// given
-		given(refreshTokenService.findToken(any()))
+		given(refreshTokenRepository.findToken(any()))
 			.willThrow(new UnAuthorizedException(REFRESH_TOKEN_NOT_FOUND_EXCEPTION));
 
 		// when, then
@@ -245,16 +245,16 @@ class AuthServiceTest {
 		// given
 		String refreshTokenValue = "refreshToken";
 		LocalDateTime expiredDate = LocalDateTime.now().minusDays(1);
-		given(refreshTokenService.findToken(any()))
+		given(refreshTokenRepository.findToken(any()))
 			.willReturn(new RefreshToken(refreshTokenValue, memberId, expiredDate));
-		willDoNothing().given(refreshTokenService).delete(refreshTokenValue);
+		willDoNothing().given(refreshTokenRepository).delete(refreshTokenValue);
 
 		// when, then
 		assertAll(
 			() -> assertThatThrownBy(() -> authService.issueAccessToken(refreshTokenValue))
 				.isExactlyInstanceOf(UnAuthorizedRefreshTokenException.class),
-			() -> verify(refreshTokenService).findToken(any()),
-			() -> verify(refreshTokenService).delete(refreshTokenValue)
+			() -> verify(refreshTokenRepository).findToken(any()),
+			() -> verify(refreshTokenRepository).delete(refreshTokenValue)
 		);
 	}
 }

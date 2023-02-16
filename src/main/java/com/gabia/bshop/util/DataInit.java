@@ -20,9 +20,9 @@ import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemImageRepository;
+import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.MemberRepository;
-import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
 
@@ -273,7 +273,31 @@ public class DataInit {
 			.stockQuantity(5)
 			.build();
 
-		itemOptionRepository.saveAll(List.of(itemOption1, itemOption2));
+		ItemOption itemOption3 = ItemOption.builder()
+			.item(item2)
+			.description("description")
+			.optionLevel(1)
+			.optionPrice(2000)
+			.stockQuantity(5)
+			.build();
+
+		ItemOption itemOption4 = ItemOption.builder()
+			.item(item6)
+			.description("description")
+			.optionLevel(1)
+			.optionPrice(2000)
+			.stockQuantity(5)
+			.build();
+
+		ItemOption itemOption5 = ItemOption.builder()
+			.item(item6)
+			.description("description")
+			.optionLevel(1)
+			.optionPrice(1999)
+			.stockQuantity(10)
+			.build();
+
+		itemOptionRepository.saveAll(List.of(itemOption1, itemOption2, itemOption3, itemOption4, itemOption5));
 
 		ItemImage itemImage1 = ItemImage.builder()
 			.item(item1)
@@ -387,35 +411,35 @@ public class DataInit {
 
 		orderRepository.saveAll(List.of(order1, order2, order3, order4));
 
-		OrderItem orderItem1_order1 = OrderItem.builder()
+		OrderItem orderItem1 = OrderItem.builder()
 			.item(item1)
 			.order(order1)
 			.option(itemOption1)
 			.orderCount(1)
 			.price(11111L)
 			.build();
-		OrderItem orderItem2_order2 = OrderItem.builder()
+		OrderItem orderItem2 = OrderItem.builder()
 			.item(item1)
 			.order(order2)
 			.option(itemOption1)
 			.orderCount(1)
 			.price(11111L)
 			.build();
-		OrderItem orderItem3_order2 = OrderItem.builder()
+		OrderItem orderItem3 = OrderItem.builder()
 			.item(item2)
 			.order(order2)
-			.option(itemOption1)
+			.option(itemOption2)
 			.orderCount(1)
 			.price(22222L)
 			.build();
-		OrderItem orderItem4_order3 = OrderItem.builder()
+		OrderItem orderItem4 = OrderItem.builder()
 			.item(item2)
 			.order(order3)
 			.option(itemOption2)
 			.orderCount(1)
 			.price(22222L)
 			.build();
-		OrderItem orderItem5_order4 = OrderItem.builder()
+		OrderItem orderItem5 = OrderItem.builder()
 			.item(item2)
 			.order(order4)
 			.option(itemOption2)
@@ -424,7 +448,7 @@ public class DataInit {
 			.build();
 
 		orderItemRepository.saveAll(
-			List.of(orderItem1_order1, orderItem2_order2, orderItem3_order2, orderItem4_order3,
-				orderItem5_order4));
+			List.of(orderItem1, orderItem2, orderItem3, orderItem4,
+				orderItem5));
 	}
 }

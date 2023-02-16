@@ -1,4 +1,4 @@
-package com.gabia.bshop.config.jpa;
+package com.gabia.bshop.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

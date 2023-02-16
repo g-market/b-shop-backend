@@ -10,8 +10,8 @@ import org.mapstruct.factory.Mappers;
 import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.dto.request.OrderCreateRequestDto;
 import com.gabia.bshop.dto.response.OrderCreateResponseDto;
-import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.Order;
+import com.gabia.bshop.entity.OrderItem;
 
 @Mapper(componentModel = "spring")
 public interface OrderMapper {
@@ -20,7 +20,7 @@ public interface OrderMapper {
 
 	@Mappings({
 		@Mapping(source = "memberId", target = "member.id"),
-		@Mapping(source = "orderItemDtoList", target = "orderItems"),
+		@Mapping(source = "orderItemDtoList", target = "orderItemList"),
 		@Mapping(source = "status", target = "status", defaultValue = "ACCEPTED"),
 		@Mapping(target = "id", ignore = true),
 		@Mapping(target = "totalPrice", ignore = true),
@@ -29,23 +29,22 @@ public interface OrderMapper {
 
 	@Mappings({
 		@Mapping(source = "member.id", target = "memberId"),
-		@Mapping(source = "orderItems", target = "orderItemDtoList")
+		@Mapping(source = "orderItemList", target = "orderItemDtoList")
 	})
 	OrderCreateResponseDto ordersCreateResponseDto(Order order);
 
 	@Mappings({
-		@Mapping(source = "id", target = "item.id"),
-		@Mapping(source = "optionId", target = "option.id"),
+		@Mapping(source = "itemId", target = "item.id"),
+		@Mapping(source = "itemOptionId", target = "option.id"),
+		@Mapping(target = "id", ignore = true),
 		@Mapping(target = "order", ignore = true),
 		@Mapping(target = "price", ignore = true),
 	})
-	OrderItem orderDtoToOrderItem(OrderItemDto orderDto);
+	OrderItem orderDtoToOrderItem(OrderItemDto orderItemDto);
 
-	@Mapping(source = "item.id", target = "id")
-	@Mapping(source = "option.id", target = "optionId")
+	@Mapping(source = "item.id", target = "itemId")
+	@Mapping(source = "option.id", target = "itemOptionId")
 	OrderItemDto orderItemToOrdersDto(OrderItem orderItem);
-
-	List<OrderItem> orderDtoListToOrderItemList(List<OrderItemDto> orderDtoList);
 
 	List<OrderItemDto> orderItemListToOrderItemDtoList(List<OrderItem> orderItemList);
 }

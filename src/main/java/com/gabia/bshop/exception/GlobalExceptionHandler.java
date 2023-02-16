@@ -37,17 +37,17 @@ public class GlobalExceptionHandler {
 	private final RefreshTokenCookieProvider refreshTokenCookieProvider;
 
 	@ExceptionHandler(ApplicationException.class)
-	public ResponseEntity<ExceptionResponse> handleApplicationException(final ApplicationException e) {
-		log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getExceptionResponse().message());
-		return ResponseEntity.status(e.getHttpStatus())
-			.body(e.getExceptionResponse());
+	public ResponseEntity<ExceptionResponse> handleApplicationException(final ApplicationException exception) {
+		log.info(LOG_FORMAT, exception.getClass().getSimpleName(), exception.getExceptionResponse().message());
+		return ResponseEntity.status(exception.getHttpStatus())
+			.body(exception.getExceptionResponse());
 	}
 
 	@ExceptionHandler(UnAuthorizedRefreshTokenException.class)
-	public ResponseEntity<ExceptionResponse> handleRefreshTokenException(final UnAuthorizedException e,
+	public ResponseEntity<ExceptionResponse> handleRefreshTokenException(final UnAuthorizedException exception,
 		final HttpServletRequest request) {
-		log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getExceptionResponse().message());
-		final ExceptionResponse responseBody = new ExceptionResponse(e.getExceptionResponse().message());
+		log.info(LOG_FORMAT, exception.getClass().getSimpleName(), exception.getExceptionResponse().message());
+		final ExceptionResponse responseBody = new ExceptionResponse(exception.getExceptionResponse().message());
 		final Cookie cookie = WebUtils.getCookie(request, REFRESH_TOKEN);
 		if (cookie != null) {
 			final ResponseCookie responseCookie = refreshTokenCookieProvider.createLogoutCookie();
@@ -60,15 +60,16 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(EntityNotFoundException.class)
-	public ResponseEntity<ExceptionResponse> handleEntityNotFoundException(final EntityNotFoundException e) {
-		log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getMessage());
+	public ResponseEntity<ExceptionResponse> handleEntityNotFoundException(final EntityNotFoundException exception) {
+		log.info(LOG_FORMAT, exception.getClass().getSimpleName(), exception.getMessage());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND)
-			.body(new ExceptionResponse(e.getMessage()));
+			.body(new ExceptionResponse(exception.getMessage()));
 	}
 
 	@ExceptionHandler(DataIntegrityViolationException.class)
-	public ResponseEntity<ExceptionResponse> handleInvalidValueException(final DataIntegrityViolationException e) {
-		log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getMessage());
+	public ResponseEntity<ExceptionResponse> handleInvalidValueException(
+		final DataIntegrityViolationException exception) {
+		log.info(LOG_FORMAT, exception.getClass().getSimpleName(), exception.getMessage());
 
 		return ResponseEntity.badRequest()
 			.body(new ExceptionResponse(REQUEST_DUPLICATED_MESSAGE));
@@ -76,33 +77,35 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(HttpMessageNotReadableException.class)
 	public ResponseEntity<ExceptionResponse> handleHttpMessageNotReadableException(
-		final HttpMessageNotReadableException e) {
-		log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getMessage());
+		final HttpMessageNotReadableException exception) {
+		log.info(LOG_FORMAT, exception.getClass().getSimpleName(), exception.getMessage());
 		return ResponseEntity.badRequest()
 			.body(new ExceptionResponse(REQUEST_DATA_FORMAT_ERROR_MESSAGE));
 	}
 
 	@ExceptionHandler({BindException.class, MethodArgumentTypeMismatchException.class})
-	public ResponseEntity<ExceptionResponse> handleInvalidQueryParameterException(Exception e) {
-		log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getMessage());
+	public ResponseEntity<ExceptionResponse> handleInvalidQueryParameterException(final Exception exception) {
+		log.info(LOG_FORMAT, exception.getClass().getSimpleName(), exception.getMessage());
 		return ResponseEntity.badRequest()
 			.body(new ExceptionResponse(REQUEST_DATA_FORMAT_ERROR_MESSAGE));
 	}
 
 	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ExceptionResponse> handleValidationException(final MethodArgumentNotValidException e) {
-		log.info(LOG_FORMAT, e.getClass().getSimpleName(), e.getMessage());
+	public ResponseEntity<ExceptionResponse> handleValidationException(
+		final MethodArgumentNotValidException exception) {
+		log.info(LOG_FORMAT, exception.getClass().getSimpleName(), exception.getMessage());
 		final StringBuilder stringBuilder = new StringBuilder();
-		e.getBindingResult().getAllErrors().forEach((error) -> stringBuilder.append(error.getDefaultMessage())
+		exception.getBindingResult().getAllErrors().forEach((error) -> stringBuilder.append(error.getDefaultMessage())
 			.append(System.lineSeparator()));
 		return ResponseEntity.badRequest()
 			.body(new ExceptionResponse(stringBuilder.toString()));
 	}
 
 	@ExceptionHandler(Exception.class)
-	public ResponseEntity<ExceptionResponse> handleUnhandledException(final Exception e) {
-		log.warn(LOG_FORMAT, e.getClass().getSimpleName(), e.getMessage());
+	public ResponseEntity<ExceptionResponse> handleUnhandledException(final Exception exception) {
+		log.warn(LOG_FORMAT, exception.getClass().getSimpleName(), exception.getMessage());
 		return ResponseEntity.internalServerError()
-			.body(new ExceptionResponse(MessageFormat.format(INTERNAL_SERVER_ERROR_MESSAGE_FORMAT, e.getMessage())));
+			.body(new ExceptionResponse(
+				MessageFormat.format(INTERNAL_SERVER_ERROR_MESSAGE_FORMAT, exception.getMessage())));
 	}
 }
