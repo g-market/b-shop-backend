@@ -16,7 +16,7 @@ import lombok.Builder;
 public record ItemRequest(
 	List<ItemOptionDto> itemOptionDtoList,
 	List<ItemImageDto> itemImageDtoList,
-	@NotNull
+	@NotNull(message = "카테고리는 필수 입니다")
 	CategoryDto categoryDto,
 
 	@NotNull(message = "상품의 이름을 입력하세요.")
@@ -27,7 +27,6 @@ public record ItemRequest(
 	@PositiveOrZero(message = "가격은 0원 이상입니다.")
 	@NotNull
 	Integer basePrice,
-
 	ItemStatus itemStatus,
 	LocalDateTime openAt
 ) {

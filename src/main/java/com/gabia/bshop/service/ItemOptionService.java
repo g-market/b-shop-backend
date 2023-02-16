@@ -31,15 +31,15 @@ public class ItemOptionService {
 	public ItemOptionResponse findItemOption(final Long optionId) {
 		final ItemOption itemOption = findItemOptionById(optionId);
 
-		return ItemOptionMapper.INSTANCE.ItemOptionToResponse(itemOption);
+		return ItemOptionMapper.INSTANCE.itemOptionToResponse(itemOption);
 	}
 
 	public List<ItemOptionResponse> findOptionList(final Long itemId) {
 		final List<ItemOption> itemOption = itemOptionRepository.findAllByItem_id(itemId);
-		if (itemOption.isEmpty())
+		if (itemOption.isEmpty()) {
 			throw new NotFoundException(ITEM_OPTION_NOT_FOUND_EXCEPTION);
-
-		return itemOption.stream().map(ItemOptionMapper.INSTANCE::ItemOptionToResponse).toList();
+		}
+		return itemOption.stream().map(ItemOptionMapper.INSTANCE::itemOptionToResponse).toList();
 	}
 
 	@Transactional
@@ -48,11 +48,12 @@ public class ItemOptionService {
 			() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, itemOptionRequest.itemId())
 		);
 
-		final ItemOption itemOption = ItemOptionMapper.INSTANCE.ItemOptionRequestToEntity(itemOptionRequest);
+		final ItemOption itemOption = ItemOptionMapper.INSTANCE.itemOptionRequestToEntity(itemOptionRequest);
 
-		return ItemOptionMapper.INSTANCE.ItemOptionToResponse(itemOptionRepository.save(itemOption));
+		itemOption.update(item);
+
+		return ItemOptionMapper.INSTANCE.itemOptionToResponse(itemOptionRepository.save(itemOption));
 	}
-
 
 	/**
 	 * 설명(description) 변경
@@ -65,7 +66,7 @@ public class ItemOptionService {
 
 		itemOption.update(itemOptionChangeRequest);
 
-		return ItemOptionMapper.INSTANCE.ItemOptionToResponse(itemOptionRepository.save(itemOption));
+		return ItemOptionMapper.INSTANCE.itemOptionToResponse(itemOptionRepository.save(itemOption));
 	}
 
 	@Transactional

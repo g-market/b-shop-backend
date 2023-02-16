@@ -15,17 +15,10 @@ public interface ItemMapper {
 
 	ItemMapper INSTANCE = Mappers.getMapper(ItemMapper.class);
 
-	// @Mappings({
-	// 	@Mapping(source = "categoryDto", target = "category"),
-	// 	@Mapping(source = "itemImageDtoList", target = "itemImageList"),
-	// 	@Mapping(source = "itemOptionDtoList", target = "itemOptionList")
-	// })
-	// Item itemDtoToEntity(ItemRequest itemDto);
-
 	@Mappings({
 		@Mapping(source = "category", target = "categoryDto"),
 		@Mapping(source = "itemImageList", target = "itemImageDtoList"),
-		@Mapping(source = "itemOptionList", target = "itemOptionDtoList")
+		@Mapping(source = "itemOptionList", target = "itemOptionDtoList"),
 	})
 	ItemResponse itemToItemResponse(Item item);
 

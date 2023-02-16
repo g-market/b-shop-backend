@@ -2,6 +2,9 @@ package com.gabia.bshop.entity;
 
 import java.util.Objects;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,12 +22,14 @@ import lombok.ToString;
 
 @ToString(exclude = {"item"})
 @Getter
+@SQLDelete(sql = "update item_image set deleted = true where id = ?")
+@Where(clause = "deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
 	name = "item_image",
 	indexes = {})
 @Entity
-public class ItemImage {
+public class ItemImage extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +42,9 @@ public class ItemImage {
 	@Column(nullable = false)
 	private String url;
 
+	@Column(nullable = false)
+	private boolean deleted = false;
+
 	@Builder
 	private ItemImage(final Long id, final Item item, final String url) {
 		this.id = id;
@@ -44,8 +52,10 @@ public class ItemImage {
 		this.url = url;
 	}
 
-	public void setItem(Item item) {
-		updateItem(item);
+	public void updateUrl(final String url) {
+		if (url != null) {
+			this.url = url;
+		}
 	}
 
 	private void updateItem(Item item) {

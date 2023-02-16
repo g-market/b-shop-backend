@@ -13,6 +13,8 @@ import lombok.Builder;
 public record ItemChangeRequest(
 	@NotNull(message = "상품 ID 는 필수 값입니다.")
 	Long itemId,
+
+	CategoryDto categoryDto,
 	String name,
 	String description,
 	@PositiveOrZero(message = "가격은 0원 이상입니다.")

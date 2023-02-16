@@ -24,7 +24,6 @@ import com.gabia.bshop.dto.request.ItemChangeRequest;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
-import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.ItemMapper;
@@ -190,7 +189,6 @@ class ItemServiceTest {
 				.openAt(LocalDateTime.now())
 				.build();
 
-
 		Item returnItem = Item.builder()
 			.id(1L)
 			.category(category)
@@ -285,8 +283,6 @@ class ItemServiceTest {
 	void itemDeleteSuccess() {
 		// given
 		Long itemId1 = 1L;
-		Long itemId2 = 2L;
-
 		Category category = Category.builder().id(1L).name("name").build(); // 존재하지 않는 카테고리
 
 		Item item1 =
@@ -321,7 +317,7 @@ class ItemServiceTest {
 		Assertions.assertThrows(
 			NotFoundException.class,
 			() -> {
-				itemService.deleteItem(3L);
+				itemService.deleteItem(itemId);
 			});
 	}
 }

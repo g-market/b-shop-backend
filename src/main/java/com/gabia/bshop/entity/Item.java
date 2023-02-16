@@ -41,35 +41,29 @@ import lombok.ToString;
 @Entity
 public class Item extends BaseEntity {
 
+	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+	private final List<ItemOption> itemOptionList = new ArrayList<>();
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
-
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id", nullable = false)
 	private Category category;
-
 	@Column(columnDefinition = "varchar(255)", nullable = false)
 	private String name;
-
 	@Column(columnDefinition = "text", nullable = false)
 	private String description;
-
 	@Column(nullable = false)
 	private int basePrice;
-
 	@Enumerated(value = EnumType.STRING)
 	@Column(columnDefinition = "char(8)", nullable = false)
 	private ItemStatus itemStatus;
-
 	@Column(nullable = false)
 	private LocalDateTime openAt;
-
 	@Column(nullable = false)
 	private boolean deleted = false;
-
-	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-	private List<ItemOption> itemOptionList = new ArrayList<>();
+	@Column(nullable = false)
+	private String thumbnail = "NO_IMAGE_URL";
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ItemImage> itemImageList = new ArrayList<>();
 
@@ -138,8 +132,10 @@ public class Item extends BaseEntity {
 		updateCategory(category);
 	}
 
-	public void updateOption(List<ItemOption> itemOptionList) {
-		this.itemOptionList = itemOptionList;
+	public void setThumbnail(ItemImage itemImage) {
+		if (itemImage != null) {
+			this.thumbnail = itemImage.getUrl();
+		}
 	}
 
 	public void updateImage(List<ItemImage> itemImageList) {

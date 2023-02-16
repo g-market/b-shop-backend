@@ -55,9 +55,6 @@ class OrderServiceTest {
 	private MemberRepository memberRepository;
 
 	@Mock
-	private ItemRepository itemRepository;
-
-	@Mock
 	private ItemOptionRepository itemOptionRepository;
 
 	@InjectMocks
@@ -229,7 +226,6 @@ class OrderServiceTest {
 			.id(1L)
 			.item(item1)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(0)
 			.stockQuantity(10)
 			.build();
@@ -238,7 +234,6 @@ class OrderServiceTest {
 			.id(2L)
 			.item(item2)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(1000)
 			.stockQuantity(5)
 			.build();

@@ -20,9 +20,7 @@ import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.exception.NotFoundException;
-import com.gabia.bshop.mapper.ItemImageMapper;
 import com.gabia.bshop.mapper.ItemMapper;
-import com.gabia.bshop.mapper.ItemOptionMapper;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.ItemRepository;
@@ -35,12 +33,11 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 @Service
 public class ItemService {
+	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
+	private static final String NO_IMAGE_URL = "TO_BE_CHANGE";
 	private final ItemRepository itemRepository;
 	private final CategoryRepository categoryRepository;
 	private final ItemOptionRepository itemOptionRepository;
-
-	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
-	private static final String NO_IMAGE_URL = "TO_BE_CHANGE";
 
 	/**
 	 * 상품 조회
@@ -75,12 +72,9 @@ public class ItemService {
 	@Transactional
 	public ItemResponse createItem(final ItemRequest itemDto) {
 
-
 		// 1. Category 조회
 		final Long categoryId = itemDto.categoryDto().id();
 		final Category category = findCategoryById(categoryId);
-
-
 
 		// 2. Item 생성
 		final Item item = Item.builder()
@@ -93,7 +87,6 @@ public class ItemService {
 			.build();
 
 		// 3. Option 생성
-		// List<ItemOption> itemOptionList = null;
 		if (itemDto.itemOptionDtoList() != null && !itemDto.itemOptionDtoList().isEmpty()) {
 			itemDto.itemOptionDtoList()
 				.stream()
@@ -112,12 +105,10 @@ public class ItemService {
 				.stockQuantity(0)
 				.optionPrice(0)
 				.build();
-			// itemOptionList = List.of(itemOption);
 			item.addItemOption(itemOption);
 		}
 
 		// 4. Image 생성
-		// List<ItemImage> itemImageList = null;
 		if (itemDto.itemImageDtoList() != null && !itemDto.itemImageDtoList().isEmpty()) {
 			/** TODO
 			 1. image url Validation
@@ -137,12 +128,9 @@ public class ItemService {
 				.url(NO_IMAGE_URL)
 				.build();
 			item.addItemImage(itemImage);
-			// itemImageList = List.of(itemImage);
 		}
-
-		// 5. option, image update
-		// item.updateOption(itemOptionList);
-		// item.updateImage(itemImageList);
+		// 6. 썸네일 설정
+		item.setThumbnail(item.getItemImageList().get(0)); // 0 번째 이미지를 썸네일로
 
 		return ItemMapper.INSTANCE.itemToItemResponse(itemRepository.save(item));
 	}

@@ -33,4 +33,6 @@ public interface ItemImageRepository extends JpaRepository<ItemImage, Long> {
 			order by t.id)
 			""")
 	List<String> findUrlByItemIds(List<Long> itemIds);
+
+	List<ItemImage> findAllByItem_id(Long itemId);
 }

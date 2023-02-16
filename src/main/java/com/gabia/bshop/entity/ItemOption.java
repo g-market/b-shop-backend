@@ -4,8 +4,6 @@ import static com.gabia.bshop.exception.ErrorCode.*;
 
 import java.util.Objects;
 
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.annotations.DynamicInsert;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -106,6 +104,12 @@ public class ItemOption extends BaseEntity {
 		updateDescription(changeRequest.description());
 		updateOptionPrice(changeRequest.optionPrice());
 		updateOptionStock(changeRequest.stockQuantity());
+	}
+
+	public void update(Item item) {
+		if (item != null) {
+			this.item = item;
+		}
 	}
 
 	@Override

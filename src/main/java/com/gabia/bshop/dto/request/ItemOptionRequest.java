@@ -3,15 +3,15 @@ package com.gabia.bshop.dto.request;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PositiveOrZero;
 
-public record ItemOptionRequest (
-	@NotNull(message = "아이템 ID 는 필수입니다.")
+public record ItemOptionRequest(
+	@NotNull(message = "itemId 는 필수입니다.")
 	Long itemId,
 
 	String description,
 
-	@PositiveOrZero(message = "가격은 0원 이상입니다.")
+	@PositiveOrZero(message = "optionPrice 는 0 이상입니다.")
 	Integer optionPrice,
-	@PositiveOrZero(message = "재고는 0개 이상 보유할 수 있습니다.")
+	@PositiveOrZero(message = "stockQuantity 는 0 이상입니다.")
 	Integer stockQuantity
-){
+) {
 }

@@ -6,6 +6,6 @@ public record ItemOptionResponse(
 	String description,
 	int optionPrice,
 	int stockQuantity
-){
+) {
 
 }

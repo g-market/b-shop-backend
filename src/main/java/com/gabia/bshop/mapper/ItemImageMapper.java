@@ -10,7 +10,5 @@ import com.gabia.bshop.entity.ItemImage;
 public interface ItemImageMapper {
 	ItemImageMapper INSTANCE = Mappers.getMapper(ItemImageMapper.class);
 
-	ItemImage ItemImageDtoToEntity(ItemImageDto itemImageDto);
-
-	ItemImageDto ItemImageToDto(ItemImage ItemImage);
+	ItemImageDto itemImageToDto(ItemImage itemImage);
 }

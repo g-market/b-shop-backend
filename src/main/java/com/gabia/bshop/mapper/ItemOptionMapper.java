@@ -5,7 +5,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
-import com.gabia.bshop.dto.ItemOptionDto;
 import com.gabia.bshop.dto.request.ItemOptionRequest;
 import com.gabia.bshop.dto.response.ItemOptionResponse;
 import com.gabia.bshop.entity.ItemOption;
@@ -14,18 +13,17 @@ import com.gabia.bshop.entity.ItemOption;
 public interface ItemOptionMapper {
 	ItemOptionMapper INSTANCE = Mappers.getMapper(ItemOptionMapper.class);
 
-	@Mapping(target = "item", ignore = true)
-	ItemOption ItemOptionDtoToEntity(ItemOptionDto itemOptionDto);
-
-	@Mapping(source = "itemId", target = "item.id")
-	ItemOption ItemOptionRequestToEntity(ItemOptionRequest itemOptionRequest);
-
-	ItemOptionDto ItemOptionToDto(ItemOption itemOption);
+	@Mappings({
+		@Mapping(source = "itemId", target = "item.id"),
+		@Mapping(target = "id", ignore = true)
+	}
+	)
+	ItemOption itemOptionRequestToEntity(ItemOptionRequest itemOptionRequest);
 
 	@Mappings({
 		@Mapping(source = "item.id", target = "itemId"),
 		@Mapping(source = "id", target = "OptionId"),
 	})
-	ItemOptionResponse ItemOptionToResponse(ItemOption itemOption);
+	ItemOptionResponse itemOptionToResponse(ItemOption itemOption);
 
 }
