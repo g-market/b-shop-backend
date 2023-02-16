@@ -18,6 +18,7 @@ import com.gabia.bshop.dto.request.ItemRequest;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.service.ItemService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -38,12 +39,12 @@ public class ItemController {
 	}
 
 	@PostMapping("/items")
-	public ResponseEntity<ItemResponse> creatItem(@RequestBody ItemRequest itemRequest) {
+	public ResponseEntity<ItemResponse> creatItem(@RequestBody @Valid final ItemRequest itemRequest) {
 		return ResponseEntity.ok().body(itemService.createItem(itemRequest));
 	}
 
 	@PatchMapping("/items")
-	public ResponseEntity<ItemResponse> updateItem(@RequestBody ItemChangeRequest itemChangeRequest) {
+	public ResponseEntity<ItemResponse> updateItem(@RequestBody @Valid final ItemChangeRequest itemChangeRequest) {
 		return ResponseEntity.ok().body(itemService.updateItem(itemChangeRequest));
 	}
 
