@@ -20,9 +20,7 @@ import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemRepository;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -32,7 +30,6 @@ public class ItemImageService {
 
 	public ItemImageDto findItemImage(final Long imageId) {
 		final ItemImage itemImage = findItemImageById(imageId);
-
 		return ItemImageMapper.INSTANCE.itemImageToDto(itemImage);
 	}
 
@@ -40,7 +37,7 @@ public class ItemImageService {
 		final List<ItemImage> itemImageList = itemImageRepository.findAllByItem_id(itemId);
 		return itemImageList.stream().map(ItemImageMapper.INSTANCE::itemImageToDto).toList();
 	}
-
+	@Transactional
 	public List<ItemImageDto> createItemImage(final ItemImageCreateRequest itemImageCreateRequest) {
 		final Item item = findItemById(itemImageCreateRequest.itemId());
 
@@ -51,13 +48,13 @@ public class ItemImageService {
 
 		return itemImageList.stream().map(ItemImageMapper.INSTANCE::itemImageToDto).toList();
 	}
-
+	@Transactional
 	public ItemImageDto changeItemImage(final ItemImageDto itemImageDto) {
 		ItemImage itemImage = findItemImageById(itemImageDto.id());
 		itemImage.updateUrl(itemImageDto.url());
 		return ItemImageMapper.INSTANCE.itemImageToDto(itemImageRepository.save(itemImage));
 	}
-
+	@Transactional
 	public ItemResponse changeItemThumbnail(final ItemThumbnailChangeRequest itemThumbnailChangeRequest) {
 		Item item = findItemById(itemThumbnailChangeRequest.itemId());
 		final ItemImage itemImage = findItemImageById(itemThumbnailChangeRequest.imageId());
@@ -66,7 +63,7 @@ public class ItemImageService {
 
 		return ItemMapper.INSTANCE.itemToItemResponse(itemRepository.save(item));
 	}
-
+	@Transactional
 	public void deleteItemImage(final Long imageId) {
 		final ItemImage itemImage = findItemImageById(imageId);
 		itemImageRepository.delete(itemImage);

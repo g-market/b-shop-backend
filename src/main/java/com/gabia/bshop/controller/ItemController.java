@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gabia.bshop.dto.request.ItemChangeRequest;
 import com.gabia.bshop.dto.request.ItemRequest;
 import com.gabia.bshop.dto.response.ItemResponse;
+import com.gabia.bshop.security.Login;
 import com.gabia.bshop.service.ItemService;
 
 import jakarta.validation.Valid;
@@ -38,18 +39,21 @@ public class ItemController {
 		return ResponseEntity.ok().body(itemService.findItemList(pageable));
 	}
 
+	@Login(admin = true)
 	@PostMapping("/items")
 	public ResponseEntity<ItemResponse> creatItem(@RequestBody @Valid final ItemRequest itemRequest) {
 		return ResponseEntity.ok().body(itemService.createItem(itemRequest));
 	}
 
+	@Login(admin = true)
 	@PatchMapping("/items")
 	public ResponseEntity<ItemResponse> updateItem(@RequestBody @Valid final ItemChangeRequest itemChangeRequest) {
 		return ResponseEntity.ok().body(itemService.updateItem(itemChangeRequest));
 	}
 
+	@Login(admin = true)
 	@DeleteMapping("/items/{id}")
-	public ResponseEntity<Void> deleteItem(@PathVariable("id") Long id) {
+	public ResponseEntity<Void> deleteItem(@PathVariable Long id) {
 		itemService.deleteItem(id);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}

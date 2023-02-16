@@ -16,10 +16,12 @@ import com.gabia.bshop.dto.ItemImageDto;
 import com.gabia.bshop.dto.request.ItemImageCreateRequest;
 import com.gabia.bshop.dto.request.ItemThumbnailChangeRequest;
 import com.gabia.bshop.dto.response.ItemResponse;
+import com.gabia.bshop.security.Login;
 import com.gabia.bshop.service.ItemImageService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.java.Log;
 import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
@@ -29,35 +31,39 @@ public class ItemImageController {
 	private final ItemImageService itemImageService;
 
 	@GetMapping("/items/images/{imageId}")
-	public ResponseEntity<ItemImageDto> findItemImage(@PathVariable("imageId") final Long imageId) {
+	public ResponseEntity<ItemImageDto> findItemImage(@PathVariable final Long imageId) {
 		return ResponseEntity.ok().body(itemImageService.findItemImage(imageId));
 	}
 
 	@GetMapping("/items/{itemId}/images")
-	public ResponseEntity<List<ItemImageDto>> findItemImageList(@PathVariable("itemId") final Long itemId) {
+	public ResponseEntity<List<ItemImageDto>> findItemImageList(@PathVariable final Long itemId) {
 		return ResponseEntity.ok().body(itemImageService.findItemImageLists(itemId));
 	}
 
+	@Login(admin = true)
 	@PostMapping("/items/images")
 	public ResponseEntity<List<ItemImageDto>> creatItemImages(
 		@RequestBody @Valid final ItemImageCreateRequest itemImageCreateRequest) {
 		return ResponseEntity.ok().body(itemImageService.createItemImage(itemImageCreateRequest));
 	}
 
+	@Login(admin = true)
 	@PatchMapping("/items/images")
 	public ResponseEntity<ItemImageDto> updateItemImage(
 		@RequestBody @Valid final ItemImageDto itemImageDto) {
 		return ResponseEntity.ok().body(itemImageService.changeItemImage(itemImageDto));
 	}
 
-	@PatchMapping("/items/thumnail")
-	public ResponseEntity<ItemResponse> updateItemthumbnail(
+	@Login(admin = true)
+	@PatchMapping("/items/thumbnail")
+	public ResponseEntity<ItemResponse> updateItemThumbnail(
 		@RequestBody @Valid final ItemThumbnailChangeRequest itemThumbnailChangeRequest) {
 		return ResponseEntity.ok().body(itemImageService.changeItemThumbnail(itemThumbnailChangeRequest));
 	}
 
+	@Login(admin = true)
 	@DeleteMapping("/items/images/{imageId}")
-	public ResponseEntity<Void> deleteItemImage(@PathVariable("imageId") final Long imageId) {
+	public ResponseEntity<Void> deleteItemImage(@PathVariable final Long imageId) {
 		itemImageService.deleteItemImage(imageId);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
