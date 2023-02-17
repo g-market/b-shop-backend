@@ -30,6 +30,7 @@ import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
 import com.gabia.bshop.exception.ConflictException;
+import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.OrderMapper;
 import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.ItemRepository;
@@ -339,7 +340,7 @@ class OrderServiceTest {
 			.orderItemList(orderItemList)
 			.build();
 
-		when(orderRepository.findById(1L)).thenReturn(Optional.ofNullable(order));
+		when(orderRepository.findByIdAndMemberId(order.getId(), member.getId())).thenReturn(Optional.ofNullable(order));
 
 		//when
 		orderService.cancelOrder(member.getId(), order.getId());
@@ -359,11 +360,11 @@ class OrderServiceTest {
 		Long memberId = 1L;
 		Long nonId = 9999L;
 
-		when(orderRepository.findById(nonId)).thenThrow(EntityNotFoundException.class);
+		when(orderRepository.findByIdAndMemberId(nonId, memberId)).thenThrow(NotFoundException.class);
 
 		//when & then
 		Assertions.assertThatThrownBy(() -> orderService.cancelOrder(memberId, nonId))
-			.isInstanceOf(EntityNotFoundException.class);
+			.isInstanceOf(NotFoundException.class);
 	}
 
 }
