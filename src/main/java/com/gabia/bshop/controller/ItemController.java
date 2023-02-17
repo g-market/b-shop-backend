@@ -30,12 +30,12 @@ public class ItemController {
 	private final ItemService itemService;
 
 	@GetMapping("/items/{id}")
-	public ResponseEntity<ItemResponse> findItem(@PathVariable("id") Long id) {
+	public ResponseEntity<ItemResponse> findItem(@PathVariable("id") final Long id) {
 		return ResponseEntity.ok().body(itemService.findItem(id));
 	}
 
 	@GetMapping("/items")
-	public ResponseEntity<List<ItemResponse>> pageItem(Pageable pageable) {
+	public ResponseEntity<List<ItemResponse>> pageItem(final Pageable pageable) {
 		return ResponseEntity.ok().body(itemService.findItemList(pageable));
 	}
 
@@ -53,7 +53,7 @@ public class ItemController {
 
 	@Login(admin = true)
 	@DeleteMapping("/items/{id}")
-	public ResponseEntity<Void> deleteItem(@PathVariable Long id) {
+	public ResponseEntity<Void> deleteItem(@PathVariable final Long id) {
 		itemService.deleteItem(id);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
