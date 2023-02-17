@@ -89,11 +89,7 @@ public class ItemOption extends BaseEntity {
 	}
 
 	public void decreaseStockQuantity(final int orderCount) {
-		int restStock = this.stockQuantity - orderCount;
-		if (restStock < 0) {
-			throw new ConflictException(ITEM_OPTION_OUT_OF_STOCK_EXCEPTION, stockQuantity);
-		}
-		this.stockQuantity = restStock;
+		this.stockQuantity -= orderCount;
 	}
 
 	public void increaseStockQuantity(final int orderCount) {
