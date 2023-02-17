@@ -35,6 +35,7 @@ import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
+import com.gabia.bshop.security.MemberPayload;
 import com.gabia.bshop.service.OrderService;
 
 import jakarta.persistence.EntityManager;
@@ -376,13 +377,16 @@ class OrderServiceTest extends IntegrationTest {
 		itemRepository.saveAll(List.of(item1, item2));
 		itemOptionRepository.saveAll(List.of(itemOption1, itemOption2));
 		itemImageRepository.saveAll(List.of(itemImage1, itemImage2, itemImage3, itemImage4));
-		orderRepository.saveAll(List.of(order1));
+		orderRepository.save(order1);
 		orderItemRepository.saveAll(List.of(orderItem1, orderItem2));
 
-		entityManager.clear();
+		MemberPayload memberPayload = MemberPayload.builder()
+			.id(member1.getId())
+			.role(member1.getRole())
+			.build();
 
 		//when
-		OrderInfoSingleResponse singleOrderInfo = orderService.findSingleOrderInfo(member1.getId(), order1.getId());
+		OrderInfoSingleResponse singleOrderInfo = orderService.findSingleOrderInfo(memberPayload, order1.getId());
 
 		//then
 		Assertions.assertThat(singleOrderInfo.orderId()).isEqualTo(order1.getId());
