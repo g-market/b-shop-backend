@@ -65,11 +65,11 @@ public class OrderService {
 	public OrderInfoSingleResponse findSingleOrderInfo(final Long memberId, final Long orderId) {
 		findOrderByIdAndMemberId(orderId, memberId);
 
-		final List<OrderItem> orderInfo = orderItemRepository.findWithOrdersAndItemByOrderId(orderId);
-		final List<String> thumbnailUrls = itemImageRepository.findUrlByItemIds(orderInfo.stream()
+		final List<OrderItem> orderInfoList = orderItemRepository.findWithOrdersAndItemByOrderId(orderId);
+		final List<String> thumbnailUrlsList = itemImageRepository.findUrlByItemIds(orderInfoList.stream()
 			.map(oi -> oi.getItem().getId())
 			.collect(Collectors.toList()));
-		return OrderInfoMapper.INSTANCE.orderInfoSingleDTOResponse(orderInfo, thumbnailUrls);
+		return OrderInfoMapper.INSTANCE.orderInfoSingleDTOResponse(orderInfoList, thumbnailUrlsList);
 	}
 
 	@Transactional(readOnly = true)
