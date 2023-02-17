@@ -164,7 +164,6 @@ class OrderServiceTest {
 			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(orderItemList);
 
 		OrderCreateRequestDto orderCreateRequestDto = OrderCreateRequestDto.builder()
-			.memberId(1L)
 			.status(OrderStatus.ACCEPTED)
 			.orderItemDtoList(orderItemDtoList)
 			.build();
@@ -174,14 +173,14 @@ class OrderServiceTest {
 			List.of(itemOption1, itemOption2));
 
 		//when
-		OrderCreateResponseDto returnDto = orderService.createOrder(orderCreateRequestDto);
+		OrderCreateResponseDto returnDto = orderService.createOrder(member.getId(), orderCreateRequestDto);
 
 		//then
 		assertAll(
 			() -> assertEquals(orderItemDtoList, returnDto.orderItemDtoList()),
 			() -> assertEquals(orderItemList.stream().mapToLong(OrderItem::getPrice).sum(),
 				returnDto.totalPrice()),
-			() -> assertEquals(orderCreateRequestDto.memberId(), returnDto.memberId()),
+			() -> assertEquals(member.getId(), returnDto.memberId()),
 			() -> assertEquals(orderCreateRequestDto.status(), returnDto.status()),
 			() -> assertEquals(9, itemOption1.getStockQuantity(), "주문을 하면 재고가 줄어들어야 한다.")
 		);
@@ -275,7 +274,6 @@ class OrderServiceTest {
 			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(orderItemList);
 
 		OrderCreateRequestDto orderCreateRequestDto = OrderCreateRequestDto.builder()
-			.memberId(1L)
 			.status(OrderStatus.ACCEPTED)
 			.orderItemDtoList(orderItemDtoList)
 			.build();
@@ -285,7 +283,7 @@ class OrderServiceTest {
 			List.of(itemOption1, itemOption2));
 
 		//when & then
-		Assertions.assertThatThrownBy(() -> orderService.createOrder(orderCreateRequestDto))
+		Assertions.assertThatThrownBy(() -> orderService.createOrder(member.getId(), orderCreateRequestDto))
 			.isInstanceOf(ConflictException.class);
 	}
 
@@ -293,6 +291,16 @@ class OrderServiceTest {
 	@Test
 	void cancelOrder() {
 		//given
+		Member member = Member.builder()
+			.id(1L)
+			.email("test@test.com")
+			.grade(MemberGrade.BRONZE)
+			.name("testName")
+			.phoneNumber("01000001111")
+			.hiworksId("hiworks")
+			.role(MemberRole.NORMAL)
+			.build();
+
 		ItemOption itemOption1 = ItemOption.builder()
 			.id(1L)
 			.description("description")
@@ -334,7 +342,7 @@ class OrderServiceTest {
 		when(orderRepository.findById(1L)).thenReturn(Optional.ofNullable(order));
 
 		//when
-		orderService.cancelOrder(1L);
+		orderService.cancelOrder(member.getId(), order.getId());
 
 		//then
 		assertAll(
@@ -348,12 +356,13 @@ class OrderServiceTest {
 	@Test
 	void cancelOrderFail() {
 		//given
+		Long memberId = 1L;
 		Long nonId = 9999L;
 
 		when(orderRepository.findById(nonId)).thenThrow(EntityNotFoundException.class);
 
 		//when & then
-		Assertions.assertThatThrownBy(() -> orderService.cancelOrder(nonId))
+		Assertions.assertThatThrownBy(() -> orderService.cancelOrder(memberId, nonId))
 			.isInstanceOf(EntityNotFoundException.class);
 	}
 
