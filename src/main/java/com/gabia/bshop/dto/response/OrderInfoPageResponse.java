@@ -8,11 +8,10 @@ import com.gabia.bshop.entity.enumtype.OrderStatus;
 
 public record OrderInfoPageResponse(
 	int resultCount,
-	List<OrderInfo> orderInfos) {
+	List<OrderInfo> orderInfoList) {
 
 	public record OrderInfo(
-		long orderId,
-		//List<Long> itemId,	// TODO: Order 조회 추후 리팩토링 진행
+		Long orderId,
 		List<OrderItemDto> orderItemDtoList,
 		String thumbnailImage,
 		String representativeName,

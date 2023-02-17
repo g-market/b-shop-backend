@@ -183,23 +183,23 @@ class OrderServiceTest extends IntegrationTest {
 			pageable);
 		//then
 		Assertions.assertThat(orderInfo.resultCount()).isEqualTo(2);
-		Assertions.assertThat(orderInfo.orderInfos().get(0).orderId()).isEqualTo(order1.getId());
+		Assertions.assertThat(orderInfo.orderInfoList().get(0).orderId()).isEqualTo(order1.getId());
 		// TODO: 썸네일 추가 후 테스트코드 수정 필요
-		//Assertions.assertThat(orderInfo.orderInfos().get(0).thumbnailImage())
+		//Assertions.assertThat(orderInfo.orderInfoList().get(0).thumbnailImage())
 		//	.isEqualTo(itemImage1.getUrl());
-		//Assertions.assertThat(orderInfo.orderInfos().get(0).representativeName())
+		//Assertions.assertThat(orderInfo.orderInfoList().get(0).representativeName())
 		//	.isEqualTo(item1.getName());
-		Assertions.assertThat(orderInfo.orderInfos().get(0).itemTotalCount()).isEqualTo(1);
-		Assertions.assertThat(orderInfo.orderInfos().get(0).orderStatus())
+		Assertions.assertThat(orderInfo.orderInfoList().get(0).itemTotalCount()).isEqualTo(1);
+		Assertions.assertThat(orderInfo.orderInfoList().get(0).orderStatus())
 			.isEqualTo(order1.getStatus());
 
-		Assertions.assertThat(orderInfo.orderInfos().get(1).orderId()).isEqualTo(order2.getId());
-		// Assertions.assertThat(orderInfo.orderInfos().get(1).thumbnailImage())
+		Assertions.assertThat(orderInfo.orderInfoList().get(1).orderId()).isEqualTo(order2.getId());
+		// Assertions.assertThat(orderInfo.orderInfoList().get(1).thumbnailImage())
 		// 	.isEqualTo(itemImage3.getUrl());
-		// Assertions.assertThat(orderInfo.orderInfos().get(1).representativeName())
+		// Assertions.assertThat(orderInfo.orderInfoList().get(1).representativeName())
 		// 	.isEqualTo(item2.getName());
-		Assertions.assertThat(orderInfo.orderInfos().get(1).itemTotalCount()).isEqualTo(2);
-		Assertions.assertThat(orderInfo.orderInfos().get(1).orderStatus())
+		Assertions.assertThat(orderInfo.orderInfoList().get(1).itemTotalCount()).isEqualTo(2);
+		Assertions.assertThat(orderInfo.orderInfoList().get(1).orderStatus())
 			.isEqualTo(order2.getStatus());
 	}
 
@@ -529,13 +529,13 @@ class OrderServiceTest extends IntegrationTest {
 		OrderInfoPageResponse orderInfo = orderService.findAdminOrdersPagination(orderInfoSearchRequest, pageable);
 		//then
 		Assertions.assertThat(orderInfo.resultCount()).isEqualTo(2);
-		Assertions.assertThat(orderInfo.orderInfos().get(0).orderId()).isEqualTo(order1.getId());
+		Assertions.assertThat(orderInfo.orderInfoList().get(0).orderId()).isEqualTo(order1.getId());
 		//TODO: 썸네일 추가 후 테스트 코드 작성
-		Assertions.assertThat(orderInfo.orderInfos().get(0).itemTotalCount()).isEqualTo(1);
-		Assertions.assertThat(orderInfo.orderInfos().get(0).orderStatus()).isEqualTo(order1.getStatus());
+		Assertions.assertThat(orderInfo.orderInfoList().get(0).itemTotalCount()).isEqualTo(1);
+		Assertions.assertThat(orderInfo.orderInfoList().get(0).orderStatus()).isEqualTo(order1.getStatus());
 
-		Assertions.assertThat(orderInfo.orderInfos().get(1).orderId()).isEqualTo(order2.getId());
-		Assertions.assertThat(orderInfo.orderInfos().get(1).itemTotalCount()).isEqualTo(2);
-		Assertions.assertThat(orderInfo.orderInfos().get(1).orderStatus()).isEqualTo(order2.getStatus());
+		Assertions.assertThat(orderInfo.orderInfoList().get(1).orderId()).isEqualTo(order2.getId());
+		Assertions.assertThat(orderInfo.orderInfoList().get(1).itemTotalCount()).isEqualTo(2);
+		Assertions.assertThat(orderInfo.orderInfoList().get(1).orderStatus()).isEqualTo(order2.getStatus());
 	}
 }
