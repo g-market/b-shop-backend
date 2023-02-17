@@ -47,7 +47,7 @@ public class OrderController {
 	@GetMapping("/order-infos/{orderId}")
 	public ResponseEntity<OrderInfoSingleResponse> singleOrderInfo(@CurrentMember final MemberPayload memberPayload,
 		@PathVariable("orderId") final Long orderId) {
-		final OrderInfoSingleResponse singleOrderInfo = orderService.findSingleOrderInfo(memberPayload.id(), orderId);
+		final OrderInfoSingleResponse singleOrderInfo = orderService.findSingleOrderInfo(memberPayload, orderId);
 		return ResponseEntity.ok(singleOrderInfo);
 	}
 

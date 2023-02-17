@@ -31,6 +31,7 @@ import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
+import com.gabia.bshop.security.MemberPayload;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -62,8 +63,13 @@ public class OrderService {
 	}
 
 	@Transactional(readOnly = true)
-	public OrderInfoSingleResponse findSingleOrderInfo(final Long memberId, final Long orderId) {
-		findOrderByIdAndMemberId(orderId, memberId);
+	public OrderInfoSingleResponse findSingleOrderInfo(final MemberPayload memberPayload, final Long orderId) {
+		//권한 확인
+		if (memberPayload.isAdmin()) {
+			findOrderById(orderId);
+		} else {
+			findOrderByIdAndMemberId(orderId, memberPayload.id());
+		}
 
 		final List<OrderItem> orderInfoList = orderItemRepository.findWithOrdersAndItemByOrderId(orderId);
 		final List<String> thumbnailUrlsList = itemImageRepository.findUrlByItemIds(orderInfoList.stream()
@@ -133,15 +139,20 @@ public class OrderService {
 			.orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND_EXCEPTION, memberId));
 	}
 
-	private List<OrderItem> findOrderItemListByOrderList(final List<Order> orderList) {
-		return orderItemRepository.findByOrderIdIn(orderList.stream()
-			.map(order -> order.getId())
-			.collect(Collectors.toList()));
+	private Order findOrderById(final Long orderId) {
+		return orderRepository.findById(orderId)
+			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
 	}
 
 	private Order findOrderByIdAndMemberId(final Long orderId, final Long memberId) {
 		return orderRepository.findByIdAndMemberId(orderId, memberId)
 			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
+	}
+
+	private List<OrderItem> findOrderItemListByOrderList(final List<Order> orderList) {
+		return orderItemRepository.findByOrderIdIn(orderList.stream()
+			.map(order -> order.getId())
+			.collect(Collectors.toList()));
 	}
 
 	private void validateItemStatus(final ItemOption itemOption) {
