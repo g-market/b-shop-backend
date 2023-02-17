@@ -32,7 +32,7 @@ public enum ErrorCode {
 	CATEGORY_NOT_FOUND_EXCEPTION(NOT_FOUND, "categoryId: {0}는 존재하지 않는 카테고리 입니다."),
 	IMAGE_NOT_FOUND_EXCEPTION(NOT_FOUND, "imageId: {0}는 존재하지 않는 이미지 입니다."),
 	GRADE_NOT_FOUND_EXCEPTION(NOT_FOUND, "gradeId: {0}는 존재하지 않는 회원등급 입니다."),
-	ITEMOPTION_NOT_FOUND_EXCEPTION(NOT_FOUND, "유효하지 않은 상품이 존재합니다."),
+	ITEM_ITEMOPTION_NOT_FOUND_EXCEPTION(NOT_FOUND, "유효하지 않은 상품이 존재합니다."),
 
 	// 409(Conflict)
 	ITEM_OPTION_OUT_OF_STOCK_EXCEPTION(CONFLICT, "상품의 재고가 부족합니다.(현재 재고 수량은 {0}개 입니다.)"),
