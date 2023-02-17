@@ -36,7 +36,7 @@ public class OrderController {
 	private final OrderService orderService;
 
 	@Login
-	@GetMapping("/order-infos")
+	@GetMapping("/orders")
 	public ResponseEntity<OrderInfoPageResponse> findOrders(@CurrentMember final MemberPayload memberPayload,
 		final Pageable pageable) {
 		validatePageElementSize(pageable);
@@ -44,7 +44,7 @@ public class OrderController {
 	}
 
 	@Login
-	@GetMapping("/order-infos/{orderId}")
+	@GetMapping("/orders/{orderId}")
 	public ResponseEntity<OrderInfoSingleResponse> singleOrderInfo(@CurrentMember final MemberPayload memberPayload,
 		@PathVariable("orderId") final Long orderId) {
 		final OrderInfoSingleResponse singleOrderInfo = orderService.findSingleOrderInfo(memberPayload, orderId);
@@ -52,7 +52,7 @@ public class OrderController {
 	}
 
 	@Login(admin = true)
-	@GetMapping("/admin/order-infos")
+	@GetMapping("/admin/orders")
 	public ResponseEntity<OrderInfoPageResponse> adminOrderInfos(final OrderInfoSearchRequest orderInfoSearchRequest,
 		final Pageable pageable) {
 		final OrderInfoPageResponse adminOrdersPagination = orderService.findAdminOrdersPagination(
@@ -69,7 +69,7 @@ public class OrderController {
 	}
 
 	@Login
-	@DeleteMapping("/orders/{id}")
+	@DeleteMapping("/orders/{orderId}")
 	public ResponseEntity<Void> cancelOrder(@CurrentMember final MemberPayload memberPayload,
 		@PathVariable final Long orderId) {
 		orderService.cancelOrder(memberPayload.id(), orderId);
