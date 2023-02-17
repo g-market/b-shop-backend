@@ -29,5 +29,5 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 		""")
 	List<Order> findAllByPeriodPagination(LocalDateTime startAt, LocalDateTime endAt, Pageable pageable);
 
-	Optional<Order> findByIdAndMemberId(Long id, Long memberId);
+	Optional<Order> findByIdAndMemberId(Long orderId, Long memberId);
 }
