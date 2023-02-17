@@ -134,7 +134,7 @@ public class OrderService {
 	}
 
 	private List<OrderItem> findOrderItemListByOrderList(final List<Order> orderList) {
-		return orderItemRepository.findByOrderIds(orderList.stream()
+		return orderItemRepository.findByOrderIdIn(orderList.stream()
 			.map(order -> order.getId())
 			.collect(Collectors.toList()));
 	}
