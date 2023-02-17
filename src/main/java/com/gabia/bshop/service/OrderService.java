@@ -62,7 +62,10 @@ public class OrderService {
 	}
 
 	@Transactional(readOnly = true)
-	public OrderInfoSingleResponse findSingleOrderInfo(final Long orderId) {
+	public OrderInfoSingleResponse findSingleOrderInfo(final Long memberId, final Long orderId) {
+		orderRepository.findByIdAndMemberId(orderId, memberId)
+			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
+
 		final List<OrderItem> orderInfo = orderItemRepository.findWithOrdersAndItemByOrderId(orderId);
 		final List<String> thumbnailUrls = itemImageRepository.findUrlByItemIds(orderInfo.stream()
 			.map(oi -> oi.getItem().getId())
@@ -84,10 +87,9 @@ public class OrderService {
 			itemImagesWithItem);
 	}
 
-	//TODO: 인증 로직 추가 필요
-	public OrderCreateResponseDto createOrder(final OrderCreateRequestDto orderCreateRequestDto) {
-		findMemberById(orderCreateRequestDto.memberId());
-		final Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(orderCreateRequestDto);
+	public OrderCreateResponseDto createOrder(final Long memberId, final OrderCreateRequestDto orderCreateRequestDto) {
+		findMemberById(memberId);
+		final Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(memberId, orderCreateRequestDto);
 
 		//DB에서 OptionItem 값 한번에 조회
 		final List<ItemOption> findAllItemOptionList = itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(
@@ -120,8 +122,8 @@ public class OrderService {
 		return OrderMapper.INSTANCE.ordersCreateResponseDto(order);
 	}
 
-	public void cancelOrder(final Long id) {
-		final Order order = findOrderById(id);
+	public void cancelOrder(final Long memberId, final Long orderId) {
+		final Order order = findOrderById(orderId);
 
 		validateOrderStatus(order);
 		order.cancel();

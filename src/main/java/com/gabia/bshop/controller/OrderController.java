@@ -18,6 +18,9 @@ import com.gabia.bshop.dto.response.OrderCreateResponseDto;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
 import com.gabia.bshop.exception.ConflictException;
+import com.gabia.bshop.security.CurrentMember;
+import com.gabia.bshop.security.Login;
+import com.gabia.bshop.security.MemberPayload;
 import com.gabia.bshop.service.OrderService;
 
 import jakarta.validation.Valid;
@@ -32,23 +35,23 @@ public class OrderController {
 	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
 	private final OrderService orderService;
 
-	// TODO: 인가 적용
+	@Login
 	@GetMapping("/order-infos")
-	public ResponseEntity<OrderInfoPageResponse> findOrders(final Pageable pageable) {
-		final Long memberId = 6L;
-
+	public ResponseEntity<OrderInfoPageResponse> findOrders(@CurrentMember MemberPayload memberPayload,
+		final Pageable pageable) {
 		validatePageElementSize(pageable);
-		return ResponseEntity.ok(orderService.findOrdersPagination(memberId, pageable));
+		return ResponseEntity.ok(orderService.findOrdersPagination(memberPayload.id(), pageable));
 	}
 
-	// TODO: 인가 적용
+	@Login
 	@GetMapping("/order-infos/{orderId}")
-	public ResponseEntity<OrderInfoSingleResponse> singleOrderInfo(@PathVariable("orderId") final Long orderId) {
-		final OrderInfoSingleResponse singleOrderInfo = orderService.findSingleOrderInfo(orderId);
+	public ResponseEntity<OrderInfoSingleResponse> singleOrderInfo(@CurrentMember MemberPayload memberPayload,
+		@PathVariable("orderId") final Long orderId) {
+		final OrderInfoSingleResponse singleOrderInfo = orderService.findSingleOrderInfo(memberPayload.id(), orderId);
 		return ResponseEntity.ok(singleOrderInfo);
 	}
 
-	// TODO: admin 인가
+	@Login(admin = true)
 	@GetMapping("/admin/order-infos")
 	public ResponseEntity<OrderInfoPageResponse> adminOrderInfos(final OrderInfoSearchRequest orderInfoSearchRequest,
 		final Pageable pageable) {
@@ -57,15 +60,19 @@ public class OrderController {
 		return ResponseEntity.ok(adminOrdersPagination);
 	}
 
+	@Login
 	@PostMapping("/orders")
 	public ResponseEntity<OrderCreateResponseDto> createOrder(
+		@CurrentMember final MemberPayload memberPayload,
 		@RequestBody @Valid final OrderCreateRequestDto orderCreateRequestDto) {
-		return ResponseEntity.ok().body(orderService.createOrder(orderCreateRequestDto));
+		return ResponseEntity.ok().body(orderService.createOrder(memberPayload.id(), orderCreateRequestDto));
 	}
 
+	@Login
 	@DeleteMapping("/orders/{id}")
-	public ResponseEntity<Void> cancelOrder(@PathVariable final Long id) {
-		orderService.cancelOrder(id);
+	public ResponseEntity<Void> cancelOrder(@CurrentMember final MemberPayload memberPayload,
+		@PathVariable final Long orderId) {
+		orderService.cancelOrder(memberPayload.id(), orderId);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 
