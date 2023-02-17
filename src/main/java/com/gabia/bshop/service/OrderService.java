@@ -63,8 +63,7 @@ public class OrderService {
 
 	@Transactional(readOnly = true)
 	public OrderInfoSingleResponse findSingleOrderInfo(final Long memberId, final Long orderId) {
-		orderRepository.findByIdAndMemberId(orderId, memberId)
-			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
+		findOrderByIdAndMemberId(orderId, memberId);
 
 		final List<OrderItem> orderInfo = orderItemRepository.findWithOrdersAndItemByOrderId(orderId);
 		final List<String> thumbnailUrls = itemImageRepository.findUrlByItemIds(orderInfo.stream()
@@ -123,7 +122,7 @@ public class OrderService {
 	}
 
 	public void cancelOrder(final Long memberId, final Long orderId) {
-		final Order order = findOrderById(orderId);
+		final Order order = findOrderByIdAndMemberId(orderId, memberId);
 
 		validateOrderStatus(order);
 		order.cancel();
@@ -134,15 +133,15 @@ public class OrderService {
 			.orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND_EXCEPTION, memberId));
 	}
 
-	private Order findOrderById(final Long orderId) {
-		return orderRepository.findById(orderId)
-			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
-	}
-
 	private List<OrderItem> findOrderItemListByOrderList(final List<Order> orderList) {
 		return orderItemRepository.findByOrderIds(orderList.stream()
 			.map(order -> order.getId())
 			.collect(Collectors.toList()));
+	}
+
+	private Order findOrderByIdAndMemberId(final Long orderId, final Long memberId) {
+		return orderRepository.findByIdAndMemberId(orderId, memberId)
+			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
 	}
 
 	private void validateItemStatus(final ItemOption itemOption) {
