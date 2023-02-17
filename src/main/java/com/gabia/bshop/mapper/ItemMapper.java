@@ -23,14 +23,14 @@ public interface ItemMapper {
 	ItemResponse itemToItemResponse(Item item);
 
 	@Mappings({
-		@Mapping(source = "category", target = "categoryDto"),
+		@Mapping(source = "category.id", target = "categoryId"),
 		@Mapping(source = "itemImageList", target = "itemImageDtoList"),
 		@Mapping(source = "itemOptionList", target = "itemOptionDtoList")
 	})
 	ItemRequest itemToItemRequest(Item item);
 
 	@Mappings({
-		@Mapping(source = "category", target = "categoryDto"),
+		@Mapping(source = "category.id", target = "categoryId"),
 		@Mapping(source = "item.id", target = "itemId"),
 	})
 	ItemChangeRequest itemToItemChangeRequest(Item item);

@@ -62,8 +62,8 @@ public class Item extends BaseEntity {
 	private LocalDateTime openAt;
 	@Column(nullable = false)
 	private boolean deleted = false;
-	@Column(nullable = false)
-	private String thumbnail = "NO_IMAGE_URL";
+	@Column
+	private String thumbnail;
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ItemImage> itemImageList = new ArrayList<>();
 

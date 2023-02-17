@@ -17,7 +17,7 @@ public record ItemRequest(
 	List<ItemOptionDto> itemOptionDtoList,
 	List<ItemImageDto> itemImageDtoList,
 	@NotNull(message = "카테고리는 필수 입니다")
-	CategoryDto categoryDto,
+	Long categoryId,
 
 	@NotNull(message = "상품의 이름을 입력하세요.")
 	String name,

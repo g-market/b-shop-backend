@@ -5,6 +5,7 @@ import static com.gabia.bshop.exception.ErrorCode.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -34,7 +35,9 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class ItemService {
 	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
-	private static final String NO_IMAGE_URL = "TO_BE_CHANGE";
+
+	@Value("${minio.default.image}")
+	private String NO_IMAGE_URL;
 	private final ItemRepository itemRepository;
 	private final CategoryRepository categoryRepository;
 	private final ItemOptionRepository itemOptionRepository;
@@ -73,7 +76,7 @@ public class ItemService {
 	public ItemResponse createItem(final ItemRequest itemDto) {
 
 		// 1. Category 조회
-		final Long categoryId = itemDto.categoryDto().id();
+		final Long categoryId = itemDto.categoryId();
 		final Category category = findCategoryById(categoryId);
 
 		// 2. Item 생성
@@ -147,7 +150,7 @@ public class ItemService {
 	@Transactional
 	public ItemResponse updateItem(final ItemChangeRequest itemChangeRequest) {
 		Item item = findItemById(itemChangeRequest.itemId());
-		final Long categoryId = itemChangeRequest.categoryDto().id();
+		final Long categoryId = itemChangeRequest.categoryId();
 
 		final Category category = findCategoryById(categoryId);
 

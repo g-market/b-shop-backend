@@ -14,7 +14,7 @@ public record ItemChangeRequest(
 	@NotNull(message = "상품 ID 는 필수 값입니다.")
 	Long itemId,
 
-	CategoryDto categoryDto,
+	Long categoryId,
 	String name,
 	String description,
 	@PositiveOrZero(message = "가격은 0원 이상입니다.")
