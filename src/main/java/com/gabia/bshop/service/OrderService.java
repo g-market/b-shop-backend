@@ -36,9 +36,7 @@ import com.gabia.bshop.repository.OrderRepository;
 import com.gabia.bshop.security.MemberPayload;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service

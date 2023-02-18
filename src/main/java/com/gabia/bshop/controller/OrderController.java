@@ -28,9 +28,7 @@ import com.gabia.bshop.service.OrderService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class OrderController {
@@ -39,7 +37,7 @@ public class OrderController {
 	private final OrderService orderService;
 
 	@Login
-	@GetMapping("/order-infos")
+	@GetMapping("/orders")
 	public ResponseEntity<OrderInfoPageResponse> findOrders(@CurrentMember final MemberPayload memberPayload,
 		final Pageable pageable) {
 		validatePageElementSize(pageable);
@@ -47,7 +45,7 @@ public class OrderController {
 	}
 
 	@Login
-	@GetMapping("/order-infos/{orderId}")
+	@GetMapping("/orders/{orderId}")
 	public ResponseEntity<OrderInfoSingleResponse> singleOrderInfo(@CurrentMember final MemberPayload memberPayload,
 		@PathVariable("orderId") final Long orderId) {
 		final OrderInfoSingleResponse singleOrderInfo = orderService.findSingleOrderInfo(memberPayload, orderId);
@@ -55,7 +53,7 @@ public class OrderController {
 	}
 
 	@Login(admin = true)
-	@GetMapping("/admin/order-infos")
+	@GetMapping("/admin/orders")
 	public ResponseEntity<OrderInfoPageResponse> adminOrderInfos(final OrderInfoSearchRequest orderInfoSearchRequest,
 		final Pageable pageable) {
 		final OrderInfoPageResponse adminOrdersPagination = orderService.findAdminOrdersPagination(
