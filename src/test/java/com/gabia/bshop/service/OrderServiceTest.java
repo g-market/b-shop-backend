@@ -500,7 +500,7 @@ class OrderServiceTest {
 
 	@DisplayName("관리자가_주문_단건_조회를_한다.")
 	@Test
-	void AdminFindSingleOrder() {
+	void adminFindSingleOrder() {
 		//given
 		Member member = Member.builder()
 			.role(MemberRole.ADMIN)
