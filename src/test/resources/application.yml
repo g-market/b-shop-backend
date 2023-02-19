@@ -30,6 +30,9 @@ server:
     domain: https://b-shop.com
     url: https://123.456.789.1
 
+cart:
+  expired-time: 86400000
+
 hiworks:
   client:
     id: clientId
