@@ -43,6 +43,7 @@ public enum ErrorCode {
 	// 500(Internal Server Error)
 	OAUTH_PROCESSING_EXCEPTION(INTERNAL_SERVER_ERROR, "Oauth 진행 중 예상치 못한 문제가 생겼습니다."),
 	OAUTH_JSON_PARSING_EXCEPTION(INTERNAL_SERVER_ERROR, "Oauth 진행 중 데이터 파싱에 실패했습니다."),
+	REDIS_JSON_PARSING_EXCEPTION(INTERNAL_SERVER_ERROR, "Redis Value의 데이터 파싱에 실패했습니다."),
 
 	// 503(Service Temporarily Unavailable)
 	HIWORKS_SERVER_ERROR_EXCEPTION(SERVICE_UNAVAILABLE, "하이웍스 서버에 문제가 있습니다.");
