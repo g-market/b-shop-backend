@@ -27,7 +27,7 @@ class RefreshTokenRepositoryImplTest extends IntegrationTest {
 	private RefreshTokenRepository refreshTokenRepository;
 
 	@Autowired
-	private RedisTemplate<String, Object> redisTemplate;
+	private RedisTemplate<String, String> redisTemplate;
 
 	@Value("${token.refresh-expired-time}")
 	private long expireLength;
@@ -37,6 +37,7 @@ class RefreshTokenRepositoryImplTest extends IntegrationTest {
 	@BeforeEach
 	void setUp() {
 		final RedisConnectionFactory connectionFactory = redisTemplate.getConnectionFactory();
+		assert connectionFactory != null;
 		connectionFactory.getConnection().serverCommands().flushAll();
 	}
 
@@ -61,6 +62,7 @@ class RefreshTokenRepositoryImplTest extends IntegrationTest {
 	@DisplayName("저장된 리프레시 토큰의 유효기간은 ${token.refresh-expired-time}과 유효범위내로 같다")
 	void given_savedRefreshToken_when_check_ExpiredTime_then_equals_refreshExpiredTime() {
 		// given
+		final String refreshTokenPrefix = "refreshToken-";
 		final RefreshToken refreshToken = RefreshToken.builder()
 			.refreshToken(tokenValue)
 			.expiredAt(expiredAt)
@@ -69,14 +71,15 @@ class RefreshTokenRepositoryImplTest extends IntegrationTest {
 		refreshTokenRepository.save(refreshToken);
 
 		// when
-		final Long actual = redisTemplate.getExpire(refreshToken.refreshToken(), TimeUnit.MILLISECONDS);
+		final Long actual = redisTemplate.getExpire(refreshTokenPrefix + refreshToken.refreshToken(),
+			TimeUnit.MILLISECONDS);
 
 		// then
-		assertThat(actual).isCloseTo(expireLength, withinPercentage(5));
+		assertThat(actual).isCloseTo(expireLength, withinPercentage(5L));
 	}
 
 	@Test
-	@DisplayName("리프레시 토큰의 REDIS TTL 적용되었음을 확인한다.")
+	@DisplayName("같은 리프레시 토큰 Key가 Redis에 존재하면 예외를 던진다.")
 	void given_savedRefreshToken_when_save_savedRefreshToken_then_throw_UnAuthorizedRefreshTokenException() {
 		// given
 		final RefreshToken refreshToken = RefreshToken.builder()
