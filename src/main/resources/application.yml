@@ -32,6 +32,9 @@ server:
     domain: ${PROD-DOMAIN}
     url: ${PROD-URL}
 
+cart:
+  expired-time: ${CART-EXPIRED-TIME}
+
 hiworks:
   client:
     id: ${CLIENT-ID}
