@@ -31,8 +31,8 @@ public class ItemOptionController {
 
 	@GetMapping("/items/{itemId}/options/{optionId}")
 	public ResponseEntity<ItemOptionResponse> findItemOption(
-		@PathVariable("itemId") final Long itemId,
-		@PathVariable("optionId") final Long optionId) {
+		@PathVariable final Long itemId,
+		@PathVariable final Long optionId) {
 		return ResponseEntity.ok().body(itemOptionService.findItemOption(itemId, optionId));
 	}
 
@@ -44,7 +44,7 @@ public class ItemOptionController {
 	@Login(admin = true)
 	@PostMapping("/items/{itemId}/options")
 	public ResponseEntity<ItemOptionResponse> creatItemOption(
-		@PathVariable("itemId") final Long itemId,
+		@PathVariable final Long itemId,
 		@RequestBody @Valid final ItemOptionRequest itemOptionRequest) {
 		return ResponseEntity.ok().body(itemOptionService.createItemOption(itemId, itemOptionRequest));
 	}
@@ -52,19 +52,19 @@ public class ItemOptionController {
 	@Login(admin = true)
 	@PatchMapping("/item/{itemId}/options/{optionId}")
 	public ResponseEntity<ItemOptionResponse> updateItemOption(
-		@PathVariable("itemId") final Long itemId,
-		@PathVariable("optionId") final Long itemOptionId,
+		@PathVariable final Long itemId,
+		@PathVariable final Long optionId,
 		@RequestBody @Valid final ItemOptionChangeRequest itemOptionChangeRequest) {
 		return ResponseEntity.ok()
-			.body(itemOptionService.changeItemOption(itemId, itemOptionId, itemOptionChangeRequest));
+			.body(itemOptionService.changeItemOption(itemId, optionId, itemOptionChangeRequest));
 	}
 
 	@Login(admin = true)
 	@DeleteMapping("/items/{itemId}/options/{optionId}")
 	public ResponseEntity<Void> deleteItemOption(
-		@PathVariable("itemId") final Long itemId,
-		@PathVariable("optionId") final Long itemOptionId) {
-		itemOptionService.deleteItemOption(itemId, itemOptionId);
+		@PathVariable final Long itemId,
+		@PathVariable final Long optionId) {
+		itemOptionService.deleteItemOption(itemId, optionId);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }

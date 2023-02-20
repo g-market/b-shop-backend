@@ -29,10 +29,10 @@ import lombok.extern.slf4j.Slf4j;
 public class ItemImageController {
 	private final ItemImageService itemImageService;
 
-	@GetMapping("/items/{itemId}/images/{imageId}")
+	@GetMapping("/items/-/images/{imageId}")
 	public ResponseEntity<ItemImageDto> findItemImage(
-		@PathVariable("itemId") final Long itemId,
-		@PathVariable("imageId") final Long imageId) {
+		@PathVariable final Long itemId,
+		@PathVariable final Long imageId) {
 		return ResponseEntity.ok().body(itemImageService.findItemImage(itemId, imageId));
 	}
 
@@ -44,7 +44,7 @@ public class ItemImageController {
 	@Login(admin = true)
 	@PostMapping("/items/{itemId}/images")
 	public ResponseEntity<List<ItemImageDto>> creatItemImages(
-		@PathVariable("itemId") final Long itemId,
+		@PathVariable final Long itemId,
 		@RequestBody @Valid final ItemImageCreateRequest itemImageCreateRequest) {
 		return ResponseEntity.ok().body(itemImageService.createItemImage(itemId, itemImageCreateRequest));
 	}
@@ -52,7 +52,7 @@ public class ItemImageController {
 	@Login(admin = true)
 	@PatchMapping("/items/{itemId}/images")
 	public ResponseEntity<ItemImageDto> updateItemImage(
-		@PathVariable("itemId") final Long itemId,
+		@PathVariable final Long itemId,
 		@RequestBody @Valid final ItemImageDto itemImageDto) {
 		return ResponseEntity.ok().body(itemImageService.changeItemImage(itemId, itemImageDto));
 	}
@@ -60,7 +60,7 @@ public class ItemImageController {
 	@Login(admin = true)
 	@PatchMapping("/items/{itemId}/thumbnail")
 	public ResponseEntity<ItemResponse> updateItemThumbnail(
-		@PathVariable("itemId") final Long itemId,
+		@PathVariable final Long itemId,
 		@RequestBody @Valid final ItemThumbnailChangeRequest itemThumbnailChangeRequest) {
 		return ResponseEntity.ok().body(itemImageService.changeItemThumbnail(itemId, itemThumbnailChangeRequest));
 	}
@@ -68,8 +68,8 @@ public class ItemImageController {
 	@Login(admin = true)
 	@DeleteMapping("/items/{itemId}/images/{imageId}")
 	public ResponseEntity<Void> deleteItemImage(
-		@PathVariable("itemId") final Long itemId,
-		@PathVariable("imageId") final Long imageId) {
+		@PathVariable final Long itemId,
+		@PathVariable final Long imageId) {
 		itemImageService.deleteItemImage(itemId, imageId);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}

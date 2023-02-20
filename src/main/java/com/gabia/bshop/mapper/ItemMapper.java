@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
+import org.springframework.data.domain.Page;
 
 import com.gabia.bshop.dto.request.ItemChangeRequest;
 import com.gabia.bshop.dto.request.ItemRequest;
@@ -34,4 +35,13 @@ public interface ItemMapper {
 		@Mapping(source = "item.id", target = "itemId"),
 	})
 	ItemChangeRequest itemToItemChangeRequest(Item item);
+
+
+	// @Mappings({
+	// 	@Mapping(source = "content.category", target = "categoryDto"),
+	// 	@Mapping(source = "content.itemImageList", target = "itemImageDtoList"),
+	// 	@Mapping(source = "content.itemOptionList", target = "itemOptionDtoList"),
+	// })
+	// Page<ItemResponse> itemListToItemResponse(Page<Item> item);
+
 }

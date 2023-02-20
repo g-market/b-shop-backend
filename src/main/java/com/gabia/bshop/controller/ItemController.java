@@ -2,6 +2,7 @@ package com.gabia.bshop.controller;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,12 +31,12 @@ public class ItemController {
 	private final ItemService itemService;
 
 	@GetMapping("/items/{id}")
-	public ResponseEntity<ItemResponse> findItem(@PathVariable("id") final Long id) {
+	public ResponseEntity<ItemResponse> findItem(@PathVariable final Long id) {
 		return ResponseEntity.ok().body(itemService.findItem(id));
 	}
 
 	@GetMapping("/items")
-	public ResponseEntity<List<ItemResponse>> findItemList(final Pageable pageable) {
+	public ResponseEntity<Page<ItemResponse>> findItemList(final Pageable pageable) {
 		return ResponseEntity.ok().body(itemService.findItemList(pageable));
 	}
 

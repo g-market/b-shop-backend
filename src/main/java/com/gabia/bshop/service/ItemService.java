@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -59,14 +60,14 @@ public class ItemService {
 	 * 1. fetch join
 	 *
 	 **/
-	public List<ItemResponse> findItemList(final Pageable page) {
+	public Page<ItemResponse> findItemList(final Pageable page) {
 
 		if (page.getPageSize() > MAX_PAGE_ELEMENT_REQUEST_SIZE) {
 			throw new ConflictException(MAX_PAGE_ELEMENT_REQUEST_SIZE_EXCEPTION, MAX_PAGE_ELEMENT_REQUEST_SIZE);
 		}
 
 		final Page<Item> itemPage = itemRepository.findAll(page);
-		return itemPage.stream().map(ItemMapper.INSTANCE::itemToItemResponse).toList();
+		return new PageImpl<>(itemPage.stream().map(ItemMapper.INSTANCE::itemToItemResponse).toList());
 	}
 
 	/*
@@ -113,11 +114,6 @@ public class ItemService {
 
 		// 4. Image 생성
 		if (itemDto.itemImageDtoList() != null && !itemDto.itemImageDtoList().isEmpty()) {
-			/** TODO
-			 1. image url Validation
-			 2. (option) file to image url
-			 **/
-
 			for (ItemImageDto itemImageDto : itemDto.itemImageDtoList()) {
 				final boolean isValid = imageValidate.validate(itemImageDto.url());
 
