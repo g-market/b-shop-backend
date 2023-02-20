@@ -67,10 +67,10 @@ public class OrderService {
 		}
 
 		final List<OrderItem> orderInfoList = orderItemRepository.findWithOrdersAndItemByOrderId(orderId);
-		final List<String> thumbnailUrlsList = itemImageRepository.findUrlByItemIds(orderInfoList.stream()
+		final List<String> thumbnailUrlList = itemImageRepository.findUrlByItemIds(orderInfoList.stream()
 			.map(oi -> oi.getItem().getId())
 			.collect(Collectors.toList()));
-		return OrderInfoMapper.INSTANCE.orderInfoSingleDTOResponse(orderInfoList, thumbnailUrlsList);
+		return OrderInfoMapper.INSTANCE.orderInfoSingleDTOResponse(orderInfoList, thumbnailUrlList);
 	}
 
 	@Transactional(readOnly = true)
