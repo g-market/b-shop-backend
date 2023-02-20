@@ -35,6 +35,7 @@ public enum ErrorCode {
 	GRADE_NOT_FOUND_EXCEPTION(NOT_FOUND, "gradeId: {0}는 존재하지 않는 회원등급 입니다."),
 	ITEM_ITEMOPTION_NOT_FOUND_EXCEPTION(NOT_FOUND, "유효하지 않은 상품이 존재합니다."),
 	INCORRECT_URL_EXCEPTION(NOT_FOUND, "유효하지 않은 URL 입니다"),
+	ITEM_RESERVATION_NOT_FOUND_EXCEPTION(NOT_FOUND, "itemId : {0}에 대한 상품예약을 찾을 수 없습니다."),
 
 	// 409(Conflict)
 	ITEM_OPTION_OUT_OF_STOCK_EXCEPTION(CONFLICT, "상품의 재고가 부족합니다.(현재 재고 수량은 {0}개 입니다.)"),

@@ -50,3 +50,6 @@ minio:
   bucket: images
   default:
     image: http://localhost:9000/images/No_Image.jpg
+
+shedlock:
+  table: shedlock

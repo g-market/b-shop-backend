@@ -53,6 +53,8 @@ minio:
   default:
     image: ${MINIO_NO_IMAGE_URL}
 
+shedlock:
+  table: shedlock
 
 logging:
   level:

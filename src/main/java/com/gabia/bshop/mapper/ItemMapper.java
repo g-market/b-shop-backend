@@ -35,13 +35,4 @@ public interface ItemMapper {
 		@Mapping(source = "item.id", target = "itemId"),
 	})
 	ItemChangeRequest itemToItemChangeRequest(Item item);
-
-
-	// @Mappings({
-	// 	@Mapping(source = "content.category", target = "categoryDto"),
-	// 	@Mapping(source = "content.itemImageList", target = "itemImageDtoList"),
-	// 	@Mapping(source = "content.itemOptionList", target = "itemOptionDtoList"),
-	// })
-	// Page<ItemResponse> itemListToItemResponse(Page<Item> item);
-
 }

@@ -78,6 +78,10 @@ dependencies {
     // url-validator
     implementation group: 'commons-validator', name: 'commons-validator', version: '1.6'
 
+    // shed-lock
+    implementation group: 'net.javacrumbs.shedlock', name: 'shedlock-spring', version: '4.42.0'
+    implementation group: 'net.javacrumbs.shedlock', name: 'shedlock-provider-jdbc-template', version: '4.42.0'
+
 }
 
 tasks.named('test') {
