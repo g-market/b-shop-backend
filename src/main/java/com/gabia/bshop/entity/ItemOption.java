@@ -5,7 +5,7 @@ import java.util.Objects;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import com.gabia.bshop.dto.request.ItemOptionChangeRequest;
+import com.gabia.bshop.dto.request.ItemOptionRequest;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -94,7 +94,7 @@ public class ItemOption extends BaseEntity {
 		this.stockQuantity += orderCount;
 	}
 
-	public void update(ItemOptionChangeRequest changeRequest) {
+	public void update(ItemOptionRequest changeRequest) {
 		updateDescription(changeRequest.description());
 		updateOptionPrice(changeRequest.optionPrice());
 		updateOptionStock(changeRequest.stockQuantity());

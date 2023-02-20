@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gabia.bshop.dto.request.ItemOptionChangeRequest;
 import com.gabia.bshop.dto.request.ItemOptionRequest;
 import com.gabia.bshop.dto.response.ItemOptionResponse;
 import com.gabia.bshop.security.Login;
@@ -54,9 +53,9 @@ public class ItemOptionController {
 	public ResponseEntity<ItemOptionResponse> updateItemOption(
 		@PathVariable final Long itemId,
 		@PathVariable final Long optionId,
-		@RequestBody @Valid final ItemOptionChangeRequest itemOptionChangeRequest) {
+		@RequestBody @Valid final ItemOptionRequest itemOptionRequest) {
 		return ResponseEntity.ok()
-			.body(itemOptionService.changeItemOption(itemId, optionId, itemOptionChangeRequest));
+			.body(itemOptionService.changeItemOption(itemId, optionId, itemOptionRequest));
 	}
 
 	@Login(admin = true)

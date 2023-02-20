@@ -7,7 +7,6 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gabia.bshop.dto.request.ItemOptionChangeRequest;
 import com.gabia.bshop.dto.request.ItemOptionRequest;
 import com.gabia.bshop.dto.response.ItemOptionResponse;
 import com.gabia.bshop.entity.Item;
@@ -64,11 +63,11 @@ public class ItemOptionService {
 	public ItemOptionResponse changeItemOption(
 		final Long itemId,
 		final Long optionId,
-		final ItemOptionChangeRequest itemOptionChangeRequest) {
+		final ItemOptionRequest itemOptionRequest) {
 
 		final ItemOption itemOption = findItemOptionByItemIdAndOptionId(itemId, optionId);
 
-		itemOption.update(itemOptionChangeRequest);
+		itemOption.update(itemOptionRequest);
 
 		return ItemOptionMapper.INSTANCE.itemOptionToResponse(itemOptionRepository.save(itemOption));
 	}
