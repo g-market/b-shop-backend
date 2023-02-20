@@ -137,6 +137,12 @@ public class Item extends BaseEntity {
 		}
 	}
 
+	public void setItemStatus(ItemStatus itemStatus) {
+		if (itemStatus != null) {
+			this.itemStatus = itemStatus;
+		}
+	}
+
 	public void updateImage(List<ItemImage> itemImageList) {
 		this.itemImageList = itemImageList;
 	}
