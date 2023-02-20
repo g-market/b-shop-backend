@@ -50,10 +50,10 @@ public class ItemOptionController {
 	}
 
 	@Login(admin = true)
-	@PatchMapping("/item/{itemId}/options/{OptionId}")
+	@PatchMapping("/item/{itemId}/options/{optionId}")
 	public ResponseEntity<ItemOptionResponse> updateItemOption(
 		@PathVariable("itemId") final Long itemId,
-		@PathVariable("OptionId") final Long itemOptionId,
+		@PathVariable("optionId") final Long itemOptionId,
 		@RequestBody @Valid final ItemOptionChangeRequest itemOptionChangeRequest) {
 		return ResponseEntity.ok()
 			.body(itemOptionService.changeItemOption(itemId, itemOptionId, itemOptionChangeRequest));
@@ -63,7 +63,7 @@ public class ItemOptionController {
 	@DeleteMapping("/items/{itemId}/options/{optionId}")
 	public ResponseEntity<Void> deleteItemOption(
 		@PathVariable("itemId") final Long itemId,
-		@PathVariable("OptionId") final Long itemOptionId) {
+		@PathVariable("optionId") final Long itemOptionId) {
 		itemOptionService.deleteItemOption(itemId, itemOptionId);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}

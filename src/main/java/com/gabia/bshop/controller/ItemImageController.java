@@ -68,8 +68,8 @@ public class ItemImageController {
 	@Login(admin = true)
 	@DeleteMapping("/items/{itemId}/images/{imageId}")
 	public ResponseEntity<Void> deleteItemImage(
-		@PathVariable final Long itemId,
-		@PathVariable final Long imageId) {
+		@PathVariable("itemId") final Long itemId,
+		@PathVariable("imageId") final Long imageId) {
 		itemImageService.deleteItemImage(itemId, imageId);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
