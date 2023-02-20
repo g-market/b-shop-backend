@@ -143,6 +143,12 @@ public class Item extends BaseEntity {
 		}
 	}
 
+	public void setOpenAt(LocalDateTime localDateTime) {
+		if (localDateTime != null) {
+			this.openAt = localDateTime;
+		}
+	}
+
 	public void updateImage(List<ItemImage> itemImageList) {
 		this.itemImageList = itemImageList;
 	}
