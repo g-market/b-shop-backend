@@ -74,6 +74,10 @@ dependencies {
 
     // minio
     implementation group: 'io.minio', name: 'minio', version: '8.3.6'
+
+    // url-validator
+    implementation group: 'commons-validator', name: 'commons-validator', version: '1.6'
+
 }
 
 tasks.named('test') {

@@ -23,4 +23,3 @@ public interface ItemOptionRepository extends JpaRepository<ItemOption, Long> {
 		""")
 	List<ItemOption> findWithItemByItemIdsAndItemOptionIds(List<Long> itemIdList, List<Long> itemOptionIdList);
 }
-

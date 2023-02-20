@@ -11,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gabia.bshop.dto.ItemImageDto;
 import com.gabia.bshop.dto.request.ItemChangeRequest;
 import com.gabia.bshop.dto.request.ItemRequest;
 import com.gabia.bshop.dto.response.ItemResponse;
@@ -25,6 +26,7 @@ import com.gabia.bshop.mapper.ItemMapper;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.ItemRepository;
+import com.gabia.bshop.util.ImageValidate;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -41,6 +43,8 @@ public class ItemService {
 	private final ItemRepository itemRepository;
 	private final CategoryRepository categoryRepository;
 	private final ItemOptionRepository itemOptionRepository;
+
+	private final ImageValidate imageValidate;
 
 	/**
 	 * 상품 조회
@@ -117,14 +121,18 @@ public class ItemService {
 			 1. image url Validation
 			 2. (option) file to image url
 			 **/
-			itemDto.itemImageDtoList()
-				.stream()
-				.map(
-					itemImageDto -> ItemImage.builder()
-						.item(item)
-						.url(itemImageDto.url())
-						.build()
-				).forEach(item::addItemImage);
+
+			for (ItemImageDto itemImageDto : itemDto.itemImageDtoList()) {
+				final boolean isValid = imageValidate.validate(itemImageDto.url());
+
+				if (!isValid) {
+					throw new NotFoundException(INCORRECT_URL_EXCEPTION);
+				}
+				item.addItemImage(ItemImage.builder()
+					.item(item)
+					.url(itemImageDto.url())
+					.build());
+			}
 		} else {
 			ItemImage itemImage = ItemImage.builder()
 				.item(item)

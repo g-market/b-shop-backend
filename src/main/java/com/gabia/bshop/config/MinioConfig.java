@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Configuration
 public class MinioConfig {
+
 	@Bean
 	public MinioClient minioClient(
 		@Value("${minio.endpoint}") final String endPoint,
