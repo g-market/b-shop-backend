@@ -32,7 +32,6 @@ import com.gabia.bshop.entity.enumtype.OrderStatus;
 import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.mapper.OrderMapper;
 import com.gabia.bshop.repository.ItemOptionRepository;
-import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OrderRepository;
 

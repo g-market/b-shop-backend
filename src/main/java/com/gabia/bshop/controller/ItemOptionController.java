@@ -38,18 +38,21 @@ public class ItemOptionController {
 	public ResponseEntity<List<ItemOptionResponse>> pageItemOption(@PathVariable final Long itemId) {
 		return ResponseEntity.ok().body(itemOptionService.findOptionList(itemId));
 	}
+
 	@Login(admin = true)
 	@PostMapping("/items/options")
 	public ResponseEntity<ItemOptionResponse> creatItemOption(
 		@RequestBody @Valid final ItemOptionRequest itemOptionRequest) {
 		return ResponseEntity.ok().body(itemOptionService.createItemOption(itemOptionRequest));
 	}
+
 	@Login(admin = true)
 	@PatchMapping("/items/options")
 	public ResponseEntity<ItemOptionResponse> updateItemOption(
 		@RequestBody @Valid final ItemOptionChangeRequest itemOptionChangeRequest) {
 		return ResponseEntity.ok().body(itemOptionService.changeItemOption(itemOptionChangeRequest));
 	}
+
 	@Login(admin = true)
 	@DeleteMapping("/items/options/{optionId}")
 	public ResponseEntity<Void> deleteItemOption(@PathVariable final Long optionId) {

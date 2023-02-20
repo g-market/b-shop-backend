@@ -24,7 +24,6 @@ import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.ItemMapper;
 import com.gabia.bshop.repository.CategoryRepository;
-import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.util.ImageValidate;
 
@@ -37,12 +36,11 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 public class ItemService {
 	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
-
-	@Value("${minio.default.image}")
-	private String NO_IMAGE_URL;
 	private final ItemRepository itemRepository;
 	private final CategoryRepository categoryRepository;
 	private final ImageValidate imageValidate;
+	@Value("${minio.default.image}")
+	private String NO_IMAGE_URL;
 
 	/**
 	 * 상품 조회

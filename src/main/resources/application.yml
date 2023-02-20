@@ -46,7 +46,7 @@ token:
   secret: ${TOKEN-SECRET}
 
 minio:
-  endpoint : ${MINIO-ENDPOINT}
+  endpoint: ${MINIO-ENDPOINT}
   user: ${MINIO_USER}
   password: ${MINIO_PASSWORD}
   bucket: ${MINIO_BUCKET}
