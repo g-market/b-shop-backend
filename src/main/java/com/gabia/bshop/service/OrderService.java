@@ -17,7 +17,6 @@ import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.ItemOption;
-import com.gabia.bshop.entity.Member;
 import com.gabia.bshop.entity.Order;
 import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
@@ -48,8 +47,6 @@ public class OrderService {
 
 	@Transactional(readOnly = true)
 	public OrderInfoPageResponse findOrdersPagination(final Long memberId, final Pageable pageable) {
-		findMemberById(memberId);
-
 		final List<Order> orderList = orderRepository.findByMemberIdPagination(memberId, pageable);
 		final List<OrderItem> orderItemList = findOrderItemListByOrderList(orderList);
 		final List<ItemImage> itemImagesWithItem = itemImageRepository.findWithItemByItemIds(
@@ -91,7 +88,6 @@ public class OrderService {
 	}
 
 	public OrderCreateResponseDto createOrder(final Long memberId, final OrderCreateRequestDto orderCreateRequestDto) {
-		findMemberById(memberId);
 		final Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(memberId, orderCreateRequestDto);
 
 		//DB에서 OptionItem 값 한번에 조회
@@ -130,11 +126,6 @@ public class OrderService {
 
 		validateOrderStatus(order);
 		order.cancel();
-	}
-
-	private Member findMemberById(final Long memberId) {
-		return memberRepository.findById(memberId)
-			.orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND_EXCEPTION, memberId));
 	}
 
 	private Order findOrderById(final Long orderId) {
