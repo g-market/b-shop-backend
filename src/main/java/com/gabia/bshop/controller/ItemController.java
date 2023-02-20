@@ -42,7 +42,7 @@ public class ItemController {
 
 	@Login(admin = true)
 	@PostMapping("/items")
-	public ResponseEntity<ItemResponse> creatItem(@RequestBody @Valid final ItemRequest itemRequest) {
+	public ResponseEntity<ItemResponse> createItem(@RequestBody @Valid final ItemRequest itemRequest) {
 		return ResponseEntity.ok().body(itemService.createItem(itemRequest));
 	}
 
