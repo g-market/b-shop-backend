@@ -14,10 +14,9 @@ public interface ItemOptionMapper {
 	ItemOptionMapper INSTANCE = Mappers.getMapper(ItemOptionMapper.class);
 
 	@Mappings({
-		@Mapping(source = "itemId", target = "item.id"),
-		@Mapping(target = "id", ignore = true)
-	}
-	)
+		@Mapping(target = "id", ignore = true),
+		@Mapping(target = "item", ignore = true)
+	})
 	ItemOption itemOptionRequestToEntity(ItemOptionRequest itemOptionRequest);
 
 	@Mappings({

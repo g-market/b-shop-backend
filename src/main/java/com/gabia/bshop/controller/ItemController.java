@@ -35,7 +35,7 @@ public class ItemController {
 	}
 
 	@GetMapping("/items")
-	public ResponseEntity<List<ItemResponse>> pageItem(final Pageable pageable) {
+	public ResponseEntity<List<ItemResponse>> findItemList(final Pageable pageable) {
 		return ResponseEntity.ok().body(itemService.findItemList(pageable));
 	}
 

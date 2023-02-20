@@ -28,24 +28,24 @@ public class ItemOptionService {
 	private final ItemRepository itemRepository;
 	private final ItemOptionRepository itemOptionRepository;
 
-	public ItemOptionResponse findItemOption(final Long optionId) {
-		final ItemOption itemOption = findItemOptionById(optionId);
+	public ItemOptionResponse findItemOption(final Long itemId, final Long optionId) {
+		final ItemOption itemOption = findItemOptionByItemIdAndOptionId(itemId, optionId);
 
 		return ItemOptionMapper.INSTANCE.itemOptionToResponse(itemOption);
 	}
 
 	public List<ItemOptionResponse> findOptionList(final Long itemId) {
-		final List<ItemOption> itemOption = itemOptionRepository.findAllByItem_id(itemId);
-		if (itemOption.isEmpty()) {
+		final List<ItemOption> itemOptionList = itemOptionRepository.findAllByItem_id(itemId);
+		if (itemOptionList.isEmpty()) {
 			throw new NotFoundException(ITEM_OPTION_NOT_FOUND_EXCEPTION);
 		}
-		return itemOption.stream().map(ItemOptionMapper.INSTANCE::itemOptionToResponse).toList();
+		return itemOptionList.stream().map(ItemOptionMapper.INSTANCE::itemOptionToResponse).toList();
 	}
 
 	@Transactional
-	public ItemOptionResponse createItemOption(final ItemOptionRequest itemOptionRequest) {
-		Item item = itemRepository.findById(itemOptionRequest.itemId()).orElseThrow(
-			() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, itemOptionRequest.itemId())
+	public ItemOptionResponse createItemOption(final Long itemId, final ItemOptionRequest itemOptionRequest) {
+		Item item = itemRepository.findById(itemId).orElseThrow(
+			() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, itemId)
 		);
 
 		final ItemOption itemOption = ItemOptionMapper.INSTANCE.itemOptionRequestToEntity(itemOptionRequest);
@@ -61,8 +61,12 @@ public class ItemOptionService {
 	 * 재고 변경
 	 */
 	@Transactional
-	public ItemOptionResponse changeItemOption(final ItemOptionChangeRequest itemOptionChangeRequest) {
-		final ItemOption itemOption = findItemOptionById(itemOptionChangeRequest.itemOptionId());
+	public ItemOptionResponse changeItemOption(
+		final Long itemId,
+		final Long optionId,
+		final ItemOptionChangeRequest itemOptionChangeRequest) {
+
+		final ItemOption itemOption = findItemOptionByItemIdAndOptionId(itemId, optionId);
 
 		itemOption.update(itemOptionChangeRequest);
 
@@ -70,13 +74,12 @@ public class ItemOptionService {
 	}
 
 	@Transactional
-	public void deleteItemOption(final Long optionId) {
-		final ItemOption itemOption = findItemOptionById(optionId);
+	public void deleteItemOption(final Long itemId, final Long optionId) {
+		final ItemOption itemOption = findItemOptionByItemIdAndOptionId(itemId, optionId);
 		itemOptionRepository.delete(itemOption);
 	}
-
-	private ItemOption findItemOptionById(final Long itemOptionId) {
-		return itemOptionRepository.findById(itemOptionId)
-			.orElseThrow(() -> new NotFoundException(ITEM_OPTION_OUT_OF_STOCK_EXCEPTION, itemOptionId));
+	private ItemOption findItemOptionByItemIdAndOptionId(final Long itemId, final Long itemOptionId) {
+		return itemOptionRepository.findByIdAndItemId(itemOptionId, itemId)
+			.orElseThrow(() -> new NotFoundException(ITEM_OPTION_NOT_FOUND_EXCEPTION, itemId, itemOptionId));
 	}
 }

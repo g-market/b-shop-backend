@@ -29,34 +29,42 @@ public class ItemOptionController {
 
 	private final ItemOptionService itemOptionService;
 
-	@GetMapping("/items/options/{optionId}")
-	public ResponseEntity<ItemOptionResponse> findItemOption(@PathVariable final Long optionId) {
-		return ResponseEntity.ok().body(itemOptionService.findItemOption(optionId));
+	@GetMapping("/items/{itemId}/options/{optionId}")
+	public ResponseEntity<ItemOptionResponse> findItemOption(
+		@PathVariable("itemId") final Long itemId,
+		@PathVariable("optionId") final Long optionId) {
+		return ResponseEntity.ok().body(itemOptionService.findItemOption(itemId, optionId));
 	}
 
 	@GetMapping("/items/{itemId}/options")
-	public ResponseEntity<List<ItemOptionResponse>> pageItemOption(@PathVariable final Long itemId) {
+	public ResponseEntity<List<ItemOptionResponse>> findItemOptionList(@PathVariable final Long itemId) {
 		return ResponseEntity.ok().body(itemOptionService.findOptionList(itemId));
 	}
 
 	@Login(admin = true)
-	@PostMapping("/items/options")
+	@PostMapping("/items/{itemId}/options")
 	public ResponseEntity<ItemOptionResponse> creatItemOption(
+		@PathVariable("itemId") final Long itemId,
 		@RequestBody @Valid final ItemOptionRequest itemOptionRequest) {
-		return ResponseEntity.ok().body(itemOptionService.createItemOption(itemOptionRequest));
+		return ResponseEntity.ok().body(itemOptionService.createItemOption(itemId, itemOptionRequest));
 	}
 
 	@Login(admin = true)
-	@PatchMapping("/items/options")
+	@PatchMapping("/item/{itemId}/options/{OptionId}")
 	public ResponseEntity<ItemOptionResponse> updateItemOption(
+		@PathVariable("itemId") final Long itemId,
+		@PathVariable("OptionId") final Long itemOptionId,
 		@RequestBody @Valid final ItemOptionChangeRequest itemOptionChangeRequest) {
-		return ResponseEntity.ok().body(itemOptionService.changeItemOption(itemOptionChangeRequest));
+		return ResponseEntity.ok()
+			.body(itemOptionService.changeItemOption(itemId, itemOptionId, itemOptionChangeRequest));
 	}
 
 	@Login(admin = true)
-	@DeleteMapping("/items/options/{optionId}")
-	public ResponseEntity<Void> deleteItemOption(@PathVariable final Long optionId) {
-		itemOptionService.deleteItemOption(optionId);
+	@DeleteMapping("/items/{itemId}/options/{optionId}")
+	public ResponseEntity<Void> deleteItemOption(
+		@PathVariable("itemId") final Long itemId,
+		@PathVariable("OptionId") final Long itemOptionId) {
+		itemOptionService.deleteItemOption(itemId, itemOptionId);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 }

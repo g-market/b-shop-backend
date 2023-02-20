@@ -20,7 +20,7 @@ public class ImageController {
 
 	@PostMapping("/images")
 	public ResponseEntity<List<ImageResponse>> uploadImage(
-		@RequestParam("fileList") MultipartFile[] fileList) {
+		@RequestParam("fileList") final MultipartFile[] fileList) {
 		return ResponseEntity.ok().body(imageService.uploadImage(fileList));
 	}
 }

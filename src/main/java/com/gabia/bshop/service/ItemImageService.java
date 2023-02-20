@@ -32,19 +32,19 @@ public class ItemImageService {
 
 	private final ImageValidate imageValidate;
 
-	public ItemImageDto findItemImage(final Long imageId) {
-		final ItemImage itemImage = findItemImageById(imageId);
+	public ItemImageDto findItemImage(final Long itemId, final Long imageId) {
+		final ItemImage itemImage = findItemImageByImageIdAndItemId(imageId, itemId);
 		return ItemImageMapper.INSTANCE.itemImageToDto(itemImage);
 	}
 
-	public List<ItemImageDto> findItemImageLists(final Long itemId) {
+	public List<ItemImageDto> findItemImageList(final Long itemId) {
 		final List<ItemImage> itemImageList = itemImageRepository.findAllByItem_id(itemId);
 		return itemImageList.stream().map(ItemImageMapper.INSTANCE::itemImageToDto).toList();
 	}
 
 	@Transactional
-	public List<ItemImageDto> createItemImage(final ItemImageCreateRequest itemImageCreateRequest) {
-		final Item item = findItemById(itemImageCreateRequest.itemId());
+	public List<ItemImageDto> createItemImage(final Long itemId, final ItemImageCreateRequest itemImageCreateRequest) {
+		final Item item = findItemById(itemId);
 
 		List<ItemImage> itemImageList = new ArrayList<>();
 
@@ -58,17 +58,17 @@ public class ItemImageService {
 	}
 
 	@Transactional
-	public ItemImageDto changeItemImage(final ItemImageDto itemImageDto) {
-		ItemImage itemImage = findItemImageById(itemImageDto.id());
+	public ItemImageDto changeItemImage(final Long itemId, final ItemImageDto itemImageDto) {
+		ItemImage itemImage = findItemImageByImageIdAndItemId(itemImageDto.id(), itemId);
 		urlValidate(itemImageDto.url()); // image validate
 		itemImage.updateUrl(itemImageDto.url());
 		return ItemImageMapper.INSTANCE.itemImageToDto(itemImage);
 	}
 
 	@Transactional
-	public ItemResponse changeItemThumbnail(final ItemThumbnailChangeRequest itemThumbnailChangeRequest) {
-		Item item = findItemById(itemThumbnailChangeRequest.itemId());
-		final ItemImage itemImage = findItemImageById(itemThumbnailChangeRequest.imageId());
+	public ItemResponse changeItemThumbnail(final Long itemId ,final ItemThumbnailChangeRequest itemThumbnailChangeRequest) {
+		Item item = findItemById(itemId);
+		final ItemImage itemImage = findItemImageByImageIdAndItemId(itemThumbnailChangeRequest.imageId(), itemId);
 
 		urlValidate(itemImage.getUrl()); // image validate
 		item.setThumbnail(itemImage);
@@ -77,13 +77,19 @@ public class ItemImageService {
 	}
 
 	@Transactional
-	public void deleteItemImage(final Long imageId) {
-		final ItemImage itemImage = findItemImageById(imageId);
+	public void deleteItemImage(final Long itemId,final Long imageId) {
+		final ItemImage itemImage = findItemImageByImageIdAndItemId(imageId, itemId);
 		itemImageRepository.delete(itemImage);
 	}
 
 	private ItemImage findItemImageById(final Long imageId) {
 		return itemImageRepository.findById(imageId).orElseThrow(
+			() -> new NotFoundException(IMAGE_NOT_FOUND_EXCEPTION, imageId)
+		);
+	}
+
+	private ItemImage findItemImageByImageIdAndItemId(final Long imageId, final Long itemId) {
+		return itemImageRepository.findByIdAndItemId(imageId, itemId).orElseThrow(
 			() -> new NotFoundException(IMAGE_NOT_FOUND_EXCEPTION, imageId)
 		);
 	}
