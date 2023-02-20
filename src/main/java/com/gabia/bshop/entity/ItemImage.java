@@ -43,13 +43,14 @@ public class ItemImage extends BaseEntity {
 	private String url;
 
 	@Column(nullable = false)
-	private boolean deleted = false;
+	private boolean deleted;
 
 	@Builder
 	private ItemImage(final Long id, final Item item, final String url) {
 		this.id = id;
 		this.item = item;
 		this.url = url;
+		this.deleted = false;
 	}
 
 	public void updateUrl(final String url) {

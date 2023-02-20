@@ -42,8 +42,6 @@ public class ItemService {
 	private String NO_IMAGE_URL;
 	private final ItemRepository itemRepository;
 	private final CategoryRepository categoryRepository;
-	private final ItemOptionRepository itemOptionRepository;
-
 	private final ImageValidate imageValidate;
 
 	/**
@@ -164,7 +162,7 @@ public class ItemService {
 
 		item.update(itemChangeRequest, category);
 
-		return ItemMapper.INSTANCE.itemToItemResponse(itemRepository.save(item));
+		return ItemMapper.INSTANCE.itemToItemResponse(item);
 	}
 
 	/**

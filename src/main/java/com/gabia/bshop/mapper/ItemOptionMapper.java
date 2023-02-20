@@ -22,7 +22,7 @@ public interface ItemOptionMapper {
 
 	@Mappings({
 		@Mapping(source = "item.id", target = "itemId"),
-		@Mapping(source = "id", target = "OptionId"),
+		@Mapping(source = "id", target = "optionId"),
 	})
 	ItemOptionResponse itemOptionToResponse(ItemOption itemOption);
 

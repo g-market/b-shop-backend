@@ -88,7 +88,6 @@ class OrderServiceTest extends IntegrationTest {
 			.basePrice(11111)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
-			.deleted(false)
 			.build();
 		Item item2 = Item.builder()
 			.category(category1)
@@ -97,7 +96,6 @@ class OrderServiceTest extends IntegrationTest {
 			.basePrice(22222)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
-			.deleted(false)
 			.build();
 		ItemOption itemOption1 = ItemOption.builder()
 			.item(item1)
@@ -227,8 +225,7 @@ class OrderServiceTest extends IntegrationTest {
 			.description("temp_item_1_description " + UUID.randomUUID())
 			.basePrice(11111)
 			.itemStatus(ItemStatus.PUBLIC)
-			.openAt(now)
-			.deleted(true)
+			.openAt(now)//deleted true
 			.build();
 		ItemOption itemOption1 = ItemOption.builder()
 			.id(1L)
@@ -297,8 +294,7 @@ class OrderServiceTest extends IntegrationTest {
 			.description("temp_item_1_description " + UUID.randomUUID())
 			.basePrice(11111)
 			.itemStatus(ItemStatus.PUBLIC)
-			.openAt(now)
-			.deleted(true)
+			.openAt(now) //deleted_true
 			.build();
 		Item item2 = Item.builder()
 			.category(category1)
@@ -307,7 +303,6 @@ class OrderServiceTest extends IntegrationTest {
 			.basePrice(22222)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
-			.deleted(false)
 			.build();
 		ItemOption itemOption1 = ItemOption.builder()
 			.item(item1)
@@ -408,7 +403,6 @@ class OrderServiceTest extends IntegrationTest {
 			.basePrice(11111)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
-			.deleted(false)
 			.build();
 		Item item2 = Item.builder()
 			.category(category1)
@@ -417,7 +411,6 @@ class OrderServiceTest extends IntegrationTest {
 			.basePrice(22222)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
-			.deleted(false)
 			.build();
 		Item item3 = Item.builder()
 			.category(category1)
@@ -426,7 +419,6 @@ class OrderServiceTest extends IntegrationTest {
 			.basePrice(33333)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
-			.deleted(false)
 			.build();
 		ItemOption itemOption1 = ItemOption.builder()
 			.item(item1)

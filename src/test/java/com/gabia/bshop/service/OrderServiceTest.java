@@ -97,7 +97,6 @@ class OrderServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -109,7 +108,6 @@ class OrderServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -206,7 +204,6 @@ class OrderServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -218,7 +215,6 @@ class OrderServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -302,7 +298,6 @@ class OrderServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 		item1.addItemOption(itemOption1);

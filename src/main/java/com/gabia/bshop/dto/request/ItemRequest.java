@@ -3,7 +3,6 @@ package com.gabia.bshop.dto.request;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.gabia.bshop.dto.CategoryDto;
 import com.gabia.bshop.dto.ItemImageDto;
 import com.gabia.bshop.dto.ItemOptionDto;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
@@ -24,6 +23,7 @@ public record ItemRequest(
 
 	@NotNull(message = "상품 설명을 입력하세요")
 	String description,
+
 	@PositiveOrZero(message = "가격은 0원 이상입니다.")
 	@NotNull
 	Integer basePrice,

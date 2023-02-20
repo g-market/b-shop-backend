@@ -57,7 +57,6 @@ class ItemServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -69,7 +68,6 @@ class ItemServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -97,7 +95,6 @@ class ItemServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -109,7 +106,6 @@ class ItemServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -127,7 +123,7 @@ class ItemServiceTest {
 	}
 
 	@Test
-	@DisplayName("상품_수정")
+	@DisplayName("상품을_수정한다")
 	void changeItem() {
 		// given
 		Category category = Category.builder().id(1L).name("name").build();
@@ -140,7 +136,6 @@ class ItemServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("before")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -152,7 +147,6 @@ class ItemServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(20000)
 				.description("changed")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -172,7 +166,7 @@ class ItemServiceTest {
 	}
 
 	@Test
-	@DisplayName("상품_생성")
+	@DisplayName("상품을_생성한다")
 	void createItem() {
 		// given
 		Category category = Category.builder().id(1L).name("name").build();
@@ -185,7 +179,6 @@ class ItemServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(20000)
 				.description("item1")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -196,7 +189,6 @@ class ItemServiceTest {
 			.itemStatus(ItemStatus.PUBLIC)
 			.basePrice(20000)
 			.description("item1")
-			.deleted(false)
 			.openAt(LocalDateTime.now())
 			.build();
 
@@ -217,7 +209,7 @@ class ItemServiceTest {
 	}
 
 	@Test
-	@DisplayName("상품_수정_실패_상품_없음")
+	@DisplayName("상품_수정시_상품이_없으면_실패한다")
 	void failToDeleteItemWithNoitem() {
 		// given
 		Category category = Category.builder().id(1L).name("name").build(); // 존재하지 않는 카테고리
@@ -230,7 +222,6 @@ class ItemServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(20000)
 				.description("not exist")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -248,7 +239,7 @@ class ItemServiceTest {
 	}
 
 	@Test
-	@DisplayName("상품_수정_실패_카테고리_없음")
+	@DisplayName("상품_수정시_카테고리가_없으면_실패한다")
 	void failToChangeItemWithoutCategory() {
 		// given
 		Category category = Category.builder().id(2L).name("name").build(); // 존재하지 않는 카테고리
@@ -261,7 +252,6 @@ class ItemServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(20000)
 				.description("changed")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -279,7 +269,7 @@ class ItemServiceTest {
 	}
 
 	@Test
-	@DisplayName("상품_제거_성공")
+	@DisplayName("상품_제거에_성공한다")
 	void itemDeleteSuccess() {
 		// given
 		Long itemId1 = 1L;
@@ -293,7 +283,6 @@ class ItemServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(20000)
 				.description("delete test item")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 		// when
@@ -305,7 +294,7 @@ class ItemServiceTest {
 	}
 
 	@Test
-	@DisplayName("상품_제거_실패")
+	@DisplayName("상품_제거에_실패하면_NotFoundException이_발생한다")
 	void failItemDelete() {
 		// given
 		Long itemId = 3L; // 존재하지 않는 상품

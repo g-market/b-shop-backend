@@ -20,7 +20,6 @@ import lombok.extern.slf4j.Slf4j;
 public class ImageController {
 	private final ImageService imageService;
 
-	@Login(admin = true)
 	@PostMapping("/images")
 	public ResponseEntity<List<ImageResponse>> uploadImage(
 		@RequestParam("fileList") MultipartFile[] fileList) {

@@ -49,7 +49,7 @@ public class ItemImageService {
 		List<ItemImage> itemImageList = new ArrayList<>();
 
 		for (String imageUrl : itemImageCreateRequest.urlList()) {
-			urlValidate(imageUrl); //image validate
+			urlValidate(imageUrl); // image validate
 			itemImageList.add(ItemImage.builder().item(item).url(imageUrl).build());
 		}
 		itemImageList = itemImageRepository.saveAll(itemImageList);
@@ -60,9 +60,9 @@ public class ItemImageService {
 	@Transactional
 	public ItemImageDto changeItemImage(final ItemImageDto itemImageDto) {
 		ItemImage itemImage = findItemImageById(itemImageDto.id());
-		urlValidate(itemImageDto.url()); //image validate
+		urlValidate(itemImageDto.url()); // image validate
 		itemImage.updateUrl(itemImageDto.url());
-		return ItemImageMapper.INSTANCE.itemImageToDto(itemImageRepository.save(itemImage));
+		return ItemImageMapper.INSTANCE.itemImageToDto(itemImage);
 	}
 
 	@Transactional
@@ -73,7 +73,7 @@ public class ItemImageService {
 		urlValidate(itemImage.getUrl()); // image validate
 		item.setThumbnail(itemImage);
 
-		return ItemMapper.INSTANCE.itemToItemResponse(itemRepository.save(item));
+		return ItemMapper.INSTANCE.itemToItemResponse(item);
 	}
 
 	@Transactional

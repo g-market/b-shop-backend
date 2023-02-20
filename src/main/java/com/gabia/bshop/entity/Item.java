@@ -61,7 +61,7 @@ public class Item extends BaseEntity {
 	@Column(nullable = false)
 	private LocalDateTime openAt;
 	@Column(nullable = false)
-	private boolean deleted = false;
+	private boolean deleted;
 	@Column
 	private String thumbnail;
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -75,8 +75,7 @@ public class Item extends BaseEntity {
 		final String description,
 		final int basePrice,
 		final ItemStatus itemStatus,
-		final LocalDateTime openAt,
-		final boolean deleted) {
+		final LocalDateTime openAt) {
 		this.id = id;
 		this.name = name;
 		this.category = category;
@@ -84,7 +83,7 @@ public class Item extends BaseEntity {
 		this.basePrice = basePrice;
 		this.itemStatus = itemStatus;
 		this.openAt = openAt;
-		this.deleted = deleted;
+		this.deleted = false;
 	}
 
 	private void updateName(final String name) {

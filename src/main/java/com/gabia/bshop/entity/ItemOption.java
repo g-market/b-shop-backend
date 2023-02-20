@@ -54,7 +54,7 @@ public class ItemOption extends BaseEntity {
 	private int stockQuantity;
 
 	@Column(nullable = false)
-	private boolean deleted = false;
+	private boolean deleted;
 
 	@Builder
 	private ItemOption(
@@ -68,6 +68,7 @@ public class ItemOption extends BaseEntity {
 		this.description = description;
 		this.optionPrice = optionPrice;
 		this.stockQuantity = stockQuantity;
+		this.deleted = false;
 	}
 
 	private void updateDescription(final String description) {
