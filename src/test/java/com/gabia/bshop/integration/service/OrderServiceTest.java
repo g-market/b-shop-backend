@@ -87,8 +87,8 @@ class OrderServiceTest extends IntegrationTest {
 			.description("temp_item_1_description " + UUID.randomUUID())
 			.basePrice(11111)
 			.itemStatus(ItemStatus.PUBLIC)
+			.year(2022)
 			.openAt(now)
-			.deleted(false)
 			.build();
 		Item item2 = Item.builder()
 			.category(category1)
@@ -96,20 +96,18 @@ class OrderServiceTest extends IntegrationTest {
 			.description("temp_item_1_description " + UUID.randomUUID())
 			.basePrice(22222)
 			.itemStatus(ItemStatus.PUBLIC)
+			.year(2022)
 			.openAt(now)
-			.deleted(false)
 			.build();
 		ItemOption itemOption1 = ItemOption.builder()
 			.item(item1)
 			.description("temp_itemOption1_description")
-			.optionLevel(1)
 			.optionPrice(0)
 			.stockQuantity(10)
 			.build();
 		ItemOption itemOption2 = ItemOption.builder()
 			.item(item2)
 			.description("temp_itemOption2_description")
-			.optionLevel(1)
 			.optionPrice(1000)
 			.stockQuantity(5)
 			.build();
@@ -118,7 +116,7 @@ class OrderServiceTest extends IntegrationTest {
 			.status(OrderStatus.ACCEPTED)
 			.totalPrice(11111L)
 			.build();
-		OrderItem orderItem1_order1 = OrderItem.builder()
+		OrderItem orderItem1Order1 = OrderItem.builder()
 			.item(item1)
 			.order(order1)
 			.option(itemOption1)
@@ -130,14 +128,14 @@ class OrderServiceTest extends IntegrationTest {
 			.status(OrderStatus.ACCEPTED)
 			.totalPrice(33333L)
 			.build();
-		OrderItem orderItem2_order2 = OrderItem.builder()
+		OrderItem orderItem2Order2 = OrderItem.builder()
 			.item(item1)
 			.order(order2)
 			.option(itemOption1)
 			.orderCount(1)
 			.price(11111L)
 			.build();
-		OrderItem orderItem3_order2 = OrderItem.builder()
+		OrderItem orderItem3Order2 = OrderItem.builder()
 			.item(item2)
 			.order(order2)
 			.option(itemOption2)
@@ -168,7 +166,7 @@ class OrderServiceTest extends IntegrationTest {
 		orderRepository.saveAll(List.of(order1, order2));
 		itemOptionRepository.saveAll(List.of(itemOption1, itemOption2));
 		orderItemRepository.saveAll(
-			List.of(orderItem1_order1, orderItem2_order2, orderItem3_order2));
+			List.of(orderItem1Order1, orderItem2Order2, orderItem3Order2));
 
 		PageRequest pageable = PageRequest.of(0, 10);
 		//when
@@ -229,14 +227,13 @@ class OrderServiceTest extends IntegrationTest {
 			.description("temp_item_1_description " + UUID.randomUUID())
 			.basePrice(11111)
 			.itemStatus(ItemStatus.PUBLIC)
-			.openAt(now)
-			.deleted(true)
+			.year(2022)
+			.openAt(now)//deleted true
 			.build();
 		ItemOption itemOption1 = ItemOption.builder()
 			.id(1L)
 			.item(item1)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(0)
 			.stockQuantity(10)
 			.build();
@@ -245,7 +242,7 @@ class OrderServiceTest extends IntegrationTest {
 			.status(OrderStatus.ACCEPTED)
 			.totalPrice(11111L)
 			.build();
-		OrderItem orderItem1_order1 = OrderItem.builder()
+		OrderItem orderItem1Order1 = OrderItem.builder()
 			.item(item1)
 			.order(order1)
 			.option(itemOption1)
@@ -267,7 +264,7 @@ class OrderServiceTest extends IntegrationTest {
 		itemOptionRepository.save(itemOption1);
 		itemImageRepository.saveAll(List.of(itemImage1, itemImage2));
 		orderRepository.saveAll(List.of(order1));
-		orderItemRepository.saveAll(List.of(orderItem1_order1));
+		orderItemRepository.saveAll(List.of(orderItem1Order1));
 		PageRequest pageable = PageRequest.of(0, 10);
 
 		//when
@@ -300,8 +297,8 @@ class OrderServiceTest extends IntegrationTest {
 			.description("temp_item_1_description " + UUID.randomUUID())
 			.basePrice(11111)
 			.itemStatus(ItemStatus.PUBLIC)
-			.openAt(now)
-			.deleted(true)
+			.year(2022)
+			.openAt(now) //deleted_true
 			.build();
 		Item item2 = Item.builder()
 			.category(category1)
@@ -309,20 +306,18 @@ class OrderServiceTest extends IntegrationTest {
 			.description("temp_item_2_description " + UUID.randomUUID())
 			.basePrice(22222)
 			.itemStatus(ItemStatus.PUBLIC)
+			.year(2022)
 			.openAt(now)
-			.deleted(false)
 			.build();
 		ItemOption itemOption1 = ItemOption.builder()
 			.item(item1)
 			.description("temp_itemOption1_description")
-			.optionLevel(1)
 			.optionPrice(0)
 			.stockQuantity(10)
 			.build();
 		ItemOption itemOption2 = ItemOption.builder()
 			.item(item2)
 			.description("temp_itemOption2_description")
-			.optionLevel(1)
 			.optionPrice(1000)
 			.stockQuantity(5)
 			.build();
@@ -413,7 +408,7 @@ class OrderServiceTest extends IntegrationTest {
 			.basePrice(11111)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
-			.deleted(false)
+			.year(2022)
 			.build();
 		Item item2 = Item.builder()
 			.category(category1)
@@ -422,7 +417,7 @@ class OrderServiceTest extends IntegrationTest {
 			.basePrice(22222)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
-			.deleted(false)
+			.year(2022)
 			.build();
 		Item item3 = Item.builder()
 			.category(category1)
@@ -431,26 +426,23 @@ class OrderServiceTest extends IntegrationTest {
 			.basePrice(33333)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
-			.deleted(false)
+			.year(2022)
 			.build();
 		ItemOption itemOption1 = ItemOption.builder()
 			.item(item1)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(0)
 			.stockQuantity(10)
 			.build();
 		ItemOption itemOption2 = ItemOption.builder()
 			.item(item2)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(1000)
 			.stockQuantity(5)
 			.build();
 		ItemOption itemOption3 = ItemOption.builder()
 			.item(item3)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(1000)
 			.stockQuantity(5)
 			.build();
@@ -459,7 +451,7 @@ class OrderServiceTest extends IntegrationTest {
 			.status(OrderStatus.ACCEPTED)
 			.totalPrice(11111L)
 			.build();
-		OrderItem orderItem1_order1 = OrderItem.builder()
+		OrderItem orderItem1Order1 = OrderItem.builder()
 			.item(item1)
 			.order(order1)
 			.option(itemOption1)
@@ -471,14 +463,14 @@ class OrderServiceTest extends IntegrationTest {
 			.status(OrderStatus.ACCEPTED)
 			.totalPrice(33333L)
 			.build();
-		OrderItem orderItem2_order2 = OrderItem.builder()
+		OrderItem orderItem2Order2 = OrderItem.builder()
 			.item(item1)
 			.order(order2)
 			.option(itemOption2)
 			.orderCount(1)
 			.price(11111L)
 			.build();
-		OrderItem orderItem3_order2 = OrderItem.builder()
+		OrderItem orderItem3Order2 = OrderItem.builder()
 			.item(item2)
 			.order(order2)
 			.option(itemOption3)
@@ -508,7 +500,7 @@ class OrderServiceTest extends IntegrationTest {
 		itemOptionRepository.saveAll(List.of(itemOption1, itemOption2, itemOption3));
 		itemImageRepository.saveAll(List.of(itemImage1, itemImage2, itemImage3, itemImage4));
 		orderRepository.saveAll(List.of(order1, order2));
-		orderItemRepository.saveAll(List.of(orderItem1_order1, orderItem2_order2, orderItem3_order2));
+		orderItemRepository.saveAll(List.of(orderItem1Order1, orderItem2Order2, orderItem3Order2));
 
 		PageRequest pageable = PageRequest.of(0, 10);
 		OrderInfoSearchRequest orderInfoSearchRequest = new OrderInfoSearchRequest(now.minusDays(1), now.plusDays(1));

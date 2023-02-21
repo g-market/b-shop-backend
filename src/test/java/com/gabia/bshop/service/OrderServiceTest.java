@@ -29,10 +29,9 @@ import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
-import com.gabia.bshop.exception.ConflictException;
+import com.gabia.bshop.exception.BadRequestException;
 import com.gabia.bshop.mapper.OrderMapper;
 import com.gabia.bshop.repository.ItemOptionRepository;
-import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OrderRepository;
 
@@ -53,9 +52,6 @@ class OrderServiceTest {
 
 	@Mock
 	private MemberRepository memberRepository;
-
-	@Mock
-	private ItemRepository itemRepository;
 
 	@Mock
 	private ItemOptionRepository itemOptionRepository;
@@ -100,7 +96,6 @@ class OrderServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -112,7 +107,6 @@ class OrderServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -120,7 +114,6 @@ class OrderServiceTest {
 			.id(1L)
 			.item(item1)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(0)
 			.stockQuantity(10)
 			.build();
@@ -129,7 +122,6 @@ class OrderServiceTest {
 			.id(2L)
 			.item(item2)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(1000)
 			.stockQuantity(5)
 			.build();
@@ -211,7 +203,6 @@ class OrderServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -223,7 +214,6 @@ class OrderServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -231,7 +221,6 @@ class OrderServiceTest {
 			.id(1L)
 			.item(item1)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(0)
 			.stockQuantity(10)
 			.build();
@@ -240,7 +229,6 @@ class OrderServiceTest {
 			.id(2L)
 			.item(item2)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(1000)
 			.stockQuantity(5)
 			.build();
@@ -286,7 +274,7 @@ class OrderServiceTest {
 
 		//when & then
 		Assertions.assertThatThrownBy(() -> orderService.createOrder(orderCreateRequestDto))
-			.isInstanceOf(ConflictException.class);
+			.isInstanceOf(BadRequestException.class);
 	}
 
 	@DisplayName("주문을 취소한다.")
@@ -296,7 +284,6 @@ class OrderServiceTest {
 		ItemOption itemOption1 = ItemOption.builder()
 			.id(1L)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(0)
 			.stockQuantity(10)
 			.build();
@@ -310,10 +297,9 @@ class OrderServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
-				.itemOptionList(options)
 				.build();
+		item1.addItemOption(itemOption1);
 
 		OrderItem orderItem1 = OrderItem.builder()
 			.id(1L)

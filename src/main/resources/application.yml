@@ -45,13 +45,24 @@ token:
   refresh-expired-time: ${REFRESH-EXPIRED-TIME}
   secret: ${TOKEN-SECRET}
 
-logging:
-  level:
-    org:
-      hibernate:
-        SQL: ${LOG-LEVEL}
+minio:
+  endpoint: ${MINIO-ENDPOINT}
+  user: ${MINIO_USER}
+  password: ${MINIO_PASSWORD}
+  bucket: ${MINIO_BUCKET}
+  default:
+    image: ${MINIO_NO_IMAGE_URL}
+
+shedlock:
+  table: shedlock
 
 sentry:
   dsn: ${SENTRY-DSN}
   exception-resolver-order: -2147483647
   traces-sample-rate: 1.0
+
+logging:
+  level:
+    org:
+      hibernate:
+        SQL: ${LOG-LEVEL}
