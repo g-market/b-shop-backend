@@ -19,7 +19,7 @@ import com.gabia.bshop.mapper.ItemImageMapper;
 import com.gabia.bshop.mapper.ItemMapper;
 import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemRepository;
-import com.gabia.bshop.util.ImageValidation;
+import com.gabia.bshop.util.ImageValidator;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,7 +30,7 @@ public class ItemImageService {
 	private final ItemRepository itemRepository;
 	private final ItemImageRepository itemImageRepository;
 
-	private final ImageValidation imageValidation;
+	private final ImageValidator imageValidator;
 
 	public ItemImageDto findItemImage(final Long itemId, final Long imageId) {
 		final ItemImage itemImage = findItemImageByImageIdAndItemId(imageId, itemId);
@@ -101,7 +101,7 @@ public class ItemImageService {
 	}
 
 	private void urlValidate(final String url) {
-		final boolean isValid = imageValidation.validate(url);
+		final boolean isValid = imageValidator.validate(url);
 
 		if (!isValid) {
 			throw new NotFoundException(INCORRECT_URL_EXCEPTION);

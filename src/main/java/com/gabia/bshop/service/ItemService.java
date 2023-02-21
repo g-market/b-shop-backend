@@ -25,7 +25,7 @@ import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.ItemMapper;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemRepository;
-import com.gabia.bshop.util.ImageValidation;
+import com.gabia.bshop.util.ImageValidator;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +38,7 @@ public class ItemService {
 	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
 	private final ItemRepository itemRepository;
 	private final CategoryRepository categoryRepository;
-	private final ImageValidation imageValidation;
+	private final ImageValidator imageValidator;
 	@Value("${minio.default.image}")
 	private String NO_IMAGE_URL;
 
@@ -120,7 +120,7 @@ public class ItemService {
 		// 4. Image 생성
 		if (itemDto.itemImageDtoList() != null && !itemDto.itemImageDtoList().isEmpty()) {
 			for (ItemImageDto itemImageDto : itemDto.itemImageDtoList()) {
-				final boolean isValid = imageValidation.validate(itemImageDto.url());
+				final boolean isValid = imageValidator.validate(itemImageDto.url());
 
 				if (!isValid) {
 					throw new NotFoundException(INCORRECT_URL_EXCEPTION);
