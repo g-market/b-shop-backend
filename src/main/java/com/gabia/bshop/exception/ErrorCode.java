@@ -11,8 +11,9 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ErrorCode {
 
-	// 400(bad request)
+	// 400(Bad request)
 	INCORRECT_URL_EXCEPTION(BAD_REQUEST, "유효하지 않은 URL 입니다"),
+	INVALID_ITEM_OPTION_NOT_FOUND_EXCEPTION(BAD_REQUEST, "유효하지 않은 상품이 존재합니다."),
 
 	// 401(Unauthorized)
 	TOKEN_INVALID_FORMAT_EXCEPTION(UNAUTHORIZED, "토큰이 잘못된 형식입니다."),
@@ -36,7 +37,6 @@ public enum ErrorCode {
 	IMAGE_NOT_FOUND_EXCEPTION(NOT_FOUND, "imageId: {0}는 존재하지 않는 이미지 입니다."),
 	ITEM_IMAGE_NOT_FOUND_EXCEPTION(NOT_FOUND, "itemId: {0}의 imageId: {1} 를 찾을 수 없습니다."),
 	GRADE_NOT_FOUND_EXCEPTION(NOT_FOUND, "gradeId: {0}는 존재하지 않는 회원등급 입니다."),
-	ITEM_ITEMOPTION_NOT_FOUND_EXCEPTION(NOT_FOUND, "유효하지 않은 상품이 존재합니다."),
 	ITEM_RESERVATION_NOT_FOUND_EXCEPTION(NOT_FOUND, "itemId : {0}에 대한 상품예약을 찾을 수 없습니다."),
 
 	// 409(Conflict)

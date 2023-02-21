@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public class BadRequestException extends ApplicationException {
 
-	public BadRequestException(ErrorCode errorCode) {
+	public BadRequestException(final ErrorCode errorCode) {
 		super(errorCode);
 	}
 }

@@ -124,8 +124,8 @@ public class Item extends BaseEntity {
 		}
 	}
 
-	private void updateYear(Integer year){
-		if (year != null){
+	private void updateYear(Integer year) {
+		if (year != null) {
 			this.year = year;
 		}
 	}

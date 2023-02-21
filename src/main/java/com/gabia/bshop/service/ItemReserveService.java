@@ -15,7 +15,7 @@ import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.ItemReservationMapper;
 import com.gabia.bshop.repository.ItemRepository;
-import com.gabia.bshop.repository.ItemReserveRepository;
+import com.gabia.bshop.repository.ReservationRepository;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -25,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 @Service
 public class ItemReserveService {
-	private final ItemReserveRepository itemReserveRepository;
+	private final ReservationRepository reservationRepository;
 	private final ItemRepository itemRepository;
 
 	@Transactional
@@ -38,7 +38,7 @@ public class ItemReserveService {
 		final Item item = findItemById(itemId);
 
 		final Reservation reservation = Reservation.builder().item(item).build();
-		return ItemReservationMapper.INSTANCE.reservationToResponse(itemReserveRepository.save(reservation));
+		return ItemReservationMapper.INSTANCE.reservationToResponse(reservationRepository.save(reservation));
 	}
 
 	@Transactional
@@ -61,11 +61,11 @@ public class ItemReserveService {
 	@Transactional
 	public void removeReservation(final Long itemId) {
 		final Reservation reservation = findReservationByItemId(itemId);
-		itemReserveRepository.delete(reservation);
+		reservationRepository.delete(reservation);
 	}
 
 	private Reservation findReservationByItemId(final Long itemId) {
-		return itemReserveRepository.findByItem_Id(itemId).orElseThrow(
+		return reservationRepository.findByItem_Id(itemId).orElseThrow(
 			() -> new NotFoundException(ITEM_RESERVATION_NOT_FOUND_EXCEPTION, itemId)
 		);
 	}

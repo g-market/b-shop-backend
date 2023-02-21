@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.gabia.bshop.entity.Reservation;
 
-public interface ItemReserveRepository extends JpaRepository<Reservation, Long> {
+public interface ReservationRepository extends JpaRepository<Reservation, Long> {
 
 	Optional<Reservation> findByItem_Id(final Long itemId);
 

@@ -112,7 +112,8 @@ class ItemServiceTest {
 		itemList = List.of(item1, item2);
 
 		Pageable pageable = PageRequest.of(0, 10);
-		Page<ItemResponse> itemDtoList = new PageImpl<>(itemList.stream().map(ItemMapper.INSTANCE::itemToItemResponse).toList());
+		Page<ItemResponse> itemDtoList = new PageImpl<>(
+			itemList.stream().map(ItemMapper.INSTANCE::itemToItemResponse).toList());
 
 		Page<Item> itemPage = new PageImpl<>(Collections.unmodifiableList(itemList));
 

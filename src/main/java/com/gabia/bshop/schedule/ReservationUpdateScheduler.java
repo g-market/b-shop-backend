@@ -10,7 +10,7 @@ import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 
 import com.gabia.bshop.entity.Reservation;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
-import com.gabia.bshop.repository.ItemReserveRepository;
+import com.gabia.bshop.repository.ReservationRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +18,7 @@ import lombok.RequiredArgsConstructor;
 @Component
 @RequiredArgsConstructor
 public class ReservationUpdateScheduler {
-	private final ItemReserveRepository itemReserveRepository;
+	private final ReservationRepository reservationRepository;
 
 	@Scheduled(cron = "0 * * * * *") // 1분 마다 실행
 	@SchedulerLock(
@@ -27,13 +27,13 @@ public class ReservationUpdateScheduler {
 		lockAtMostFor = "10s") // 최대 잠금 시간
 	@Transactional
 	public void updateReservationStatus() {
-		final List<Reservation> reservationList = itemReserveRepository.findAllByItemOpenAtBefore(LocalDateTime.now());
+		final List<Reservation> reservationList = reservationRepository.findAllByItemOpenAtBefore(LocalDateTime.now());
 
 		for (Reservation reservation : reservationList) {
 			if (reservation.getItem().getItemStatus() == ItemStatus.PRIVATE) {
 				reservation.getItem().setItemStatus(ItemStatus.PUBLIC);
 			}
-			itemReserveRepository.delete(reservation); // deleteAll
+			reservationRepository.delete(reservation); // deleteAll
 		}
 	}
 }

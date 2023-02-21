@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
 
 public interface ItemImageRepository extends JpaRepository<ItemImage, Long> {

@@ -1,5 +1,7 @@
 package com.gabia.bshop.entity;
 
+import java.util.Objects;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -31,5 +33,22 @@ public class Reservation extends BaseEntity {
 	@Builder
 	private Reservation(final Item item) {
 		this.item = item;
+	}
+
+	@Override
+	public boolean equals(final Object that) {
+		if (this == that) {
+			return true;
+		}
+		if (that == null || getClass() != that.getClass()) {
+			return false;
+		}
+		final Reservation reservation = (Reservation)that;
+		return getId().equals(reservation.getId());
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(getId());
 	}
 }

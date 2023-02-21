@@ -20,7 +20,6 @@ public record ItemChangeRequest(
 	Integer basePrice,
 	ItemStatus itemStatus,
 
-
 	@PositiveOrZero(message = "year 는 0 이상입니다.")
 	Integer year,
 

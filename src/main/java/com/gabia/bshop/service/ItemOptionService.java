@@ -69,7 +69,7 @@ public class ItemOptionService {
 
 		itemOption.update(itemOptionRequest);
 
-		return ItemOptionMapper.INSTANCE.itemOptionToResponse(itemOptionRepository.save(itemOption));
+		return ItemOptionMapper.INSTANCE.itemOptionToResponse(itemOption);
 	}
 
 	@Transactional
@@ -77,6 +77,7 @@ public class ItemOptionService {
 		final ItemOption itemOption = findItemOptionByItemIdAndOptionId(itemId, optionId);
 		itemOptionRepository.delete(itemOption);
 	}
+
 	private ItemOption findItemOptionByItemIdAndOptionId(final Long itemId, final Long itemOptionId) {
 		return itemOptionRepository.findByIdAndItemId(itemOptionId, itemId)
 			.orElseThrow(() -> new NotFoundException(ITEM_OPTION_NOT_FOUND_EXCEPTION, itemId, itemOptionId));
