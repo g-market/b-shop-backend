@@ -49,7 +49,7 @@ public class ItemOptionController {
 	}
 
 	@Login(admin = true)
-	@PatchMapping("/item/{itemId}/options/{optionId}")
+	@PatchMapping("/items/{itemId}/options/{optionId}")
 	public ResponseEntity<ItemOptionResponse> updateItemOption(
 		@PathVariable final Long itemId,
 		@PathVariable final Long optionId,
