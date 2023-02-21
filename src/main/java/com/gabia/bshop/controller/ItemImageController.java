@@ -29,7 +29,7 @@ import lombok.extern.slf4j.Slf4j;
 public class ItemImageController {
 	private final ItemImageService itemImageService;
 
-	@GetMapping("/items/-/images/{imageId}")
+	@GetMapping("/items/{itemId}/images/{imageId}")
 	public ResponseEntity<ItemImageDto> findItemImage(
 		@PathVariable final Long itemId,
 		@PathVariable final Long imageId) {
