@@ -56,9 +56,13 @@ minio:
 shedlock:
   table: shedlock
 
+sentry:
+  dsn: ${SENTRY-DSN}
+  exception-resolver-order: -2147483647
+  traces-sample-rate: 1.0
+
 logging:
   level:
     org:
       hibernate:
         SQL: ${LOG-LEVEL}
-
