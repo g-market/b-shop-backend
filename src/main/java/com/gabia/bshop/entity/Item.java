@@ -7,6 +7,8 @@ import java.util.Objects;
 
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.hibernate.envers.AuditJoinTable;
+import org.hibernate.envers.Audited;
 
 import com.gabia.bshop.dto.request.ItemChangeRequest;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
@@ -30,6 +32,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+@Audited
 @ToString(exclude = {"category"})
 @Getter
 @SQLDelete(sql = "update item set deleted = true where id = ?")
@@ -42,6 +45,7 @@ import lombok.ToString;
 public class Item extends BaseEntity {
 
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+	@AuditJoinTable(name = "item_option_aud")
 	private final List<ItemOption> itemOptionList = new ArrayList<>();
 
 	@Id
@@ -77,6 +81,7 @@ public class Item extends BaseEntity {
 	private Integer year;
 
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+	@AuditJoinTable(name = "item_image_aud")
 	private List<ItemImage> itemImageList = new ArrayList<>();
 
 	@Builder
