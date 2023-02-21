@@ -57,16 +57,21 @@ public class ItemService {
 
 	/**
 	 * 상품 목록 조회
-	 * 1. fetch join
+	 * 비활성, Private 상태의 아이템?
 	 *
 	 **/
-	public Page<ItemResponse> findItemList(final Pageable page) {
+	public Page<ItemResponse> findItemList(final Pageable page, final Long categoryId) {
 
 		if (page.getPageSize() > MAX_PAGE_ELEMENT_REQUEST_SIZE) {
 			throw new ConflictException(MAX_PAGE_ELEMENT_REQUEST_SIZE_EXCEPTION, MAX_PAGE_ELEMENT_REQUEST_SIZE);
 		}
-
-		final Page<Item> itemPage = itemRepository.findAll(page);
+		Page<Item> itemPage;
+		if (categoryId == null) {
+			itemPage = itemRepository.findAll(page);
+		} else {
+			final Category category = findCategoryById(categoryId);
+			itemPage = itemRepository.findByCategory(category, page);
+		}
 		return new PageImpl<>(itemPage.stream().map(ItemMapper.INSTANCE::itemToItemResponse).toList());
 	}
 
@@ -87,6 +92,7 @@ public class ItemService {
 			.basePrice(itemDto.basePrice())
 			.category(category)
 			.openAt(getOpenedAt(itemDto.openAt()))
+			.year(itemDto.year())
 			.itemStatus(getItemStatus(itemDto.itemStatus()))
 			.build();
 
@@ -145,7 +151,8 @@ public class ItemService {
 	 3. 기본가격(basePrice)
 	 4. 설명(description)
 	 5. 오픈시간(openAt)
-	 6. 상태(status)
+	 6. 년도(year)
+	 7. 상태(status)
 	 **/
 	@Transactional
 	public ItemResponse updateItem(final ItemChangeRequest itemChangeRequest) {

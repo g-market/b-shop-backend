@@ -15,19 +15,24 @@ import lombok.Builder;
 public record ItemRequest(
 	List<ItemOptionDto> itemOptionDtoList,
 	List<ItemImageDto> itemImageDtoList,
-	@NotNull(message = "카테고리는 필수 입니다")
+	@NotNull(message = "categoryId 는 필수 입니다")
 	Long categoryId,
 
-	@NotNull(message = "상품의 이름을 입력하세요.")
+	@NotNull(message = "name 을 입력하세요.")
 	String name,
 
-	@NotNull(message = "상품 설명을 입력하세요")
+	@NotNull(message = "description 을 입력하세요")
 	String description,
 
-	@PositiveOrZero(message = "가격은 0원 이상입니다.")
+	@PositiveOrZero(message = "basePrice 는 0 이상입니다.")
 	@NotNull
 	Integer basePrice,
 	ItemStatus itemStatus,
+
+	@PositiveOrZero(message = "year 는 0 이상입니다.")
+	@NotNull
+	Integer year,
+
 	LocalDateTime openAt
 ) {
 }

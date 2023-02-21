@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gabia.bshop.dto.request.ItemChangeRequest;
@@ -36,9 +37,14 @@ public class ItemController {
 	}
 
 	@GetMapping("/items")
-	public ResponseEntity<Page<ItemResponse>> findItemList(final Pageable pageable) {
-		return ResponseEntity.ok().body(itemService.findItemList(pageable));
+	public ResponseEntity<Page<ItemResponse>> findItemList(
+		final Pageable pageable,
+		@RequestParam("categoryId") final Long categoryId) {
+		return ResponseEntity.ok().body(itemService.findItemList(pageable, categoryId));
 	}
+	//년도, 상의, 하의
+	// &category=상의&year=2022
+	//
 
 	@Login(admin = true)
 	@PostMapping("/items")

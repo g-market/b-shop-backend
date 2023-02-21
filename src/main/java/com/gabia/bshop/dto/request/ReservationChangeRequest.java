@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 
 public record ReservationChangeRequest(
 
-	@NotNull(message = "openAt은 필수 값 입니다.")
+	@NotNull(message = "openAt 은 필수 값 입니다.")
 	LocalDateTime openAt
 ) {
 }

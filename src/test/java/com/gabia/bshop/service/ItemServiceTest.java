@@ -119,7 +119,7 @@ class ItemServiceTest {
 		when(itemRepository.findAll(pageable)).thenReturn(itemPage);
 
 		// when & then
-		assertEquals(itemDtoList, itemService.findItemList(pageable));
+		assertEquals(itemDtoList, itemService.findItemList(pageable, null));
 	}
 
 	@Test

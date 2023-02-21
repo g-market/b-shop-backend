@@ -26,6 +26,7 @@ public record ItemResponse(
 	int basePrice,
 	String thumbnail,
 	ItemStatus itemStatus,
+	Integer year,
 	LocalDateTime openAt) {
 
 }

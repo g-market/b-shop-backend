@@ -172,6 +172,7 @@ public class DataInit {
 			.basePrice(11111)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
+			.year(2022)
 			.build();
 		Item item2 = Item.builder()
 			.category(category1)
@@ -180,6 +181,7 @@ public class DataInit {
 			.basePrice(22222)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
+			.year(2022)
 			.build();
 		Item item3 = Item.builder()
 			.category(category1)
@@ -188,6 +190,7 @@ public class DataInit {
 			.basePrice(33333)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
+			.year(2022)
 			.build();
 		Item item4 = Item.builder()
 			.category(category1)
@@ -196,6 +199,7 @@ public class DataInit {
 			.basePrice(44444)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
+			.year(2023)
 			.build();
 		Item item5 = Item.builder()
 			.category(category1)
@@ -204,6 +208,7 @@ public class DataInit {
 			.basePrice(55555)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
+			.year(2023)
 			.build();
 		Item item6 = Item.builder()
 			.category(category1)
@@ -212,6 +217,7 @@ public class DataInit {
 			.basePrice(66666)
 			.itemStatus(ItemStatus.PRIVATE)
 			.openAt(now.minusDays(1L))
+			.year(2023)
 			.build();
 		Item item7 = Item.builder()
 			.category(category1)
@@ -220,6 +226,7 @@ public class DataInit {
 			.basePrice(77777)
 			.itemStatus(ItemStatus.PRIVATE)
 			.openAt(now.minusDays(1L))
+			.year(2023)
 			.build();
 		Item item8 = Item.builder()
 			.category(category1)
@@ -228,6 +235,7 @@ public class DataInit {
 			.basePrice(88888)
 			.itemStatus(ItemStatus.RESERVED)
 			.openAt(now.plusDays(1L))
+			.year(2023)
 			.build();
 		Item item9 = Item.builder()
 			.category(category1)
@@ -236,6 +244,7 @@ public class DataInit {
 			.basePrice(99999)
 			.itemStatus(ItemStatus.RESERVED)
 			.openAt(now.plusDays(1L))
+			.year(2023)
 			.build();
 		Item item10 = Item.builder()
 			.category(category1)
@@ -243,6 +252,7 @@ public class DataInit {
 			.description("temp_item_10_description " + UUID.randomUUID())
 			.basePrice(12345)
 			.itemStatus(ItemStatus.PUBLIC)
+			.year(2023)
 			.openAt(now)
 			.build();//deleted true
 		itemRepository.saveAll(

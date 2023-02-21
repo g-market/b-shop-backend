@@ -43,27 +43,39 @@ public class Item extends BaseEntity {
 
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
 	private final List<ItemOption> itemOptionList = new ArrayList<>();
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "category_id", nullable = false)
 	private Category category;
+
 	@Column(columnDefinition = "varchar(255)", nullable = false)
 	private String name;
+
 	@Column(columnDefinition = "text", nullable = false)
 	private String description;
+
 	@Column(nullable = false)
 	private int basePrice;
+
 	@Enumerated(value = EnumType.STRING)
 	@Column(columnDefinition = "char(8)", nullable = false)
 	private ItemStatus itemStatus;
+
 	@Column(nullable = false)
 	private LocalDateTime openAt;
+
 	@Column(nullable = false)
 	private boolean deleted;
 	@Column
 	private String thumbnail;
+
+	@Column(columnDefinition = "smallint", nullable = false)
+	private Integer year;
+
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ItemImage> itemImageList = new ArrayList<>();
 
@@ -75,6 +87,7 @@ public class Item extends BaseEntity {
 		final String description,
 		final int basePrice,
 		final ItemStatus itemStatus,
+		final Integer year,
 		final LocalDateTime openAt) {
 		this.id = id;
 		this.name = name;
@@ -83,6 +96,7 @@ public class Item extends BaseEntity {
 		this.basePrice = basePrice;
 		this.itemStatus = itemStatus;
 		this.openAt = openAt;
+		this.year = year;
 		this.deleted = false;
 	}
 
@@ -110,6 +124,12 @@ public class Item extends BaseEntity {
 		}
 	}
 
+	private void updateYear(Integer year){
+		if (year != null){
+			this.year = year;
+		}
+	}
+
 	private void updateOpenAt(LocalDateTime openAt) {
 		if (openAt != null) {
 			this.openAt = openAt;
@@ -128,6 +148,7 @@ public class Item extends BaseEntity {
 		updateDescription(itemChangeRequest.description());
 		updateOpenAt(itemChangeRequest.openAt());
 		updateItemStatus(itemChangeRequest.itemStatus());
+		updateYear(itemChangeRequest.year());
 		updateCategory(category);
 	}
 
