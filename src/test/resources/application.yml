@@ -1,0 +1,44 @@
+spring:
+  profiles:
+    active: test
+  datasource:
+    driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
+    url: jdbc:tc:mysql:8.0.31://testDB
+  jpa:
+    hibernate:
+      ddl-auto: create
+    properties:
+      hibernate:
+        format_sql: true
+        default_batch_fetch_size: 100
+      jakarta:
+        persistence:
+          sharedCache:
+            mode: ALL
+    show-sql: true
+    open-in-view: false
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+
+---
+server:
+  local:
+    domain: http://b-shop.com
+  prod:
+    domain: https://b-shop.com
+    url: https://123.456.789.1
+
+hiworks:
+  client:
+    id: clientId
+    secret: clientSecret
+  url:
+    accessToken: http://localhost:8888/login/oauth/access_token
+    user: http://localhost:8888/user
+
+token:
+  access-expired-time: 3600000  # 2시간
+  refresh-expired-time: 2420000000  # 28일
+  secret: testkey1234567891011121314151617181920
