@@ -19,7 +19,7 @@ import com.gabia.bshop.mapper.ItemImageMapper;
 import com.gabia.bshop.mapper.ItemMapper;
 import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemRepository;
-import com.gabia.bshop.util.ImageValidate;
+import com.gabia.bshop.util.ImageValidation;
 
 import lombok.RequiredArgsConstructor;
 
@@ -30,7 +30,7 @@ public class ItemImageService {
 	private final ItemRepository itemRepository;
 	private final ItemImageRepository itemImageRepository;
 
-	private final ImageValidate imageValidate;
+	private final ImageValidation imageValidation;
 
 	public ItemImageDto findItemImage(final Long itemId, final Long imageId) {
 		final ItemImage itemImage = findItemImageByImageIdAndItemId(imageId, itemId);
@@ -66,7 +66,8 @@ public class ItemImageService {
 	}
 
 	@Transactional
-	public ItemResponse changeItemThumbnail(final Long itemId ,final ItemThumbnailChangeRequest itemThumbnailChangeRequest) {
+	public ItemResponse changeItemThumbnail(final Long itemId,
+		final ItemThumbnailChangeRequest itemThumbnailChangeRequest) {
 		Item item = findItemById(itemId);
 		final ItemImage itemImage = findItemImageByImageIdAndItemId(itemThumbnailChangeRequest.imageId(), itemId);
 
@@ -77,7 +78,7 @@ public class ItemImageService {
 	}
 
 	@Transactional
-	public void deleteItemImage(final Long itemId,final Long imageId) {
+	public void deleteItemImage(final Long itemId, final Long imageId) {
 		final ItemImage itemImage = findItemImageByImageIdAndItemId(imageId, itemId);
 		itemImageRepository.delete(itemImage);
 	}
@@ -100,7 +101,7 @@ public class ItemImageService {
 	}
 
 	private void urlValidate(final String url) {
-		final boolean isValid = imageValidate.validate(url);
+		final boolean isValid = imageValidation.validate(url);
 
 		if (!isValid) {
 			throw new NotFoundException(INCORRECT_URL_EXCEPTION);

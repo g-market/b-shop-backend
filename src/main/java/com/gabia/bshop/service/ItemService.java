@@ -3,7 +3,6 @@ package com.gabia.bshop.service;
 import static com.gabia.bshop.exception.ErrorCode.*;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -26,7 +25,7 @@ import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.ItemMapper;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemRepository;
-import com.gabia.bshop.util.ImageValidate;
+import com.gabia.bshop.util.ImageValidation;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -39,7 +38,7 @@ public class ItemService {
 	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
 	private final ItemRepository itemRepository;
 	private final CategoryRepository categoryRepository;
-	private final ImageValidate imageValidate;
+	private final ImageValidation imageValidation;
 	@Value("${minio.default.image}")
 	private String NO_IMAGE_URL;
 
@@ -121,7 +120,7 @@ public class ItemService {
 		// 4. Image 생성
 		if (itemDto.itemImageDtoList() != null && !itemDto.itemImageDtoList().isEmpty()) {
 			for (ItemImageDto itemImageDto : itemDto.itemImageDtoList()) {
-				final boolean isValid = imageValidate.validate(itemImageDto.url());
+				final boolean isValid = imageValidation.validate(itemImageDto.url());
 
 				if (!isValid) {
 					throw new NotFoundException(INCORRECT_URL_EXCEPTION);

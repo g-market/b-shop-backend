@@ -16,15 +16,13 @@ import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
-public class ImageValidate {
+public class ImageValidation {
 	private final MinioClient minioClient;
+	private final UrlValidator urlValidator;
 	@Value("${minio.bucket}")
 	private String bucketName;
 
 	public boolean validate(final String imageUrl) {
-		final String[] schemes = {"http", "https"};
-		final UrlValidator urlValidator = new UrlValidator(schemes);
-
 		if (!urlValidator.isValid(imageUrl)) {
 			throw new NotFoundException(INCORRECT_URL_EXCEPTION);
 		}
