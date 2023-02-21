@@ -1,13 +1,11 @@
-package com.gabia.bshop.dto;
+package com.gabia.bshop.dto.response;
 
 import java.time.LocalDateTime;
 
+import com.gabia.bshop.dto.CategoryDto;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 
-import lombok.Builder;
-
-@Builder
-public record ItemDto(
+public record ItemChangeResponse(
 	Long id,
 	CategoryDto categoryDto,
 	String name,

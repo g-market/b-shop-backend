@@ -1,6 +1,7 @@
 package com.gabia.bshop.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -33,4 +34,8 @@ public interface ItemImageRepository extends JpaRepository<ItemImage, Long> {
 			order by t.id)
 			""")
 	List<String> findUrlByItemIds(List<Long> itemIds);
+
+	List<ItemImage> findAllByItem_id(Long itemId);
+
+	Optional<ItemImage> findByIdAndItemId(Long imageId, Long itemId);
 }
