@@ -19,7 +19,7 @@ import lombok.ToString;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "category", indexes = {})
 @Entity
-public class Category {
+public class Category extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
