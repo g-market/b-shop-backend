@@ -29,7 +29,7 @@ import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
-import com.gabia.bshop.exception.ConflictException;
+import com.gabia.bshop.exception.BadRequestException;
 import com.gabia.bshop.mapper.OrderMapper;
 import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.MemberRepository;
@@ -274,7 +274,7 @@ class OrderServiceTest {
 
 		//when & then
 		Assertions.assertThatThrownBy(() -> orderService.createOrder(orderCreateRequestDto))
-			.isInstanceOf(ConflictException.class);
+			.isInstanceOf(BadRequestException.class);
 	}
 
 	@DisplayName("주문을 취소한다.")
