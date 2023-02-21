@@ -53,7 +53,5 @@ logging:
 
 sentry:
   dsn: ${SENTRY-DSN}
-  traces-sample-rate: 1.0  # 전송할 트랜잭션의 양 `1 = 100 %`
-  logging:
-    minimum-event-level: info  # 최소 이벤트 레벨
-    minimum-breadcrumb-level: info  # 최소 브래드크럼 레벨
+  exception-resolver-order: -2147483647
+  traces-sample-rate: 1.0
