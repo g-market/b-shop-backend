@@ -1,6 +1,7 @@
 package com.gabia.bshop.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.factory.Mappers;
 
 import com.gabia.bshop.dto.CategoryDto;
@@ -11,7 +12,8 @@ public interface CategoryMapper {
 
 	CategoryMapper INSTANCE = Mappers.getMapper(CategoryMapper.class);
 
-	Category CategoryDtoToEntity(CategoryDto categoryDto);
+	@Mapping(target = "name", ignore = true)
+	Category categoryDtoToEntity(CategoryDto categoryDto);
 
 	CategoryDto categoryToDto(Category category);
 }

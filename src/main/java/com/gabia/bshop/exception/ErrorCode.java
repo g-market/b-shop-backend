@@ -11,6 +11,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ErrorCode {
 
+	// 400(Bad request)
+	INCORRECT_URL_EXCEPTION(BAD_REQUEST, "유효하지 않은 URL 입니다"),
+	INVALID_ITEM_OPTION_NOT_FOUND_EXCEPTION(BAD_REQUEST, "유효하지 않은 상품이 존재합니다."),
+
 	// 401(Unauthorized)
 	TOKEN_INVALID_FORMAT_EXCEPTION(UNAUTHORIZED, "토큰이 잘못된 형식입니다."),
 	TOKEN_NOT_EXIST_EXCEPTION(UNAUTHORIZED, "토큰이 존재하지 않습니다."),
@@ -28,21 +32,27 @@ public enum ErrorCode {
 	MEMBER_NOT_FOUND_EXCEPTION(NOT_FOUND, "hiworksId: {0}로 등록된 사용자가 존재하지 않습니다."),
 	ORDER_NOT_FOUND_EXCEPTION(NOT_FOUND, "orderId: {0}는 존재하지 않는 주문 ID 입니다."),
 	ITEM_NOT_FOUND_EXCEPTION(NOT_FOUND, "itemId: {0}는 존재하지 않는 아이템 입니다."),
+	ITEM_OPTION_NOT_FOUND_EXCEPTION(NOT_FOUND, "itemId: {0}의 optionId: {1} 를 찾을 수 없습니다."),
 	CATEGORY_NOT_FOUND_EXCEPTION(NOT_FOUND, "categoryId: {0}는 존재하지 않는 카테고리 입니다."),
 	IMAGE_NOT_FOUND_EXCEPTION(NOT_FOUND, "imageId: {0}는 존재하지 않는 이미지 입니다."),
+	ITEM_IMAGE_NOT_FOUND_EXCEPTION(NOT_FOUND, "itemId: {0}의 imageId: {1} 를 찾을 수 없습니다."),
 	GRADE_NOT_FOUND_EXCEPTION(NOT_FOUND, "gradeId: {0}는 존재하지 않는 회원등급 입니다."),
-	ITEM_ITEMOPTION_NOT_FOUND_EXCEPTION(NOT_FOUND, "유효하지 않은 상품이 존재합니다."),
+	ITEM_RESERVATION_NOT_FOUND_EXCEPTION(NOT_FOUND, "itemId : {0}에 대한 상품예약을 찾을 수 없습니다."),
 
 	// 409(Conflict)
 	ITEM_OPTION_OUT_OF_STOCK_EXCEPTION(CONFLICT, "상품의 재고가 부족합니다.(현재 재고 수량은 {0}개 입니다.)"),
 	ORDER_STATUS_ALREADY_COMPLETED_EXCEPTION(CONFLICT, "상품의 상태가 완료된 상태입니다."),
 	ORDER_STATUS_ALREADY_CANCELLED_EXCEPTION(CONFLICT, "상품의 상태가 취소된 상태입니다."),
 	MAX_PAGE_ELEMENT_REQUEST_SIZE_EXCEPTION(CONFLICT, "한 페이지의 최대 {0}개까지 조회가 가능합니다."),
+	MAX_FILE_UPLOAD_REQUEST_EXCEPTION(CONFLICT, "한번에 최대 {0}개의 파일만 업로드 가능합니다"),
 	ITEM_STATUS_NOT_PUBLIC_EXCEPTION(CONFLICT, "현재 판매하지 않는 상품이 존재합니다."),
+	RESERVATION_TIME_NOT_VALID_EXCEPTION(CONFLICT, "예약시간: {0} 은 현재시간 이후의 시간이어야 합니다."),
 
 	// 500(Internal Server Error)
 	OAUTH_PROCESSING_EXCEPTION(INTERNAL_SERVER_ERROR, "Oauth 진행 중 예상치 못한 문제가 생겼습니다."),
 	OAUTH_JSON_PARSING_EXCEPTION(INTERNAL_SERVER_ERROR, "Oauth 진행 중 데이터 파싱에 실패했습니다."),
+	MINIO_UPLOAD_EXCEPTION(INTERNAL_SERVER_ERROR, "데이터 업로드 과정 중 문제가 발생했습니다."),
+	MINIO_EXCEPTION(INTERNAL_SERVER_ERROR, "데이터 검색 과정에서 문제가 발생했습니다"),
 	REDIS_JSON_PARSING_EXCEPTION(INTERNAL_SERVER_ERROR, "Redis Value의 데이터 파싱에 실패했습니다."),
 
 	// 503(Service Temporarily Unavailable)
