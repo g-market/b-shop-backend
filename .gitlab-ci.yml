@@ -1,0 +1,61 @@
+stages:
+  - build
+  - test
+  - coverage
+#  - deploy
+
+build:
+  rules:
+    -  if : '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+  image: openjdk:17-alpine
+  stage: build
+  before_script:
+    - echo "$APPLICATION_YAML" > "src/main/resources/application.yml"
+  script:
+    - ./gradlew clean
+    - ./gradlew build -x test
+  artifacts:
+    paths:
+      - build/libs/*.jar
+    expire_in: 10 min
+
+test:
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+  variables:
+    GRADLE_OPTS: "-Dorg.gradle.daemon=false"
+    # Instruct Testcontainers to use the daemon of DinD.
+    DOCKER_HOST: "tcp://docker:2375"
+    # Improve performance with overlayfs.
+    DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: ""
+
+  image: openjdk:17-alpine
+  stage: test
+  tags:
+    - gitlab-runner
+  services:
+    - name: docker:dind
+  script:
+    - ./gradlew test
+  coverage: '/    - Instruction Coverage: ([0-9.]+)%/'
+  artifacts:
+    paths:
+      - build/reports/jacoco/test/jacoco*.xml
+    reports:
+      junit: build/test-results/test/**/TEST-*.xml
+
+#https://docs.gitlab.com/ee/ci/testing/test_coverage_visualization.html
+coverage:
+  rules:
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+  stage: coverage
+  image: registry.gitlab.com/haynes/jacoco2cobertura:1.0.7
+  script:
+    - python /opt/cover2cover.py build/reports/jacoco/test/jacoco*.xml $CI_PROJECT_DIR/src/main/java/ > build/cobertura.xml
+  needs: ["test"]
+  artifacts:
+    reports:
+      coverage_report:
+        coverage_format: cobertura
+        path: build/cobertura.xml
