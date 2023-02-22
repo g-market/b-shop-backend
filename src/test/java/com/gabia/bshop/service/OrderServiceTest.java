@@ -14,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
 
 import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.dto.request.OrderCreateRequestDto;
@@ -36,8 +35,6 @@ import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OrderRepository;
-
-import jakarta.persistence.EntityNotFoundException;
 
 /*
     OrderService 기능들에 대한 단위 테스트
@@ -63,19 +60,6 @@ class OrderServiceTest {
 
 	@InjectMocks
 	private OrderService orderService;
-
-	@DisplayName("존재하지_않는_회원ID로_주문목록_조회를_요청하면_오류가_발생한다")
-	@Test
-	void findOrderListInvalidMemberIdFail() {
-		//given
-		Long invalidMemberId = 999999999999L;
-		when(memberRepository.findById(invalidMemberId))
-			.thenThrow(EntityNotFoundException.class);
-		//when & then
-		Assertions.assertThatThrownBy(
-				() -> orderService.findOrdersPagination(invalidMemberId, PageRequest.of(0, 10)))
-			.isInstanceOf(EntityNotFoundException.class);
-	}
 
 	@DisplayName("주문을 생성한다.")
 	@Test
@@ -169,7 +153,6 @@ class OrderServiceTest {
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 
-		when(memberRepository.findById(1L)).thenReturn(Optional.ofNullable(member));
 		when(itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(List.of(1L, 2L), List.of(1L, 2L))).thenReturn(
 			List.of(itemOption1, itemOption2));
 
@@ -279,7 +262,6 @@ class OrderServiceTest {
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 
-		when(memberRepository.findById(1L)).thenReturn(Optional.ofNullable(member));
 		when(itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(List.of(1L, 1L), List.of(1L, 2L))).thenReturn(
 			List.of(itemOption1, itemOption2));
 

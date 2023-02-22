@@ -26,7 +26,6 @@ import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
-import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.integration.IntegrationTest;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemImageRepository;
@@ -202,18 +201,6 @@ class OrderServiceTest extends IntegrationTest {
 		Assertions.assertThat(orderInfo.orderInfoList().get(1).itemTotalCount()).isEqualTo(2);
 		Assertions.assertThat(orderInfo.orderInfoList().get(1).orderStatus())
 			.isEqualTo(order2.getStatus());
-	}
-
-	@DisplayName("존재하지_않는_회원이_주문목록_조회를_요청하면_오류가_발생해야한다")
-	@Test
-	void findOrderListInvalidIdFail() {
-		//given
-		Long invalidMemberId = 12375819347689L;
-		PageRequest pageable = PageRequest.of(0, 10);
-		//when & then
-		Assertions.assertThatThrownBy(
-				() -> orderService.findOrdersPagination(invalidMemberId, pageable))
-			.isInstanceOf(NotFoundException.class);
 	}
 
 	@DisplayName("주문_후_삭제된_상품도_주문목록에서_조회되어야한다")
