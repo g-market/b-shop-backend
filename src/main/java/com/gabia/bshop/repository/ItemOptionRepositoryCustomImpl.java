@@ -4,10 +4,15 @@ import static com.gabia.bshop.entity.QCategory.*;
 import static com.gabia.bshop.entity.QItem.*;
 import static com.gabia.bshop.entity.QItemOption.*;
 
-import java.util.Collection;
+import java.util.ArrayList;
 import java.util.List;
 
+import com.gabia.bshop.dto.CartDto;
+import com.gabia.bshop.dto.ItemIdAndItemOptionIdAble;
 import com.gabia.bshop.entity.ItemOption;
+import com.querydsl.core.types.Expression;
+import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
 import lombok.RequiredArgsConstructor;
@@ -18,23 +23,29 @@ public class ItemOptionRepositoryCustomImpl implements ItemOptionRepositoryCusto
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public List<ItemOption> findWithItemByItemIdsAndItemOptionIds(List<Long> itemIdList, List<Long> itemOptionIdList) {
-		return jpaQueryFactory.select(itemOption)
-			.from(itemOption)
-			.join(itemOption.item)
-			.where(item.id.in(itemIdList).and(itemOption.id.in(itemOptionIdList)))
-			.fetch();
-	}
-
-	@Override
-	public List<ItemOption> findWithItemAndCategory(Collection<Long> itemIdList, Collection<Long> itemOptionIdList) {
+	public List<ItemOption> findWithItemAndCategoryAndImageByItemIdListAndIdList(List<CartDto> cartDtoList) {
 		return jpaQueryFactory.select(itemOption)
 			.from(itemOption)
 			.join(itemOption.item, item).fetchJoin()
 			.join(item.category, category).fetchJoin()
-			// .join(item.image, itemImage).fetchJoin()
-			.where(item.id.in(itemIdList).and(itemOption.id.in(itemOptionIdList)))
-			.orderBy(item.id.asc(), itemOption.id.asc())
+			.where(Expressions.list(item.id, itemOption.id).in(searchItemIdAndItemOptionIdIn(cartDtoList)))
 			.fetch();
+	}
+
+	private BooleanExpression itemIdEq(Long itemId) {
+		return itemId != null ? item.id.eq(itemId) : null;
+	}
+
+	private BooleanExpression itemOptionIdEq(Long itemOptionId) {
+		return itemOptionId != null ? itemOption.id.eq(itemOptionId) : null;
+	}
+
+	private <T extends ItemIdAndItemOptionIdAble> Expression[] searchItemIdAndItemOptionIdIn(
+		List<T> itemIdAndItemOptionIdList) {
+		List<Expression<Object>> tuples = new ArrayList<>();
+		for (T cartDto : itemIdAndItemOptionIdList) {
+			tuples.add(Expressions.template(Object.class, "(({0}, {1}))", cartDto.itemId(), cartDto.itemOptionId()));
+		}
+		return tuples.toArray(new Expression[0]);
 	}
 }
