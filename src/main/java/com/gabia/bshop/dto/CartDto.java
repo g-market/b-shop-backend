@@ -4,5 +4,5 @@ public record CartDto(
 	Long itemId,
 	Long itemOptionId,
 	int orderCount
-) {
+) implements ItemIdAndItemOptionIdAble {
 }
