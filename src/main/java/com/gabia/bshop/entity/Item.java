@@ -75,7 +75,7 @@ public class Item extends BaseEntity {
 	private String thumbnail;
 
 	@Column(columnDefinition = "smallint", nullable = false)
-	private Integer year;
+	private int year;
 
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
 	@AuditJoinTable(name = "item_option_aud")
@@ -93,7 +93,7 @@ public class Item extends BaseEntity {
 		final String description,
 		final int basePrice,
 		final ItemStatus itemStatus,
-		final Integer year,
+		final int year,
 		final LocalDateTime openAt) {
 		this.id = id;
 		this.name = name;
