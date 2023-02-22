@@ -18,7 +18,7 @@ import com.gabia.bshop.integration.IntegrationTest;
 class RedisTransactionTest extends IntegrationTest {
 
 	@Autowired
-	private RedisTemplate<String, Object> redisTemplate;
+	private RedisTemplate<String, String> redisTemplate;
 
 	@Autowired
 	private StringRedisTemplate stringRedisTemplate;

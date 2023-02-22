@@ -44,8 +44,8 @@ public class GlobalExceptionHandler {
 	}
 
 	@ExceptionHandler(UnAuthorizedRefreshTokenException.class)
-	public ResponseEntity<ExceptionResponse> handleRefreshTokenException(final UnAuthorizedException exception,
-		final HttpServletRequest request) {
+	public ResponseEntity<ExceptionResponse> handleRefreshTokenException(
+		final UnAuthorizedRefreshTokenException exception, final HttpServletRequest request) {
 		log.info(LOG_FORMAT, exception.getClass().getSimpleName(), exception.getExceptionResponse().message());
 		final ExceptionResponse responseBody = new ExceptionResponse(exception.getExceptionResponse().message());
 		final Cookie cookie = WebUtils.getCookie(request, REFRESH_TOKEN);
@@ -101,6 +101,7 @@ public class GlobalExceptionHandler {
 			.body(new ExceptionResponse(stringBuilder.toString()));
 	}
 
+	// TODO: 수정 필요 (로그 레벨에 대한 학습과, message를 client에 제공하는 것은 위험하다의 피드백)
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<ExceptionResponse> handleUnhandledException(final Exception exception) {
 		log.warn(LOG_FORMAT, exception.getClass().getSimpleName(), exception.getMessage());
