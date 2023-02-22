@@ -12,9 +12,11 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.dto.request.OrderCreateRequestDto;
 import com.gabia.bshop.dto.request.OrderInfoSearchRequest;
+import com.gabia.bshop.dto.request.OrderUpdateStatusRequest;
 import com.gabia.bshop.dto.response.OrderCreateResponseDto;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
+import com.gabia.bshop.dto.response.OrderUpdateStatusResponse;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.Order;
@@ -126,7 +128,14 @@ public class OrderService {
 		final Order order = findOrderByIdAndMemberId(orderId, memberId);
 
 		validateOrderStatus(order);
-		order.cancel();
+		order.cancelOrder();
+	}
+
+	public OrderUpdateStatusResponse updateOrderStatus(final OrderUpdateStatusRequest orderUpdateStatusRequest) {
+		final Order order = findOrderById(orderUpdateStatusRequest.orderId());
+		order.updateOrderStatus(orderUpdateStatusRequest.status());
+
+		return OrderMapper.INSTANCE.orderToOrderUpdateStatusResponse(order);
 	}
 
 	private Order findOrderById(final Long orderId) {

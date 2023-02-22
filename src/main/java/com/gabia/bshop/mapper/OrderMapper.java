@@ -10,6 +10,7 @@ import org.mapstruct.factory.Mappers;
 import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.dto.request.OrderCreateRequestDto;
 import com.gabia.bshop.dto.response.OrderCreateResponseDto;
+import com.gabia.bshop.dto.response.OrderUpdateStatusResponse;
 import com.gabia.bshop.entity.Order;
 import com.gabia.bshop.entity.OrderItem;
 
@@ -47,4 +48,9 @@ public interface OrderMapper {
 	OrderItemDto orderItemToOrdersDto(OrderItem orderItem);
 
 	List<OrderItemDto> orderItemListToOrderItemDtoList(List<OrderItem> orderItemList);
+
+	//orderStatus Update
+	@Mapping(source = "id", target = "orderId")
+	@Mapping(source = "member.id", target = "memberId")
+	OrderUpdateStatusResponse orderToOrderUpdateStatusResponse(Order order);
 }
