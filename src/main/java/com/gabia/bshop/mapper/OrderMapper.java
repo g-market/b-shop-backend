@@ -20,12 +20,12 @@ public interface OrderMapper {
 
 	@Mappings({
 		@Mapping(source = "memberId", target = "member.id"),
-		@Mapping(source = "orderItemDtoList", target = "orderItemList"),
-		@Mapping(source = "status", target = "status", defaultValue = "ACCEPTED"),
+		@Mapping(source = "orderCreateRequestDto.orderItemDtoList", target = "orderItemList"),
+		@Mapping(source = "orderCreateRequestDto.status", target = "status", defaultValue = "ACCEPTED"),
 		@Mapping(target = "id", ignore = true),
 		@Mapping(target = "totalPrice", ignore = true),
 	})
-	Order ordersCreateDtoToEntity(OrderCreateRequestDto orderCreateRequestDto);
+	Order ordersCreateDtoToEntity(Long memberId, OrderCreateRequestDto orderCreateRequestDto);
 
 	@Mappings({
 		@Mapping(source = "member.id", target = "memberId"),
