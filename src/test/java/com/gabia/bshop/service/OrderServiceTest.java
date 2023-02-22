@@ -15,7 +15,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
 
 import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.dto.request.OrderCreateRequestDto;
@@ -33,12 +32,10 @@ import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
-import com.gabia.bshop.exception.ConflictException;
-import com.gabia.bshop.exception.NotFoundException;
+import com.gabia.bshop.exception.BadRequestException;
 import com.gabia.bshop.mapper.OrderMapper;
 import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemOptionRepository;
-import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
 import com.gabia.bshop.security.MemberPayload;
@@ -62,9 +59,6 @@ class OrderServiceTest {
 	private OrderItemRepository orderItemRepository;
 
 	@Mock
-	private MemberRepository memberRepository;
-
-	@Mock
 	private ItemOptionRepository itemOptionRepository;
 
 	@Mock
@@ -73,20 +67,7 @@ class OrderServiceTest {
 	@InjectMocks
 	private OrderService orderService;
 
-	@DisplayName("존재하지_않는_회원ID로_주문목록_조회를_요청하면_오류가_발생한다")
-	@Test
-	void findOrderListInvalidMemberIdFail() {
-		//given
-		Long invalidMemberId = 999999999999L;
-		when(memberRepository.findById(invalidMemberId))
-			.thenThrow(EntityNotFoundException.class);
-		//when & then
-		Assertions.assertThatThrownBy(
-				() -> orderService.findOrdersPagination(invalidMemberId, PageRequest.of(0, 10)))
-			.isInstanceOf(EntityNotFoundException.class);
-	}
-
-	@DisplayName("주문을_생성한다.")
+	@DisplayName("주문을 생성한다.")
 	@Test
 	void createOrder() {
 		//given
@@ -110,7 +91,6 @@ class OrderServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -122,7 +102,6 @@ class OrderServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -130,7 +109,6 @@ class OrderServiceTest {
 			.id(1L)
 			.item(item1)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(0)
 			.stockQuantity(10)
 			.build();
@@ -139,7 +117,6 @@ class OrderServiceTest {
 			.id(2L)
 			.item(item2)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(1000)
 			.stockQuantity(5)
 			.build();
@@ -178,7 +155,6 @@ class OrderServiceTest {
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 
-		when(memberRepository.findById(1L)).thenReturn(Optional.ofNullable(member));
 		when(itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(List.of(1L, 2L), List.of(1L, 2L))).thenReturn(
 			List.of(itemOption1, itemOption2));
 
@@ -220,7 +196,6 @@ class OrderServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -232,7 +207,6 @@ class OrderServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -240,7 +214,6 @@ class OrderServiceTest {
 			.id(1L)
 			.item(item1)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(0)
 			.stockQuantity(10)
 			.build();
@@ -249,7 +222,6 @@ class OrderServiceTest {
 			.id(2L)
 			.item(item2)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(1000)
 			.stockQuantity(5)
 			.build();
@@ -288,13 +260,12 @@ class OrderServiceTest {
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 
-		when(memberRepository.findById(1L)).thenReturn(Optional.ofNullable(member));
 		when(itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(List.of(1L, 1L), List.of(1L, 2L))).thenReturn(
 			List.of(itemOption1, itemOption2));
 
 		//when & then
 		Assertions.assertThatThrownBy(() -> orderService.createOrder(member.getId(), orderCreateRequestDto))
-			.isInstanceOf(ConflictException.class);
+			.isInstanceOf(BadRequestException.class);
 	}
 
 	@DisplayName("주문을_취소한다.")
@@ -314,7 +285,6 @@ class OrderServiceTest {
 		ItemOption itemOption1 = ItemOption.builder()
 			.id(1L)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(0)
 			.stockQuantity(10)
 			.build();
@@ -328,10 +298,9 @@ class OrderServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
-				.itemOptionList(options)
 				.build();
+		item1.addItemOption(itemOption1);
 
 		OrderItem orderItem1 = OrderItem.builder()
 			.id(1L)
@@ -360,20 +329,6 @@ class OrderServiceTest {
 			() -> assertEquals(OrderStatus.CANCELLED, order.getStatus(),
 				"주문을 취소하면 주문상태가 CANCELLED로 변경되어야 한다.")
 		);
-	}
-
-	@DisplayName("주문_ID가_유효하지_않으면_주문취소에_실패한다.")
-	@Test
-	void cancelOrderFail() {
-		//given
-		Long memberId = 1L;
-		Long nonId = 9999L;
-
-		when(orderRepository.findByIdAndMemberId(nonId, memberId)).thenThrow(NotFoundException.class);
-
-		//when & then
-		Assertions.assertThatThrownBy(() -> orderService.cancelOrder(memberId, nonId))
-			.isInstanceOf(NotFoundException.class);
 	}
 
 	@DisplayName("주문_상태를_변경한다.")
@@ -421,11 +376,11 @@ class OrderServiceTest {
 			.role(member.getRole())
 			.build();
 
-		when(orderRepository.findByIdAndMemberId(order.getId(), member.getId())).thenThrow(NotFoundException.class);
+		when(orderRepository.findByIdAndMemberId(order.getId(), member.getId())).thenThrow(EntityNotFoundException.class);
 
 		//when & then
 		Assertions.assertThatThrownBy(() -> orderService.findSingleOrderInfo(memberPayload, order.getId()))
-			.isInstanceOf(NotFoundException.class);
+			.isInstanceOf(EntityNotFoundException.class);
 	}
 
 	@DisplayName("사용자는_본인의_주문일_경우_주문_단건_조회에_성공한다.")

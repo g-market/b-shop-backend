@@ -19,11 +19,11 @@ import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
 import com.gabia.bshop.dto.response.OrderUpdateStatusResponse;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.ItemOption;
-import com.gabia.bshop.entity.Member;
 import com.gabia.bshop.entity.Order;
 import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
+import com.gabia.bshop.exception.BadRequestException;
 import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.OrderInfoMapper;
@@ -50,8 +50,6 @@ public class OrderService {
 
 	@Transactional(readOnly = true)
 	public OrderInfoPageResponse findOrdersPagination(final Long memberId, final Pageable pageable) {
-		findMemberById(memberId);
-
 		final List<Order> orderList = orderRepository.findByMemberIdPagination(memberId, pageable);
 		final List<OrderItem> orderItemList = findOrderItemListByOrderList(orderList);
 		final List<ItemImage> itemImagesWithItem = itemImageRepository.findWithItemByItemIds(
@@ -72,10 +70,10 @@ public class OrderService {
 		}
 
 		final List<OrderItem> orderInfoList = orderItemRepository.findWithOrdersAndItemByOrderId(orderId);
-		final List<String> thumbnailUrlsList = itemImageRepository.findUrlByItemIds(orderInfoList.stream()
+		final List<String> thumbnailUrlList = itemImageRepository.findUrlByItemIds(orderInfoList.stream()
 			.map(oi -> oi.getItem().getId())
 			.collect(Collectors.toList()));
-		return OrderInfoMapper.INSTANCE.orderInfoSingleDTOResponse(orderInfoList, thumbnailUrlsList);
+		return OrderInfoMapper.INSTANCE.orderInfoSingleDTOResponse(orderInfoList, thumbnailUrlList);
 	}
 
 	@Transactional(readOnly = true)
@@ -93,7 +91,6 @@ public class OrderService {
 	}
 
 	public OrderCreateResponseDto createOrder(final Long memberId, final OrderCreateRequestDto orderCreateRequestDto) {
-		findMemberById(memberId);
 		final Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(memberId, orderCreateRequestDto);
 
 		//DB에서 OptionItem 값 한번에 조회
@@ -141,11 +138,6 @@ public class OrderService {
 		return OrderMapper.INSTANCE.orderToOrderUpdateStatusResponse(order);
 	}
 
-	private Member findMemberById(final Long memberId) {
-		return memberRepository.findById(memberId)
-			.orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND_EXCEPTION, memberId));
-	}
-
 	private Order findOrderById(final Long orderId) {
 		return orderRepository.findById(orderId)
 			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
@@ -187,7 +179,7 @@ public class OrderService {
 	private boolean isEqualListSize(final OrderCreateRequestDto orderCreateRequestDto,
 		final List<OrderItemDto> validItemOptionList) {
 		if (orderCreateRequestDto.orderItemDtoList().size() != validItemOptionList.size()) {
-			throw new ConflictException(ITEM_ITEMOPTION_NOT_FOUND_EXCEPTION);
+			throw new BadRequestException(INVALID_ITEM_OPTION_NOT_FOUND_EXCEPTION);
 		}
 		return true;
 	}
