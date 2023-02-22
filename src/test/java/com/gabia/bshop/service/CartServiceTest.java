@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.util.List;
-import java.util.Set;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -124,19 +123,19 @@ class CartServiceTest {
 		final Item item1 = ItemFixture.ITEM_1.getInstance(itemId, category1);
 		final ItemOption itemOption1 = ITEM_OPTION_1.getInstance(itemOptionId, item1);
 		final Item item2 = ItemFixture.ITEM_2.getInstance(newItemId, category1);
-		final ItemOption itemOption2 = ITEM_OPTION_2.getInstance(itemOptionId, item2);
+		final ItemOption itemOption2 = ITEM_OPTION_2.getInstance(newItemOptionId, item2);
 
 		// TODO: imageUrl 기입
 		final CartResponse cartResponse1 = new CartResponse(itemId, itemOptionId, cartDto1.orderCount(),
 			item1.getName(), item1.getBasePrice(),
-			itemOption1.getOptionPrice(), category1.getName(), "추후에 기입");
+			itemOption1.getOptionPrice(), category1.getName(), null);
 		final CartResponse cartResponse2 = new CartResponse(newItemId, newItemOptionId, cartDto2.orderCount(),
 			item2.getName(), item2.getBasePrice(),
-			itemOption2.getOptionPrice(), category1.getName(), "추후에 기입");
+			itemOption2.getOptionPrice(), category1.getName(), null);
 
 		given(cartRepository.findAllByMemberId(memberId)).willReturn(List.of(cartDto1, cartDto2));
-		given(itemOptionRepository.findWithItemAndCategory(Set.of(itemId, newItemId),
-			Set.of(itemOptionId, newItemOptionId))).willReturn(List.of(itemOption1, itemOption2));
+		given(itemOptionRepository.findWithItemAndCategoryAndImageByItemIdListAndIdList(List.of(cartDto1, cartDto2)))
+			.willReturn(List.of(itemOption1, itemOption2));
 
 		// when
 		final List<CartResponse> actual = cartService.findAll(memberId);
