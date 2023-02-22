@@ -70,9 +70,13 @@ public class Order extends BaseEntity {
 		this.totalPrice += orderItem.getPrice() * count;
 	}
 
-	public void cancel() {
+	public void cancelOrder() {
 		this.orderItemList.forEach(OrderItem::cancel);
 		this.status = OrderStatus.CANCELLED;
+	}
+
+	public void updateOrderStatus(OrderStatus orderStatus) {
+		this.status = orderStatus;
 	}
 
 	@Override
