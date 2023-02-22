@@ -41,9 +41,6 @@ import lombok.ToString;
 @Entity
 public class Item extends BaseEntity {
 
-	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
-	private final List<ItemOption> itemOptionList = new ArrayList<>();
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -70,11 +67,15 @@ public class Item extends BaseEntity {
 
 	@Column(nullable = false)
 	private boolean deleted;
+
 	@Column
 	private String thumbnail;
 
 	@Column(columnDefinition = "smallint", nullable = false)
 	private Integer year;
+
+	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+	private final List<ItemOption> itemOptionList = new ArrayList<>();
 
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
 	private List<ItemImage> itemImageList = new ArrayList<>();
