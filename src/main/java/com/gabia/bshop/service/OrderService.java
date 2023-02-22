@@ -21,6 +21,7 @@ import com.gabia.bshop.entity.Order;
 import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
+import com.gabia.bshop.exception.BadRequestException;
 import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.OrderInfoMapper;
@@ -169,7 +170,7 @@ public class OrderService {
 	private boolean isEqualListSize(final OrderCreateRequestDto orderCreateRequestDto,
 		final List<OrderItemDto> validItemOptionList) {
 		if (orderCreateRequestDto.orderItemDtoList().size() != validItemOptionList.size()) {
-			throw new ConflictException(ITEM_ITEMOPTION_NOT_FOUND_EXCEPTION);
+			throw new BadRequestException(INVALID_ITEM_OPTION_NOT_FOUND_EXCEPTION);
 		}
 		return true;
 	}
