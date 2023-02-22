@@ -11,6 +11,6 @@ public record CartResponse(
 	int basePrice,
 	int optionPrice,
 	String category,
-	String imageUrl
+	String thumbnailUrl
 ) {
 }
