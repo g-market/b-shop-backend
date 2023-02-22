@@ -402,7 +402,6 @@ class OrderServiceTest {
 		ItemOption itemOption1 = ItemOption.builder()
 			.id(1L)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(0)
 			.stockQuantity(10)
 			.build();
@@ -416,9 +415,7 @@ class OrderServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
-				.itemOptionList(options)
 				.build();
 
 		OrderItem orderItem1 = OrderItem.builder()
@@ -470,7 +467,6 @@ class OrderServiceTest {
 		ItemOption itemOption1 = ItemOption.builder()
 			.id(1L)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(0)
 			.stockQuantity(10)
 			.build();
@@ -484,9 +480,7 @@ class OrderServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
-				.itemOptionList(options)
 				.build();
 
 		OrderItem orderItem1 = OrderItem.builder()
