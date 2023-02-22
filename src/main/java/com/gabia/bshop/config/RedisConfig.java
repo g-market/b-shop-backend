@@ -8,7 +8,6 @@ import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactor
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
-import org.springframework.data.redis.hash.ObjectHashMapper;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -22,8 +21,8 @@ public class RedisConfig {
 	private final RedisProperties redisProperties;
 
 	@Bean
-	public RedisTemplate<String, Object> redisTemplate() {
-		RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
+	public RedisTemplate<String, String> redisTemplate() {
+		final RedisTemplate<String, String> redisTemplate = new RedisTemplate<>();
 		redisTemplate.setConnectionFactory(redisConnectionFactory());
 		redisTemplate.setKeySerializer(new StringRedisSerializer());
 		redisTemplate.setValueSerializer(new StringRedisSerializer());
@@ -33,19 +32,14 @@ public class RedisConfig {
 
 	@Bean
 	public StringRedisTemplate stringRedisTemplate() {
-		StringRedisTemplate stringRedisTemplate = new StringRedisTemplate(redisConnectionFactory());
+		final StringRedisTemplate stringRedisTemplate = new StringRedisTemplate(redisConnectionFactory());
 		stringRedisTemplate.setEnableTransactionSupport(true);
 		return stringRedisTemplate;
 	}
 
 	@Bean
-	public HashOperations<String, byte[], byte[]> hashOperations() {
+	public HashOperations<String, String, String> hashOperations() {
 		return redisTemplate().opsForHash();
-	}
-
-	@Bean
-	public ObjectHashMapper objectHashMapper() {
-		return new ObjectHashMapper();
 	}
 
 	@Bean

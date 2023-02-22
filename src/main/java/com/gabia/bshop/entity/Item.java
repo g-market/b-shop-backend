@@ -70,6 +70,7 @@ public class Item extends BaseEntity {
 
 	@Column(nullable = false)
 	private boolean deleted;
+
 	@Column
 	private String thumbnail;
 

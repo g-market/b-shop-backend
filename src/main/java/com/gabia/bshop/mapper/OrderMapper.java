@@ -10,6 +10,7 @@ import org.mapstruct.factory.Mappers;
 import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.dto.request.OrderCreateRequestDto;
 import com.gabia.bshop.dto.response.OrderCreateResponseDto;
+import com.gabia.bshop.dto.response.OrderUpdateStatusResponse;
 import com.gabia.bshop.entity.Order;
 import com.gabia.bshop.entity.OrderItem;
 
@@ -20,12 +21,12 @@ public interface OrderMapper {
 
 	@Mappings({
 		@Mapping(source = "memberId", target = "member.id"),
-		@Mapping(source = "orderItemDtoList", target = "orderItemList"),
-		@Mapping(source = "status", target = "status", defaultValue = "ACCEPTED"),
+		@Mapping(source = "orderCreateRequestDto.orderItemDtoList", target = "orderItemList"),
+		@Mapping(source = "orderCreateRequestDto.status", target = "status", defaultValue = "ACCEPTED"),
 		@Mapping(target = "id", ignore = true),
 		@Mapping(target = "totalPrice", ignore = true),
 	})
-	Order ordersCreateDtoToEntity(OrderCreateRequestDto orderCreateRequestDto);
+	Order ordersCreateDtoToEntity(Long memberId, OrderCreateRequestDto orderCreateRequestDto);
 
 	@Mappings({
 		@Mapping(source = "member.id", target = "memberId"),
@@ -47,4 +48,9 @@ public interface OrderMapper {
 	OrderItemDto orderItemToOrdersDto(OrderItem orderItem);
 
 	List<OrderItemDto> orderItemListToOrderItemDtoList(List<OrderItem> orderItemList);
+
+	//orderStatus Update
+	@Mapping(source = "id", target = "orderId")
+	@Mapping(source = "member.id", target = "memberId")
+	OrderUpdateStatusResponse orderToOrderUpdateStatusResponse(Order order);
 }

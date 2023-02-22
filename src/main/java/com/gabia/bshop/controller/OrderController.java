@@ -7,6 +7,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -14,17 +15,20 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gabia.bshop.dto.request.OrderCreateRequestDto;
 import com.gabia.bshop.dto.request.OrderInfoSearchRequest;
+import com.gabia.bshop.dto.request.OrderUpdateStatusRequest;
 import com.gabia.bshop.dto.response.OrderCreateResponseDto;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
+import com.gabia.bshop.dto.response.OrderUpdateStatusResponse;
 import com.gabia.bshop.exception.ConflictException;
+import com.gabia.bshop.security.CurrentMember;
+import com.gabia.bshop.security.Login;
+import com.gabia.bshop.security.MemberPayload;
 import com.gabia.bshop.service.OrderService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class OrderController {
@@ -32,24 +36,24 @@ public class OrderController {
 	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
 	private final OrderService orderService;
 
-	// TODO: 인가 적용
-	@GetMapping("/order-infos")
-	public ResponseEntity<OrderInfoPageResponse> findOrders(final Pageable pageable) {
-		final Long memberId = 6L;
-
+	@Login
+	@GetMapping("/orders")
+	public ResponseEntity<OrderInfoPageResponse> findOrders(@CurrentMember final MemberPayload memberPayload,
+		final Pageable pageable) {
 		validatePageElementSize(pageable);
-		return ResponseEntity.ok(orderService.findOrdersPagination(memberId, pageable));
+		return ResponseEntity.ok(orderService.findOrdersPagination(memberPayload.id(), pageable));
 	}
 
-	// TODO: 인가 적용
-	@GetMapping("/order-infos/{orderId}")
-	public ResponseEntity<OrderInfoSingleResponse> singleOrderInfo(@PathVariable("orderId") final Long orderId) {
-		final OrderInfoSingleResponse singleOrderInfo = orderService.findSingleOrderInfo(orderId);
+	@Login
+	@GetMapping("/orders/{orderId}")
+	public ResponseEntity<OrderInfoSingleResponse> singleOrderInfo(@CurrentMember final MemberPayload memberPayload,
+		@PathVariable("orderId") final Long orderId) {
+		final OrderInfoSingleResponse singleOrderInfo = orderService.findSingleOrderInfo(memberPayload, orderId);
 		return ResponseEntity.ok(singleOrderInfo);
 	}
 
-	// TODO: admin 인가
-	@GetMapping("/admin/order-infos")
+	@Login(admin = true)
+	@GetMapping("/admin/orders")
 	public ResponseEntity<OrderInfoPageResponse> adminOrderInfos(final OrderInfoSearchRequest orderInfoSearchRequest,
 		final Pageable pageable) {
 		final OrderInfoPageResponse adminOrdersPagination = orderService.findAdminOrdersPagination(
@@ -57,16 +61,27 @@ public class OrderController {
 		return ResponseEntity.ok(adminOrdersPagination);
 	}
 
+	@Login
 	@PostMapping("/orders")
 	public ResponseEntity<OrderCreateResponseDto> createOrder(
+		@CurrentMember final MemberPayload memberPayload,
 		@RequestBody @Valid final OrderCreateRequestDto orderCreateRequestDto) {
-		return ResponseEntity.ok().body(orderService.createOrder(orderCreateRequestDto));
+		return ResponseEntity.ok().body(orderService.createOrder(memberPayload.id(), orderCreateRequestDto));
 	}
 
-	@DeleteMapping("/orders/{id}")
-	public ResponseEntity<Void> cancelOrder(@PathVariable final Long id) {
-		orderService.cancelOrder(id);
+	@Login
+	@DeleteMapping("/orders/{orderId}")
+	public ResponseEntity<Void> cancelOrder(@CurrentMember final MemberPayload memberPayload,
+		@PathVariable final Long orderId) {
+		orderService.cancelOrder(memberPayload.id(), orderId);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+	}
+
+	@Login(admin = true)
+	@PatchMapping("/orders/{orderId}")
+	public ResponseEntity<OrderUpdateStatusResponse> updateOrderStatus(
+		@RequestBody @Valid final OrderUpdateStatusRequest orderUpdateStatusRequest) {
+		return ResponseEntity.ok().body(orderService.updateOrderStatus(orderUpdateStatusRequest));
 	}
 
 	private void validatePageElementSize(final Pageable pageable) {

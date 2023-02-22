@@ -17,6 +17,7 @@ import lombok.NoArgsConstructor;
 	indexes = {})
 @Entity
 public class ShadLock {
+
 	@Id
 	@Column(name = "name", columnDefinition = "varchar(64)", nullable = false)
 	private String name;
