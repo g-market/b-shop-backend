@@ -1,13 +1,16 @@
 package com.gabia.bshop.repository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import com.gabia.bshop.entity.ItemOption;
 
-public interface ItemOptionRepository extends JpaRepository<ItemOption, Long> {
+public interface ItemOptionRepository extends JpaRepository<ItemOption, Long>, ItemOptionRepositoryCustom {
+
+	List<ItemOption> findAllByItem_id(Long itemId);
 
 	@Query("""
 		select io from ItemOption io
@@ -16,4 +19,8 @@ public interface ItemOptionRepository extends JpaRepository<ItemOption, Long> {
 		and io.id in :itemOptionIdList
 		""")
 	List<ItemOption> findWithItemByItemIdsAndItemOptionIds(List<Long> itemIdList, List<Long> itemOptionIdList);
+
+	Optional<ItemOption> findByIdAndItemId(Long itemOptionId, Long itemId);
+
+	boolean existsByItem_IdAndIdAndStockQuantityIsGreaterThanEqual(Long itemId, Long itemOptionId, int stockQuantity);
 }

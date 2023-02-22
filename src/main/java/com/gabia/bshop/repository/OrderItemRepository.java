@@ -9,12 +9,7 @@ import com.gabia.bshop.entity.OrderItem;
 
 public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 
-	@Query("""
-		select oi
-		from OrderItem oi
-		where oi.item.id in (:orderIdList)
-		""")
-	List<OrderItem> findByOrderIds(List<Long> orderIdList);
+	List<OrderItem> findByOrderIdIn(List<Long> orderIdList);
 
 	@Query("""
 		select oi

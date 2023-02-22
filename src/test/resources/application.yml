@@ -30,6 +30,9 @@ server:
     domain: https://b-shop.com
     url: https://123.456.789.1
 
+cart:
+  expired-time: 86400000
+
 hiworks:
   client:
     id: clientId
@@ -42,3 +45,14 @@ token:
   access-expired-time: 3600000  # 2시간
   refresh-expired-time: 2420000000  # 28일
   secret: testkey1234567891011121314151617181920
+
+minio:
+  endpoint: http://localhost:9000
+  user: minio
+  password: minio1234
+  bucket: images
+  default:
+    image: http://localhost:9000/images/No_Image.jpg
+
+shedlock:
+  table: shedlock

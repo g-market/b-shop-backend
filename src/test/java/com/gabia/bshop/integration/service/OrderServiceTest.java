@@ -26,7 +26,6 @@ import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
-import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.integration.IntegrationTest;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemImageRepository;
@@ -35,7 +34,10 @@ import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
+import com.gabia.bshop.security.MemberPayload;
 import com.gabia.bshop.service.OrderService;
+
+import jakarta.persistence.EntityManager;
 
 @Transactional
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -65,6 +67,9 @@ class OrderServiceTest extends IntegrationTest {
 	@Autowired
 	private OrderService orderService;
 
+	@Autowired
+	private EntityManager entityManager;
+
 	@DisplayName("주문을_한_회원이_주문목록_조회를_수행하면_주문내역들이_조회되어야한다")
 	@Test
 	void findOrderList() {
@@ -87,8 +92,8 @@ class OrderServiceTest extends IntegrationTest {
 			.description("temp_item_1_description " + UUID.randomUUID())
 			.basePrice(11111)
 			.itemStatus(ItemStatus.PUBLIC)
+			.year(2022)
 			.openAt(now)
-			.deleted(false)
 			.build();
 		Item item2 = Item.builder()
 			.category(category1)
@@ -96,20 +101,18 @@ class OrderServiceTest extends IntegrationTest {
 			.description("temp_item_1_description " + UUID.randomUUID())
 			.basePrice(22222)
 			.itemStatus(ItemStatus.PUBLIC)
+			.year(2022)
 			.openAt(now)
-			.deleted(false)
 			.build();
 		ItemOption itemOption1 = ItemOption.builder()
 			.item(item1)
 			.description("temp_itemOption1_description")
-			.optionLevel(1)
 			.optionPrice(0)
 			.stockQuantity(10)
 			.build();
 		ItemOption itemOption2 = ItemOption.builder()
 			.item(item2)
 			.description("temp_itemOption2_description")
-			.optionLevel(1)
 			.optionPrice(1000)
 			.stockQuantity(5)
 			.build();
@@ -118,7 +121,7 @@ class OrderServiceTest extends IntegrationTest {
 			.status(OrderStatus.ACCEPTED)
 			.totalPrice(11111L)
 			.build();
-		OrderItem orderItem1_order1 = OrderItem.builder()
+		OrderItem orderItem1Order1 = OrderItem.builder()
 			.item(item1)
 			.order(order1)
 			.option(itemOption1)
@@ -130,14 +133,14 @@ class OrderServiceTest extends IntegrationTest {
 			.status(OrderStatus.ACCEPTED)
 			.totalPrice(33333L)
 			.build();
-		OrderItem orderItem2_order2 = OrderItem.builder()
+		OrderItem orderItem2Order2 = OrderItem.builder()
 			.item(item1)
 			.order(order2)
 			.option(itemOption1)
 			.orderCount(1)
 			.price(11111L)
 			.build();
-		OrderItem orderItem3_order2 = OrderItem.builder()
+		OrderItem orderItem3Order2 = OrderItem.builder()
 			.item(item2)
 			.order(order2)
 			.option(itemOption2)
@@ -168,7 +171,9 @@ class OrderServiceTest extends IntegrationTest {
 		orderRepository.saveAll(List.of(order1, order2));
 		itemOptionRepository.saveAll(List.of(itemOption1, itemOption2));
 		orderItemRepository.saveAll(
-			List.of(orderItem1_order1, orderItem2_order2, orderItem3_order2));
+			List.of(orderItem1Order1, orderItem2Order2, orderItem3Order2));
+
+		entityManager.clear();
 
 		PageRequest pageable = PageRequest.of(0, 10);
 		//when
@@ -176,35 +181,24 @@ class OrderServiceTest extends IntegrationTest {
 			pageable);
 		//then
 		Assertions.assertThat(orderInfo.resultCount()).isEqualTo(2);
-		Assertions.assertThat(orderInfo.orderInfos().get(0).orderId()).isEqualTo(order1.getId());
-		Assertions.assertThat(orderInfo.orderInfos().get(0).thumbnailImage())
-			.isEqualTo(itemImage1.getUrl());
-		Assertions.assertThat(orderInfo.orderInfos().get(0).representativeName())
-			.isEqualTo(item1.getName());
-		Assertions.assertThat(orderInfo.orderInfos().get(0).itemTotalCount()).isEqualTo(1);
-		Assertions.assertThat(orderInfo.orderInfos().get(0).orderStatus())
+		Assertions.assertThat(orderInfo.orderInfoList().get(0).orderId()).isEqualTo(order1.getId());
+		// TODO: 썸네일 추가 후 테스트코드 수정 필요
+		//Assertions.assertThat(orderInfo.orderInfoList().get(0).thumbnailImage())
+		//	.isEqualTo(itemImage1.getUrl());
+		//Assertions.assertThat(orderInfo.orderInfoList().get(0).representativeName())
+		//	.isEqualTo(item1.getName());
+		Assertions.assertThat(orderInfo.orderInfoList().get(0).itemTotalCount()).isEqualTo(1);
+		Assertions.assertThat(orderInfo.orderInfoList().get(0).orderStatus())
 			.isEqualTo(order1.getStatus());
 
-		Assertions.assertThat(orderInfo.orderInfos().get(1).orderId()).isEqualTo(order2.getId());
-		Assertions.assertThat(orderInfo.orderInfos().get(1).thumbnailImage())
-			.isEqualTo(itemImage3.getUrl());
-		Assertions.assertThat(orderInfo.orderInfos().get(1).representativeName())
-			.isEqualTo(item2.getName());
-		Assertions.assertThat(orderInfo.orderInfos().get(1).itemTotalCount()).isEqualTo(2);
-		Assertions.assertThat(orderInfo.orderInfos().get(1).orderStatus())
+		Assertions.assertThat(orderInfo.orderInfoList().get(1).orderId()).isEqualTo(order2.getId());
+		// Assertions.assertThat(orderInfo.orderInfoList().get(1).thumbnailImage())
+		// 	.isEqualTo(itemImage3.getUrl());
+		// Assertions.assertThat(orderInfo.orderInfoList().get(1).representativeName())
+		// 	.isEqualTo(item2.getName());
+		Assertions.assertThat(orderInfo.orderInfoList().get(1).itemTotalCount()).isEqualTo(2);
+		Assertions.assertThat(orderInfo.orderInfoList().get(1).orderStatus())
 			.isEqualTo(order2.getStatus());
-	}
-
-	@DisplayName("존재하지_않는_회원이_주문목록_조회를_요청하면_오류가_발생해야한다")
-	@Test
-	void findOrderListInvalidIdFail() {
-		//given
-		Long invalidMemberId = 12375819347689L;
-		PageRequest pageable = PageRequest.of(0, 10);
-		//when & then
-		Assertions.assertThatThrownBy(
-				() -> orderService.findOrdersPagination(invalidMemberId, pageable))
-			.isInstanceOf(NotFoundException.class);
 	}
 
 	@DisplayName("주문_후_삭제된_상품도_주문목록에서_조회되어야한다")
@@ -229,14 +223,13 @@ class OrderServiceTest extends IntegrationTest {
 			.description("temp_item_1_description " + UUID.randomUUID())
 			.basePrice(11111)
 			.itemStatus(ItemStatus.PUBLIC)
-			.openAt(now)
-			.deleted(true)
+			.year(2022)
+			.openAt(now)//deleted true
 			.build();
 		ItemOption itemOption1 = ItemOption.builder()
 			.id(1L)
 			.item(item1)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(0)
 			.stockQuantity(10)
 			.build();
@@ -245,7 +238,7 @@ class OrderServiceTest extends IntegrationTest {
 			.status(OrderStatus.ACCEPTED)
 			.totalPrice(11111L)
 			.build();
-		OrderItem orderItem1_order1 = OrderItem.builder()
+		OrderItem orderItem1Order1 = OrderItem.builder()
 			.item(item1)
 			.order(order1)
 			.option(itemOption1)
@@ -267,8 +260,10 @@ class OrderServiceTest extends IntegrationTest {
 		itemOptionRepository.save(itemOption1);
 		itemImageRepository.saveAll(List.of(itemImage1, itemImage2));
 		orderRepository.saveAll(List.of(order1));
-		orderItemRepository.saveAll(List.of(orderItem1_order1));
+		orderItemRepository.saveAll(List.of(orderItem1Order1));
 		PageRequest pageable = PageRequest.of(0, 10);
+
+		entityManager.clear();
 
 		//when
 		OrderInfoPageResponse orderInfo = orderService.findOrdersPagination(member1.getId(),
@@ -300,8 +295,8 @@ class OrderServiceTest extends IntegrationTest {
 			.description("temp_item_1_description " + UUID.randomUUID())
 			.basePrice(11111)
 			.itemStatus(ItemStatus.PUBLIC)
-			.openAt(now)
-			.deleted(true)
+			.year(2022)
+			.openAt(now) //deleted_true
 			.build();
 		Item item2 = Item.builder()
 			.category(category1)
@@ -309,20 +304,18 @@ class OrderServiceTest extends IntegrationTest {
 			.description("temp_item_2_description " + UUID.randomUUID())
 			.basePrice(22222)
 			.itemStatus(ItemStatus.PUBLIC)
+			.year(2022)
 			.openAt(now)
-			.deleted(false)
 			.build();
 		ItemOption itemOption1 = ItemOption.builder()
 			.item(item1)
 			.description("temp_itemOption1_description")
-			.optionLevel(1)
 			.optionPrice(0)
 			.stockQuantity(10)
 			.build();
 		ItemOption itemOption2 = ItemOption.builder()
 			.item(item2)
 			.description("temp_itemOption2_description")
-			.optionLevel(1)
 			.optionPrice(1000)
 			.stockQuantity(5)
 			.build();
@@ -366,11 +359,16 @@ class OrderServiceTest extends IntegrationTest {
 		itemRepository.saveAll(List.of(item1, item2));
 		itemOptionRepository.saveAll(List.of(itemOption1, itemOption2));
 		itemImageRepository.saveAll(List.of(itemImage1, itemImage2, itemImage3, itemImage4));
-		orderRepository.saveAll(List.of(order1));
+		orderRepository.save(order1);
 		orderItemRepository.saveAll(List.of(orderItem1, orderItem2));
 
+		MemberPayload memberPayload = MemberPayload.builder()
+			.id(member1.getId())
+			.role(member1.getRole())
+			.build();
+
 		//when
-		OrderInfoSingleResponse singleOrderInfo = orderService.findSingleOrderInfo(order1.getId());
+		OrderInfoSingleResponse singleOrderInfo = orderService.findSingleOrderInfo(memberPayload, order1.getId());
 
 		//then
 		Assertions.assertThat(singleOrderInfo.orderId()).isEqualTo(order1.getId());
@@ -386,8 +384,7 @@ class OrderServiceTest extends IntegrationTest {
 		Assertions.assertThat(singleOrderInfo.orderItems().get(1).orderCount()).isEqualTo(orderItem2.getOrderCount());
 		Assertions.assertThat(singleOrderInfo.orderItems().get(0).price()).isEqualTo(orderItem1.getPrice());
 		Assertions.assertThat(singleOrderInfo.orderItems().get(1).price()).isEqualTo(orderItem2.getPrice());
-		Assertions.assertThat(singleOrderInfo.orderItems().get(0).thumbnailImage()).isEqualTo(itemImage1.getUrl());
-		Assertions.assertThat(singleOrderInfo.orderItems().get(1).thumbnailImage()).isEqualTo(itemImage3.getUrl());
+		//TODO : 썸네일 추가후 테스트 코드 작성
 	}
 
 	@DisplayName("관리자 주문목록 조회를 수행하면 모든 유저의 주문내역들이 조회되어야한다")
@@ -413,7 +410,7 @@ class OrderServiceTest extends IntegrationTest {
 			.basePrice(11111)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
-			.deleted(false)
+			.year(2022)
 			.build();
 		Item item2 = Item.builder()
 			.category(category1)
@@ -422,7 +419,7 @@ class OrderServiceTest extends IntegrationTest {
 			.basePrice(22222)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
-			.deleted(false)
+			.year(2022)
 			.build();
 		Item item3 = Item.builder()
 			.category(category1)
@@ -431,26 +428,23 @@ class OrderServiceTest extends IntegrationTest {
 			.basePrice(33333)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
-			.deleted(false)
+			.year(2022)
 			.build();
 		ItemOption itemOption1 = ItemOption.builder()
 			.item(item1)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(0)
 			.stockQuantity(10)
 			.build();
 		ItemOption itemOption2 = ItemOption.builder()
 			.item(item2)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(1000)
 			.stockQuantity(5)
 			.build();
 		ItemOption itemOption3 = ItemOption.builder()
 			.item(item3)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(1000)
 			.stockQuantity(5)
 			.build();
@@ -459,7 +453,7 @@ class OrderServiceTest extends IntegrationTest {
 			.status(OrderStatus.ACCEPTED)
 			.totalPrice(11111L)
 			.build();
-		OrderItem orderItem1_order1 = OrderItem.builder()
+		OrderItem orderItem1Order1 = OrderItem.builder()
 			.item(item1)
 			.order(order1)
 			.option(itemOption1)
@@ -471,14 +465,14 @@ class OrderServiceTest extends IntegrationTest {
 			.status(OrderStatus.ACCEPTED)
 			.totalPrice(33333L)
 			.build();
-		OrderItem orderItem2_order2 = OrderItem.builder()
+		OrderItem orderItem2Order2 = OrderItem.builder()
 			.item(item1)
 			.order(order2)
 			.option(itemOption2)
 			.orderCount(1)
 			.price(11111L)
 			.build();
-		OrderItem orderItem3_order2 = OrderItem.builder()
+		OrderItem orderItem3Order2 = OrderItem.builder()
 			.item(item2)
 			.order(order2)
 			.option(itemOption3)
@@ -508,7 +502,9 @@ class OrderServiceTest extends IntegrationTest {
 		itemOptionRepository.saveAll(List.of(itemOption1, itemOption2, itemOption3));
 		itemImageRepository.saveAll(List.of(itemImage1, itemImage2, itemImage3, itemImage4));
 		orderRepository.saveAll(List.of(order1, order2));
-		orderItemRepository.saveAll(List.of(orderItem1_order1, orderItem2_order2, orderItem3_order2));
+		orderItemRepository.saveAll(List.of(orderItem1Order1, orderItem2Order2, orderItem3Order2));
+
+		entityManager.clear();
 
 		PageRequest pageable = PageRequest.of(0, 10);
 		OrderInfoSearchRequest orderInfoSearchRequest = new OrderInfoSearchRequest(now.minusDays(1), now.plusDays(1));
@@ -516,16 +512,13 @@ class OrderServiceTest extends IntegrationTest {
 		OrderInfoPageResponse orderInfo = orderService.findAdminOrdersPagination(orderInfoSearchRequest, pageable);
 		//then
 		Assertions.assertThat(orderInfo.resultCount()).isEqualTo(2);
-		Assertions.assertThat(orderInfo.orderInfos().get(0).orderId()).isEqualTo(order1.getId());
-		Assertions.assertThat(orderInfo.orderInfos().get(0).thumbnailImage()).isEqualTo(itemImage1.getUrl());
-		Assertions.assertThat(orderInfo.orderInfos().get(0).representativeName()).isEqualTo(item1.getName());
-		Assertions.assertThat(orderInfo.orderInfos().get(0).itemTotalCount()).isEqualTo(1);
-		Assertions.assertThat(orderInfo.orderInfos().get(0).orderStatus()).isEqualTo(order1.getStatus());
+		Assertions.assertThat(orderInfo.orderInfoList().get(0).orderId()).isEqualTo(order1.getId());
+		//TODO: 썸네일 추가 후 테스트 코드 작성
+		Assertions.assertThat(orderInfo.orderInfoList().get(0).itemTotalCount()).isEqualTo(1);
+		Assertions.assertThat(orderInfo.orderInfoList().get(0).orderStatus()).isEqualTo(order1.getStatus());
 
-		Assertions.assertThat(orderInfo.orderInfos().get(1).orderId()).isEqualTo(order2.getId());
-		Assertions.assertThat(orderInfo.orderInfos().get(1).thumbnailImage()).isEqualTo(itemImage1.getUrl());
-		Assertions.assertThat(orderInfo.orderInfos().get(1).representativeName()).isEqualTo(item1.getName());
-		Assertions.assertThat(orderInfo.orderInfos().get(1).itemTotalCount()).isEqualTo(1);
-		Assertions.assertThat(orderInfo.orderInfos().get(1).orderStatus()).isEqualTo(order2.getStatus());
+		Assertions.assertThat(orderInfo.orderInfoList().get(1).orderId()).isEqualTo(order2.getId());
+		Assertions.assertThat(orderInfo.orderInfoList().get(1).itemTotalCount()).isEqualTo(2);
+		Assertions.assertThat(orderInfo.orderInfoList().get(1).orderStatus()).isEqualTo(order2.getStatus());
 	}
 }

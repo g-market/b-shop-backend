@@ -13,7 +13,8 @@ public interface CategoryMapper {
 
 	CategoryMapper INSTANCE = Mappers.getMapper(CategoryMapper.class);
 
-	Category CategoryDtoToEntity(CategoryDto categoryDto);
+	@Mapping(target = "name", ignore = true)
+	Category categoryDtoToEntity(CategoryDto categoryDto);
 
 	CategoryDto categoryToDto(Category category);
 
