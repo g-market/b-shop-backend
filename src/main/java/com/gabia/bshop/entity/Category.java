@@ -2,6 +2,8 @@ package com.gabia.bshop.entity;
 
 import java.util.Objects;
 
+import org.hibernate.envers.Audited;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,6 +16,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+@Audited
 @ToString(exclude = {})
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
