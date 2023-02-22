@@ -14,7 +14,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
 
 import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.dto.request.OrderCreateRequestDto;
@@ -34,8 +33,6 @@ import com.gabia.bshop.mapper.OrderMapper;
 import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OrderRepository;
-
-import jakarta.persistence.EntityNotFoundException;
 
 /*
     OrderService 기능들에 대한 단위 테스트
@@ -58,19 +55,6 @@ class OrderServiceTest {
 
 	@InjectMocks
 	private OrderService orderService;
-
-	@DisplayName("존재하지_않는_회원ID로_주문목록_조회를_요청하면_오류가_발생한다")
-	@Test
-	void findOrderListInvalidMemberIdFail() {
-		//given
-		Long invalidMemberId = 999999999999L;
-		when(memberRepository.findById(invalidMemberId))
-			.thenThrow(EntityNotFoundException.class);
-		//when & then
-		Assertions.assertThatThrownBy(
-				() -> orderService.findOrdersPagination(invalidMemberId, PageRequest.of(0, 10)))
-			.isInstanceOf(EntityNotFoundException.class);
-	}
 
 	@DisplayName("주문을 생성한다.")
 	@Test
@@ -156,24 +140,22 @@ class OrderServiceTest {
 			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(orderItemList);
 
 		OrderCreateRequestDto orderCreateRequestDto = OrderCreateRequestDto.builder()
-			.memberId(1L)
 			.status(OrderStatus.ACCEPTED)
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 
-		when(memberRepository.findById(1L)).thenReturn(Optional.ofNullable(member));
 		when(itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(List.of(1L, 2L), List.of(1L, 2L))).thenReturn(
 			List.of(itemOption1, itemOption2));
 
 		//when
-		OrderCreateResponseDto returnDto = orderService.createOrder(orderCreateRequestDto);
+		OrderCreateResponseDto returnDto = orderService.createOrder(member.getId(), orderCreateRequestDto);
 
 		//then
 		assertAll(
 			() -> assertEquals(orderItemDtoList, returnDto.orderItemDtoList()),
 			() -> assertEquals(orderItemList.stream().mapToLong(OrderItem::getPrice).sum(),
 				returnDto.totalPrice()),
-			() -> assertEquals(orderCreateRequestDto.memberId(), returnDto.memberId()),
+			() -> assertEquals(member.getId(), returnDto.memberId()),
 			() -> assertEquals(orderCreateRequestDto.status(), returnDto.status()),
 			() -> assertEquals(9, itemOption1.getStockQuantity(), "주문을 하면 재고가 줄어들어야 한다.")
 		);
@@ -263,17 +245,15 @@ class OrderServiceTest {
 			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(orderItemList);
 
 		OrderCreateRequestDto orderCreateRequestDto = OrderCreateRequestDto.builder()
-			.memberId(1L)
 			.status(OrderStatus.ACCEPTED)
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 
-		when(memberRepository.findById(1L)).thenReturn(Optional.ofNullable(member));
 		when(itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(List.of(1L, 1L), List.of(1L, 2L))).thenReturn(
 			List.of(itemOption1, itemOption2));
 
 		//when & then
-		Assertions.assertThatThrownBy(() -> orderService.createOrder(orderCreateRequestDto))
+		Assertions.assertThatThrownBy(() -> orderService.createOrder(member.getId(), orderCreateRequestDto))
 			.isInstanceOf(BadRequestException.class);
 	}
 
@@ -281,6 +261,16 @@ class OrderServiceTest {
 	@Test
 	void cancelOrder() {
 		//given
+		Member member = Member.builder()
+			.id(1L)
+			.email("test@test.com")
+			.grade(MemberGrade.BRONZE)
+			.name("testName")
+			.phoneNumber("01000001111")
+			.hiworksId("hiworks")
+			.role(MemberRole.NORMAL)
+			.build();
+
 		ItemOption itemOption1 = ItemOption.builder()
 			.id(1L)
 			.description("description")
@@ -317,10 +307,10 @@ class OrderServiceTest {
 			.orderItemList(orderItemList)
 			.build();
 
-		when(orderRepository.findById(1L)).thenReturn(Optional.ofNullable(order));
+		when(orderRepository.findByIdAndMemberId(order.getId(), member.getId())).thenReturn(Optional.ofNullable(order));
 
 		//when
-		orderService.cancelOrder(1L);
+		orderService.cancelOrder(member.getId(), order.getId());
 
 		//then
 		assertAll(
@@ -329,18 +319,4 @@ class OrderServiceTest {
 				"주문을 취소하면 주문상태가 CANCELLED로 변경되어야 한다.")
 		);
 	}
-
-	@DisplayName("주문 ID가 유효하지 않으면 주문취소에 실패한다.")
-	@Test
-	void cancelOrderFail() {
-		//given
-		Long nonId = 9999L;
-
-		when(orderRepository.findById(nonId)).thenThrow(EntityNotFoundException.class);
-
-		//when & then
-		Assertions.assertThatThrownBy(() -> orderService.cancelOrder(nonId))
-			.isInstanceOf(EntityNotFoundException.class);
-	}
-
 }
