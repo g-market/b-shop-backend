@@ -3,6 +3,7 @@ package com.gabia.bshop.entity;
 import java.util.Objects;
 
 import org.hibernate.envers.Audited;
+
 import com.gabia.bshop.dto.CategoryDto;
 
 import jakarta.persistence.Column;
