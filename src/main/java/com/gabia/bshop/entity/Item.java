@@ -1,12 +1,16 @@
 package com.gabia.bshop.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import org.hibernate.envers.AuditJoinTable;
+import org.hibernate.envers.Audited;
 
-import com.gabia.bshop.dto.ItemDto;
+import com.gabia.bshop.dto.request.ItemChangeRequest;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 
 import jakarta.persistence.CascadeType;
@@ -28,9 +32,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+@Audited
 @ToString(exclude = {"category"})
 @Getter
 @SQLDelete(sql = "update item set deleted = true where id = ?")
+@Where(clause = "deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
 	name = "item",
@@ -65,8 +71,19 @@ public class Item extends BaseEntity {
 	@Column(nullable = false)
 	private boolean deleted;
 
-	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL)
-	private List<ItemOption> itemOptionList;
+	@Column
+	private String thumbnail;
+
+	@Column(columnDefinition = "smallint", nullable = false)
+	private int year;
+
+	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+	@AuditJoinTable(name = "item_option_aud")
+	private List<ItemOption> itemOptionList = new ArrayList<>();
+
+	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
+	@AuditJoinTable(name = "item_image_aud")
+	private List<ItemImage> itemImageList = new ArrayList<>();
 
 	@Builder
 	private Item(
@@ -76,9 +93,8 @@ public class Item extends BaseEntity {
 		final String description,
 		final int basePrice,
 		final ItemStatus itemStatus,
-		final LocalDateTime openAt,
-		final boolean deleted,
-		final List<ItemOption> itemOptionList) {
+		final int year,
+		final LocalDateTime openAt) {
 		this.id = id;
 		this.name = name;
 		this.category = category;
@@ -86,17 +102,8 @@ public class Item extends BaseEntity {
 		this.basePrice = basePrice;
 		this.itemStatus = itemStatus;
 		this.openAt = openAt;
-		this.deleted = deleted;
-		this.itemOptionList = itemOptionList;
-	}
-
-	public void update(final ItemDto itemDto, final Category category) {
-		updateName(itemDto.name());
-		updateCategory(category);
-		updatePrice(itemDto.basePrice());
-		updateDescription(itemDto.description());
-		updateItemStatus(itemDto.itemStatus());
-		updateOpenAt(itemDto.openAt());
+		this.year = year;
+		this.deleted = false;
 	}
 
 	private void updateName(final String name) {
@@ -105,14 +112,8 @@ public class Item extends BaseEntity {
 		}
 	}
 
-	private void updateCategory(Category category) {
-		if (category != null) {
-			this.category = category;
-		}
-	}
-
-	private void updatePrice(int basePrice) {
-		if ((Integer)basePrice != null) {
+	private void updatePrice(Integer basePrice) {
+		if (basePrice != null) {
 			this.basePrice = basePrice;
 		}
 	}
@@ -129,10 +130,62 @@ public class Item extends BaseEntity {
 		}
 	}
 
+	private void updateYear(Integer year) {
+		if (year != null) {
+			this.year = year;
+		}
+	}
+
 	private void updateOpenAt(LocalDateTime openAt) {
 		if (openAt != null) {
 			this.openAt = openAt;
 		}
+	}
+
+	private void updateCategory(Category category) {
+		if (category != null) {
+			this.category = category;
+		}
+	}
+
+	public void update(final ItemChangeRequest itemChangeRequest, final Category category) {
+		updateName(itemChangeRequest.name());
+		updatePrice(itemChangeRequest.basePrice());
+		updateDescription(itemChangeRequest.description());
+		updateOpenAt(itemChangeRequest.openAt());
+		updateItemStatus(itemChangeRequest.itemStatus());
+		updateYear(itemChangeRequest.year());
+		updateCategory(category);
+	}
+
+	public void setThumbnail(ItemImage itemImage) {
+		if (itemImage != null) {
+			this.thumbnail = itemImage.getUrl();
+		}
+	}
+
+	public void setItemStatus(ItemStatus itemStatus) {
+		if (itemStatus != null) {
+			this.itemStatus = itemStatus;
+		}
+	}
+
+	public void setOpenAt(LocalDateTime localDateTime) {
+		if (localDateTime != null) {
+			this.openAt = localDateTime;
+		}
+	}
+
+	public void updateImage(List<ItemImage> itemImageList) {
+		this.itemImageList = itemImageList;
+	}
+
+	public void addItemOption(ItemOption itemOption) {
+		this.itemOptionList.add(itemOption);
+	}
+
+	public void addItemImage(ItemImage itemImage) {
+		this.itemImageList.add(itemImage);
 	}
 
 	@Override

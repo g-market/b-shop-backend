@@ -2,6 +2,7 @@ package com.gabia.bshop.entity;
 
 import java.util.Objects;
 
+import org.hibernate.envers.Audited;
 import com.gabia.bshop.dto.CategoryDto;
 
 import jakarta.persistence.Column;
@@ -16,12 +17,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+@Audited
 @ToString(exclude = {})
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "category", indexes = {})
 @Entity
-public class Category {
+public class Category extends BaseEntity {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
