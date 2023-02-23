@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gabia.bshop.dto.request.MemberUpdateRequest;
-import com.gabia.bshop.dto.response.LoggedInMemberResponse;
+import com.gabia.bshop.dto.response.MemberResponse;
 import com.gabia.bshop.security.CurrentMember;
 import com.gabia.bshop.security.Login;
 import com.gabia.bshop.security.MemberPayload;
@@ -26,7 +26,7 @@ public class MemberController {
 
 	@GetMapping("/me")
 	@Login
-	public LoggedInMemberResponse showLoggedIn(@CurrentMember final MemberPayload memberPayload) {
+	public MemberResponse showLoggedIn(@CurrentMember final MemberPayload memberPayload) {
 		return memberService.findLoggedInMember(memberPayload.id());
 	}
 
