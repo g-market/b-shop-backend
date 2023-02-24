@@ -4,9 +4,12 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.data.jpa.repository.Query;
 
 import com.gabia.bshop.entity.ItemOption;
+
+import jakarta.persistence.LockModeType;
 
 public interface ItemOptionRepository extends JpaRepository<ItemOption, Long>, ItemOptionRepositoryCustom {
 
@@ -20,6 +23,7 @@ public interface ItemOptionRepository extends JpaRepository<ItemOption, Long>, I
 		""")
 	List<ItemOption> findWithItemByItemIdsAndItemOptionIds(List<Long> itemIdList, List<Long> itemOptionIdList);
 
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	Optional<ItemOption> findByIdAndItemId(Long itemOptionId, Long itemId);
 
 	boolean existsByItem_IdAndIdAndStockQuantityIsGreaterThanEqual(Long itemId, Long itemOptionId, int stockQuantity);

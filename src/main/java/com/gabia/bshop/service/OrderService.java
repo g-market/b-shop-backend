@@ -2,6 +2,7 @@ package com.gabia.bshop.service;
 
 import static com.gabia.bshop.exception.ErrorCode.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -90,7 +91,79 @@ public class OrderService {
 			itemImagesWithItem);
 	}
 
+	public Order createOrder1(final Long memberId, final OrderCreateRequestDto orderCreateRequestDto) {
+		//1.order Return
+		final Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(memberId, orderCreateRequestDto);
+
+		//DB에서 OptionItem 값 한번에 조회
+		final List<ItemOption> findAllItemOptionList = itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(
+			orderCreateRequestDto.orderItemDtoList().stream().map(OrderItemDto::itemId).toList(),
+			orderCreateRequestDto.orderItemDtoList().stream().map(OrderItemDto::itemOptionId).toList()
+		);
+
+		//유효한 ItemOption값 인지 검사
+		final List<OrderItemDto> validItemOptionList = orderCreateRequestDto.orderItemDtoList().stream()
+			.filter(oi -> findAllItemOptionList.stream().anyMatch(oi::equalsIds))
+			.toList();
+
+		//요청 List와 검증한 List size가 일치하지 않다면
+		isEqualListSize(orderCreateRequestDto, validItemOptionList);
+
+		return order;
+	}
+
+	public OrderCreateResponseDto saveOrder(Order order, List<OrderItem> list) {
+		order.createOrder(list);
+		orderRepository.save(order);
+
+		return OrderMapper.INSTANCE.ordersCreateResponseDto(order);
+	}
+
+	//각각 쿼리
+	public List<OrderItem> lockItemOptionList(List<OrderItemDto> list, Order order) {
+		List<OrderItem> res = new ArrayList<>();
+
+		for (OrderItemDto now : list) {
+			ItemOption itemOption = itemOptionRepository.findByIdAndItemId(now.itemOptionId(), now.itemId()).orElseThrow();
+
+			final int restStock = itemOption.getStockQuantity()-now.orderCount();
+
+			if (restStock < 0) {
+				throw new ConflictException(ITEM_OPTION_OUT_OF_STOCK_EXCEPTION, itemOption.getStockQuantity());
+			}
+			//itemOptionList.get(i).decreaseStockQuantity(orderCount);
+
+			res.add(OrderItem.createOrderItem(itemOption, order, now.orderCount()));
+		}
+		return res;
+	}
+
+	// //쿼리 한방
+	// public List<OrderItem> lockItemOptionList(List<OrderItemDto> list, Order order) {
+	// 	List<OrderItem> res = new ArrayList<>();
+	//
+	// 	List<ItemOption> itemOptionList = itemOptionRepository.findByItemIdListAndIdList(list);
+	//
+	// 	for (int i=0;i<list.size();i++) {
+	// 		//ItemOption itemOption = itemOptionRepository.findByIdAndItemId(now.itemOptionId(), now.itemId());
+	// 		//now.orderCount();
+	// 		int nowStock = itemOptionList.get(i).getStockQuantity();
+	// 		int orderCount = list.get(i).orderCount();
+	// 		final int restStock = nowStock-orderCount;
+	//
+	// 		if (restStock < 0) {
+	// 			throw new ConflictException(ITEM_OPTION_OUT_OF_STOCK_EXCEPTION, nowStock);
+	// 		}
+	// 		//itemOptionList.get(i).decreaseStockQuantity(orderCount);
+	//
+	// 		res.add(OrderItem.createOrderItem(itemOptionList.get(i), order, orderCount));
+	// 	}
+	// 	return res;
+	// }
+
+
 	public OrderCreateResponseDto createOrder(final Long memberId, final OrderCreateRequestDto orderCreateRequestDto) {
+		//1.order Return
 		final Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(memberId, orderCreateRequestDto);
 
 		//DB에서 OptionItem 값 한번에 조회
@@ -112,9 +185,10 @@ public class OrderService {
 				.filter(orderItemDto::equalsIds)
 				.findFirst()
 				.orElseThrow();
-			validateItemStatus(itemOption);
+			//validateItemStatus(itemOption);
 			validateStockQuantity(itemOption, orderItemDto.orderCount());
-
+			//dec(itemOption, orderItemDto.orderCount());
+			//dec(orderItemDto);
 			return OrderItem.createOrderItem(itemOption, order, orderItemDto.orderCount());
 		}).toList();
 

@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import org.aspectj.weaver.ast.Or;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -30,4 +31,6 @@ public interface OrderRepository extends JpaRepository<Order, Long> {
 	List<Order> findAllByPeriodPagination(LocalDateTime startAt, LocalDateTime endAt, Pageable pageable);
 
 	Optional<Order> findByIdAndMemberId(Long orderId, Long memberId);
+
+	List<Order> findAllByMemberId(Long memberId);
 }
