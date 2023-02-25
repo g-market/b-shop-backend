@@ -2,6 +2,7 @@ package com.gabia.bshop.controller;
 
 import static com.gabia.bshop.exception.ErrorCode.*;
 
+import com.gabia.bshop.service.OrderLockFacade;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +37,8 @@ public class OrderController {
 	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
 	private final OrderService orderService;
 
+	private final OrderLockFacade orderLockFacade;
+
 	@Login
 	@GetMapping("/orders")
 	public ResponseEntity<OrderInfoPageResponse> findOrders(@CurrentMember final MemberPayload memberPayload,
@@ -66,7 +69,8 @@ public class OrderController {
 	public ResponseEntity<OrderCreateResponseDto> createOrder(
 		@CurrentMember final MemberPayload memberPayload,
 		@RequestBody @Valid final OrderCreateRequestDto orderCreateRequestDto) {
-		return ResponseEntity.ok().body(orderService.createOrder(memberPayload.id(), orderCreateRequestDto));
+		//return ResponseEntity.ok().body(orderService.createOrder(memberPayload.id(), orderCreateRequestDto));
+		return ResponseEntity.ok().body(orderLockFacade.purchase(memberPayload.id(), orderCreateRequestDto));
 	}
 
 	@Login

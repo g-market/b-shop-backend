@@ -33,8 +33,6 @@ public class OrderLockFacade {
 		this.orderRepository = orderRepository;
 	}
 
-
-
 	// public void cancelOrder(final Long memberId, final Long orderId) {
 	// 	RLock lock = redissonClient.getLock(String.format("purchase:%d", memberId));
 	// 	try {
@@ -53,7 +51,7 @@ public class OrderLockFacade {
 
 	public OrderCreateResponseDto purchase(final Long memberId, final OrderCreateRequestDto orderCreateRequestDto) {
 
-		Order order = orderService.createOrder1(memberId, orderCreateRequestDto);
+		Order order = orderService.validateOrderItemDtoList(memberId, orderCreateRequestDto);
 		final List<OrderItemDto> sortedDtoList = orderCreateRequestDto.orderItemDtoList().stream()
 			.sorted(Comparator.comparing(OrderItemDto::itemId).thenComparing(OrderItemDto::itemOptionId))
 			.toList();

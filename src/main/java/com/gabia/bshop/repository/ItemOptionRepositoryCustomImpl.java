@@ -42,8 +42,17 @@ public class ItemOptionRepositoryCustomImpl implements ItemOptionRepositoryCusto
 			.from(itemOption)
 			.where(Expressions.list(item.id, itemOption.id).in(searchItemIdAndItemOptionIdIn(orderItemDtoList)))
 			.orderBy(item.id.asc(), itemOption.id.asc())
-			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
 			.fetch();
+	}
+
+	@Override
+	public List<ItemOption> findByItemIdListAndIdListWithLock(List<OrderItemDto> orderItemDtoList) {
+		return jpaQueryFactory.select(itemOption)
+				.from(itemOption)
+				.where(Expressions.list(item.id, itemOption.id).in(searchItemIdAndItemOptionIdIn(orderItemDtoList)))
+				.orderBy(item.id.asc(), itemOption.id.asc())
+				.setLockMode(LockModeType.PESSIMISTIC_WRITE)
+				.fetch();
 	}
 
 	private BooleanExpression itemIdEq(Long itemId) {

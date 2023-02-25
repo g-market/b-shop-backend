@@ -91,15 +91,11 @@ public class OrderService {
 			itemImagesWithItem);
 	}
 
-	public Order createOrder1(final Long memberId, final OrderCreateRequestDto orderCreateRequestDto) {
-		//1.order Return
+	public Order validateOrderItemDtoList(final Long memberId, final OrderCreateRequestDto orderCreateRequestDto) {
 		final Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(memberId, orderCreateRequestDto);
 
 		//DB에서 OptionItem 값 한번에 조회
-		final List<ItemOption> findAllItemOptionList = itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(
-			orderCreateRequestDto.orderItemDtoList().stream().map(OrderItemDto::itemId).toList(),
-			orderCreateRequestDto.orderItemDtoList().stream().map(OrderItemDto::itemOptionId).toList()
-		);
+		final List<ItemOption> findAllItemOptionList = itemOptionRepository.findByItemIdListAndIdList(orderCreateRequestDto.orderItemDtoList());
 
 		//유효한 ItemOption값 인지 검사
 		final List<OrderItemDto> validItemOptionList = orderCreateRequestDto.orderItemDtoList().stream()
@@ -142,7 +138,7 @@ public class OrderService {
 	// public List<OrderItem> lockItemOptionList(List<OrderItemDto> list, Order order) {
 	// 	List<OrderItem> res = new ArrayList<>();
 	//
-	// 	List<ItemOption> itemOptionList = itemOptionRepository.findByItemIdListAndIdList(list);
+	// 	List<ItemOption> itemOptionList = itemOptionRepository.findByItemIdListAndIdListWithLock(list);
 	//
 	// 	for (int i=0;i<list.size();i++) {
 	// 		//ItemOption itemOption = itemOptionRepository.findByIdAndItemId(now.itemOptionId(), now.itemId());
