@@ -94,115 +94,66 @@ public class OrderService {
 	public Order validateOrderItemDtoList(final Long memberId, final OrderCreateRequestDto orderCreateRequestDto) {
 		final Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(memberId, orderCreateRequestDto);
 
-		//DB에서 OptionItem 값 한번에 조회
-		final List<ItemOption> findAllItemOptionList = itemOptionRepository.findByItemIdListAndIdList(orderCreateRequestDto.orderItemDtoList());
+		final List<ItemOption> findAllItemOptionList = itemOptionRepository.findByItemIdListAndIdList(
+			orderCreateRequestDto.orderItemDtoList());
 
-		//유효한 ItemOption값 인지 검사
 		final List<OrderItemDto> validItemOptionList = orderCreateRequestDto.orderItemDtoList().stream()
 			.filter(oi -> findAllItemOptionList.stream().anyMatch(oi::equalsIds))
 			.toList();
 
-		//요청 List와 검증한 List size가 일치하지 않다면
 		isEqualListSize(orderCreateRequestDto, validItemOptionList);
 
 		return order;
 	}
 
-	public OrderCreateResponseDto saveOrder(Order order, List<OrderItem> list) {
-		order.createOrder(list);
-		orderRepository.save(order);
-
-		return OrderMapper.INSTANCE.ordersCreateResponseDto(order);
-	}
-
-	//각각 쿼리
-	public List<OrderItem> lockItemOptionList(List<OrderItemDto> list, Order order) {
-		List<OrderItem> res = new ArrayList<>();
-
-		for (OrderItemDto now : list) {
-			ItemOption itemOption = itemOptionRepository.findByIdAndItemId(now.itemOptionId(), now.itemId()).orElseThrow();
-
-			final int restStock = itemOption.getStockQuantity()-now.orderCount();
-
-			if (restStock < 0) {
-				throw new ConflictException(ITEM_OPTION_OUT_OF_STOCK_EXCEPTION, itemOption.getStockQuantity());
-			}
-			//itemOptionList.get(i).decreaseStockQuantity(orderCount);
-
-			res.add(OrderItem.createOrderItem(itemOption, order, now.orderCount()));
-		}
-		return res;
-	}
-
-	// //쿼리 한방
-	// public List<OrderItem> lockItemOptionList(List<OrderItemDto> list, Order order) {
-	// 	List<OrderItem> res = new ArrayList<>();
+	// public OrderCreateResponseDto saveOrder(Order order, List<OrderItem> list) {
+	// 	order.createOrder(list);
+	// 	orderRepository.save(order);
 	//
-	// 	List<ItemOption> itemOptionList = itemOptionRepository.findByItemIdListAndIdListWithLock(list);
-	//
-	// 	for (int i=0;i<list.size();i++) {
-	// 		//ItemOption itemOption = itemOptionRepository.findByIdAndItemId(now.itemOptionId(), now.itemId());
-	// 		//now.orderCount();
-	// 		int nowStock = itemOptionList.get(i).getStockQuantity();
-	// 		int orderCount = list.get(i).orderCount();
-	// 		final int restStock = nowStock-orderCount;
-	//
-	// 		if (restStock < 0) {
-	// 			throw new ConflictException(ITEM_OPTION_OUT_OF_STOCK_EXCEPTION, nowStock);
-	// 		}
-	// 		//itemOptionList.get(i).decreaseStockQuantity(orderCount);
-	//
-	// 		res.add(OrderItem.createOrderItem(itemOptionList.get(i), order, orderCount));
-	// 	}
-	// 	return res;
+	// 	return OrderMapper.INSTANCE.ordersCreateResponseDto(order);
 	// }
 
+	//각각 쿼리
+	// public List<OrderItem> lockItemOptionList(List<OrderItemDto> orderItemDtoList, Order order) {
+	// 	List<OrderItem> returnList = new ArrayList<>();
+	//
+	// 	for (OrderItemDto oiDto : orderItemDtoList) {
+	// 		ItemOption itemOption = itemOptionRepository.findByIdAndItemId(oiDto.itemOptionId(), oiDto.itemId())
+	// 			.orElseThrow();
+	//
+	// 		validateItemStatus(itemOption);
+	// 		validateStockQuantity(itemOption, oiDto.orderCount());
+	//
+	// 		returnList.add(OrderItem.createOrderItem(itemOption, order, oiDto.orderCount()));
+	// 	}
+	// 	return returnList;
+	// }
 
-	public OrderCreateResponseDto createOrder(final Long memberId, final OrderCreateRequestDto orderCreateRequestDto) {
-		//1.order Return
-		final Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(memberId, orderCreateRequestDto);
+	//쿼리 한방
+	public OrderCreateResponseDto lockItemOptionList(List<OrderItemDto> orderItemDtoList, Order order) {
+		List<OrderItem> returnList = new ArrayList<>();
 
-		//DB에서 OptionItem 값 한번에 조회
-		final List<ItemOption> findAllItemOptionList = itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(
-			orderCreateRequestDto.orderItemDtoList().stream().map(OrderItemDto::itemId).toList(),
-			orderCreateRequestDto.orderItemDtoList().stream().map(OrderItemDto::itemOptionId).toList()
-		);
+		List<ItemOption> itemOptionList = itemOptionRepository.findByItemIdListAndIdListWithLock(orderItemDtoList);
 
-		//유효한 ItemOption값 인지 검사
-		final List<OrderItemDto> validItemOptionList = orderCreateRequestDto.orderItemDtoList().stream()
-			.filter(oi -> findAllItemOptionList.stream().anyMatch(oi::equalsIds))
-			.toList();
+		for (int i = 0; i < orderItemDtoList.size(); i++) {
+			ItemOption itemOption = itemOptionList.get(i);
+			int orderCount = orderItemDtoList.get(i).orderCount();
 
-		//요청 List와 검증한 List size가 일치하지 않다면
-		isEqualListSize(orderCreateRequestDto, validItemOptionList);
+			validateItemStatus(itemOption);
+			validateStockQuantity(itemOption, orderCount);
 
-		final List<OrderItem> orderItemList = validItemOptionList.stream().map(orderItemDto -> {
-			final ItemOption itemOption = findAllItemOptionList.stream()
-				.filter(orderItemDto::equalsIds)
-				.findFirst()
-				.orElseThrow();
-			//validateItemStatus(itemOption);
-			validateStockQuantity(itemOption, orderItemDto.orderCount());
-			//dec(itemOption, orderItemDto.orderCount());
-			//dec(orderItemDto);
-			return OrderItem.createOrderItem(itemOption, order, orderItemDto.orderCount());
-		}).toList();
+			returnList.add(OrderItem.createOrderItem(itemOption, order, orderCount));
+		}
 
-		order.createOrder(orderItemList);
+		order.createOrder(returnList);
 		orderRepository.save(order);
 
 		return OrderMapper.INSTANCE.ordersCreateResponseDto(order);
-	}
-
-	public void cancelOrder(final Long memberId, final Long orderId) {
-		final Order order = findOrderByIdAndMemberId(orderId, memberId);
-
-		validateOrderStatus(order);
-		order.cancelOrder();
 	}
 
 	public OrderUpdateStatusResponse updateOrderStatus(final OrderUpdateStatusRequest orderUpdateStatusRequest) {
 		final Order order = findOrderById(orderUpdateStatusRequest.orderId());
+		validateOrderStatus(order);
 		order.updateOrderStatus(orderUpdateStatusRequest.status());
 
 		return OrderMapper.INSTANCE.orderToOrderUpdateStatusResponse(order);
@@ -226,14 +177,13 @@ public class OrderService {
 
 	private void validateItemStatus(final ItemOption itemOption) {
 		if (itemOption.getItem().getItemStatus() != ItemStatus.PUBLIC) {
-			//TODO: 어떤 아이템이 판매되지 않는지 RETURN
 			throw new ConflictException(ITEM_STATUS_NOT_PUBLIC_EXCEPTION);
 		}
 	}
 
 	private void validateStockQuantity(final ItemOption itemOption, final int orderCount) {
 		final int restStock = itemOption.getStockQuantity() - orderCount;
-		if (restStock <= 0) {
+		if (restStock < 0) {
 			throw new ConflictException(ITEM_OPTION_OUT_OF_STOCK_EXCEPTION, itemOption.getStockQuantity());
 		}
 	}

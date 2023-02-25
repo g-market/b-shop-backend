@@ -2,7 +2,6 @@ package com.gabia.bshop.controller;
 
 import static com.gabia.bshop.exception.ErrorCode.*;
 
-import com.gabia.bshop.service.OrderLockFacade;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +24,7 @@ import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.security.CurrentMember;
 import com.gabia.bshop.security.Login;
 import com.gabia.bshop.security.MemberPayload;
+import com.gabia.bshop.service.OrderLockFacade;
 import com.gabia.bshop.service.OrderService;
 
 import jakarta.validation.Valid;
@@ -69,7 +69,6 @@ public class OrderController {
 	public ResponseEntity<OrderCreateResponseDto> createOrder(
 		@CurrentMember final MemberPayload memberPayload,
 		@RequestBody @Valid final OrderCreateRequestDto orderCreateRequestDto) {
-		//return ResponseEntity.ok().body(orderService.createOrder(memberPayload.id(), orderCreateRequestDto));
 		return ResponseEntity.ok().body(orderLockFacade.purchase(memberPayload.id(), orderCreateRequestDto));
 	}
 
@@ -77,7 +76,7 @@ public class OrderController {
 	@DeleteMapping("/orders/{orderId}")
 	public ResponseEntity<Void> cancelOrder(@CurrentMember final MemberPayload memberPayload,
 		@PathVariable final Long orderId) {
-		orderService.cancelOrder(memberPayload.id(), orderId);
+		//orderService.cancelOrder(memberPayload.id(), orderId);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 

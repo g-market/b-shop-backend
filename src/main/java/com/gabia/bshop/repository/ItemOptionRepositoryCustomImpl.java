@@ -7,8 +7,6 @@ import static com.gabia.bshop.entity.QItemOption.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.data.jpa.repository.Lock;
-
 import com.gabia.bshop.dto.CartDto;
 import com.gabia.bshop.dto.ItemIdAndItemOptionIdAble;
 import com.gabia.bshop.dto.OrderItemDto;
@@ -48,11 +46,11 @@ public class ItemOptionRepositoryCustomImpl implements ItemOptionRepositoryCusto
 	@Override
 	public List<ItemOption> findByItemIdListAndIdListWithLock(List<OrderItemDto> orderItemDtoList) {
 		return jpaQueryFactory.select(itemOption)
-				.from(itemOption)
-				.where(Expressions.list(item.id, itemOption.id).in(searchItemIdAndItemOptionIdIn(orderItemDtoList)))
-				.orderBy(item.id.asc(), itemOption.id.asc())
-				.setLockMode(LockModeType.PESSIMISTIC_WRITE)
-				.fetch();
+			.from(itemOption)
+			.where(Expressions.list(item.id, itemOption.id).in(searchItemIdAndItemOptionIdIn(orderItemDtoList)))
+			.orderBy(item.id.asc(), itemOption.id.asc())
+			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
+			.fetch();
 	}
 
 	private BooleanExpression itemIdEq(Long itemId) {

@@ -79,7 +79,7 @@ public class Item extends BaseEntity {
 
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
 	@AuditJoinTable(name = "item_option_aud")
-	private List<ItemOption> itemOptionList = new ArrayList<>();
+	private final List<ItemOption> itemOptionList = new ArrayList<>();
 
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
 	@AuditJoinTable(name = "item_image_aud")

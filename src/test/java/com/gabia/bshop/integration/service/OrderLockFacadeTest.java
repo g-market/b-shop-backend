@@ -193,7 +193,6 @@ public class OrderLockFacadeTest extends IntegrationTest {
 			.openAt(now)
 			.build();
 
-
 		ItemOption itemOption1 = ItemOption.builder()
 			.item(item1)
 			.description("temp_itemOption1_description")
@@ -308,15 +307,18 @@ public class OrderLockFacadeTest extends IntegrationTest {
 
 		memberRepository.saveAll(List.of(member1, member2, member3, member4, member5));
 		categoryRepository.save(category1);
-		itemRepository.saveAll(List.of(item1, item2, item3, item4, item5, item6,item7,item8,item9));
-		itemOptionRepository.saveAll(List.of(itemOption1, itemOption2, itemOption3,itemOption4,itemOption5,itemOption6,itemOption7,itemOption8,itemOption9,itemOption10));
+		itemRepository.saveAll(List.of(item1, item2, item3, item4, item5, item6, item7, item8, item9));
+		itemOptionRepository.saveAll(
+			List.of(itemOption1, itemOption2, itemOption3, itemOption4, itemOption5, itemOption6, itemOption7,
+				itemOption8, itemOption9, itemOption10));
 
 		List<OrderItemDto> orderItemDtoList =
-			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(List.of(orderItem1,orderItem3,orderItem10));
+			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(List.of(orderItem1, orderItem3, orderItem10));
 
 		List<OrderItemDto> orderItemDtoList2 =
 			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(List
-				.of(orderItem1,orderItem2,orderItem3,orderItem4,orderItem5,orderItem6,orderItem7,orderItem8,orderItem9,orderItem10));
+				.of(orderItem1, orderItem2, orderItem3, orderItem4, orderItem5, orderItem6, orderItem7, orderItem8,
+					orderItem9, orderItem10));
 		// List<OrderItemDto> orderItemDtoList3 =
 		// 	OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(List.of(orderItem4_order3, orderItem5_order3));
 		//
@@ -347,7 +349,7 @@ public class OrderLockFacadeTest extends IntegrationTest {
 		// 	.build();
 
 		int nThreahdsSize = 1000;
-		int repeatSize =300;
+		int repeatSize = 300;
 		ExecutorService executorService = Executors.newFixedThreadPool(nThreahdsSize);
 		CountDownLatch countDownLatch = new CountDownLatch(repeatSize);
 
@@ -372,37 +374,37 @@ public class OrderLockFacadeTest extends IntegrationTest {
 					countDownLatch.countDown();
 				}
 			});
-		// 	executorService.submit(() -> {
-		// 		try {
-		// 			orderLockFacade.purchase(member3.getId(), orderCreateRequestDto3);//(2) (3)
-		// 		} catch (ConflictException e) {
-		// 			e.getMessage();
-		// 			//System.out.println("주문 실패");
-		// 		} finally {
-		// 			countDownLatch.countDown();
-		// 		}
-		// 	});
-		// 	executorService.submit(() -> {
-		// 		try {
-		// 			//orderLockFacade.purchase(member4.getId(), orderCreateRequestDto4);//(3)
-		// 		} catch (ConflictException e) {
-		// 			e.getMessage();
-		// 			//System.out.println("주문 실패");
-		// 		} finally {
-		// 			countDownLatch.countDown();
-		// 		}
-		// 	});
-		// 	executorService.submit(() -> {
-		// 		try {
-		// 			//orderLockFacade.purchase(member5.getId(), orderCreateRequestDto5);//(2)
-		// 		} catch (ConflictException e) {
-		// 			e.getMessage();
-		// 			//System.out.println("주문 실패");
-		// 		} finally {
-		// 			countDownLatch.countDown();
-		// 		}
-		// 	});
-		 }
+			// 	executorService.submit(() -> {
+			// 		try {
+			// 			orderLockFacade.purchase(member3.getId(), orderCreateRequestDto3);//(2) (3)
+			// 		} catch (ConflictException e) {
+			// 			e.getMessage();
+			// 			//System.out.println("주문 실패");
+			// 		} finally {
+			// 			countDownLatch.countDown();
+			// 		}
+			// 	});
+			// 	executorService.submit(() -> {
+			// 		try {
+			// 			//orderLockFacade.purchase(member4.getId(), orderCreateRequestDto4);//(3)
+			// 		} catch (ConflictException e) {
+			// 			e.getMessage();
+			// 			//System.out.println("주문 실패");
+			// 		} finally {
+			// 			countDownLatch.countDown();
+			// 		}
+			// 	});
+			// 	executorService.submit(() -> {
+			// 		try {
+			// 			//orderLockFacade.purchase(member5.getId(), orderCreateRequestDto5);//(2)
+			// 		} catch (ConflictException e) {
+			// 			e.getMessage();
+			// 			//System.out.println("주문 실패");
+			// 		} finally {
+			// 			countDownLatch.countDown();
+			// 		}
+			// 	});
+		}
 
 		countDownLatch.await();
 		ItemOption actual = itemOptionRepository.findById(itemOption1.getId()).orElseThrow();
