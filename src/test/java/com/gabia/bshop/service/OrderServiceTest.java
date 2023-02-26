@@ -64,9 +64,6 @@ class OrderServiceTest {
 	@Mock
 	private ItemImageRepository imageRepository;
 
-	@Mock
-	private OrderLockFacade orderLockFacade;
-
 	@InjectMocks
 	private OrderService orderService;
 
@@ -158,11 +155,12 @@ class OrderServiceTest {
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 
-		when(itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(List.of(1L, 2L), List.of(1L, 2L))).thenReturn(
-			List.of(itemOption1, itemOption2));
+		when(itemOptionRepository.findByItemIdListAndIdList(orderItemDtoList)).thenReturn(List.of(itemOption1,itemOption2));
+		when(itemOptionRepository.findByItemIdListAndIdListWithLock(orderItemDtoList)).thenReturn(List.of(itemOption1,itemOption2));
 
 		//when
-		OrderCreateResponseDto returnDto = orderLockFacade.purchaseOrder(member.getId(), orderCreateRequestDto);
+		Order returnOrder = orderService.validateCreateOrder(member.getId(), orderCreateRequestDto);
+		OrderCreateResponseDto returnDto = orderService.lockCreateOrder(orderItemDtoList, returnOrder);
 
 		//then
 		assertAll(
@@ -263,76 +261,76 @@ class OrderServiceTest {
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 
-		when(itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(List.of(1L, 1L), List.of(1L, 2L))).thenReturn(
-			List.of(itemOption1, itemOption2));
+		when(itemOptionRepository.findByItemIdListAndIdList(orderItemDtoList)).thenReturn(List.of(itemOption1,itemOption2));
+
 
 		//when & then
-		Assertions.assertThatThrownBy(() -> orderLockFacade.purchaseOrder(member.getId(), orderCreateRequestDto))
+		Assertions.assertThatThrownBy(() -> orderService.validateCreateOrder(member.getId(), orderCreateRequestDto))
 			.isInstanceOf(BadRequestException.class);
 	}
 
-	// @DisplayName("주문을_취소한다.")
-	// @Test
-	// void cancelOrder() {
-	// 	//given
-	// 	Member member = Member.builder()
-	// 		.id(1L)
-	// 		.email("test@test.com")
-	// 		.grade(MemberGrade.BRONZE)
-	// 		.name("testName")
-	// 		.phoneNumber("01000001111")
-	// 		.hiworksId("hiworks")
-	// 		.role(MemberRole.NORMAL)
-	// 		.build();
-	//
-	// 	ItemOption itemOption1 = ItemOption.builder()
-	// 		.id(1L)
-	// 		.description("description")
-	// 		.optionPrice(0)
-	// 		.stockQuantity(10)
-	// 		.build();
-	//
-	// 	List<ItemOption> options = List.of(itemOption1);
-	//
-	// 	Item item1 =
-	// 		Item.builder()
-	// 			.id(1L)
-	// 			.name("item")
-	// 			.itemStatus(ItemStatus.PUBLIC)
-	// 			.basePrice(10000)
-	// 			.description("description")
-	// 			.openAt(LocalDateTime.now())
-	// 			.build();
-	// 	item1.addItemOption(itemOption1);
-	//
-	// 	OrderItem orderItem1 = OrderItem.builder()
-	// 		.id(1L)
-	// 		.item(item1)
-	// 		.option(itemOption1)
-	// 		.orderCount(5)
-	// 		.build();
-	//
-	// 	List<OrderItem> orderItemList = List.of(orderItem1);
-	//
-	// 	Order order = Order.builder()
-	// 		.id(1L)
-	// 		.status(OrderStatus.ACCEPTED)
-	// 		.totalPrice(20000)
-	// 		.orderItemList(orderItemList)
-	// 		.build();
-	//
-	// 	when(orderRepository.findByIdAndMemberId(order.getId(), member.getId())).thenReturn(Optional.ofNullable(order));
-	//
-	// 	//when
-	// 	orderService.cancelOrder(member.getId(), order.getId());
-	//
-	// 	//then
-	// 	assertAll(
-	// 		() -> assertEquals(15, itemOption1.getStockQuantity(), "주문을 취소하면 재고가 다시 추가되어야 한다."),
-	// 		() -> assertEquals(OrderStatus.CANCELLED, order.getStatus(),
-	// 			"주문을 취소하면 주문상태가 CANCELLED로 변경되어야 한다.")
-	// 	);
-	// }
+	@DisplayName("주문을_취소한다.")
+	@Test
+	void cancelOrder() {
+		//given
+		Member member = Member.builder()
+			.id(1L)
+			.email("test@test.com")
+			.grade(MemberGrade.BRONZE)
+			.name("testName")
+			.phoneNumber("01000001111")
+			.hiworksId("hiworks")
+			.role(MemberRole.NORMAL)
+			.build();
+
+		ItemOption itemOption1 = ItemOption.builder()
+			.id(1L)
+			.description("description")
+			.optionPrice(0)
+			.stockQuantity(10)
+			.build();
+
+		List<ItemOption> options = List.of(itemOption1);
+
+		Item item1 =
+			Item.builder()
+				.id(1L)
+				.name("item")
+				.itemStatus(ItemStatus.PUBLIC)
+				.basePrice(10000)
+				.description("description")
+				.openAt(LocalDateTime.now())
+				.build();
+		item1.addItemOption(itemOption1);
+
+		OrderItem orderItem1 = OrderItem.builder()
+			.id(1L)
+			.item(item1)
+			.option(itemOption1)
+			.orderCount(5)
+			.build();
+
+		List<OrderItem> orderItemList = List.of(orderItem1);
+
+		Order order = Order.builder()
+			.id(1L)
+			.status(OrderStatus.ACCEPTED)
+			.totalPrice(20000)
+			.orderItemList(orderItemList)
+			.build();
+
+		when(orderRepository.findByIdAndMemberIdWithLock(order.getId(),member.getId())).thenReturn(Optional.ofNullable(order));
+
+		//when
+		orderService.cancelOrder(member.getId(), order.getId());
+
+		//then
+		assertAll(
+			() -> assertEquals(15, itemOption1.getStockQuantity(), "주문을 취소하면 재고가 다시 추가되어야 한다."),
+			() -> assertEquals(OrderStatus.CANCELLED, order.getStatus(),
+				"주문을 취소하면 주문상태가 CANCELLED로 변경되어야 한다.")
+		);
+	}
 
 	@DisplayName("주문_상태를_변경한다.")
 	@Test

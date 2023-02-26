@@ -367,14 +367,17 @@ public class OrderLockFacadeTest extends IntegrationTest {
 		int nThreahdsSize = 1000;
 		int repeatSize = 300;
 		ExecutorService executorService = Executors.newFixedThreadPool(nThreahdsSize);
-		CountDownLatch countDownLatch = new CountDownLatch(301);
+		CountDownLatch countDownLatch = new CountDownLatch(repeatSize);
 
 		for (int i = 0; i < repeatSize; i++) {
 			executorService.submit(() -> {
 				try {
-					//orderLockFacade.purchaseOrder(member1.getId(), orderCreateRequestDto6);//(1)
+					orderLockFacade.purchaseOrder(member1.getId(), orderCreateRequestDto6);//(1)
 					orderLockFacade.purchaseOrder(member1.getId(), orderCreateRequestDto);//(1) (3) (10)
-					orderLockFacade.purchaseOrder(member1.getId(), orderCreateRequestDto2);//(1) ~(10)
+					//orderLockFacade.purchaseOrder(member1.getId(), orderCreateRequestDto2);//(1) ~(10)
+					//orderLockFacade.purchaseOrder(member3.getId(), orderCreateRequestDto3);//(2) (3)
+					//orderLockFacade.purchaseOrder(member4.getId(), orderCreateRequestDto4);//(3)
+					//orderLockFacade.purchaseOrder(member5.getId(), orderCreateRequestDto5);//(2)
 				} catch (ConflictException e) {
 					e.getMessage();
 					//System.out.println("주문 실패");
@@ -382,9 +385,10 @@ public class OrderLockFacadeTest extends IntegrationTest {
 					countDownLatch.countDown();
 				}
 			});
+
 			// executorService.submit(() -> {
 			// 	try {
-			// 		orderLockFacade.purchaseOrder(member1.getId(), orderCreateRequestDto2);//(1) ~(10)
+			// 		itemOptionService.changeItemOption(1L, 1L, itemOptionRequest);
 			// 	} catch (ConflictException e) {
 			// 		e.getMessage();
 			// 		//System.out.println("주문 실패");
@@ -392,88 +396,43 @@ public class OrderLockFacadeTest extends IntegrationTest {
 			// 		countDownLatch.countDown();
 			// 	}
 			// });
-			// 	executorService.submit(() -> {
-			// 		try {
-			// 			orderLockFacade.purchaseOrder(member3.getId(), orderCreateRequestDto3);//(2) (3)
-			// 		} catch (ConflictException e) {
-			// 			e.getMessage();
-			// 			//System.out.println("주문 실패");
-			// 		} finally {
-			// 			countDownLatch.countDown();
-			// 		}
-			// 	});
-			// 	executorService.submit(() -> {
-			// 		try {
-			// 			//orderLockFacade.purchaseOrder(member4.getId(), orderCreateRequestDto4);//(3)
-			// 		} catch (ConflictException e) {
-			// 			e.getMessage();
-			// 			//System.out.println("주문 실패");
-			// 		} finally {
-			// 			countDownLatch.countDown();
-			// 		}
-			// 	});
-			// 	executorService.submit(() -> {
-			// 		try {
-			// 			//orderLockFacade.purchaseOrder(member5.getId(), orderCreateRequestDto5);//(2)
-			// 		} catch (ConflictException e) {
-			// 			e.getMessage();
-			// 			//System.out.println("주문 실패");
-			// 		} finally {
-			// 			countDownLatch.countDown();
-			// 		}
-			// 	});
 		}
-		executorService.submit(() -> {
-			try {
-				itemOptionService.changeItemOption(1L, 1L, itemOptionRequest);
-			} catch (ConflictException e) {
-				e.getMessage();
-				//System.out.println("주문 실패");
-			} finally {
-				countDownLatch.countDown();
-			}
-		});
+			countDownLatch.await();
+			ItemOption actual = itemOptionRepository.findById(itemOption1.getId()).orElseThrow();
+			ItemOption actual2 = itemOptionRepository.findById(itemOption2.getId()).orElseThrow();
+			ItemOption actual3 = itemOptionRepository.findById(itemOption3.getId()).orElseThrow();
 
-		countDownLatch.await();
-		ItemOption actual = itemOptionRepository.findById(itemOption1.getId()).orElseThrow();
-		ItemOption actual2 = itemOptionRepository.findById(itemOption2.getId()).orElseThrow();
-		ItemOption actual3 = itemOptionRepository.findById(itemOption3.getId()).orElseThrow();
+			List<Order> orderAll = orderRepository.findAll();
+			List<OrderItem> oi1 = orderItemRepository.findAllByOptionId(itemOption1.getId());
+			List<OrderItem> oi2 = orderItemRepository.findAllByOptionId(itemOption2.getId());
+			List<OrderItem> oi3 = orderItemRepository.findAllByOptionId(itemOption3.getId());
 
-		List<Order> orderAll = orderRepository.findAll();
-		List<OrderItem> oi1 = orderItemRepository.findAllByOptionId(itemOption1.getId());
-		List<OrderItem> oi2 = orderItemRepository.findAllByOptionId(itemOption2.getId());
-		List<OrderItem> oi3 = orderItemRepository.findAllByOptionId(itemOption3.getId());
+			List<Order> oiO1 = orderRepository.findAllByMemberId(member1.getId());
+			List<Order> oiO2 = orderRepository.findAllByMemberId(member2.getId());
+			List<Order> oiO3 = orderRepository.findAllByMemberId(member3.getId());
+			List<Order> oiO4 = orderRepository.findAllByMemberId(member4.getId());
+			List<Order> oiO5 = orderRepository.findAllByMemberId(member5.getId());
 
-		List<Order> oiO1 = orderRepository.findAllByMemberId(member1.getId());
-		List<Order> oiO2 = orderRepository.findAllByMemberId(member2.getId());
-		List<Order> oiO3 = orderRepository.findAllByMemberId(member3.getId());
-		List<Order> oiO4 = orderRepository.findAllByMemberId(member4.getId());
-		List<Order> oiO5 = orderRepository.findAllByMemberId(member5.getId());
+			System.out.println("1재고:" + actual.getStockQuantity());
+			System.out.println("2재고:" + actual2.getStockQuantity());
+			System.out.println("3재고:" + actual3.getStockQuantity());
+			System.out.println(orderAll.size());
+			System.out.println("1OI:" + oi1.size());
+			System.out.println("2OI:" + oi2.size());
+			System.out.println("3OI:" + oi3.size());
 
-		System.out.println("1재고:" + actual.getStockQuantity());
-		System.out.println("2재고:" + actual2.getStockQuantity());
-		System.out.println("3재고:" + actual3.getStockQuantity());
-		System.out.println(orderAll.size());
-		System.out.println("1OI:" + oi1.size());
-		System.out.println("2OI:" + oi2.size());
-		System.out.println("3OI:" + oi3.size());
+			System.out.println("member1:" + oiO1.size());
+			System.out.println("member2:" + oiO2.size());
+			System.out.println("member3:" + oiO3.size());
+			System.out.println("member4:" + oiO4.size());
+			System.out.println("member5:" + oiO5.size());
 
-		System.out.println("member1:" + oiO1.size());
-		System.out.println("member2:" + oiO2.size());
-		System.out.println("member3:" + oiO3.size());
-		System.out.println("member4:" + oiO4.size());
-		System.out.println("member5:" + oiO5.size());
-
-		// Assertions.assertThat(actual.getStockQuantity()).isEqualTo(0);
-		// Assertions.assertThat(actual2.getStockQuantity()).isEqualTo(0);
-
-		//executorService.shutdown();
-
+			// Assertions.assertThat(actual.getStockQuantity()).isEqualTo(0);
 	}
 
 	@DisplayName("동시에_주문을_취소한다.")
 	@Test
-	void concurrencypurchaseOrderAndCancel() throws InterruptedException {
+	void concurrencyOrderCancel() throws InterruptedException {
 
 		int nThreahdsSize = 400;
 		List<Long> orderIds = orderRepository.findAll().stream().map(order -> order.getId()).toList();
@@ -486,7 +445,6 @@ public class OrderLockFacadeTest extends IntegrationTest {
 				try {
 					//orderLockFacade.cancelOrder(1L, orderId);
 					orderService.cancelOrder(1L, orderId);
-					//orderLockFacade.purchaseOrder(2L, orderCreateRequestDto2);
 				} finally {
 					countDownLatch.countDown();
 				}
