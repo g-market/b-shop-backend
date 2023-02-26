@@ -21,7 +21,6 @@ test:
 
   image: openjdk:17-alpine
   stage: test
-  needs: [ "build" ]
   tags:
     - gitlab-runner
   services:
