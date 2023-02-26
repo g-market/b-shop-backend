@@ -155,8 +155,10 @@ class OrderServiceTest {
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 
-		when(itemOptionRepository.findByItemIdListAndIdList(orderItemDtoList)).thenReturn(List.of(itemOption1,itemOption2));
-		when(itemOptionRepository.findByItemIdListAndIdListWithLock(orderItemDtoList)).thenReturn(List.of(itemOption1,itemOption2));
+		when(itemOptionRepository.findByItemIdListAndIdList(orderItemDtoList)).thenReturn(
+			List.of(itemOption1, itemOption2));
+		when(itemOptionRepository.findByItemIdListAndIdListWithLock(orderItemDtoList)).thenReturn(
+			List.of(itemOption1, itemOption2));
 
 		//when
 		Order returnOrder = orderService.validateCreateOrder(member.getId(), orderCreateRequestDto);
@@ -261,8 +263,8 @@ class OrderServiceTest {
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 
-		when(itemOptionRepository.findByItemIdListAndIdList(orderItemDtoList)).thenReturn(List.of(itemOption1,itemOption2));
-
+		when(itemOptionRepository.findByItemIdListAndIdList(orderItemDtoList)).thenReturn(
+			List.of(itemOption1, itemOption2));
 
 		//when & then
 		Assertions.assertThatThrownBy(() -> orderService.validateCreateOrder(member.getId(), orderCreateRequestDto))
@@ -319,7 +321,8 @@ class OrderServiceTest {
 			.orderItemList(orderItemList)
 			.build();
 
-		when(orderRepository.findByIdAndMemberIdWithLock(order.getId(),member.getId())).thenReturn(Optional.ofNullable(order));
+		when(orderRepository.findByIdAndMemberIdWithLock(order.getId(), member.getId())).thenReturn(
+			Optional.ofNullable(order));
 
 		//when
 		orderService.cancelOrder(member.getId(), order.getId());

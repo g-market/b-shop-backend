@@ -397,37 +397,37 @@ public class OrderLockFacadeTest extends IntegrationTest {
 			// 	}
 			// });
 		}
-			countDownLatch.await();
-			ItemOption actual = itemOptionRepository.findById(itemOption1.getId()).orElseThrow();
-			ItemOption actual2 = itemOptionRepository.findById(itemOption2.getId()).orElseThrow();
-			ItemOption actual3 = itemOptionRepository.findById(itemOption3.getId()).orElseThrow();
+		countDownLatch.await();
+		ItemOption actual = itemOptionRepository.findById(itemOption1.getId()).orElseThrow();
+		ItemOption actual2 = itemOptionRepository.findById(itemOption2.getId()).orElseThrow();
+		ItemOption actual3 = itemOptionRepository.findById(itemOption3.getId()).orElseThrow();
 
-			List<Order> orderAll = orderRepository.findAll();
-			List<OrderItem> oi1 = orderItemRepository.findAllByOptionId(itemOption1.getId());
-			List<OrderItem> oi2 = orderItemRepository.findAllByOptionId(itemOption2.getId());
-			List<OrderItem> oi3 = orderItemRepository.findAllByOptionId(itemOption3.getId());
+		List<Order> orderAll = orderRepository.findAll();
+		List<OrderItem> oi1 = orderItemRepository.findAllByOptionId(itemOption1.getId());
+		List<OrderItem> oi2 = orderItemRepository.findAllByOptionId(itemOption2.getId());
+		List<OrderItem> oi3 = orderItemRepository.findAllByOptionId(itemOption3.getId());
 
-			List<Order> oiO1 = orderRepository.findAllByMemberId(member1.getId());
-			List<Order> oiO2 = orderRepository.findAllByMemberId(member2.getId());
-			List<Order> oiO3 = orderRepository.findAllByMemberId(member3.getId());
-			List<Order> oiO4 = orderRepository.findAllByMemberId(member4.getId());
-			List<Order> oiO5 = orderRepository.findAllByMemberId(member5.getId());
+		List<Order> oiO1 = orderRepository.findAllByMemberId(member1.getId());
+		List<Order> oiO2 = orderRepository.findAllByMemberId(member2.getId());
+		List<Order> oiO3 = orderRepository.findAllByMemberId(member3.getId());
+		List<Order> oiO4 = orderRepository.findAllByMemberId(member4.getId());
+		List<Order> oiO5 = orderRepository.findAllByMemberId(member5.getId());
 
-			System.out.println("1재고:" + actual.getStockQuantity());
-			System.out.println("2재고:" + actual2.getStockQuantity());
-			System.out.println("3재고:" + actual3.getStockQuantity());
-			System.out.println(orderAll.size());
-			System.out.println("1OI:" + oi1.size());
-			System.out.println("2OI:" + oi2.size());
-			System.out.println("3OI:" + oi3.size());
+		System.out.println("1재고:" + actual.getStockQuantity());
+		System.out.println("2재고:" + actual2.getStockQuantity());
+		System.out.println("3재고:" + actual3.getStockQuantity());
+		System.out.println(orderAll.size());
+		System.out.println("1OI:" + oi1.size());
+		System.out.println("2OI:" + oi2.size());
+		System.out.println("3OI:" + oi3.size());
 
-			System.out.println("member1:" + oiO1.size());
-			System.out.println("member2:" + oiO2.size());
-			System.out.println("member3:" + oiO3.size());
-			System.out.println("member4:" + oiO4.size());
-			System.out.println("member5:" + oiO5.size());
+		System.out.println("member1:" + oiO1.size());
+		System.out.println("member2:" + oiO2.size());
+		System.out.println("member3:" + oiO3.size());
+		System.out.println("member4:" + oiO4.size());
+		System.out.println("member5:" + oiO5.size());
 
-			// Assertions.assertThat(actual.getStockQuantity()).isEqualTo(0);
+		// Assertions.assertThat(actual.getStockQuantity()).isEqualTo(0);
 	}
 
 	@DisplayName("동시에_주문을_취소한다.")
