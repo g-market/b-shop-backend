@@ -69,14 +69,14 @@ public class OrderController {
 	public ResponseEntity<OrderCreateResponseDto> createOrder(
 		@CurrentMember final MemberPayload memberPayload,
 		@RequestBody @Valid final OrderCreateRequestDto orderCreateRequestDto) {
-		return ResponseEntity.ok().body(orderLockFacade.purchase(memberPayload.id(), orderCreateRequestDto));
+		return ResponseEntity.ok().body(orderLockFacade.purchaseOrder(memberPayload.id(), orderCreateRequestDto));
 	}
 
 	@Login
 	@DeleteMapping("/orders/{orderId}")
 	public ResponseEntity<Void> cancelOrder(@CurrentMember final MemberPayload memberPayload,
 		@PathVariable final Long orderId) {
-		//orderService.cancelOrder(memberPayload.id(), orderId);
+		orderService.cancelOrder(memberPayload.id(), orderId);
 		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 	}
 

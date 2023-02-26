@@ -91,7 +91,7 @@ public class OrderService {
 			itemImagesWithItem);
 	}
 
-	public Order validateOrderItemDtoList(final Long memberId, final OrderCreateRequestDto orderCreateRequestDto) {
+	public Order validateCreateOrder(final Long memberId, final OrderCreateRequestDto orderCreateRequestDto) {
 		final Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(memberId, orderCreateRequestDto);
 
 		final List<ItemOption> findAllItemOptionList = itemOptionRepository.findByItemIdListAndIdList(
@@ -106,31 +106,7 @@ public class OrderService {
 		return order;
 	}
 
-	// public OrderCreateResponseDto saveOrder(Order order, List<OrderItem> list) {
-	// 	order.createOrder(list);
-	// 	orderRepository.save(order);
-	//
-	// 	return OrderMapper.INSTANCE.ordersCreateResponseDto(order);
-	// }
-
-	//각각 쿼리
-	// public List<OrderItem> lockItemOptionList(List<OrderItemDto> orderItemDtoList, Order order) {
-	// 	List<OrderItem> returnList = new ArrayList<>();
-	//
-	// 	for (OrderItemDto oiDto : orderItemDtoList) {
-	// 		ItemOption itemOption = itemOptionRepository.findByIdAndItemId(oiDto.itemOptionId(), oiDto.itemId())
-	// 			.orElseThrow();
-	//
-	// 		validateItemStatus(itemOption);
-	// 		validateStockQuantity(itemOption, oiDto.orderCount());
-	//
-	// 		returnList.add(OrderItem.createOrderItem(itemOption, order, oiDto.orderCount()));
-	// 	}
-	// 	return returnList;
-	// }
-
-	//쿼리 한방
-	public OrderCreateResponseDto lockItemOptionList(List<OrderItemDto> orderItemDtoList, Order order) {
+	public OrderCreateResponseDto lockCreateOrder(List<OrderItemDto> orderItemDtoList, Order order) {
 		List<OrderItem> returnList = new ArrayList<>();
 
 		List<ItemOption> itemOptionList = itemOptionRepository.findByItemIdListAndIdListWithLock(orderItemDtoList);
@@ -151,6 +127,12 @@ public class OrderService {
 		return OrderMapper.INSTANCE.ordersCreateResponseDto(order);
 	}
 
+	public void cancelOrder(final Long memberId, final Long orderId) {
+		final Order order = findOrderByIdAndMemberIdWithLock(orderId, memberId);
+		validateOrderStatus(order);
+		order.cancelOrder();
+	}
+
 	public OrderUpdateStatusResponse updateOrderStatus(final OrderUpdateStatusRequest orderUpdateStatusRequest) {
 		final Order order = findOrderById(orderUpdateStatusRequest.orderId());
 		validateOrderStatus(order);
@@ -166,6 +148,11 @@ public class OrderService {
 
 	private Order findOrderByIdAndMemberId(final Long orderId, final Long memberId) {
 		return orderRepository.findByIdAndMemberId(orderId, memberId)
+			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
+	}
+
+	private Order findOrderByIdAndMemberIdWithLock(final Long orderId, final Long memberId) {
+		return orderRepository.findByIdAndMemberIdWithLock(orderId, memberId)
 			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
 	}
 

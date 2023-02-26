@@ -162,7 +162,7 @@ class OrderServiceTest {
 			List.of(itemOption1, itemOption2));
 
 		//when
-		OrderCreateResponseDto returnDto = orderLockFacade.purchase(member.getId(), orderCreateRequestDto);
+		OrderCreateResponseDto returnDto = orderLockFacade.purchaseOrder(member.getId(), orderCreateRequestDto);
 
 		//then
 		assertAll(
@@ -267,7 +267,7 @@ class OrderServiceTest {
 			List.of(itemOption1, itemOption2));
 
 		//when & then
-		Assertions.assertThatThrownBy(() -> orderLockFacade.purchase(member.getId(), orderCreateRequestDto))
+		Assertions.assertThatThrownBy(() -> orderLockFacade.purchaseOrder(member.getId(), orderCreateRequestDto))
 			.isInstanceOf(BadRequestException.class);
 	}
 

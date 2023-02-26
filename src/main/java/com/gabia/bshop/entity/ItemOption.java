@@ -90,16 +90,19 @@ public class ItemOption extends BaseEntity {
 
 	public void decreaseStockQuantity(final int orderCount) {
 		this.stockQuantity -= orderCount;
+		System.out.println("재고감소:" + stockQuantity);
 	}
 
 	public void increaseStockQuantity(final int orderCount) {
 		this.stockQuantity += orderCount;
+		System.out.println("재고증가:" + stockQuantity);
 	}
 
 	public void update(ItemOptionRequest changeRequest) {
 		updateDescription(changeRequest.description());
 		updateOptionPrice(changeRequest.optionPrice());
 		updateOptionStock(changeRequest.stockQuantity());
+		System.out.println("재고 업데이트!" + changeRequest.stockQuantity());
 	}
 
 	public void update(Item item) {

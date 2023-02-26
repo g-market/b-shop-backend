@@ -23,8 +23,15 @@ public interface ItemOptionRepository extends JpaRepository<ItemOption, Long>, I
 		""")
 	List<ItemOption> findWithItemByItemIdsAndItemOptionIds(List<Long> itemIdList, List<Long> itemOptionIdList);
 
-	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	Optional<ItemOption> findByIdAndItemId(Long itemOptionId, Long itemId);
+
+	@Query("""
+		select io from ItemOption io
+		where io.id in :itemOptionId
+		and io.item.id in :itemId
+		""")
+	@Lock(LockModeType.PESSIMISTIC_WRITE)
+	Optional<ItemOption> findByIdAndItemIdWithLock(Long itemOptionId, Long itemId);
 
 	boolean existsByItem_IdAndIdAndStockQuantityIsGreaterThanEqual(Long itemId, Long itemOptionId, int stockQuantity);
 }
