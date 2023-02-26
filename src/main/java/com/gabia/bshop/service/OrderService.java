@@ -31,7 +31,6 @@ import com.gabia.bshop.mapper.OrderInfoMapper;
 import com.gabia.bshop.mapper.OrderMapper;
 import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemOptionRepository;
-import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
 import com.gabia.bshop.security.MemberPayload;
@@ -46,7 +45,6 @@ public class OrderService {
 	private final OrderRepository orderRepository;
 	private final OrderItemRepository orderItemRepository;
 	private final ItemImageRepository itemImageRepository;
-	private final MemberRepository memberRepository;
 	private final ItemOptionRepository itemOptionRepository;
 
 	@Transactional(readOnly = true)
@@ -94,12 +92,8 @@ public class OrderService {
 	public Order validateCreateOrder(final Long memberId, final OrderCreateRequestDto orderCreateRequestDto) {
 		final Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(memberId, orderCreateRequestDto);
 
-		final List<ItemOption> findAllItemOptionList = itemOptionRepository.findByItemIdListAndIdList(
+		final List<ItemOption> validItemOptionList = itemOptionRepository.findByItemIdListAndIdList(
 			orderCreateRequestDto.orderItemDtoList());
-
-		final List<OrderItemDto> validItemOptionList = orderCreateRequestDto.orderItemDtoList().stream()
-			.filter(oi -> findAllItemOptionList.stream().anyMatch(oi::equalsIds))
-			.toList();
 
 		isEqualListSize(orderCreateRequestDto, validItemOptionList);
 
@@ -107,9 +101,9 @@ public class OrderService {
 	}
 
 	public OrderCreateResponseDto lockCreateOrder(List<OrderItemDto> orderItemDtoList, Order order) {
-		List<OrderItem> returnList = new ArrayList<>();
-
-		List<ItemOption> itemOptionList = itemOptionRepository.findByItemIdListAndIdListWithLock(orderItemDtoList);
+		final List<OrderItem> orderItemList = new ArrayList<>();
+		final List<ItemOption> itemOptionList = itemOptionRepository.findByItemIdListAndIdListWithLock(
+			orderItemDtoList);
 
 		for (int i = 0; i < orderItemDtoList.size(); i++) {
 			ItemOption itemOption = itemOptionList.get(i);
@@ -118,10 +112,10 @@ public class OrderService {
 			validateItemStatus(itemOption);
 			validateStockQuantity(itemOption, orderCount);
 
-			returnList.add(OrderItem.createOrderItem(itemOption, order, orderCount));
+			orderItemList.add(OrderItem.createOrderItem(itemOption, order, orderCount));
 		}
 
-		order.createOrder(returnList);
+		order.createOrder(orderItemList);
 		orderRepository.save(order);
 
 		return OrderMapper.INSTANCE.ordersCreateResponseDto(order);
@@ -184,7 +178,7 @@ public class OrderService {
 	}
 
 	private boolean isEqualListSize(final OrderCreateRequestDto orderCreateRequestDto,
-		final List<OrderItemDto> validItemOptionList) {
+		final List<ItemOption> validItemOptionList) {
 		if (orderCreateRequestDto.orderItemDtoList().size() != validItemOptionList.size()) {
 			throw new BadRequestException(INVALID_ITEM_OPTION_NOT_FOUND_EXCEPTION);
 		}

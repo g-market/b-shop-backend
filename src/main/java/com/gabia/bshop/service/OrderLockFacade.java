@@ -20,12 +20,12 @@ public class OrderLockFacade {
 
 	public OrderCreateResponseDto purchaseOrder(final Long memberId,
 		final OrderCreateRequestDto orderCreateRequestDto) {
-		Order order = orderService.validateCreateOrder(memberId, orderCreateRequestDto);
+		final Order order = orderService.validateCreateOrder(memberId, orderCreateRequestDto);
 		final List<OrderItemDto> sortedDtoList = orderCreateRequestDto.orderItemDtoList().stream()
 			.sorted(Comparator.comparing(OrderItemDto::itemId).thenComparing(OrderItemDto::itemOptionId))
 			.toList();
 
-		OrderCreateResponseDto returnDto = orderService.lockCreateOrder(sortedDtoList, order);
-		return returnDto;
+		final OrderCreateResponseDto orderCreateResponseDto = orderService.lockCreateOrder(sortedDtoList, order);
+		return orderCreateResponseDto;
 	}
 }

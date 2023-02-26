@@ -66,7 +66,7 @@ public class OrderController {
 
 	@Login
 	@PostMapping("/orders")
-	public ResponseEntity<OrderCreateResponseDto> createOrder(
+	public ResponseEntity<OrderCreateResponseDto> purchaseOrder(
 		@CurrentMember final MemberPayload memberPayload,
 		@RequestBody @Valid final OrderCreateRequestDto orderCreateRequestDto) {
 		return ResponseEntity.ok().body(orderLockFacade.purchaseOrder(memberPayload.id(), orderCreateRequestDto));
