@@ -1,25 +1,12 @@
 stages:
-  - build
   - test
+  - build
   - visualization
   - package
   - deploy
 
 variables:
   IMAGE_NAME: mentoring-gitlab.gabia.com:5050/mentee/mentee_2023.01/team/g-market/gabia_b_shop_backend
-
-build:
-  rules:
-    - if : '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
-  image: openjdk:17-alpine
-  stage: build
-  script:
-    - ./gradlew clean
-    - ./gradlew build -x test
-  artifacts:
-    paths:
-      - build/libs/*.jar
-    expire_in: 10 min
 
 test:
   rules:
@@ -64,9 +51,23 @@ visualization:
         path: build/cobertura.xml
 
 
+build:
+  rules:
+    - if : '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+  image: openjdk:17-alpine
+  stage: build
+  needs: [ "test" ]
+  script:
+    - ./gradlew clean
+    - ./gradlew build -x test
+  artifacts:
+    paths:
+      - build/libs/*.jar
+    expire_in: 10 min
+
 package:
   rules:
-    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+    - if : '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
   stage: package
   needs: ["build"]
   image: docker:latest
