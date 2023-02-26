@@ -263,8 +263,7 @@ class OrderServiceTest {
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 
-		when(itemOptionRepository.findByItemIdListAndIdList(orderItemDtoList)).thenReturn(
-			List.of(itemOption1, itemOption2));
+		when(itemOptionRepository.findByItemIdListAndIdList(orderItemDtoList)).thenReturn(List.of(itemOption1));
 
 		//when & then
 		Assertions.assertThatThrownBy(() -> orderService.validateCreateOrder(member.getId(), orderCreateRequestDto))
@@ -433,7 +432,6 @@ class OrderServiceTest {
 
 		List<OrderItem> orderItemList = List.of(orderItem1);
 
-		//TODO: 썸네일 기능 추가 후 변경 필요
 		String thumbnailUrl = "thumbnailUrl_test";
 		List<String> thumbnailUrlList = List.of(thumbnailUrl);
 
@@ -498,7 +496,6 @@ class OrderServiceTest {
 
 		List<OrderItem> orderItemList = List.of(orderItem1);
 
-		//TODO: 썸네일 기능 추가 후 변경 필요
 		String thumbnailUrl = "thumbnailUrl_test";
 		List<String> thumbnailUrlList = List.of(thumbnailUrl);
 
