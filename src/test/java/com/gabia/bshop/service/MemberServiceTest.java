@@ -57,7 +57,7 @@ class MemberServiceTest {
 			.willReturn(Optional.of(jaime));
 
 		// when
-		memberService.updateMember(1L, new MemberUpdateRequest("01012341234"));
+		memberService.updateLoggedInMember(1L, new MemberUpdateRequest("01012341234"));
 
 		// then
 		assertAll(
