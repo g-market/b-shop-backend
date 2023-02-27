@@ -148,7 +148,6 @@ jacocoTestCoverageVerification {
     }
 }
 
-
 // ============================ check style =======================
 tasks.withType(Checkstyle) {
     reports {
