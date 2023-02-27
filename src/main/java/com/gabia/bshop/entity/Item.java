@@ -79,7 +79,7 @@ public class Item extends BaseEntity {
 
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
 	@AuditJoinTable(name = "item_option_aud")
-	private final List<ItemOption> itemOptionList = new ArrayList<>();
+	private List<ItemOption> itemOptionList = new ArrayList<>();
 
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
 	@AuditJoinTable(name = "item_image_aud")
@@ -176,10 +176,6 @@ public class Item extends BaseEntity {
 		if (localDateTime != null) {
 			this.openAt = localDateTime;
 		}
-	}
-
-	public void updateImage(List<ItemImage> itemImageList) {
-		this.itemImageList = itemImageList;
 	}
 
 	public void addItemOption(ItemOption itemOption) {
