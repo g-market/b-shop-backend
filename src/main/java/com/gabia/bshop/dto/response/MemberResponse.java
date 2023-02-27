@@ -1,13 +1,14 @@
 package com.gabia.bshop.dto.response;
 
-import lombok.Builder;
+import com.gabia.bshop.entity.enumtype.MemberGrade;
+import com.gabia.bshop.entity.enumtype.MemberRole;
 
-@Builder
 public record MemberResponse(
 	Long id,
 	String email,
+	String phoneNumber,
 	String name,
-	String hiworksId
+	MemberRole role,
+	MemberGrade grade
 ) {
-
 }

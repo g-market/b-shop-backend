@@ -9,12 +9,14 @@ import com.gabia.bshop.dto.response.AdminLoginResponse;
 import com.gabia.bshop.dto.response.HiworksProfileResponse;
 import com.gabia.bshop.dto.response.IssuedTokensResponse;
 import com.gabia.bshop.dto.response.LoginResult;
+import com.gabia.bshop.dto.response.MemberResponse;
 import com.gabia.bshop.entity.Member;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.exception.ForbiddenException;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.exception.UnAuthorizedRefreshTokenException;
 import com.gabia.bshop.mapper.HiworksProfileMapper;
+import com.gabia.bshop.mapper.MemberResponseMapper;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.RefreshTokenRepository;
 import com.gabia.bshop.security.RefreshToken;
@@ -46,7 +48,8 @@ public class AuthService {
 			member.getRole());
 		final RefreshToken refreshToken = refreshTokenProvider.createToken(memberId);
 		refreshTokenRepository.save(refreshToken);
-		return new LoginResult(refreshToken.refreshToken(), applicationAccessToken, member);
+		final MemberResponse memberResponse = MemberResponseMapper.INSTANCE.from(member);
+		return new LoginResult(refreshToken.refreshToken(), applicationAccessToken, memberResponse);
 	}
 
 	public AdminLoginResponse loginAdmin(final String authCode) {

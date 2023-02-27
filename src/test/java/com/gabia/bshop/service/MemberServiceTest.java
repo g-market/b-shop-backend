@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.gabia.bshop.dto.request.MemberUpdateRequest;
-import com.gabia.bshop.dto.response.LoggedInMemberResponse;
+import com.gabia.bshop.dto.response.MemberResponse;
 import com.gabia.bshop.entity.Member;
 import com.gabia.bshop.repository.MemberRepository;
 
@@ -35,17 +35,18 @@ class MemberServiceTest {
 			.willReturn(Optional.of(JAIME.getInstance(1L)));
 
 		// when
-		final LoggedInMemberResponse loggedInMemberResponse = memberService.findLoggedInMember(1L);
+		final MemberResponse memberResponse = memberService.findLoggedInMember(1L);
 
 		// then
 		assertAll(
 			() -> verify(memberRepository).findById(1L),
-			() -> assertThat(loggedInMemberResponse)
+			() -> assertThat(memberResponse)
 				.hasFieldOrPropertyWithValue("id", 1L)
 				.hasFieldOrPropertyWithValue("email", jaime.getEmail())
 				.hasFieldOrPropertyWithValue("phoneNumber", jaime.getPhoneNumber())
 				.hasFieldOrPropertyWithValue("name", jaime.getName())
-				.hasFieldOrPropertyWithValue("hiworksId", jaime.getHiworksId())
+				.hasFieldOrPropertyWithValue("role", jaime.getRole())
+				.hasFieldOrPropertyWithValue("grade", jaime.getGrade())
 		);
 	}
 
@@ -57,7 +58,7 @@ class MemberServiceTest {
 			.willReturn(Optional.of(jaime));
 
 		// when
-		memberService.updateMember(1L, new MemberUpdateRequest("01012341234"));
+		memberService.updateLoggedInMember(1L, new MemberUpdateRequest("01012341234"));
 
 		// then
 		assertAll(
