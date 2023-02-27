@@ -26,15 +26,15 @@ public class MemberController {
 
 	@GetMapping("/me")
 	@Login
-	public LoggedInMemberResponse showLoggedIn(@CurrentMember final MemberPayload memberPayload) {
+	public LoggedInMemberResponse findLoggedInMember(@CurrentMember final MemberPayload memberPayload) {
 		return memberService.findLoggedInMember(memberPayload.id());
 	}
 
 	@PatchMapping("/me")
 	@Login
-	public ResponseEntity<Void> updateMe(@CurrentMember final MemberPayload memberPayload,
+	public ResponseEntity<Void> updateLoggedInMember(@CurrentMember final MemberPayload memberPayload,
 		@Valid @RequestBody final MemberUpdateRequest memberUpdateRequest) {
-		memberService.updateMember(memberPayload.id(), memberUpdateRequest);
+		memberService.updateLoggedInMember(memberPayload.id(), memberUpdateRequest);
 		return ResponseEntity.ok().build();
 	}
 }

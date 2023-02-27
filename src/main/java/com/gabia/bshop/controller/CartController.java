@@ -30,28 +30,28 @@ public class CartController {
 
 	private final CartService cartService;
 
-	@PostMapping
-	@Login
-	public ResponseEntity<Void> save(@CurrentMember MemberPayload memberPayload,
-		@RequestBody @Valid CartCreateRequest cartCreateRequest) {
-		final CartDto cartDto = CartReqeuestMapper.INSTANCE.toCartDto(cartCreateRequest);
-		cartService.save(memberPayload.id(), cartDto);
-		return ResponseEntity.noContent().build();
-	}
-
 	@GetMapping
 	@Login
-	public ResponseEntity<List<CartResponse>> findAll(@CurrentMember MemberPayload memberPayload) {
-		final List<CartResponse> responseList = cartService.findAll(memberPayload.id());
+	public ResponseEntity<List<CartResponse>> findCartList(@CurrentMember MemberPayload memberPayload) {
+		final List<CartResponse> responseList = cartService.findCartList(memberPayload.id());
 		return ResponseEntity.ok(responseList);
+	}
+
+	@PostMapping
+	@Login
+	public ResponseEntity<Void> createCart(@CurrentMember MemberPayload memberPayload,
+		@RequestBody @Valid CartCreateRequest cartCreateRequest) {
+		final CartDto cartDto = CartReqeuestMapper.INSTANCE.toCartDto(cartCreateRequest);
+		cartService.createCart(memberPayload.id(), cartDto);
+		return ResponseEntity.noContent().build();
 	}
 
 	@DeleteMapping
 	@Login
-	public ResponseEntity<Void> delete(@CurrentMember MemberPayload memberPayload,
+	public ResponseEntity<Void> deleteCart(@CurrentMember MemberPayload memberPayload,
 		@RequestBody @Valid CartDeleteRequest cartDeleteRequest) {
 		final CartDto cartDto = CartReqeuestMapper.INSTANCE.toCartDto(cartDeleteRequest);
-		cartService.delete(memberPayload.id(), cartDto);
+		cartService.deleteCart(memberPayload.id(), cartDto);
 		return ResponseEntity.noContent().build();
 	}
 }

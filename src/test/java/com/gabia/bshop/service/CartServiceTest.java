@@ -55,7 +55,7 @@ class CartServiceTest {
 		given(cartRepository.save(memberId, cartDto)).willReturn(cartDto);
 
 		// when
-		final CartDto savedCartDto = cartService.save(memberId, cartDto);
+		final CartDto savedCartDto = cartService.createCart(memberId, cartDto);
 
 		// then
 		assertAll(
@@ -74,7 +74,7 @@ class CartServiceTest {
 
 		// when & then
 		assertAll(
-			() -> assertThatThrownBy(() -> cartService.save(memberId, cartDto)).isInstanceOf(NotFoundException.class),
+			() -> assertThatThrownBy(() -> cartService.createCart(memberId, cartDto)).isInstanceOf(NotFoundException.class),
 			() -> verify(itemOptionRepository).existsByItem_IdAndIdAndStockQuantityIsGreaterThanEqual(itemId,
 				itemOptionId, orderCount)
 		);
@@ -90,7 +90,7 @@ class CartServiceTest {
 
 		// when & then
 		assertAll(
-			() -> assertThatThrownBy(() -> cartService.save(memberId, cartDto)).isInstanceOf(NotFoundException.class),
+			() -> assertThatThrownBy(() -> cartService.createCart(memberId, cartDto)).isInstanceOf(NotFoundException.class),
 			() -> verify(itemOptionRepository).existsByItem_IdAndIdAndStockQuantityIsGreaterThanEqual(itemId,
 				itemOptionId, orderCount)
 		);
@@ -106,7 +106,7 @@ class CartServiceTest {
 
 		// when & then
 		assertAll(
-			() -> assertThatThrownBy(() -> cartService.save(memberId, cartDto)).isInstanceOf(NotFoundException.class),
+			() -> assertThatThrownBy(() -> cartService.createCart(memberId, cartDto)).isInstanceOf(NotFoundException.class),
 			() -> verify(itemOptionRepository).existsByItem_IdAndIdAndStockQuantityIsGreaterThanEqual(itemId,
 				itemOptionId, orderCount)
 		);
@@ -138,7 +138,7 @@ class CartServiceTest {
 			.willReturn(List.of(itemOption1, itemOption2));
 
 		// when
-		final List<CartResponse> actual = cartService.findAll(memberId);
+		final List<CartResponse> actual = cartService.findCartList(memberId);
 
 		// then
 		assertAll(
@@ -154,7 +154,7 @@ class CartServiceTest {
 		willDoNothing().given(cartRepository).delete(memberId, cartDto);
 
 		// when
-		cartService.delete(memberId, cartDto);
+		cartService.deleteCart(memberId, cartDto);
 
 		// then
 		then(cartRepository).should().delete(memberId, cartDto);
