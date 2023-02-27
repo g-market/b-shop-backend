@@ -33,6 +33,9 @@ import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
 import com.gabia.bshop.exception.BadRequestException;
+import com.gabia.bshop.fixture.CategoryFixture;
+import com.gabia.bshop.fixture.ItemFixture;
+import com.gabia.bshop.fixture.MemberFixture;
 import com.gabia.bshop.mapper.OrderMapper;
 import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemOptionRepository;
@@ -71,39 +74,10 @@ class OrderServiceTest {
 	@Test
 	void createOrder() {
 		//given
-		Member member = Member.builder()
-			.id(1L)
-			.email("test@test.com")
-			.grade(MemberGrade.BRONZE)
-			.name("testName")
-			.phoneNumber("01000001111")
-			.hiworksId("hiworks")
-			.role(MemberRole.NORMAL)
-			.build();
-
-		Category category = Category.builder().id(1L).name("name").build();
-
-		Item item1 =
-			Item.builder()
-				.id(1L)
-				.category(category)
-				.name("item")
-				.itemStatus(ItemStatus.PUBLIC)
-				.basePrice(10000)
-				.description("description")
-				.openAt(LocalDateTime.now())
-				.build();
-
-		Item item2 =
-			Item.builder()
-				.id(2L)
-				.category(category)
-				.name("item")
-				.itemStatus(ItemStatus.PUBLIC)
-				.basePrice(10000)
-				.description("description")
-				.openAt(LocalDateTime.now())
-				.build();
+		Member member = MemberFixture.JENNA.getInstance(1L);
+		Category category = CategoryFixture.CATEGORY_1.getInstance(1L);
+		Item item1 = ItemFixture.ITEM_1.getInstance(1L, category);
+		Item item2 = ItemFixture.ITEM_2.getInstance(2L, category);
 
 		ItemOption itemOption1 = ItemOption.builder()
 			.id(1L)
