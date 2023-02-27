@@ -27,7 +27,7 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void updateMember(final Long memberId, MemberUpdateRequest memberUpdateRequest) {
+	public void updateLoggedInMember(final Long memberId, MemberUpdateRequest memberUpdateRequest) {
 		final Member member = findMember(memberId);
 		member.updatePhoneNumber(memberUpdateRequest.phoneNumber());
 	}
