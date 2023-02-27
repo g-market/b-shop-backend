@@ -53,6 +53,7 @@ visualization:
 build:
   rules:
     - if : '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+    - if : '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == "main"'
   image: openjdk:17-alpine
   stage: build
   needs: [ "test" ]
@@ -66,7 +67,7 @@ build:
 
 package:
   rules:
-    - if : '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+    - if : '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == "main"'
   stage: package
   needs: ["build"]
   image: docker:latest
@@ -84,7 +85,7 @@ package:
 
 deploy:
   rules:
-    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main"'
+    - if : '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == "main"'
   stage: deploy
   needs: ["package"]
   tags:
