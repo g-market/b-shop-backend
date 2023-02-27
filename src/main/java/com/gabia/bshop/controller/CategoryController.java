@@ -26,27 +26,27 @@ public class CategoryController {
 
 	@GetMapping("/categories/{categoryId}")
 	public ResponseEntity<CategoryDto> findCategory(@PathVariable final Long categoryId) {
-		return ResponseEntity.ok().body(categoryService.findCategory(categoryId));
+		return ResponseEntity.ok(categoryService.findCategory(categoryId));
 	}
 
 	@GetMapping("/categories")
 	public ResponseEntity<Page<CategoryDto>> findCategoryList(final Pageable pageable) {
-		return ResponseEntity.ok().body(categoryService.findCategoryList(pageable));
+		return ResponseEntity.ok(categoryService.findCategoryList(pageable));
 	}
 
 	@PostMapping("/categories")
 	public ResponseEntity<CategoryDto> createCategory(@RequestBody final CategoryRequest categoryRequest) {
-		return ResponseEntity.ok().body(categoryService.createCategory(categoryRequest));
+		return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(categoryRequest));
 	}
 
 	@PatchMapping("/categories")
 	public ResponseEntity<CategoryDto> updateCategory(@RequestBody final CategoryDto categoryDto) {
-		return ResponseEntity.ok().body(categoryService.updateCategory(categoryDto));
+		return ResponseEntity.ok(categoryService.updateCategory(categoryDto));
 	}
 
 	@DeleteMapping("/categories/{categoryId}")
 	public ResponseEntity<Void> deleteCategory(@PathVariable final Long categoryId) {
 		categoryService.deleteCategory(categoryId);
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 }

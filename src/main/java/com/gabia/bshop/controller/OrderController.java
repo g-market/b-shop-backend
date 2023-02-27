@@ -38,35 +38,37 @@ public class OrderController {
 
 	@Login
 	@GetMapping("/orders")
-	public ResponseEntity<OrderInfoPageResponse> findOrders(@CurrentMember final MemberPayload memberPayload,
+	public ResponseEntity<OrderInfoPageResponse> findOrderInfoList(@CurrentMember final MemberPayload memberPayload,
 		final Pageable pageable) {
 		validatePageElementSize(pageable);
-		return ResponseEntity.ok(orderService.findOrdersPagination(memberPayload.id(), pageable));
+		return ResponseEntity.ok(orderService.findOrderInfoList(memberPayload.id(), pageable));
 	}
 
 	@Login
 	@GetMapping("/orders/{orderId}")
-	public ResponseEntity<OrderInfoSingleResponse> singleOrderInfo(@CurrentMember final MemberPayload memberPayload,
+	public ResponseEntity<OrderInfoSingleResponse> findOrderInfo(@CurrentMember final MemberPayload memberPayload,
 		@PathVariable("orderId") final Long orderId) {
-		final OrderInfoSingleResponse singleOrderInfo = orderService.findSingleOrderInfo(memberPayload, orderId);
+		final OrderInfoSingleResponse singleOrderInfo = orderService.findOrderInfo(memberPayload, orderId);
 		return ResponseEntity.ok(singleOrderInfo);
 	}
 
 	@Login(admin = true)
 	@GetMapping("/admin/orders")
-	public ResponseEntity<OrderInfoPageResponse> adminOrderInfos(final OrderInfoSearchRequest orderInfoSearchRequest,
+	public ResponseEntity<OrderInfoPageResponse> findAllOrderInfoList(
+		final OrderInfoSearchRequest orderInfoSearchRequest,
 		final Pageable pageable) {
-		final OrderInfoPageResponse adminOrdersPagination = orderService.findAdminOrdersPagination(
+		final OrderInfoPageResponse adminOrdersPagination = orderService.findAllOrderInfoList(
 			orderInfoSearchRequest, pageable);
 		return ResponseEntity.ok(adminOrdersPagination);
 	}
 
 	@Login
 	@PostMapping("/orders")
-	public ResponseEntity<OrderCreateResponseDto> createOrder(
+	public ResponseEntity<OrderCreateResponseDto> purchaseOrder(
 		@CurrentMember final MemberPayload memberPayload,
 		@RequestBody @Valid final OrderCreateRequestDto orderCreateRequestDto) {
-		return ResponseEntity.ok().body(orderService.createOrder(memberPayload.id(), orderCreateRequestDto));
+		return ResponseEntity.status(HttpStatus.CREATED)
+			.body(orderService.purchaseOrder(memberPayload.id(), orderCreateRequestDto));
 	}
 
 	@Login
@@ -74,14 +76,14 @@ public class OrderController {
 	public ResponseEntity<Void> cancelOrder(@CurrentMember final MemberPayload memberPayload,
 		@PathVariable final Long orderId) {
 		orderService.cancelOrder(memberPayload.id(), orderId);
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 
 	@Login(admin = true)
 	@PatchMapping("/orders/{orderId}")
 	public ResponseEntity<OrderUpdateStatusResponse> updateOrderStatus(
 		@RequestBody @Valid final OrderUpdateStatusRequest orderUpdateStatusRequest) {
-		return ResponseEntity.ok().body(orderService.updateOrderStatus(orderUpdateStatusRequest));
+		return ResponseEntity.ok(orderService.updateOrderStatus(orderUpdateStatusRequest));
 	}
 
 	private void validatePageElementSize(final Pageable pageable) {

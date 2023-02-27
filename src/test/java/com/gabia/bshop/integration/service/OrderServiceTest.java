@@ -177,7 +177,7 @@ class OrderServiceTest extends IntegrationTest {
 
 		PageRequest pageable = PageRequest.of(0, 10);
 		//when
-		OrderInfoPageResponse orderInfo = orderService.findOrdersPagination(member1.getId(),
+		OrderInfoPageResponse orderInfo = orderService.findOrderInfoList(member1.getId(),
 			pageable);
 		//then
 		Assertions.assertThat(orderInfo.resultCount()).isEqualTo(2);
@@ -266,7 +266,7 @@ class OrderServiceTest extends IntegrationTest {
 		entityManager.clear();
 
 		//when
-		OrderInfoPageResponse orderInfo = orderService.findOrdersPagination(member1.getId(),
+		OrderInfoPageResponse orderInfo = orderService.findOrderInfoList(member1.getId(),
 			pageable);
 
 		//then
@@ -368,7 +368,7 @@ class OrderServiceTest extends IntegrationTest {
 			.build();
 
 		//when
-		OrderInfoSingleResponse singleOrderInfo = orderService.findSingleOrderInfo(memberPayload, order1.getId());
+		OrderInfoSingleResponse singleOrderInfo = orderService.findOrderInfo(memberPayload, order1.getId());
 
 		//then
 		Assertions.assertThat(singleOrderInfo.orderId()).isEqualTo(order1.getId());
@@ -509,7 +509,7 @@ class OrderServiceTest extends IntegrationTest {
 		PageRequest pageable = PageRequest.of(0, 10);
 		OrderInfoSearchRequest orderInfoSearchRequest = new OrderInfoSearchRequest(now.minusDays(1), now.plusDays(1));
 		//when
-		OrderInfoPageResponse orderInfo = orderService.findAdminOrdersPagination(orderInfoSearchRequest, pageable);
+		OrderInfoPageResponse orderInfo = orderService.findAllOrderInfoList(orderInfoSearchRequest, pageable);
 		//then
 		Assertions.assertThat(orderInfo.resultCount()).isEqualTo(2);
 		Assertions.assertThat(orderInfo.orderInfoList().get(0).orderId()).isEqualTo(order1.getId());

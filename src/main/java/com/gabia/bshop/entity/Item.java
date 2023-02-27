@@ -176,10 +176,6 @@ public class Item extends BaseEntity {
 		}
 	}
 
-	public void updateImage(List<ItemImage> itemImageList) {
-		this.itemImageList = itemImageList;
-	}
-
 	public void addItemOption(ItemOption itemOption) {
 		this.itemOptionList.add(itemOption);
 	}

@@ -30,7 +30,6 @@ import com.gabia.bshop.mapper.OrderInfoMapper;
 import com.gabia.bshop.mapper.OrderMapper;
 import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemOptionRepository;
-import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
 import com.gabia.bshop.security.MemberPayload;
@@ -45,11 +44,10 @@ public class OrderService {
 	private final OrderRepository orderRepository;
 	private final OrderItemRepository orderItemRepository;
 	private final ItemImageRepository itemImageRepository;
-	private final MemberRepository memberRepository;
 	private final ItemOptionRepository itemOptionRepository;
 
 	@Transactional(readOnly = true)
-	public OrderInfoPageResponse findOrdersPagination(final Long memberId, final Pageable pageable) {
+	public OrderInfoPageResponse findOrderInfoList(final Long memberId, final Pageable pageable) {
 		final List<Order> orderList = orderRepository.findByMemberIdPagination(memberId, pageable);
 		final List<OrderItem> orderItemList = findOrderItemListByOrderList(orderList);
 		final List<ItemImage> itemImagesWithItem = itemImageRepository.findWithItemByItemIds(
@@ -61,7 +59,7 @@ public class OrderService {
 	}
 
 	@Transactional(readOnly = true)
-	public OrderInfoSingleResponse findSingleOrderInfo(final MemberPayload memberPayload, final Long orderId) {
+	public OrderInfoSingleResponse findOrderInfo(final MemberPayload memberPayload, final Long orderId) {
 		//권한 확인
 		if (memberPayload.isAdmin()) {
 			findOrderById(orderId);
@@ -77,7 +75,7 @@ public class OrderService {
 	}
 
 	@Transactional(readOnly = true)
-	public OrderInfoPageResponse findAdminOrdersPagination(final OrderInfoSearchRequest orderInfoSearchRequest,
+	public OrderInfoPageResponse findAllOrderInfoList(final OrderInfoSearchRequest orderInfoSearchRequest,
 		final Pageable pageable) {
 		final List<Order> orderList = orderRepository.findAllByPeriodPagination(orderInfoSearchRequest.startAt(),
 			orderInfoSearchRequest.endAt(), pageable);
@@ -90,7 +88,8 @@ public class OrderService {
 			itemImagesWithItem);
 	}
 
-	public OrderCreateResponseDto createOrder(final Long memberId, final OrderCreateRequestDto orderCreateRequestDto) {
+	public OrderCreateResponseDto purchaseOrder(final Long memberId,
+		final OrderCreateRequestDto orderCreateRequestDto) {
 		final Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(memberId, orderCreateRequestDto);
 
 		//DB에서 OptionItem 값 한번에 조회

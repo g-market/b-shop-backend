@@ -159,7 +159,7 @@ class OrderServiceTest {
 			List.of(itemOption1, itemOption2));
 
 		//when
-		OrderCreateResponseDto returnDto = orderService.createOrder(member.getId(), orderCreateRequestDto);
+		OrderCreateResponseDto returnDto = orderService.purchaseOrder(member.getId(), orderCreateRequestDto);
 
 		//then
 		assertAll(
@@ -264,7 +264,7 @@ class OrderServiceTest {
 			List.of(itemOption1, itemOption2));
 
 		//when & then
-		Assertions.assertThatThrownBy(() -> orderService.createOrder(member.getId(), orderCreateRequestDto))
+		Assertions.assertThatThrownBy(() -> orderService.purchaseOrder(member.getId(), orderCreateRequestDto))
 			.isInstanceOf(BadRequestException.class);
 	}
 
@@ -380,7 +380,7 @@ class OrderServiceTest {
 			EntityNotFoundException.class);
 
 		//when & then
-		Assertions.assertThatThrownBy(() -> orderService.findSingleOrderInfo(memberPayload, order.getId()))
+		Assertions.assertThatThrownBy(() -> orderService.findOrderInfo(memberPayload, order.getId()))
 			.isInstanceOf(EntityNotFoundException.class);
 	}
 
@@ -445,7 +445,7 @@ class OrderServiceTest {
 			.build();
 
 		//when
-		OrderInfoSingleResponse returnDto = orderService.findSingleOrderInfo(memberPayload, order.getId());
+		OrderInfoSingleResponse returnDto = orderService.findOrderInfo(memberPayload, order.getId());
 
 		//then
 		assertEquals(order.getId(), returnDto.orderId(), "사용자는 본인의 주문일 경우 주문 단건 조회에 성공한다.");
@@ -510,7 +510,7 @@ class OrderServiceTest {
 			.build();
 
 		//when
-		OrderInfoSingleResponse returnDto = orderService.findSingleOrderInfo(memberPayload, order.getId());
+		OrderInfoSingleResponse returnDto = orderService.findOrderInfo(memberPayload, order.getId());
 
 		//then
 		assertEquals(order.getId(), returnDto.orderId(), "관리자는 자신의 주문이 아니여도 단건 주문 조회에 성공한다.");
