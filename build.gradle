@@ -148,7 +148,6 @@ jacocoTestCoverageVerification {
     }
 }
 
-
 // ============================ check style =======================
 tasks.withType(Checkstyle) {
     reports {
@@ -160,4 +159,8 @@ tasks.withType(Checkstyle) {
 checkstyle {
     configFile = file("${rootDir}/checkstyle/naver-checkstyle-rules.xml")
     configProperties = ["suppressionFile": "${rootDir}/checkstyle/naver-checkstyle-suppressions.xml"]
+}
+
+jar {
+    enabled = false
 }
