@@ -1,5 +1,6 @@
 package com.gabia.bshop.controller;
 
+import java.net.URI;
 import java.util.List;
 
 import org.springframework.http.ResponseEntity;
@@ -43,7 +44,7 @@ public class CartController {
 		@RequestBody @Valid CartCreateRequest cartCreateRequest) {
 		final CartDto cartDto = CartReqeuestMapper.INSTANCE.toCartDto(cartCreateRequest);
 		cartService.createCart(memberPayload.id(), cartDto);
-		return ResponseEntity.noContent().build();
+		return ResponseEntity.created(URI.create("/carts")).build();
 	}
 
 	@DeleteMapping
