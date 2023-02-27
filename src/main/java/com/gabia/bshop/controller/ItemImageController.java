@@ -6,10 +6,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gabia.bshop.dto.ItemImageDto;
@@ -23,34 +25,35 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/items/{itemId}")
 public class ItemImageController {
 	private final ItemImageService itemImageService;
 
-	@GetMapping("/items/{itemId}/images/{imageId}")
+	@GetMapping("/images/{imageId}")
 	public ResponseEntity<ItemImageDto> findItemImage(
 		@PathVariable final Long itemId,
 		@PathVariable final Long imageId) {
 		return ResponseEntity.ok().body(itemImageService.findItemImage(itemId, imageId));
 	}
 
-	@GetMapping("/items/{itemId}/images")
+	@GetMapping("/images")
 	public ResponseEntity<List<ItemImageDto>> findItemImageList(@PathVariable final Long itemId) {
 		return ResponseEntity.ok().body(itemImageService.findItemImageList(itemId));
 	}
 
 	@Login(admin = true)
-	@PostMapping("/items/{itemId}/images")
-	public ResponseEntity<List<ItemImageDto>> creatItemImages(
+	@PostMapping("/images")
+	public ResponseEntity<List<ItemImageDto>> createItemImageList(
 		@PathVariable final Long itemId,
 		@RequestBody @Valid final ItemImageCreateRequest itemImageCreateRequest) {
-		return ResponseEntity.ok().body(itemImageService.createItemImage(itemId, itemImageCreateRequest));
+		return ResponseEntity.status(HttpStatus.CREATED)
+			.body(itemImageService.createItemImage(itemId, itemImageCreateRequest));
 	}
 
 	@Login(admin = true)
-	@PatchMapping("/items/{itemId}/images")
+	@PatchMapping("/images")
 	public ResponseEntity<ItemImageDto> updateItemImage(
 		@PathVariable final Long itemId,
 		@RequestBody @Valid final ItemImageDto itemImageDto) {
@@ -58,7 +61,7 @@ public class ItemImageController {
 	}
 
 	@Login(admin = true)
-	@PatchMapping("/items/{itemId}/thumbnail")
+	@PatchMapping("/thumbnail")
 	public ResponseEntity<ItemResponse> updateItemThumbnail(
 		@PathVariable final Long itemId,
 		@RequestBody @Valid final ItemThumbnailChangeRequest itemThumbnailChangeRequest) {
@@ -66,11 +69,11 @@ public class ItemImageController {
 	}
 
 	@Login(admin = true)
-	@DeleteMapping("/items/{itemId}/images/{imageId}")
+	@DeleteMapping("/images/{imageId}")
 	public ResponseEntity<Void> deleteItemImage(
 		@PathVariable final Long itemId,
 		@PathVariable final Long imageId) {
 		itemImageService.deleteItemImage(itemId, imageId);
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 }
