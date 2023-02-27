@@ -74,7 +74,8 @@ class CartServiceTest {
 
 		// when & then
 		assertAll(
-			() -> assertThatThrownBy(() -> cartService.createCart(memberId, cartDto)).isInstanceOf(NotFoundException.class),
+			() -> assertThatThrownBy(() -> cartService.createCart(memberId, cartDto)).isInstanceOf(
+				NotFoundException.class),
 			() -> verify(itemOptionRepository).existsByItem_IdAndIdAndStockQuantityIsGreaterThanEqual(itemId,
 				itemOptionId, orderCount)
 		);
@@ -90,7 +91,8 @@ class CartServiceTest {
 
 		// when & then
 		assertAll(
-			() -> assertThatThrownBy(() -> cartService.createCart(memberId, cartDto)).isInstanceOf(NotFoundException.class),
+			() -> assertThatThrownBy(() -> cartService.createCart(memberId, cartDto)).isInstanceOf(
+				NotFoundException.class),
 			() -> verify(itemOptionRepository).existsByItem_IdAndIdAndStockQuantityIsGreaterThanEqual(itemId,
 				itemOptionId, orderCount)
 		);
@@ -106,7 +108,8 @@ class CartServiceTest {
 
 		// when & then
 		assertAll(
-			() -> assertThatThrownBy(() -> cartService.createCart(memberId, cartDto)).isInstanceOf(NotFoundException.class),
+			() -> assertThatThrownBy(() -> cartService.createCart(memberId, cartDto)).isInstanceOf(
+				NotFoundException.class),
 			() -> verify(itemOptionRepository).existsByItem_IdAndIdAndStockQuantityIsGreaterThanEqual(itemId,
 				itemOptionId, orderCount)
 		);
