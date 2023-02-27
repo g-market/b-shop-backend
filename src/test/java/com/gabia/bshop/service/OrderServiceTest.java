@@ -376,7 +376,8 @@ class OrderServiceTest {
 			.role(member.getRole())
 			.build();
 
-		when(orderRepository.findByIdAndMemberId(order.getId(), member.getId())).thenThrow(EntityNotFoundException.class);
+		when(orderRepository.findByIdAndMemberId(order.getId(), member.getId())).thenThrow(
+			EntityNotFoundException.class);
 
 		//when & then
 		Assertions.assertThatThrownBy(() -> orderService.findSingleOrderInfo(memberPayload, order.getId()))

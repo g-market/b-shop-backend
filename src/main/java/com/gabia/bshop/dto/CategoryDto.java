@@ -4,6 +4,7 @@ import lombok.Builder;
 
 @Builder
 public record CategoryDto(
-	Long id
+	Long id,
+	String name
 ) {
 }

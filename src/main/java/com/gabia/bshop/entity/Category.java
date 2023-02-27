@@ -2,6 +2,10 @@ package com.gabia.bshop.entity;
 
 import java.util.Objects;
 
+import org.hibernate.envers.Audited;
+
+import com.gabia.bshop.dto.CategoryDto;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,6 +18,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+@Audited
 @ToString(exclude = {})
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -32,6 +37,16 @@ public class Category extends BaseEntity {
 	private Category(final Long id, final String name) {
 		this.id = id;
 		this.name = name;
+	}
+
+	public void update(final CategoryDto categoryDto) {
+		updateName(categoryDto.name());
+	}
+
+	private void updateName(final String name) {
+		if (name != null) {
+			this.name = name;
+		}
 	}
 
 	@Override
