@@ -25,8 +25,16 @@ public class CartService {
 	private final CartRepository cartRepository;
 	private final ItemOptionRepository itemOptionRepository;
 
+	public List<CartResponse> findCartList(final Long memberId) {
+		final List<CartDto> cartDtoList = cartRepository.findAllByMemberId(memberId);
+		final List<ItemOption> itemOptionList = itemOptionRepository.findWithItemAndCategoryAndImageByItemIdListAndIdList(
+			cartDtoList);
+
+		return CartResponseMapper.INSTANCE.from(itemOptionList, cartDtoList);
+	}
+
 	@Transactional
-	public CartDto save(final Long memberId, final CartDto cartDto) {
+	public CartDto createCart(final Long memberId, final CartDto cartDto) {
 		checkItemAndItemOption(cartDto);
 		return cartRepository.save(memberId, cartDto);
 	}
@@ -38,16 +46,8 @@ public class CartService {
 		}
 	}
 
-	public List<CartResponse> findAll(final Long memberId) {
-		final List<CartDto> cartDtoList = cartRepository.findAllByMemberId(memberId);
-		final List<ItemOption> itemOptionList = itemOptionRepository.findWithItemAndCategoryAndImageByItemIdListAndIdList(
-			cartDtoList);
-
-		return CartResponseMapper.INSTANCE.from(itemOptionList, cartDtoList);
-	}
-
 	@Transactional
-	public void delete(final Long memberId, final CartDto cartDto) {
+	public void deleteCart(final Long memberId, final CartDto cartDto) {
 		cartRepository.delete(memberId, cartDto);
 	}
 }
