@@ -89,23 +89,17 @@ public class OrderService {
 			itemImagesWithItem);
 	}
 
-	public Order validateCreateOrder(final Long memberId, final OrderCreateRequestDto orderCreateRequestDto) {
+	public OrderCreateResponseDto purchase(final Long memberId, final OrderCreateRequestDto orderCreateRequestDto) {
 		final Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(memberId, orderCreateRequestDto);
 
-		final List<ItemOption> validItemOptionList = itemOptionRepository.findByItemIdListAndIdList(
-			orderCreateRequestDto.orderItemDtoList());
-
-		isEqualListSize(orderCreateRequestDto, validItemOptionList);
-
-		return order;
-	}
-
-	public OrderCreateResponseDto lockCreateOrder(List<OrderItemDto> orderItemDtoList, Order order) {
-		final List<OrderItem> orderItemList = new ArrayList<>();
+		List<OrderItemDto> orderItemDtoList = orderCreateRequestDto.orderItemDtoList();
 		final List<ItemOption> itemOptionList = itemOptionRepository.findByItemIdListAndIdListWithLock(
 			orderItemDtoList);
 
-		for (int i = 0; i < orderItemDtoList.size(); i++) {
+		isEqualListSize(orderItemDtoList, itemOptionList);
+
+		final List<OrderItem> orderItemList = new ArrayList<>();
+		for (int i = 0; i < itemOptionList.size(); i++) {
 			ItemOption itemOption = itemOptionList.get(i);
 			int orderCount = orderItemDtoList.get(i).orderCount();
 
@@ -177,9 +171,9 @@ public class OrderService {
 		}
 	}
 
-	private boolean isEqualListSize(final OrderCreateRequestDto orderCreateRequestDto,
+	private boolean isEqualListSize(final List<OrderItemDto> orderItemDtoList,
 		final List<ItemOption> validItemOptionList) {
-		if (orderCreateRequestDto.orderItemDtoList().size() != validItemOptionList.size()) {
+		if (orderItemDtoList.size() != validItemOptionList.size()) {
 			throw new BadRequestException(INVALID_ITEM_OPTION_NOT_FOUND_EXCEPTION);
 		}
 		return true;

@@ -155,14 +155,11 @@ class OrderServiceTest {
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 
-		when(itemOptionRepository.findByItemIdListAndIdList(orderItemDtoList)).thenReturn(
-			List.of(itemOption1, itemOption2));
 		when(itemOptionRepository.findByItemIdListAndIdListWithLock(orderItemDtoList)).thenReturn(
 			List.of(itemOption1, itemOption2));
 
 		//when
-		Order returnOrder = orderService.validateCreateOrder(member.getId(), orderCreateRequestDto);
-		OrderCreateResponseDto returnDto = orderService.lockCreateOrder(orderItemDtoList, returnOrder);
+		OrderCreateResponseDto returnDto = orderService.purchase(member.getId(), orderCreateRequestDto);
 
 		//then
 		assertAll(
@@ -263,10 +260,10 @@ class OrderServiceTest {
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 
-		when(itemOptionRepository.findByItemIdListAndIdList(orderItemDtoList)).thenReturn(List.of(itemOption1));
+		when(itemOptionRepository.findByItemIdListAndIdListWithLock(orderItemDtoList)).thenReturn(List.of(itemOption1));
 
 		//when & then
-		Assertions.assertThatThrownBy(() -> orderService.validateCreateOrder(member.getId(), orderCreateRequestDto))
+		Assertions.assertThatThrownBy(() -> orderService.purchase(member.getId(), orderCreateRequestDto))
 			.isInstanceOf(BadRequestException.class);
 	}
 

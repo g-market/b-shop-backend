@@ -24,7 +24,6 @@ import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.security.CurrentMember;
 import com.gabia.bshop.security.Login;
 import com.gabia.bshop.security.MemberPayload;
-import com.gabia.bshop.service.OrderLockFacade;
 import com.gabia.bshop.service.OrderService;
 
 import jakarta.validation.Valid;
@@ -36,8 +35,6 @@ public class OrderController {
 
 	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
 	private final OrderService orderService;
-
-	private final OrderLockFacade orderLockFacade;
 
 	@Login
 	@GetMapping("/orders")
@@ -69,7 +66,7 @@ public class OrderController {
 	public ResponseEntity<OrderCreateResponseDto> purchaseOrder(
 		@CurrentMember final MemberPayload memberPayload,
 		@RequestBody @Valid final OrderCreateRequestDto orderCreateRequestDto) {
-		return ResponseEntity.ok().body(orderLockFacade.purchaseOrder(memberPayload.id(), orderCreateRequestDto));
+		return ResponseEntity.ok().body(orderService.purchase(memberPayload.id(), orderCreateRequestDto));
 	}
 
 	@Login

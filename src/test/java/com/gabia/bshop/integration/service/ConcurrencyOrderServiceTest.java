@@ -1,15 +1,20 @@
 package com.gabia.bshop.integration.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 
 import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.dto.request.ItemOptionRequest;
@@ -26,7 +31,6 @@ import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
 import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.integration.IntegrationTest;
-import com.gabia.bshop.mapper.OrderMapper;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemOptionRepository;
@@ -35,12 +39,14 @@ import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
 import com.gabia.bshop.service.ItemOptionService;
-import com.gabia.bshop.service.OrderLockFacade;
 import com.gabia.bshop.service.OrderService;
 
 import jakarta.persistence.EntityManager;
 
-public class OrderLockFacadeTest extends IntegrationTest {
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+public class ConcurrencyOrderServiceTest extends IntegrationTest {
+
+	static int idx = 0;
 
 	@Autowired
 	private MemberRepository memberRepository;
@@ -52,10 +58,10 @@ public class OrderLockFacadeTest extends IntegrationTest {
 	private ItemRepository itemRepository;
 
 	@Autowired
-	private OrderRepository orderRepository;
+	private ItemOptionRepository itemOptionRepository;
 
 	@Autowired
-	private ItemOptionRepository itemOptionRepository;
+	private OrderRepository orderRepository;
 
 	@Autowired
 	private OrderItemRepository orderItemRepository;
@@ -70,14 +76,10 @@ public class OrderLockFacadeTest extends IntegrationTest {
 	private EntityManager entityManager;
 
 	@Autowired
-	private OrderLockFacade orderLockFacade;
-
-	@Autowired
 	private ItemOptionService itemOptionService;
 
-	@DisplayName("동시에_100명이_주문을_한다.")
-	@Test
-	void concurrencyOrder() throws InterruptedException {
+	@BeforeEach
+	void setUp() {
 		LocalDateTime now = LocalDateTime.now();
 		Member member1 = Member.builder()
 			.name("1_test_name")
@@ -121,7 +123,7 @@ public class OrderLockFacadeTest extends IntegrationTest {
 			.build();
 
 		Category category1 = Category.builder()
-			.name("카테고리1")
+			.name("카테고리" + idx++)
 			.build();
 
 		Item item1 = Item.builder()
@@ -201,112 +203,61 @@ public class OrderLockFacadeTest extends IntegrationTest {
 			.item(item1)
 			.description("temp_itemOption1_description")
 			.optionPrice(0)
-			.stockQuantity(300)
+			.stockQuantity(100)
 			.build();
 		ItemOption itemOption2 = ItemOption.builder()
 			.item(item2)
 			.description("temp_itemOption2_description")
 			.optionPrice(1000)
-			.stockQuantity(300)
+			.stockQuantity(100)
 			.build();
 		ItemOption itemOption3 = ItemOption.builder()
 			.item(item3)
 			.description("temp_itemOption3_description")
 			.optionPrice(1000)
-			.stockQuantity(300)
+			.stockQuantity(100)
 			.build();
 		ItemOption itemOption4 = ItemOption.builder()
 			.item(item4)
 			.description("temp_itemOption4_description")
 			.optionPrice(1000)
-			.stockQuantity(300)
+			.stockQuantity(100)
 			.build();
 		ItemOption itemOption5 = ItemOption.builder()
 			.item(item5)
 			.description("temp_itemOption5_description")
 			.optionPrice(1000)
-			.stockQuantity(300)
+			.stockQuantity(100)
 			.build();
 		ItemOption itemOption6 = ItemOption.builder()
 			.item(item6)
 			.description("temp_itemOption6_description")
 			.optionPrice(1000)
-			.stockQuantity(300)
+			.stockQuantity(100)
 			.build();
 		ItemOption itemOption7 = ItemOption.builder()
 			.item(item7)
 			.description("temp_itemOption7_description")
 			.optionPrice(1000)
-			.stockQuantity(300)
+			.stockQuantity(100)
 			.build();
 		ItemOption itemOption8 = ItemOption.builder()
 			.item(item8)
 			.description("temp_itemOption8_description")
 			.optionPrice(1000)
-			.stockQuantity(300)
+			.stockQuantity(100)
 			.build();
 		ItemOption itemOption9 = ItemOption.builder()
 			.item(item9)
 			.description("temp_itemOption9_description")
 			.optionPrice(1000)
-			.stockQuantity(300)
+			.stockQuantity(100)
 			.build();
 		ItemOption itemOption10 = ItemOption.builder()
 			.item(item9)
 			.description("temp_itemOption10_description")
 			.optionPrice(1000)
-			.stockQuantity(300)
-			.build();
-
-		OrderItem orderItem1 = OrderItem.builder()
-			.item(item1)
-			.option(itemOption1)
-			.orderCount(1)
-			.build();
-		OrderItem orderItem2 = OrderItem.builder()
-			.item(item2)
-			.option(itemOption2)
-			.orderCount(1)
-			.build();
-		OrderItem orderItem3 = OrderItem.builder()
-			.item(item3)
-			.option(itemOption3)
-			.orderCount(1)
-			.build();
-		OrderItem orderItem4 = OrderItem.builder()
-			.item(item4)
-			.option(itemOption4)
-			.orderCount(1)
-			.build();
-		OrderItem orderItem5 = OrderItem.builder()
-			.item(item5)
-			.option(itemOption5)
-			.orderCount(1)
-			.build();
-		OrderItem orderItem6 = OrderItem.builder()
-			.item(item6)
-			.option(itemOption6)
-			.orderCount(1)
-			.build();
-		OrderItem orderItem7 = OrderItem.builder()
-			.item(item7)
-			.option(itemOption7)
-			.orderCount(1)
-			.build();
-		OrderItem orderItem8 = OrderItem.builder()
-			.item(item8)
-			.option(itemOption8)
-			.orderCount(1)
-			.build();
-		OrderItem orderItem9 = OrderItem.builder()
-			.item(item9)
-			.option(itemOption9)
-			.orderCount(1)
-			.build();
-		OrderItem orderItem10 = OrderItem.builder()
-			.item(item9)
-			.option(itemOption10)
-			.orderCount(1)
+			.stockQuantity(100)
 			.build();
 
 		memberRepository.saveAll(List.of(member1, member2, member3, member4, member5));
@@ -315,49 +266,44 @@ public class OrderLockFacadeTest extends IntegrationTest {
 		itemOptionRepository.saveAll(
 			List.of(itemOption1, itemOption2, itemOption3, itemOption4, itemOption5, itemOption6, itemOption7,
 				itemOption8, itemOption9, itemOption10));
+	}
 
-		List<OrderItemDto> orderItemDtoList =
-			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(List.of(orderItem1, orderItem3, orderItem10));
+	@AfterEach
+	public void afterEach() {
+		orderItemRepository.deleteAll();
+		orderRepository.deleteAll();
+		itemOptionRepository.deleteAll();
+		itemRepository.deleteAll();
+		categoryRepository.deleteAll();
+		memberRepository.deleteAll();
+	}
 
-		List<OrderItemDto> orderItemDtoList2 =
-			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(List
-				.of(orderItem1, orderItem2, orderItem3, orderItem4, orderItem5, orderItem6, orderItem7, orderItem8,
-					orderItem9, orderItem10));
+	@DisplayName("동시에_100명이_주문을_한다.")
+	@Test
+	void concurrencyOrder() throws InterruptedException {
 
-		List<OrderItemDto> orderItemDtoList6 =
-			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(List.of(orderItem1));
-		// List<OrderItemDto> orderItemDtoList3 =
-		// 	OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(List.of(orderItem4_order3, orderItem5_order3));
-		//
-		// List<OrderItemDto> orderItemDtoList4 =
-		// 	OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(List.of(orderItem6_order4));
-		// List<OrderItemDto> orderItemDtoList5 =
-		// 	OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(List.of(orderItem7_order5));
+		OrderItemDto orderItemDto1 = OrderItemDto.builder()
+			.itemId(1L)
+			.itemOptionId(1L)
+			.orderCount(1)
+			.build();
+		OrderItemDto orderItemDto3 = OrderItemDto.builder()
+			.itemId(3L)
+			.itemOptionId(3L)
+			.orderCount(1)
+			.build();
+		OrderItemDto orderItemDto10 = OrderItemDto.builder()
+			.itemId(9L)
+			.itemOptionId(10L)
+			.orderCount(1)
+			.build();
+
+		List<OrderItemDto> orderItemDtoList = List.of(orderItemDto1, orderItemDto3, orderItemDto10);
 
 		OrderCreateRequestDto orderCreateRequestDto = OrderCreateRequestDto.builder()
 			.status(OrderStatus.ACCEPTED)
 			.orderItemDtoList(orderItemDtoList)
 			.build();
-		OrderCreateRequestDto orderCreateRequestDto2 = OrderCreateRequestDto.builder()
-			.status(OrderStatus.ACCEPTED)
-			.orderItemDtoList(orderItemDtoList2)
-			.build();
-		OrderCreateRequestDto orderCreateRequestDto6 = OrderCreateRequestDto.builder()
-			.status(OrderStatus.ACCEPTED)
-			.orderItemDtoList(orderItemDtoList6)
-			.build();
-		// OrderCreateRequestDto orderCreateRequestDto3 = OrderCreateRequestDto.builder()
-		// 	.status(OrderStatus.ACCEPTED)
-		// 	.orderItemDtoList(orderItemDtoList3)
-		// 	.build();
-		// OrderCreateRequestDto orderCreateRequestDto4 = OrderCreateRequestDto.builder()
-		// 	.status(OrderStatus.ACCEPTED)
-		// 	.orderItemDtoList(orderItemDtoList4)
-		// 	.build();
-		// OrderCreateRequestDto orderCreateRequestDto5 = OrderCreateRequestDto.builder()
-		// 	.status(OrderStatus.ACCEPTED)
-		// 	.orderItemDtoList(orderItemDtoList5)
-		// 	.build();
 
 		ItemOptionRequest itemOptionRequest = ItemOptionRequest.builder()
 			.description("item description")
@@ -365,19 +311,15 @@ public class OrderLockFacadeTest extends IntegrationTest {
 			.build();
 
 		int nThreahdsSize = 1000;
-		int repeatSize = 300;
+		int repeatSize = 50;
+		int countDownLatchSize = 100;
 		ExecutorService executorService = Executors.newFixedThreadPool(nThreahdsSize);
-		CountDownLatch countDownLatch = new CountDownLatch(repeatSize);
+		CountDownLatch countDownLatch = new CountDownLatch(countDownLatchSize);
 
 		for (int i = 0; i < repeatSize; i++) {
 			executorService.submit(() -> {
 				try {
-					orderLockFacade.purchaseOrder(member1.getId(), orderCreateRequestDto6);//(1)
-					orderLockFacade.purchaseOrder(member1.getId(), orderCreateRequestDto);//(1) (3) (10)
-					//orderLockFacade.purchaseOrder(member1.getId(), orderCreateRequestDto2);//(1) ~(10)
-					//orderLockFacade.purchaseOrder(member3.getId(), orderCreateRequestDto3);//(2) (3)
-					//orderLockFacade.purchaseOrder(member4.getId(), orderCreateRequestDto4);//(3)
-					//orderLockFacade.purchaseOrder(member5.getId(), orderCreateRequestDto5);//(2)
+					orderService.purchase(1L, orderCreateRequestDto);
 				} catch (ConflictException e) {
 					e.getMessage();
 					//System.out.println("주문 실패");
@@ -385,102 +327,177 @@ public class OrderLockFacadeTest extends IntegrationTest {
 					countDownLatch.countDown();
 				}
 			});
-
-			// executorService.submit(() -> {
-			// 	try {
-			// 		itemOptionService.changeItemOption(1L, 1L, itemOptionRequest);
-			// 	} catch (ConflictException e) {
-			// 		e.getMessage();
-			// 		//System.out.println("주문 실패");
-			// 	} finally {
-			// 		countDownLatch.countDown();
-			// 	}
-			// });
+			executorService.submit(() -> {
+				try {
+					orderService.purchase(2L, orderCreateRequestDto);
+				} catch (ConflictException e) {
+					e.getMessage();
+					//System.out.println("주문 실패");
+				} finally {
+					countDownLatch.countDown();
+				}
+			});
 		}
 		countDownLatch.await();
-		ItemOption actual = itemOptionRepository.findById(itemOption1.getId()).orElseThrow();
-		ItemOption actual2 = itemOptionRepository.findById(itemOption2.getId()).orElseThrow();
-		ItemOption actual3 = itemOptionRepository.findById(itemOption3.getId()).orElseThrow();
+		ItemOption itemOption1 = itemOptionRepository.findById(1L).orElseThrow();
+		ItemOption itemOption3 = itemOptionRepository.findById(3L).orElseThrow();
+		ItemOption itemOption10 = itemOptionRepository.findById(10L).orElseThrow();
 
 		List<Order> orderAll = orderRepository.findAll();
-		List<OrderItem> oi1 = orderItemRepository.findAllByOptionId(itemOption1.getId());
-		List<OrderItem> oi2 = orderItemRepository.findAllByOptionId(itemOption2.getId());
-		List<OrderItem> oi3 = orderItemRepository.findAllByOptionId(itemOption3.getId());
+		List<OrderItem> oi1 = orderItemRepository.findAllByOptionId(1L);
+		List<OrderItem> oi3 = orderItemRepository.findAllByOptionId(3L);
+		List<OrderItem> oi10 = orderItemRepository.findAllByOptionId(10L);
 
-		List<Order> oiO1 = orderRepository.findAllByMemberId(member1.getId());
-		List<Order> oiO2 = orderRepository.findAllByMemberId(member2.getId());
-		List<Order> oiO3 = orderRepository.findAllByMemberId(member3.getId());
-		List<Order> oiO4 = orderRepository.findAllByMemberId(member4.getId());
-		List<Order> oiO5 = orderRepository.findAllByMemberId(member5.getId());
+		List<Order> oiO1 = orderRepository.findAllByMemberId(1L);
+		List<Order> oiO2 = orderRepository.findAllByMemberId(2L);
 
-		System.out.println("1재고:" + actual.getStockQuantity());
-		System.out.println("2재고:" + actual2.getStockQuantity());
-		System.out.println("3재고:" + actual3.getStockQuantity());
-		System.out.println(orderAll.size());
-		System.out.println("1OI:" + oi1.size());
-		System.out.println("2OI:" + oi2.size());
-		System.out.println("3OI:" + oi3.size());
+		Assertions.assertThat(itemOption1.getStockQuantity()).isEqualTo(0);
+		Assertions.assertThat(itemOption3.getStockQuantity()).isEqualTo(0);
+		Assertions.assertThat(itemOption10.getStockQuantity()).isEqualTo(0);
+		Assertions.assertThat(oi1.size() * orderItemDto1.orderCount()).isEqualTo(100);
+		Assertions.assertThat(oi3.size() * orderItemDto3.orderCount()).isEqualTo(100);
+		Assertions.assertThat(oi10.size() * orderItemDto10.orderCount()).isEqualTo(100);
+		Assertions.assertThat(orderAll.size()).isEqualTo(100);
 
-		System.out.println("member1:" + oiO1.size());
-		System.out.println("member2:" + oiO2.size());
-		System.out.println("member3:" + oiO3.size());
-		System.out.println("member4:" + oiO4.size());
-		System.out.println("member5:" + oiO5.size());
-
-		// Assertions.assertThat(actual.getStockQuantity()).isEqualTo(0);
 	}
 
 	@DisplayName("동시에_주문을_취소한다.")
 	@Test
 	void concurrencyOrderCancel() throws InterruptedException {
 
-		int nThreahdsSize = 400;
+		List<ItemOption> itemOptionList = itemOptionRepository.findAll();
+
+		List<OrderItemDto> orderItemDtoList = new ArrayList<>();
+		for (ItemOption now : itemOptionList) {
+			OrderItemDto orderItemDto = OrderItemDto.builder()
+				.itemId(now.getItem().getId())
+				.itemOptionId(now.getId())
+				.orderCount(1)
+				.build();
+
+			orderItemDtoList.add(orderItemDto);
+		}
+
+		OrderCreateRequestDto orderCreateRequestDto = OrderCreateRequestDto.builder()
+			.status(OrderStatus.ACCEPTED)
+			.orderItemDtoList(orderItemDtoList)
+			.build();
+
+		ItemOptionRequest itemOptionRequest = ItemOptionRequest.builder()
+			.description("item description")
+			.stockQuantity(0)
+			.build();
+
+		int nThreahdsSize = 1000;
+		int repeatSize = 100;
+		int countDownLatchSize = 100;
 		List<Long> orderIds = orderRepository.findAll().stream().map(order -> order.getId()).toList();
 		int repeatCount = orderIds.size();
 		ExecutorService executorService = Executors.newFixedThreadPool(nThreahdsSize);
-		CountDownLatch countDownLatch = new CountDownLatch(repeatCount);
+		CountDownLatch countDownLatch = new CountDownLatch(countDownLatchSize);
 
+		//100개를 주문한다.
+		for (int i = 0; i < repeatSize; i++) {
+			executorService.submit(() -> {
+				try {
+					orderService.purchase(1L, orderCreateRequestDto);
+				} catch (ConflictException e) {
+					e.getMessage();
+					//System.out.println("주문 실패");
+				} finally {
+					countDownLatch.countDown();
+				}
+			});
+		}
+		countDownLatch.await();
+
+		//100개를 동시에 주문 취소한다.
+		CountDownLatch countDownLatch2 = new CountDownLatch(repeatCount);
 		for (Long orderId : orderIds) {
 			executorService.submit(() -> {
 				try {
-					//orderLockFacade.cancelOrder(1L, orderId);
 					orderService.cancelOrder(1L, orderId);
 				} finally {
 					countDownLatch.countDown();
 				}
 			});
 		}
+		countDownLatch2.await();
+
+		ItemOption itemOption1 = itemOptionList.get(0);
+
+		Assertions.assertThat(itemOption1.getStockQuantity()).isEqualTo(100);
+	}
+
+	@DisplayName("재고를_업데이트_한다.")
+	@Test
+	void concurrencyStockUpdate() throws InterruptedException {
+
+		List<ItemOption> itemOptionList = itemOptionRepository.findAll();
+
+		List<OrderItemDto> orderItemDtoList = new ArrayList<>();
+		for (ItemOption now : itemOptionList) {
+			OrderItemDto orderItemDto = OrderItemDto.builder()
+				.itemId(now.getItem().getId())
+				.itemOptionId(now.getId())
+				.orderCount(1)
+				.build();
+
+			orderItemDtoList.add(orderItemDto);
+		}
+
+		OrderCreateRequestDto orderCreateRequestDto = OrderCreateRequestDto.builder()
+			.status(OrderStatus.ACCEPTED)
+			.orderItemDtoList(orderItemDtoList)
+			.build();
+
+		int nThreahdsSize = 1000;
+		int repeatSize = 50;
+		int countDownLatchSize = 101;
+		ExecutorService executorService = Executors.newFixedThreadPool(nThreahdsSize);
+		CountDownLatch countDownLatch = new CountDownLatch(countDownLatchSize);
+
+		for (int i = 0; i < repeatSize; i++) {
+			executorService.submit(() -> {
+				try {
+					orderService.purchase(1L, orderCreateRequestDto);
+				} catch (ConflictException e) {
+					e.getMessage();
+					//System.out.println("주문 실패");
+				} finally {
+					countDownLatch.countDown();
+				}
+			});
+			executorService.submit(() -> {
+				try {
+					orderService.purchase(2L, orderCreateRequestDto);
+				} catch (ConflictException e) {
+					e.getMessage();
+					//System.out.println("주문 실패");
+				} finally {
+					countDownLatch.countDown();
+				}
+			});
+		}
+
+		//재고를 업데이트한다.
+		executorService.submit(() -> {
+			try {
+				orderService.purchase(2L, orderCreateRequestDto);
+			} catch (ConflictException e) {
+				e.getMessage();
+				//System.out.println("주문 실패");
+			} finally {
+				countDownLatch.countDown();
+			}
+		});
 
 		countDownLatch.await();
-		ItemOption actual = itemOptionRepository.findById(1L).orElseThrow();
-		ItemOption actual2 = itemOptionRepository.findById(2L).orElseThrow();
-		ItemOption actual3 = itemOptionRepository.findById(3L).orElseThrow();
 
-		List<Order> orderAll = orderRepository.findAll();
-		List<OrderItem> oi1 = orderItemRepository.findAllByOptionId(1L);
-		List<OrderItem> oi2 = orderItemRepository.findAllByOptionId(2L);
-		List<OrderItem> oi3 = orderItemRepository.findAllByOptionId(3L);
+		ItemOption itemOption1 = itemOptionList.get(0);
+		List<OrderItem> orderItemList1 = orderItemRepository.findAllByOptionId(itemOption1.getId());
 
-		List<Order> oiO1 = orderRepository.findAllByMemberId(1L);
-		List<Order> oiO2 = orderRepository.findAllByMemberId(2L);
-		List<Order> oiO3 = orderRepository.findAllByMemberId(3L);
-		List<Order> oiO4 = orderRepository.findAllByMemberId(4L);
-		List<Order> oiO5 = orderRepository.findAllByMemberId(5L);
-
-		System.out.println("1재고:" + actual.getStockQuantity());
-		System.out.println("2재고:" + actual2.getStockQuantity());
-		System.out.println("3재고:" + actual3.getStockQuantity());
-		System.out.println(orderAll.size());
-		System.out.println("1OI:" + oi1.size());
-		System.out.println("2OI:" + oi2.size());
-		System.out.println("3OI:" + oi3.size());
-
-		System.out.println("member1:" + oiO1.size());
-		System.out.println("member2:" + oiO2.size());
-		System.out.println("member3:" + oiO3.size());
-		System.out.println("member4:" + oiO4.size());
-		System.out.println("member5:" + oiO5.size());
-
-		//Assertions.assertThat(actual.getStockQuantity()).isZero();
+		Assertions.assertThat(itemOption1.getStockQuantity()).isEqualTo(100);
+		Assertions.assertThat(itemOption1.getStockQuantity()).isEqualTo(100 - orderItemList1.size());
 	}
 }
