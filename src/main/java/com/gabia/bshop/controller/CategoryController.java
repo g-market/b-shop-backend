@@ -16,6 +16,7 @@ import com.gabia.bshop.dto.CategoryDto;
 import com.gabia.bshop.dto.request.CategoryRequest;
 import com.gabia.bshop.service.CategoryService;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -35,12 +36,12 @@ public class CategoryController {
 	}
 
 	@PostMapping("/categories")
-	public ResponseEntity<CategoryDto> createCategory(@RequestBody final CategoryRequest categoryRequest) {
+	public ResponseEntity<CategoryDto> createCategory(@RequestBody @Valid final CategoryRequest categoryRequest) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(categoryRequest));
 	}
 
 	@PatchMapping("/categories")
-	public ResponseEntity<CategoryDto> updateCategory(@RequestBody final CategoryDto categoryDto) {
+	public ResponseEntity<CategoryDto> updateCategory(@RequestBody @Valid final CategoryDto categoryDto) {
 		return ResponseEntity.ok(categoryService.updateCategory(categoryDto));
 	}
 
