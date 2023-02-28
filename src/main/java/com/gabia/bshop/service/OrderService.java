@@ -90,7 +90,7 @@ public class OrderService {
 
 	public OrderCreateResponse purchaseOrder(final Long memberId,
 		final OrderCreateRequest orderCreateRequest) {
-		final Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(memberId, orderCreateRequest);
+		final Order order = OrderMapper.INSTANCE.orderCreateRequsetToEntity(memberId, orderCreateRequest);
 
 		//DB에서 OptionItem 값 한번에 조회
 		final List<ItemOption> findAllItemOptionList = itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(
@@ -120,7 +120,7 @@ public class OrderService {
 		order.createOrder(orderItemList);
 		orderRepository.save(order);
 
-		return OrderMapper.INSTANCE.ordersCreateResponseDto(order);
+		return OrderMapper.INSTANCE.orderCreateResponseToDto(order);
 	}
 
 	public void cancelOrder(final Long memberId, final Long orderId) {

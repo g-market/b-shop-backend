@@ -33,7 +33,7 @@ import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
 import com.gabia.bshop.exception.BadRequestException;
-import com.gabia.bshop.mapper.OrderMapper;
+import com.gabia.bshop.mapper.OrderItemMapper;
 import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
@@ -148,7 +148,7 @@ class OrderServiceTest {
 		List<OrderItem> orderItemList = List.of(orderItem1, orderItem2);
 
 		List<OrderItemDto> orderItemDtoList =
-			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(orderItemList);
+			OrderItemMapper.INSTANCE.orderItemListToOrderItemDtoList(orderItemList);
 
 		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder()
 			.status(OrderStatus.ACCEPTED)
@@ -253,7 +253,7 @@ class OrderServiceTest {
 		List<OrderItem> orderItemList = List.of(orderItem1, orderItem2);
 
 		List<OrderItemDto> orderItemDtoList =
-			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(orderItemList);
+			OrderItemMapper.INSTANCE.orderItemListToOrderItemDtoList(orderItemList);
 
 		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder()
 			.status(OrderStatus.ACCEPTED)

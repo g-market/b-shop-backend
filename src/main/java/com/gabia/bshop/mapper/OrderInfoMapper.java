@@ -39,7 +39,7 @@ public interface OrderInfoMapper {
 			IntStream.range(0, orderList.size()).boxed()
 				.map(i -> new OrderInfo(
 					orderList.get(i).getId(),
-					OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(
+					OrderItemMapper.INSTANCE.orderItemListToOrderItemDtoList(
 						orderItemsPerOrderId.get(orderList.get(i).getId())),
 					//TODO: 썸네일 추가 필요
 					//itemImagePerItemId.get(orderItemsPerOrderId.get(order.get(i).getId())).getItem().getThumbNail,
