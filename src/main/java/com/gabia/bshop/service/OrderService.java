@@ -50,12 +50,9 @@ public class OrderService {
 	public OrderInfoPageResponse findOrderInfoList(final Long memberId, final Pageable pageable) {
 		final List<Order> orderList = orderRepository.findByMemberIdPagination(memberId, pageable);
 		final List<OrderItem> orderItemList = findOrderItemListByOrderList(orderList);
-		final List<ItemImage> itemImagesWithItem = itemImageRepository.findWithItemByItemIds(
-			orderItemList.stream().map(oi -> oi.getItem().getId()).collect(Collectors.toList()));
 
 		return OrderInfoMapper.INSTANCE.orderInfoRelatedEntitiesToOrderInfoPageResponse(orderList,
-			orderItemList,
-			itemImagesWithItem);
+			orderItemList);
 	}
 
 	@Transactional(readOnly = true)
@@ -68,10 +65,8 @@ public class OrderService {
 		}
 
 		final List<OrderItem> orderInfoList = orderItemRepository.findWithOrdersAndItemByOrderId(orderId);
-		final List<String> thumbnailUrlList = itemImageRepository.findUrlByItemIds(orderInfoList.stream()
-			.map(oi -> oi.getItem().getId())
-			.collect(Collectors.toList()));
-		return OrderInfoMapper.INSTANCE.orderInfoSingleDTOResponse(orderInfoList, thumbnailUrlList);
+
+		return OrderInfoMapper.INSTANCE.orderInfoSingleDTOResponse(orderInfoList);
 	}
 
 	@Transactional(readOnly = true)
@@ -80,17 +75,13 @@ public class OrderService {
 		final List<Order> orderList = orderRepository.findAllByPeriodPagination(orderInfoSearchRequest.startAt(),
 			orderInfoSearchRequest.endAt(), pageable);
 		final List<OrderItem> orderItems = findOrderItemListByOrderList(orderList);
-		final List<ItemImage> itemImagesWithItem = itemImageRepository.findWithItemByItemIds(orderItems.stream()
-			.map(oi -> oi.getItem().getId())
-			.collect(Collectors.toList()));
 
-		return OrderInfoMapper.INSTANCE.orderInfoRelatedEntitiesToOrderInfoPageResponse(orderList, orderItems,
-			itemImagesWithItem);
+		return OrderInfoMapper.INSTANCE.orderInfoRelatedEntitiesToOrderInfoPageResponse(orderList, orderItems);
 	}
 
-	public OrderCreateResponse purchaseOrder(final Long memberId,
+	public OrderCreateResponse createOrder(final Long memberId,
 		final OrderCreateRequest orderCreateRequest) {
-		final Order order = OrderMapper.INSTANCE.orderCreateRequsetToEntity(memberId, orderCreateRequest);
+		final Order order = OrderMapper.INSTANCE.orderCreateRequestToEntity(memberId, orderCreateRequest);
 
 		//DB에서 OptionItem 값 한번에 조회
 		final List<ItemOption> findAllItemOptionList = itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(

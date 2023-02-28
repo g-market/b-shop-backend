@@ -22,7 +22,7 @@ public interface OrderInfoMapper {
 	OrderInfoMapper INSTANCE = Mappers.getMapper(OrderInfoMapper.class);
 
 	default OrderInfoPageResponse orderInfoRelatedEntitiesToOrderInfoPageResponse(final List<Order> orderList,
-		final List<OrderItem> orderItemList, final List<ItemImage> itemImagesWithItem) {
+		final List<OrderItem> orderItemList) {
 
 		// 주문 별 상품 종류 개수 수집
 		final Map<Long, Integer> itemCountPerOrderId = orderItemList.stream()
@@ -32,19 +32,14 @@ public interface OrderInfoMapper {
 			.collect(
 				Collectors.toMap(o -> o.getId(), o -> o.getOrderItemList(), (p1, p2) -> p2));
 
-		final Map<Long, ItemImage> itemImagePerItemId = itemImagesWithItem.stream()
-			.collect(Collectors.toMap(i -> i.getItem().getId(), i -> i));
-
 		return new OrderInfoPageResponse(orderList.size(),
 			IntStream.range(0, orderList.size()).boxed()
 				.map(i -> new OrderInfo(
 					orderList.get(i).getId(),
-					OrderItemMapper.INSTANCE.orderItemListToOrderItemDtoList(
+					OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(
 						orderItemsPerOrderId.get(orderList.get(i).getId())),
-					//TODO: 썸네일 추가 필요
-					//itemImagePerItemId.get(orderItemsPerOrderId.get(order.get(i).getId())).getItem().getThumbNail,
-					"dummy",
-					"dummy",
+					orderItemList.get(0).getItem().getThumbnail(),
+					orderItemList.get(0).getItem().getName(),
 					itemCountPerOrderId.get(orderList.get(i).getId()),
 					orderList.get(i).getStatus(),
 					orderList.get(i).getTotalPrice(),
@@ -52,8 +47,7 @@ public interface OrderInfoMapper {
 				.collect(Collectors.toList()));
 	}
 
-	default OrderInfoSingleResponse orderInfoSingleDTOResponse(final List<OrderItem> orderItemsWithOrdersAndItem,
-		final List<String> thumbnailUrls) {
+	default OrderInfoSingleResponse orderInfoSingleDTOResponse(final List<OrderItem> orderItemsWithOrdersAndItem){
 		if (orderItemsWithOrdersAndItem == null) {
 			return null;
 		}
@@ -68,7 +62,7 @@ public interface OrderInfoMapper {
 					orderItemsWithOrdersAndItem.get(i).getItem().getName(),
 					orderItemsWithOrdersAndItem.get(i).getOrderCount(),
 					orderItemsWithOrdersAndItem.get(i).getPrice(),
-					thumbnailUrls.get(i)))
+					orderItemsWithOrdersAndItem.get(i).getItem().getThumbnail()))
 				.collect(Collectors.toList()));
 	}
 }

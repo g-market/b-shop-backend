@@ -64,11 +64,11 @@ public class OrderController {
 
 	@Login
 	@PostMapping("/orders")
-	public ResponseEntity<OrderCreateResponse> purchaseOrder(
+	public ResponseEntity<OrderCreateResponse> createOrder(
 		@CurrentMember final MemberPayload memberPayload,
 		@RequestBody @Valid final OrderCreateRequest orderCreateRequest) {
 		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(orderService.purchaseOrder(memberPayload.id(), orderCreateRequest));
+			.body(orderService.createOrder(memberPayload.id(), orderCreateRequest));
 	}
 
 	@Login
