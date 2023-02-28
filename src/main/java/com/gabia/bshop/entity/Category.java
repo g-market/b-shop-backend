@@ -2,9 +2,10 @@ package com.gabia.bshop.entity;
 
 import java.util.Objects;
 
+import org.hibernate.annotations.SQLDelete;
 import org.hibernate.envers.Audited;
 
-import com.gabia.bshop.dto.CategoryDto;
+import com.gabia.bshop.dto.request.CategoryUpdateRequest;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -21,6 +22,7 @@ import lombok.ToString;
 @Audited
 @ToString(exclude = {})
 @Getter
+@SQLDelete(sql = "update category set deleted = true where id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "category", indexes = {})
 @Entity
@@ -33,14 +35,18 @@ public class Category extends BaseEntity {
 	@Column(columnDefinition = "varchar(255)", unique = true, nullable = false)
 	private String name;
 
+	@Column(nullable = false)
+	private boolean deleted;
+
 	@Builder
 	private Category(final Long id, final String name) {
 		this.id = id;
 		this.name = name;
+		this.deleted = false;
 	}
 
-	public void update(final CategoryDto categoryDto) {
-		updateName(categoryDto.name());
+	public void update(final CategoryUpdateRequest categoryUpdateRequest) {
+		updateName(categoryUpdateRequest.name());
 	}
 
 	private void updateName(final String name) {

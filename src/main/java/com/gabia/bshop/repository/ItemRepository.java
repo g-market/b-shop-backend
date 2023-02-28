@@ -1,5 +1,7 @@
 package com.gabia.bshop.repository;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -12,5 +14,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 	Page<Item> findAll(Pageable page);
 
 	Page<Item> findByCategory(Category category, Pageable page);
+
+	List<Item> findAllByCategoryId(Long categoryId);
 
 }
