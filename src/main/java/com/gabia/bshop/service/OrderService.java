@@ -17,7 +17,6 @@ import com.gabia.bshop.dto.response.OrderCreateResponse;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
 import com.gabia.bshop.dto.response.OrderUpdateStatusResponse;
-import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.Order;
 import com.gabia.bshop.entity.OrderItem;
@@ -63,7 +62,6 @@ public class OrderService {
 		} else {
 			findOrderByIdAndMemberId(orderId, memberPayload.id());
 		}
-
 		final List<OrderItem> orderInfoList = orderItemRepository.findWithOrdersAndItemByOrderId(orderId);
 
 		return OrderInfoMapper.INSTANCE.orderInfoSingleDtoResponse(orderInfoList);
@@ -116,7 +114,6 @@ public class OrderService {
 
 	public void cancelOrder(final Long memberId, final Long orderId) {
 		final Order order = findOrderByIdAndMemberId(orderId, memberId);
-
 		validateOrderStatus(order);
 		order.cancelOrder();
 	}

@@ -13,7 +13,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gabia.bshop.dto.CategoryDto;
-import com.gabia.bshop.dto.request.CategoryRequest;
+import com.gabia.bshop.dto.request.CategoryCreateRequest;
+import com.gabia.bshop.dto.request.CategoryUpdateRequest;
 import com.gabia.bshop.service.CategoryService;
 
 import jakarta.validation.Valid;
@@ -36,13 +37,15 @@ public class CategoryController {
 	}
 
 	@PostMapping("/categories")
-	public ResponseEntity<CategoryDto> createCategory(@RequestBody @Valid final CategoryRequest categoryRequest) {
-		return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(categoryRequest));
+	public ResponseEntity<CategoryDto> createCategory(
+		@RequestBody @Valid final CategoryCreateRequest categoryCreateRequest) {
+		return ResponseEntity.status(HttpStatus.CREATED).body(categoryService.createCategory(categoryCreateRequest));
 	}
 
 	@PatchMapping("/categories")
-	public ResponseEntity<CategoryDto> updateCategory(@RequestBody @Valid final CategoryDto categoryDto) {
-		return ResponseEntity.ok(categoryService.updateCategory(categoryDto));
+	public ResponseEntity<CategoryDto> updateCategory(
+		@RequestBody @Valid final CategoryUpdateRequest categoryUpdateRequest) {
+		return ResponseEntity.ok(categoryService.updateCategory(categoryUpdateRequest));
 	}
 
 	@DeleteMapping("/categories/{categoryId}")
