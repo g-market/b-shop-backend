@@ -6,10 +6,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gabia.bshop.dto.request.MemberUpdateRequest;
-import com.gabia.bshop.dto.response.LoggedInMemberResponse;
+import com.gabia.bshop.dto.response.MemberResponse;
 import com.gabia.bshop.entity.Member;
 import com.gabia.bshop.exception.NotFoundException;
-import com.gabia.bshop.mapper.LoggedInMemberResponseMapper;
+import com.gabia.bshop.mapper.MemberResponseMapper;
 import com.gabia.bshop.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -21,13 +21,13 @@ public class MemberService {
 
 	private final MemberRepository memberRepository;
 
-	public LoggedInMemberResponse findLoggedInMember(final Long loggedInId) {
+	public MemberResponse findLoggedInMember(final Long loggedInId) {
 		final Member member = findMember(loggedInId);
-		return LoggedInMemberResponseMapper.INSTANCE.from(member);
+		return MemberResponseMapper.INSTANCE.from(member);
 	}
 
 	@Transactional
-	public void updateMember(final Long memberId, MemberUpdateRequest memberUpdateRequest) {
+	public void updateLoggedInMember(final Long memberId, MemberUpdateRequest memberUpdateRequest) {
 		final Member member = findMember(memberId);
 		member.updatePhoneNumber(memberUpdateRequest.phoneNumber());
 	}

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -14,11 +15,13 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.PageRequest;
 
 import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.dto.request.OrderCreateRequestDto;
+import com.gabia.bshop.dto.request.OrderUpdateStatusRequest;
 import com.gabia.bshop.dto.response.OrderCreateResponseDto;
+import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
+import com.gabia.bshop.dto.response.OrderUpdateStatusResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemOption;
@@ -31,9 +34,11 @@ import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
 import com.gabia.bshop.exception.BadRequestException;
 import com.gabia.bshop.mapper.OrderMapper;
+import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemOptionRepository;
-import com.gabia.bshop.repository.MemberRepository;
+import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
+import com.gabia.bshop.security.MemberPayload;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -51,26 +56,16 @@ class OrderServiceTest {
 	private OrderRepository orderRepository;
 
 	@Mock
-	private MemberRepository memberRepository;
+	private OrderItemRepository orderItemRepository;
 
 	@Mock
 	private ItemOptionRepository itemOptionRepository;
 
+	@Mock
+	private ItemImageRepository imageRepository;
+
 	@InjectMocks
 	private OrderService orderService;
-
-	@DisplayName("존재하지_않는_회원ID로_주문목록_조회를_요청하면_오류가_발생한다")
-	@Test
-	void findOrderListInvalidMemberIdFail() {
-		//given
-		Long invalidMemberId = 999999999999L;
-		when(memberRepository.findById(invalidMemberId))
-			.thenThrow(EntityNotFoundException.class);
-		//when & then
-		Assertions.assertThatThrownBy(
-				() -> orderService.findOrdersPagination(invalidMemberId, PageRequest.of(0, 10)))
-			.isInstanceOf(EntityNotFoundException.class);
-	}
 
 	@DisplayName("주문을 생성한다.")
 	@Test
@@ -156,30 +151,28 @@ class OrderServiceTest {
 			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(orderItemList);
 
 		OrderCreateRequestDto orderCreateRequestDto = OrderCreateRequestDto.builder()
-			.memberId(1L)
 			.status(OrderStatus.ACCEPTED)
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 
-		when(memberRepository.findById(1L)).thenReturn(Optional.ofNullable(member));
 		when(itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(List.of(1L, 2L), List.of(1L, 2L))).thenReturn(
 			List.of(itemOption1, itemOption2));
 
 		//when
-		OrderCreateResponseDto returnDto = orderService.createOrder(orderCreateRequestDto);
+		OrderCreateResponseDto returnDto = orderService.createOrder(member.getId(), orderCreateRequestDto);
 
 		//then
 		assertAll(
 			() -> assertEquals(orderItemDtoList, returnDto.orderItemDtoList()),
 			() -> assertEquals(orderItemList.stream().mapToLong(OrderItem::getPrice).sum(),
 				returnDto.totalPrice()),
-			() -> assertEquals(orderCreateRequestDto.memberId(), returnDto.memberId()),
+			() -> assertEquals(member.getId(), returnDto.memberId()),
 			() -> assertEquals(orderCreateRequestDto.status(), returnDto.status()),
 			() -> assertEquals(9, itemOption1.getStockQuantity(), "주문을 하면 재고가 줄어들어야 한다.")
 		);
 	}
 
-	@DisplayName("유효하지 않은 아이템,옵션 ID가 들어오면 주문 생성에 실패한다.")
+	@DisplayName("유효하지_않은_아이템,옵션_ID가_들어오면_주문_생성에_실패한다.")
 	@Test
 	void createOrderFail() {
 		//given
@@ -263,24 +256,32 @@ class OrderServiceTest {
 			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(orderItemList);
 
 		OrderCreateRequestDto orderCreateRequestDto = OrderCreateRequestDto.builder()
-			.memberId(1L)
 			.status(OrderStatus.ACCEPTED)
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 
-		when(memberRepository.findById(1L)).thenReturn(Optional.ofNullable(member));
 		when(itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(List.of(1L, 1L), List.of(1L, 2L))).thenReturn(
 			List.of(itemOption1, itemOption2));
 
 		//when & then
-		Assertions.assertThatThrownBy(() -> orderService.createOrder(orderCreateRequestDto))
+		Assertions.assertThatThrownBy(() -> orderService.createOrder(member.getId(), orderCreateRequestDto))
 			.isInstanceOf(BadRequestException.class);
 	}
 
-	@DisplayName("주문을 취소한다.")
+	@DisplayName("주문을_취소한다.")
 	@Test
 	void cancelOrder() {
 		//given
+		Member member = Member.builder()
+			.id(1L)
+			.email("test@test.com")
+			.grade(MemberGrade.BRONZE)
+			.name("testName")
+			.phoneNumber("01000001111")
+			.hiworksId("hiworks")
+			.role(MemberRole.NORMAL)
+			.build();
+
 		ItemOption itemOption1 = ItemOption.builder()
 			.id(1L)
 			.description("description")
@@ -317,10 +318,10 @@ class OrderServiceTest {
 			.orderItemList(orderItemList)
 			.build();
 
-		when(orderRepository.findById(1L)).thenReturn(Optional.ofNullable(order));
+		when(orderRepository.findByIdAndMemberId(order.getId(), member.getId())).thenReturn(Optional.ofNullable(order));
 
 		//when
-		orderService.cancelOrder(1L);
+		orderService.cancelOrder(member.getId(), order.getId());
 
 		//then
 		assertAll(
@@ -330,17 +331,188 @@ class OrderServiceTest {
 		);
 	}
 
-	@DisplayName("주문 ID가 유효하지 않으면 주문취소에 실패한다.")
+	@DisplayName("주문_상태를_변경한다.")
 	@Test
-	void cancelOrderFail() {
+	void changeOrderStatus() {
 		//given
-		Long nonId = 9999L;
+		Order order = Order.builder()
+			.id(1L)
+			.status(OrderStatus.ACCEPTED)
+			.totalPrice(20000)
+			.build();
 
-		when(orderRepository.findById(nonId)).thenThrow(EntityNotFoundException.class);
+		when(orderRepository.findById(order.getId())).thenReturn(Optional.ofNullable(order));
+
+		OrderUpdateStatusRequest reqDto = OrderUpdateStatusRequest.builder()
+			.orderId(order.getId())
+			.status(OrderStatus.COMPLETED)
+			.build();
+
+		//when
+		OrderUpdateStatusResponse returnDto = orderService.updateOrderStatus(reqDto);
+
+		//then
+		assertEquals(reqDto.status(), returnDto.status(), "주문 상태 변경에 성공한다.");
+	}
+
+	@DisplayName("사용자는_본인의_주문이_아닐_경우_주문_단건_조회에_실패한다.")
+	@Test
+	void userFindSingleOrderFail() {
+		//given
+		Member member = Member.builder()
+			.id(1L)
+			.role(MemberRole.NORMAL)
+			.build();
+
+		Order order = Order.builder()
+			.id(1L)
+			.member(member)
+			.status(OrderStatus.ACCEPTED)
+			.totalPrice(20000)
+			.build();
+
+		MemberPayload memberPayload = MemberPayload.builder()
+			.id(member.getId())
+			.role(member.getRole())
+			.build();
+
+		when(orderRepository.findByIdAndMemberId(order.getId(), member.getId())).thenThrow(
+			EntityNotFoundException.class);
 
 		//when & then
-		Assertions.assertThatThrownBy(() -> orderService.cancelOrder(nonId))
+		Assertions.assertThatThrownBy(() -> orderService.findSingleOrderInfo(memberPayload, order.getId()))
 			.isInstanceOf(EntityNotFoundException.class);
 	}
 
+	@DisplayName("사용자는_본인의_주문일_경우_주문_단건_조회에_성공한다.")
+	@Test
+	void userFindSingleOrderSuccess() {
+		//given
+		Member member = Member.builder()
+			.id(1L)
+			.role(MemberRole.NORMAL)
+			.build();
+
+		Order order = Order.builder()
+			.id(1L)
+			.member(member)
+			.status(OrderStatus.ACCEPTED)
+			.totalPrice(20000)
+			.build();
+
+		ItemOption itemOption1 = ItemOption.builder()
+			.id(1L)
+			.description("description")
+			.optionPrice(0)
+			.stockQuantity(10)
+			.build();
+
+		List<ItemOption> options = List.of(itemOption1);
+
+		Item item1 =
+			Item.builder()
+				.id(1L)
+				.name("item")
+				.itemStatus(ItemStatus.PUBLIC)
+				.basePrice(10000)
+				.description("description")
+				.openAt(LocalDateTime.now())
+				.build();
+
+		OrderItem orderItem1 = OrderItem.builder()
+			.id(1L)
+			.order(order)
+			.item(item1)
+			.option(itemOption1)
+			.orderCount(5)
+			.build();
+
+		List<OrderItem> orderItemList = List.of(orderItem1);
+
+		//TODO: 썸네일 기능 추가 후 변경 필요
+		String thumbnailUrl = "thumbnailUrl_test";
+		List<String> thumbnailUrlList = List.of(thumbnailUrl);
+
+		when(orderRepository.findByIdAndMemberId(order.getId(), member.getId())).thenReturn(Optional.ofNullable(order));
+		when(orderItemRepository.findWithOrdersAndItemByOrderId(order.getId())).thenReturn(orderItemList);
+		when(imageRepository.findUrlByItemIds(orderItemList.stream()
+			.map(oi -> oi.getItem().getId())
+			.collect(Collectors.toList()))).thenReturn(thumbnailUrlList);
+
+		MemberPayload memberPayload = MemberPayload.builder()
+			.id(member.getId())
+			.role(member.getRole())
+			.build();
+
+		//when
+		OrderInfoSingleResponse returnDto = orderService.findSingleOrderInfo(memberPayload, order.getId());
+
+		//then
+		assertEquals(order.getId(), returnDto.orderId(), "사용자는 본인의 주문일 경우 주문 단건 조회에 성공한다.");
+	}
+
+	@DisplayName("관리자가_주문_단건_조회를_한다.")
+	@Test
+	void adminFindSingleOrder() {
+		//given
+		Member member = Member.builder()
+			.role(MemberRole.ADMIN)
+			.build();
+
+		Order order = Order.builder()
+			.id(1L)
+			.status(OrderStatus.ACCEPTED)
+			.totalPrice(20000)
+			.build();
+
+		ItemOption itemOption1 = ItemOption.builder()
+			.id(1L)
+			.description("description")
+			.optionPrice(0)
+			.stockQuantity(10)
+			.build();
+
+		List<ItemOption> options = List.of(itemOption1);
+
+		Item item1 =
+			Item.builder()
+				.id(1L)
+				.name("item")
+				.itemStatus(ItemStatus.PUBLIC)
+				.basePrice(10000)
+				.description("description")
+				.openAt(LocalDateTime.now())
+				.build();
+
+		OrderItem orderItem1 = OrderItem.builder()
+			.id(1L)
+			.order(order)
+			.item(item1)
+			.option(itemOption1)
+			.orderCount(5)
+			.build();
+
+		List<OrderItem> orderItemList = List.of(orderItem1);
+
+		//TODO: 썸네일 기능 추가 후 변경 필요
+		String thumbnailUrl = "thumbnailUrl_test";
+		List<String> thumbnailUrlList = List.of(thumbnailUrl);
+
+		when(orderRepository.findById(order.getId())).thenReturn(Optional.ofNullable(order));
+		when(orderItemRepository.findWithOrdersAndItemByOrderId(order.getId())).thenReturn(orderItemList);
+		when(imageRepository.findUrlByItemIds(orderItemList.stream()
+			.map(oi -> oi.getItem().getId())
+			.collect(Collectors.toList()))).thenReturn(thumbnailUrlList);
+
+		MemberPayload memberPayload = MemberPayload.builder()
+			.id(member.getId())
+			.role(member.getRole())
+			.build();
+
+		//when
+		OrderInfoSingleResponse returnDto = orderService.findSingleOrderInfo(memberPayload, order.getId());
+
+		//then
+		assertEquals(order.getId(), returnDto.orderId(), "관리자는 자신의 주문이 아니여도 단건 주문 조회에 성공한다.");
+	}
 }

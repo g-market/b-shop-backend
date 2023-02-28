@@ -32,6 +32,9 @@ server:
     domain: ${PROD-DOMAIN}
     url: ${PROD-URL}
 
+cart:
+  expired-time: ${CART-EXPIRED-TIME}
+
 hiworks:
   client:
     id: ${CLIENT-ID}
@@ -56,9 +59,13 @@ minio:
 shedlock:
   table: shedlock
 
+sentry:
+  dsn: ${SENTRY-DSN}
+  exception-resolver-order: -2147483647
+  traces-sample-rate: 1.0
+
 logging:
   level:
     org:
       hibernate:
         SQL: ${LOG-LEVEL}
-

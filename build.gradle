@@ -25,6 +25,7 @@ repositories {
 }
 
 dependencies {
+    // spring
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
@@ -52,6 +53,10 @@ dependencies {
     annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
     annotationProcessor "jakarta.annotation:jakarta.annotation-api"
     annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+
+    // sentry
+    implementation 'io.sentry:sentry-spring-boot-starter-jakarta:6.14.0'
+    implementation 'io.sentry:sentry-logback:6.14.0'
 
     // lombok
     compileOnly 'org.projectlombok:lombok'
@@ -82,6 +87,8 @@ dependencies {
     implementation 'net.javacrumbs.shedlock:shedlock-spring:4.42.0'
     implementation 'net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.42.0'
 
+    // hibernate envers
+    implementation 'org.springframework.data:spring-data-envers'
 }
 
 tasks.named('test') {
@@ -141,7 +148,6 @@ jacocoTestCoverageVerification {
     }
 }
 
-
 // ============================ check style =======================
 tasks.withType(Checkstyle) {
     reports {
@@ -153,4 +159,8 @@ tasks.withType(Checkstyle) {
 checkstyle {
     configFile = file("${rootDir}/checkstyle/naver-checkstyle-rules.xml")
     configProperties = ["suppressionFile": "${rootDir}/checkstyle/naver-checkstyle-suppressions.xml"]
+}
+
+jar {
+    enabled = false
 }

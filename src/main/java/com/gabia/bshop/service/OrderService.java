@@ -12,12 +12,13 @@ import org.springframework.transaction.annotation.Transactional;
 import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.dto.request.OrderCreateRequestDto;
 import com.gabia.bshop.dto.request.OrderInfoSearchRequest;
+import com.gabia.bshop.dto.request.OrderUpdateStatusRequest;
 import com.gabia.bshop.dto.response.OrderCreateResponseDto;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
+import com.gabia.bshop.dto.response.OrderUpdateStatusResponse;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.ItemOption;
-import com.gabia.bshop.entity.Member;
 import com.gabia.bshop.entity.Order;
 import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
@@ -32,11 +33,10 @@ import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
+import com.gabia.bshop.security.MemberPayload;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -50,8 +50,6 @@ public class OrderService {
 
 	@Transactional(readOnly = true)
 	public OrderInfoPageResponse findOrdersPagination(final Long memberId, final Pageable pageable) {
-		findMemberById(memberId);
-
 		final List<Order> orderList = orderRepository.findByMemberIdPagination(memberId, pageable);
 		final List<OrderItem> orderItemList = findOrderItemListByOrderList(orderList);
 		final List<ItemImage> itemImagesWithItem = itemImageRepository.findWithItemByItemIds(
@@ -63,12 +61,19 @@ public class OrderService {
 	}
 
 	@Transactional(readOnly = true)
-	public OrderInfoSingleResponse findSingleOrderInfo(final Long orderId) {
-		final List<OrderItem> orderInfo = orderItemRepository.findWithOrdersAndItemByOrderId(orderId);
-		final List<String> thumbnailUrls = itemImageRepository.findUrlByItemIds(orderInfo.stream()
+	public OrderInfoSingleResponse findSingleOrderInfo(final MemberPayload memberPayload, final Long orderId) {
+		//권한 확인
+		if (memberPayload.isAdmin()) {
+			findOrderById(orderId);
+		} else {
+			findOrderByIdAndMemberId(orderId, memberPayload.id());
+		}
+
+		final List<OrderItem> orderInfoList = orderItemRepository.findWithOrdersAndItemByOrderId(orderId);
+		final List<String> thumbnailUrlList = itemImageRepository.findUrlByItemIds(orderInfoList.stream()
 			.map(oi -> oi.getItem().getId())
 			.collect(Collectors.toList()));
-		return OrderInfoMapper.INSTANCE.orderInfoSingleDTOResponse(orderInfo, thumbnailUrls);
+		return OrderInfoMapper.INSTANCE.orderInfoSingleDTOResponse(orderInfoList, thumbnailUrlList);
 	}
 
 	@Transactional(readOnly = true)
@@ -85,10 +90,8 @@ public class OrderService {
 			itemImagesWithItem);
 	}
 
-	//TODO: 인증 로직 추가 필요
-	public OrderCreateResponseDto createOrder(final OrderCreateRequestDto orderCreateRequestDto) {
-		findMemberById(orderCreateRequestDto.memberId());
-		final Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(orderCreateRequestDto);
+	public OrderCreateResponseDto createOrder(final Long memberId, final OrderCreateRequestDto orderCreateRequestDto) {
+		final Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(memberId, orderCreateRequestDto);
 
 		//DB에서 OptionItem 값 한번에 조회
 		final List<ItemOption> findAllItemOptionList = itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(
@@ -121,16 +124,18 @@ public class OrderService {
 		return OrderMapper.INSTANCE.ordersCreateResponseDto(order);
 	}
 
-	public void cancelOrder(final Long id) {
-		final Order order = findOrderById(id);
+	public void cancelOrder(final Long memberId, final Long orderId) {
+		final Order order = findOrderByIdAndMemberId(orderId, memberId);
 
 		validateOrderStatus(order);
-		order.cancel();
+		order.cancelOrder();
 	}
 
-	private Member findMemberById(final Long memberId) {
-		return memberRepository.findById(memberId)
-			.orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND_EXCEPTION, memberId));
+	public OrderUpdateStatusResponse updateOrderStatus(final OrderUpdateStatusRequest orderUpdateStatusRequest) {
+		final Order order = findOrderById(orderUpdateStatusRequest.orderId());
+		order.updateOrderStatus(orderUpdateStatusRequest.status());
+
+		return OrderMapper.INSTANCE.orderToOrderUpdateStatusResponse(order);
 	}
 
 	private Order findOrderById(final Long orderId) {
@@ -138,8 +143,13 @@ public class OrderService {
 			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
 	}
 
+	private Order findOrderByIdAndMemberId(final Long orderId, final Long memberId) {
+		return orderRepository.findByIdAndMemberId(orderId, memberId)
+			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
+	}
+
 	private List<OrderItem> findOrderItemListByOrderList(final List<Order> orderList) {
-		return orderItemRepository.findByOrderIds(orderList.stream()
+		return orderItemRepository.findByOrderIdIn(orderList.stream()
 			.map(order -> order.getId())
 			.collect(Collectors.toList()));
 	}

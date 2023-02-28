@@ -12,7 +12,7 @@ import lombok.RequiredArgsConstructor;
 public class TransactionService {
 
 	private final StringRedisTemplate stringRedisTemplate;
-	private final RedisTemplate<String, Object> redisTemplate;
+	private final RedisTemplate<String, String> redisTemplate;
 
 	@Transactional
 	public void stringRedisTemplateCheckRollback() {

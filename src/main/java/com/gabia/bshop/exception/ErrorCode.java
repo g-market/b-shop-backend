@@ -53,6 +53,8 @@ public enum ErrorCode {
 	OAUTH_JSON_PARSING_EXCEPTION(INTERNAL_SERVER_ERROR, "Oauth 진행 중 데이터 파싱에 실패했습니다."),
 	MINIO_UPLOAD_EXCEPTION(INTERNAL_SERVER_ERROR, "데이터 업로드 과정 중 문제가 발생했습니다."),
 	MINIO_EXCEPTION(INTERNAL_SERVER_ERROR, "데이터 검색 과정에서 문제가 발생했습니다"),
+	REDIS_JSON_PARSING_EXCEPTION(INTERNAL_SERVER_ERROR, "Redis Value의 데이터 파싱에 실패했습니다."),
+
 	// 503(Service Temporarily Unavailable)
 	HIWORKS_SERVER_ERROR_EXCEPTION(SERVICE_UNAVAILABLE, "하이웍스 서버에 문제가 있습니다.");
 

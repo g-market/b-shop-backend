@@ -23,13 +23,13 @@ import com.gabia.bshop.integration.IntegrationTest;
 public class RedisStudyTest extends IntegrationTest {
 
 	@Autowired
-	private RedisTemplate<String, Object> redisTemplate;
+	private RedisTemplate<String, String> redisTemplate;
 
 	@Test
 	@DisplayName("string 테스트")
 	void string() {
 		// given
-		final ValueOperations<String, Object> string = redisTemplate.opsForValue();
+		final ValueOperations<String, String> string = redisTemplate.opsForValue();
 
 		// when
 		string.set("member:name", "jaime");
@@ -47,13 +47,13 @@ public class RedisStudyTest extends IntegrationTest {
 	@DisplayName("list 테스트")
 	void list() {
 		// given
-		final ListOperations<String, Object> list = redisTemplate.opsForList();
+		final ListOperations<String, String> list = redisTemplate.opsForList();
 		final String key = "memberList";
-		final List<Object> expect = List.of("member1", "member2", "member3", "member4");
+		final List<String> expect = List.of("member1", "member2", "member3", "member4");
 
 		// when
 		list.rightPushAll(key, expect);
-		final List<Object> range = list.range(key, 0, 3);
+		final List<String> range = list.range(key, 0, 3);
 
 		// then
 		assertThat(range).usingRecursiveComparison().isEqualTo(expect);
@@ -63,13 +63,13 @@ public class RedisStudyTest extends IntegrationTest {
 	@DisplayName("set 테스트")
 	void set() {
 		// given
-		final SetOperations<String, Object> set = redisTemplate.opsForSet();
+		final SetOperations<String, String> set = redisTemplate.opsForSet();
 		final String key = "memberSet";
-		final Set<Object> expect = Set.of("member1", "member2", "member3", "member4");
+		final Set<String> expect = Set.of("member1", "member2", "member3", "member4");
 
 		// when
 		expect.forEach(obj -> set.add(key, obj));
-		final Set<Object> members = set.members(key);
+		final Set<String> members = set.members(key);
 
 		// then
 		assertThat(members).usingRecursiveComparison().isEqualTo(expect);
@@ -79,7 +79,7 @@ public class RedisStudyTest extends IntegrationTest {
 	@DisplayName("sortedSet 테스트")
 	void sortedSet() {
 		// given
-		final ZSetOperations<String, Object> zSet = redisTemplate.opsForZSet();
+		final ZSetOperations<String, String> zSet = redisTemplate.opsForZSet();
 		final String key = "userRank";
 		final Set<Object> expect = Set.of("member1", "member2", "member3", "member4");
 
@@ -89,7 +89,7 @@ public class RedisStudyTest extends IntegrationTest {
 		zSet.add(key, "member3", 1);
 		zSet.add(key, "member4", 2);
 
-		final Set<Object> range = zSet.range(key, 0, 4);
+		final Set<String> range = zSet.range(key, 0, 4);
 
 		// then
 		assertAll(
