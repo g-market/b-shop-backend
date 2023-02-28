@@ -13,7 +13,6 @@ import org.mapstruct.factory.Mappers;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse.OrderInfo;
 import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
-import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.Order;
 import com.gabia.bshop.entity.OrderItem;
 
@@ -38,8 +37,8 @@ public interface OrderInfoMapper {
 					orderList.get(i).getId(),
 					OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(
 						orderItemsPerOrderId.get(orderList.get(i).getId())),
-					orderItemList.get(0).getItem().getThumbnail(),
-					orderItemList.get(0).getItem().getName(),
+					orderItemList.get(i).getItem().getThumbnail(),
+					orderItemList.get(i).getItem().getName(),
 					itemCountPerOrderId.get(orderList.get(i).getId()),
 					orderList.get(i).getStatus(),
 					orderList.get(i).getTotalPrice(),
@@ -47,7 +46,7 @@ public interface OrderInfoMapper {
 				.collect(Collectors.toList()));
 	}
 
-	default OrderInfoSingleResponse orderInfoSingleDTOResponse(final List<OrderItem> orderItemsWithOrdersAndItem){
+	default OrderInfoSingleResponse orderInfoSingleDtoResponse(final List<OrderItem> orderItemsWithOrdersAndItem) {
 		if (orderItemsWithOrdersAndItem == null) {
 			return null;
 		}

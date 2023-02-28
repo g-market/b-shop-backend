@@ -33,7 +33,7 @@ import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
 import com.gabia.bshop.exception.BadRequestException;
-import com.gabia.bshop.mapper.OrderItemMapper;
+import com.gabia.bshop.mapper.OrderMapper;
 import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
@@ -159,7 +159,7 @@ class OrderServiceTest {
 			List.of(itemOption1, itemOption2));
 
 		//when
-		OrderCreateResponse returnDto = orderService.purchaseOrder(member.getId(), orderCreateRequest);
+		OrderCreateResponse returnDto = orderService.createOrder(member.getId(), orderCreateRequest);
 
 		//then
 		assertAll(
@@ -264,7 +264,7 @@ class OrderServiceTest {
 			List.of(itemOption1, itemOption2));
 
 		//when & then
-		Assertions.assertThatThrownBy(() -> orderService.purchaseOrder(member.getId(), orderCreateRequest))
+		Assertions.assertThatThrownBy(() -> orderService.createOrder(member.getId(), orderCreateRequest))
 			.isInstanceOf(BadRequestException.class);
 	}
 
@@ -435,9 +435,6 @@ class OrderServiceTest {
 
 		when(orderRepository.findByIdAndMemberId(order.getId(), member.getId())).thenReturn(Optional.ofNullable(order));
 		when(orderItemRepository.findWithOrdersAndItemByOrderId(order.getId())).thenReturn(orderItemList);
-		when(imageRepository.findUrlByItemIds(orderItemList.stream()
-			.map(oi -> oi.getItem().getId())
-			.collect(Collectors.toList()))).thenReturn(thumbnailUrlList);
 
 		MemberPayload memberPayload = MemberPayload.builder()
 			.id(member.getId())
@@ -500,9 +497,6 @@ class OrderServiceTest {
 
 		when(orderRepository.findById(order.getId())).thenReturn(Optional.ofNullable(order));
 		when(orderItemRepository.findWithOrdersAndItemByOrderId(order.getId())).thenReturn(orderItemList);
-		when(imageRepository.findUrlByItemIds(orderItemList.stream()
-			.map(oi -> oi.getItem().getId())
-			.collect(Collectors.toList()))).thenReturn(thumbnailUrlList);
 
 		MemberPayload memberPayload = MemberPayload.builder()
 			.id(member.getId())

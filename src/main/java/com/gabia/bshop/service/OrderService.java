@@ -66,7 +66,7 @@ public class OrderService {
 
 		final List<OrderItem> orderInfoList = orderItemRepository.findWithOrdersAndItemByOrderId(orderId);
 
-		return OrderInfoMapper.INSTANCE.orderInfoSingleDTOResponse(orderInfoList);
+		return OrderInfoMapper.INSTANCE.orderInfoSingleDtoResponse(orderInfoList);
 	}
 
 	@Transactional(readOnly = true)
