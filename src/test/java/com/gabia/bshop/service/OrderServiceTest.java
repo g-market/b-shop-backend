@@ -148,7 +148,7 @@ class OrderServiceTest {
 		List<OrderItem> orderItemList = List.of(orderItem1, orderItem2);
 
 		List<OrderItemDto> orderItemDtoList =
-			OrderItemMapper.INSTANCE.orderItemListToOrderItemDtoList(orderItemList);
+			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(orderItemList);
 
 		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder()
 			.status(OrderStatus.ACCEPTED)
@@ -253,7 +253,7 @@ class OrderServiceTest {
 		List<OrderItem> orderItemList = List.of(orderItem1, orderItem2);
 
 		List<OrderItemDto> orderItemDtoList =
-			OrderItemMapper.INSTANCE.orderItemListToOrderItemDtoList(orderItemList);
+			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(orderItemList);
 
 		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder()
 			.status(OrderStatus.ACCEPTED)
