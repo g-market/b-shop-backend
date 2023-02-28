@@ -8,9 +8,17 @@ stages:
 variables:
   IMAGE_NAME: mentoring-gitlab.gabia.com:5050/mentee/mentee_2023.01/team/g-market/gabia_b_shop_backend
 
-test:
+.merge_rules:
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+
+.push_rules:
+  rules:
+    - if : '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == "main"'
+
+test:
+  rules:
+    - !reference [.merge_rules, rules]
   variables:
     GRADLE_OPTS: "-Dorg.gradle.daemon=false"
     # Instruct Testcontainers to use the daemon of DinD.
@@ -37,7 +45,7 @@ test:
 #https://docs.gitlab.com/ee/ci/testing/test_coverage_visualization.html
 visualization:
   rules:
-    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+    - !reference [.merge_rules, rules]
   stage: visualization
   needs: ["test"]
   image: registry.gitlab.com/haynes/jacoco2cobertura:1.0.7
@@ -52,8 +60,8 @@ visualization:
 
 build:
   rules:
-    - if : '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
-    - if : '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == "main"'
+    - !reference [.merge_rules, rules]
+    - !reference [.push_rules, rules]
   image: openjdk:17-alpine
   stage: build
   needs: [ "test" ]
@@ -67,7 +75,7 @@ build:
 
 package:
   rules:
-    - if : '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == "main"'
+    - !reference [.push_rules, rules]
   stage: package
   needs: ["build"]
   image: docker:latest
@@ -85,7 +93,7 @@ package:
 
 deploy:
   rules:
-    - if : '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == "main"'
+    - !reference [.push_rules, rules]
   stage: deploy
   needs: ["package"]
   tags:
@@ -106,14 +114,14 @@ deploy:
     - ssh-keygen -R localhost
     ## Move deploy file and .env file
     - scp -o "StrictHostKeyChecking=no" $BLUE_DEPLOY_YAML root@localhost:~/deploy/blue-deploy.yml
-    #    - scp -o "StrictHostKeyChecking=no" $GREEN_DEPLOY_YAML root@localhost:~/deploy/green-deploy.yml ## TODO: for green deploy
+    - scp -o "StrictHostKeyChecking=no" $GREEN_DEPLOY_YAML root@localhost:~/deploy/green-deploy.yml
     - scp -o "StrictHostKeyChecking=no" $DEPLOY_ENV root@localhost:~/deploy/.env
   script:
     - |
       ssh -tt -o StrictHostKeyChecking=no root@localhost <<EOF >/dev/null
       cd deploy \
       && docker pull $IMAGE_NAME:latest \
-      && docker-compose -f blue-deploy.yml down -v \
       && docker-compose -f blue-deploy.yml --env-file .env up -d \
+      && docker-compose -f green-deploy.yml --env-file .env up -d \
       && exit
       EOF
