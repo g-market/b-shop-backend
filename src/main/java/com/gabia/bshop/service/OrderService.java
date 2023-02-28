@@ -10,10 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gabia.bshop.dto.OrderItemDto;
-import com.gabia.bshop.dto.request.OrderCreateRequestDto;
+import com.gabia.bshop.dto.request.OrderCreateRequest;
 import com.gabia.bshop.dto.request.OrderInfoSearchRequest;
 import com.gabia.bshop.dto.request.OrderUpdateStatusRequest;
-import com.gabia.bshop.dto.response.OrderCreateResponseDto;
+import com.gabia.bshop.dto.response.OrderCreateResponse;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
 import com.gabia.bshop.dto.response.OrderUpdateStatusResponse;
@@ -88,23 +88,23 @@ public class OrderService {
 			itemImagesWithItem);
 	}
 
-	public OrderCreateResponseDto purchaseOrder(final Long memberId,
-		final OrderCreateRequestDto orderCreateRequestDto) {
-		final Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(memberId, orderCreateRequestDto);
+	public OrderCreateResponse purchaseOrder(final Long memberId,
+		final OrderCreateRequest orderCreateRequest) {
+		final Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(memberId, orderCreateRequest);
 
 		//DB에서 OptionItem 값 한번에 조회
 		final List<ItemOption> findAllItemOptionList = itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(
-			orderCreateRequestDto.orderItemDtoList().stream().map(OrderItemDto::itemId).toList(),
-			orderCreateRequestDto.orderItemDtoList().stream().map(OrderItemDto::itemOptionId).toList()
+			orderCreateRequest.orderItemDtoList().stream().map(OrderItemDto::itemId).toList(),
+			orderCreateRequest.orderItemDtoList().stream().map(OrderItemDto::itemOptionId).toList()
 		);
 
 		//유효한 ItemOption값 인지 검사
-		final List<OrderItemDto> validItemOptionList = orderCreateRequestDto.orderItemDtoList().stream()
+		final List<OrderItemDto> validItemOptionList = orderCreateRequest.orderItemDtoList().stream()
 			.filter(oi -> findAllItemOptionList.stream().anyMatch(oi::equalsIds))
 			.toList();
 
 		//요청 List와 검증한 List size가 일치하지 않다면
-		isEqualListSize(orderCreateRequestDto, validItemOptionList);
+		isEqualListSize(orderCreateRequest, validItemOptionList);
 
 		final List<OrderItem> orderItemList = validItemOptionList.stream().map(orderItemDto -> {
 			final ItemOption itemOption = findAllItemOptionList.stream()
@@ -175,9 +175,9 @@ public class OrderService {
 		}
 	}
 
-	private boolean isEqualListSize(final OrderCreateRequestDto orderCreateRequestDto,
+	private boolean isEqualListSize(final OrderCreateRequest orderCreateRequest,
 		final List<OrderItemDto> validItemOptionList) {
-		if (orderCreateRequestDto.orderItemDtoList().size() != validItemOptionList.size()) {
+		if (orderCreateRequest.orderItemDtoList().size() != validItemOptionList.size()) {
 			throw new BadRequestException(INVALID_ITEM_OPTION_NOT_FOUND_EXCEPTION);
 		}
 		return true;

@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gabia.bshop.dto.request.OrderCreateRequestDto;
+import com.gabia.bshop.dto.request.OrderCreateRequest;
 import com.gabia.bshop.dto.request.OrderInfoSearchRequest;
 import com.gabia.bshop.dto.request.OrderUpdateStatusRequest;
-import com.gabia.bshop.dto.response.OrderCreateResponseDto;
+import com.gabia.bshop.dto.response.OrderCreateResponse;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
 import com.gabia.bshop.dto.response.OrderUpdateStatusResponse;
@@ -64,11 +64,11 @@ public class OrderController {
 
 	@Login
 	@PostMapping("/orders")
-	public ResponseEntity<OrderCreateResponseDto> purchaseOrder(
+	public ResponseEntity<OrderCreateResponse> purchaseOrder(
 		@CurrentMember final MemberPayload memberPayload,
-		@RequestBody @Valid final OrderCreateRequestDto orderCreateRequestDto) {
+		@RequestBody @Valid final OrderCreateRequest orderCreateRequest) {
 		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(orderService.purchaseOrder(memberPayload.id(), orderCreateRequestDto));
+			.body(orderService.purchaseOrder(memberPayload.id(), orderCreateRequest));
 	}
 
 	@Login

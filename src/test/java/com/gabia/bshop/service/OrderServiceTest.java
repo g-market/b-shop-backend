@@ -17,9 +17,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.gabia.bshop.dto.OrderItemDto;
-import com.gabia.bshop.dto.request.OrderCreateRequestDto;
+import com.gabia.bshop.dto.request.OrderCreateRequest;
 import com.gabia.bshop.dto.request.OrderUpdateStatusRequest;
-import com.gabia.bshop.dto.response.OrderCreateResponseDto;
+import com.gabia.bshop.dto.response.OrderCreateResponse;
 import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
 import com.gabia.bshop.dto.response.OrderUpdateStatusResponse;
 import com.gabia.bshop.entity.Category;
@@ -150,7 +150,7 @@ class OrderServiceTest {
 		List<OrderItemDto> orderItemDtoList =
 			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(orderItemList);
 
-		OrderCreateRequestDto orderCreateRequestDto = OrderCreateRequestDto.builder()
+		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder()
 			.status(OrderStatus.ACCEPTED)
 			.orderItemDtoList(orderItemDtoList)
 			.build();
@@ -159,7 +159,7 @@ class OrderServiceTest {
 			List.of(itemOption1, itemOption2));
 
 		//when
-		OrderCreateResponseDto returnDto = orderService.purchaseOrder(member.getId(), orderCreateRequestDto);
+		OrderCreateResponse returnDto = orderService.purchaseOrder(member.getId(), orderCreateRequest);
 
 		//then
 		assertAll(
@@ -167,7 +167,7 @@ class OrderServiceTest {
 			() -> assertEquals(orderItemList.stream().mapToLong(OrderItem::getPrice).sum(),
 				returnDto.totalPrice()),
 			() -> assertEquals(member.getId(), returnDto.memberId()),
-			() -> assertEquals(orderCreateRequestDto.status(), returnDto.status()),
+			() -> assertEquals(orderCreateRequest.status(), returnDto.status()),
 			() -> assertEquals(9, itemOption1.getStockQuantity(), "주문을 하면 재고가 줄어들어야 한다.")
 		);
 	}
@@ -255,7 +255,7 @@ class OrderServiceTest {
 		List<OrderItemDto> orderItemDtoList =
 			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(orderItemList);
 
-		OrderCreateRequestDto orderCreateRequestDto = OrderCreateRequestDto.builder()
+		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder()
 			.status(OrderStatus.ACCEPTED)
 			.orderItemDtoList(orderItemDtoList)
 			.build();
@@ -264,7 +264,7 @@ class OrderServiceTest {
 			List.of(itemOption1, itemOption2));
 
 		//when & then
-		Assertions.assertThatThrownBy(() -> orderService.purchaseOrder(member.getId(), orderCreateRequestDto))
+		Assertions.assertThatThrownBy(() -> orderService.purchaseOrder(member.getId(), orderCreateRequest))
 			.isInstanceOf(BadRequestException.class);
 	}
 
