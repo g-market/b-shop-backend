@@ -64,4 +64,3 @@ logging:
     org:
       hibernate:
         SQL: ${LOG_LEVEL}
-
