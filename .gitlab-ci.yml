@@ -62,7 +62,6 @@ build:
     - !reference [.push_rules, rules]
   image: openjdk:17-alpine
   stage: build
-  needs: [ "test" ]
   script:
     - ./gradlew clean
     - ./gradlew build -x test
@@ -72,6 +71,8 @@ build:
     expire_in: 10 min
 
 package:
+  rules:
+    - !reference [ .push_rules, rules ]
   stage: package
   needs: ["build"]
   image: docker:latest
@@ -88,6 +89,8 @@ package:
     - docker logout
 
 deploy:
+  rules:
+    - !reference [ .push_rules, rules ]
   stage: deploy
   needs: ["package"]
   tags:
