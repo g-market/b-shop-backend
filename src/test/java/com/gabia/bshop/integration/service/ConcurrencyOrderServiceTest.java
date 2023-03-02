@@ -15,10 +15,11 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.dto.request.ItemOptionRequest;
-import com.gabia.bshop.dto.request.OrderCreateRequestDto;
+import com.gabia.bshop.dto.request.OrderCreateRequest;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemOption;
@@ -304,8 +305,7 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 
 		List<OrderItemDto> orderItemDtoList = List.of(orderItemDto1, orderItemDto3, orderItemDto10);
 
-		OrderCreateRequestDto orderCreateRequestDto = OrderCreateRequestDto.builder()
-			.status(OrderStatus.ACCEPTED)
+		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder()
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 
@@ -318,7 +318,7 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 		for (int i = 0; i < repeatSize; i++) {
 			executorService.submit(() -> {
 				try {
-					orderService.purchase(1L, orderCreateRequestDto);
+					orderService.createOrder(1L, orderCreateRequest);
 				} catch (ConflictException e) {
 					e.getMessage();
 					//System.out.println("주문 실패");
@@ -328,7 +328,7 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 			});
 			executorService.submit(() -> {
 				try {
-					orderService.purchase(2L, orderCreateRequestDto);
+					orderService.createOrder(2L, orderCreateRequest);
 				} catch (ConflictException e) {
 					e.getMessage();
 					//System.out.println("주문 실패");
@@ -380,8 +380,7 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 			orderItemDtoList.add(orderItemDto);
 		}
 
-		OrderCreateRequestDto orderCreateRequestDto = OrderCreateRequestDto.builder()
-			.status(OrderStatus.ACCEPTED)
+		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder()
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 
@@ -397,7 +396,7 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 		for (int i = 0; i < repeatSize; i++) {
 			executorService.submit(() -> {
 				try {
-					orderService.purchase(1L, orderCreateRequestDto);
+					orderService.createOrder(1L, orderCreateRequest);
 				} catch (ConflictException e) {
 					e.getMessage();
 					//System.out.println("주문 실패");
@@ -445,8 +444,7 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 			orderItemDtoList.add(orderItemDto);
 		}
 
-		OrderCreateRequestDto orderCreateRequestDto = OrderCreateRequestDto.builder()
-			.status(OrderStatus.ACCEPTED)
+		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder()
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 
@@ -466,7 +464,7 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 		for (int i = 0; i < repeatSize; i++) {
 			executorService.submit(() -> {
 				try {
-					orderService.purchase(1L, orderCreateRequestDto);
+					orderService.createOrder(1L, orderCreateRequest);
 				} catch (ConflictException e) {
 					e.getMessage();
 					//System.out.println("주문 실패");
@@ -476,7 +474,7 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 			});
 			executorService.submit(() -> {
 				try {
-					orderService.purchase(2L, orderCreateRequestDto);
+					orderService.createOrder(2L, orderCreateRequest);
 				} catch (ConflictException e) {
 					e.getMessage();
 					//System.out.println("주문 실패");

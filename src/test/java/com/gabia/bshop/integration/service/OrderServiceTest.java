@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,16 +70,6 @@ class OrderServiceTest extends IntegrationTest {
 	@Autowired
 	private EntityManager entityManager;
 
-	@BeforeEach
-	public void afterEach() {
-		orderItemRepository.deleteAll();
-		orderRepository.deleteAll();
-		itemOptionRepository.deleteAll();
-		itemRepository.deleteAll();
-		categoryRepository.deleteAll();
-		memberRepository.deleteAll();
-	}
-
 	@DisplayName("주문을_한_회원이_주문목록_조회를_수행하면_주문내역들이_조회되어야한다")
 	@Test
 	void findOrderList() {
@@ -95,7 +84,7 @@ class OrderServiceTest extends IntegrationTest {
 			.grade(MemberGrade.BRONZE)
 			.build();
 		Category category1 = Category.builder()
-			.name("카테고리1")
+			.name("카테고리100")
 			.build();
 		Item item1 = Item.builder()
 			.category(category1)
@@ -222,7 +211,7 @@ class OrderServiceTest extends IntegrationTest {
 			.grade(MemberGrade.BRONZE)
 			.build();
 		Category category1 = Category.builder()
-			.name("카테고리1")
+			.name("카테고리100")
 			.build();
 		Item item1 = Item.builder()
 			.category(category1)
@@ -294,7 +283,7 @@ class OrderServiceTest extends IntegrationTest {
 			.grade(MemberGrade.BRONZE)
 			.build();
 		Category category1 = Category.builder()
-			.name("카테고리1")
+			.name("카테고리100")
 			.build();
 		Item item1 = Item.builder()
 			.category(category1)
@@ -412,7 +401,7 @@ class OrderServiceTest extends IntegrationTest {
 			.grade(MemberGrade.BRONZE)
 			.build();
 		Category category1 = Category.builder()
-			.name("카테고리1")
+			.name("카테고리100")
 			.build();
 		Item item1 = Item.builder()
 			.category(category1)

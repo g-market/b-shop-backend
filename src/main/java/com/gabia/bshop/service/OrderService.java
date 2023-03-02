@@ -82,7 +82,7 @@ public class OrderService {
 		final OrderCreateRequest orderCreateRequest) {
 		final Order order = OrderMapper.INSTANCE.orderCreateRequestToEntity(memberId, orderCreateRequest);
 
-		List<OrderItemDto> orderItemDtoList = orderCreateRequestDto.orderItemDtoList();
+		List<OrderItemDto> orderItemDtoList = orderCreateRequest.orderItemDtoList();
 		final List<ItemOption> itemOptionList = itemOptionRepository.findByItemIdListAndIdListWithLock(
 			orderItemDtoList);
 
