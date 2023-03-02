@@ -383,6 +383,20 @@ public class DataInit {
 				itemImage15, itemImage16,
 				itemImage17, itemImage18, itemImage19, itemImage20));
 
+		item1.setThumbnail(itemImage1);
+		item2.setThumbnail(itemImage3);
+		item3.setThumbnail(itemImage5);
+		item4.setThumbnail(itemImage7);
+		item5.setThumbnail(itemImage9);
+		item6.setThumbnail(itemImage11);
+		item7.setThumbnail(itemImage13);
+		item8.setThumbnail(itemImage15);
+		item9.setThumbnail(itemImage17);
+		item10.setThumbnail(itemImage19);
+
+		itemRepository.saveAll(
+			List.of(item1, item2, item3, item4, item5, item6, item7, item8, item9, item10));
+
 		Order order1 = Order.builder()
 			.member(member6)
 			.status(OrderStatus.ACCEPTED)
