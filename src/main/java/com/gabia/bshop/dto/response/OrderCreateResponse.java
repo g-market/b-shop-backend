@@ -8,7 +8,7 @@ import com.gabia.bshop.entity.enumtype.OrderStatus;
 import lombok.Builder;
 
 @Builder
-public record OrderCreateResponseDto(
+public record OrderCreateResponse(
 	Long id,
 	Long memberId,
 	List<OrderItemDto> orderItemDtoList,
