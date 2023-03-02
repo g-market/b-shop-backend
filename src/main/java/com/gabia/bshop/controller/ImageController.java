@@ -17,15 +17,14 @@ import com.gabia.bshop.service.ImageService;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@Validated
 @RequiredArgsConstructor
+@Validated
 public class ImageController {
 	private final ImageService imageService;
 
 	@PostMapping("/images")
 	public ResponseEntity<List<ImageResponse>> uploadImage(
-		@RequestParam("fileList")
-		@ValidFile final MultipartFile[] fileList) {
+		@RequestParam("fileList") @ValidFile final MultipartFile[] fileList) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(imageService.uploadImage(fileList));
 	}
 }

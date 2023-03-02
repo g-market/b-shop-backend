@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gabia.bshop.dto.ItemImageDto;
 import com.gabia.bshop.dto.request.ItemImageCreateRequest;
-import com.gabia.bshop.dto.request.ItemThumbnailChangeRequest;
+import com.gabia.bshop.dto.request.ItemThumbnailUpdateRequest;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
@@ -58,18 +58,18 @@ public class ItemImageService {
 	}
 
 	@Transactional
-	public ItemImageDto changeItemImage(final Long itemId, final ItemImageDto itemImageDto) {
+	public ItemImageDto updateItemImage(final Long itemId, final ItemImageDto itemImageDto) {
 		ItemImage itemImage = findItemImageByImageIdAndItemId(itemImageDto.id(), itemId);
-		urlValidate(itemImageDto.url()); // image validate
+		urlValidate(itemImageDto.url());
 		itemImage.updateUrl(itemImageDto.url());
 		return ItemImageMapper.INSTANCE.itemImageToDto(itemImage);
 	}
 
 	@Transactional
-	public ItemResponse changeItemThumbnail(final Long itemId,
-		final ItemThumbnailChangeRequest itemThumbnailChangeRequest) {
+	public ItemResponse updateItemThumbnail(final Long itemId,
+		final ItemThumbnailUpdateRequest itemThumbnailUpdateRequest) {
 		Item item = findItemById(itemId);
-		final ItemImage itemImage = findItemImageByImageIdAndItemId(itemThumbnailChangeRequest.imageId(), itemId);
+		final ItemImage itemImage = findItemImageByImageIdAndItemId(itemThumbnailUpdateRequest.imageId(), itemId);
 
 		urlValidate(itemImage.getUrl()); // image validate
 		item.setThumbnail(itemImage);
