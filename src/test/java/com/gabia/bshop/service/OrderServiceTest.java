@@ -150,7 +150,6 @@ class OrderServiceTest {
 			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(orderItemList);
 
 		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder()
-			.status(OrderStatus.ACCEPTED)
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 
@@ -166,7 +165,7 @@ class OrderServiceTest {
 			() -> assertEquals(orderItemList.stream().mapToLong(OrderItem::getPrice).sum(),
 				returnDto.totalPrice()),
 			() -> assertEquals(member.getId(), returnDto.memberId()),
-			() -> assertEquals(orderCreateRequest.status(), returnDto.status()),
+			() -> assertEquals(OrderStatus.ACCEPTED, returnDto.status()),
 			() -> assertEquals(9, itemOption1.getStockQuantity(), "주문을 하면 재고가 줄어들어야 한다.")
 		);
 	}
@@ -255,7 +254,6 @@ class OrderServiceTest {
 			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(orderItemList);
 
 		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder()
-			.status(OrderStatus.ACCEPTED)
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 

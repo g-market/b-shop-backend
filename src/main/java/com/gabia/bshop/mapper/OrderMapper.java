@@ -22,7 +22,7 @@ public interface OrderMapper {
 	@Mappings({
 		@Mapping(source = "memberId", target = "member.id"),
 		@Mapping(source = "orderCreateRequest.orderItemDtoList", target = "orderItemList"),
-		@Mapping(source = "orderCreateRequest.status", target = "status", defaultValue = "ACCEPTED"),
+		@Mapping(target = "status", constant = "ACCEPTED"),
 		@Mapping(target = "id", ignore = true),
 		@Mapping(target = "totalPrice", ignore = true),
 	})
