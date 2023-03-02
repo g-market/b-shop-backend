@@ -6,11 +6,7 @@ public class NotFoundException extends ApplicationException {
 		super(errorCode);
 	}
 
-	public NotFoundException(final ErrorCode errorCode, final Object parameter) {
+	public NotFoundException(final ErrorCode errorCode, final Object... parameter) {
 		super(errorCode, parameter);
-	}
-
-	public NotFoundException(final ErrorCode errorCode, final Object parameter1, final Object parameter2) {
-		super(errorCode, parameter1, parameter2);
 	}
 }
