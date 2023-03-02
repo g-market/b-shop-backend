@@ -94,7 +94,8 @@ public class Item extends BaseEntity {
 		final int basePrice,
 		final ItemStatus itemStatus,
 		final int year,
-		final LocalDateTime openAt) {
+		final LocalDateTime openAt,
+		final String thumbnail) {
 		this.id = id;
 		this.name = name;
 		this.category = category;
@@ -104,6 +105,7 @@ public class Item extends BaseEntity {
 		this.openAt = openAt;
 		this.year = year;
 		this.deleted = false;
+		this.thumbnail = thumbnail;
 	}
 
 	private void updateName(final String name) {
@@ -174,10 +176,6 @@ public class Item extends BaseEntity {
 		if (localDateTime != null) {
 			this.openAt = localDateTime;
 		}
-	}
-
-	public void updateImage(List<ItemImage> itemImageList) {
-		this.itemImageList = itemImageList;
 	}
 
 	public void addItemOption(ItemOption itemOption) {
