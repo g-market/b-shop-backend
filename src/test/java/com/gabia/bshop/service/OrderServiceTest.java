@@ -6,7 +6,6 @@ import static org.mockito.Mockito.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -17,9 +16,9 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.gabia.bshop.dto.OrderItemDto;
-import com.gabia.bshop.dto.request.OrderCreateRequestDto;
+import com.gabia.bshop.dto.request.OrderCreateRequest;
 import com.gabia.bshop.dto.request.OrderUpdateStatusRequest;
-import com.gabia.bshop.dto.response.OrderCreateResponseDto;
+import com.gabia.bshop.dto.response.OrderCreateResponse;
 import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
 import com.gabia.bshop.dto.response.OrderUpdateStatusResponse;
 import com.gabia.bshop.entity.Category;
@@ -124,8 +123,7 @@ class OrderServiceTest {
 		List<OrderItemDto> orderItemDtoList =
 			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(orderItemList);
 
-		OrderCreateRequestDto orderCreateRequestDto = OrderCreateRequestDto.builder()
-			.status(OrderStatus.ACCEPTED)
+		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder()
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 
@@ -133,7 +131,7 @@ class OrderServiceTest {
 			List.of(itemOption1, itemOption2));
 
 		//when
-		OrderCreateResponseDto returnDto = orderService.purchase(member.getId(), orderCreateRequestDto);
+		OrderCreateResponse returnDto = orderService.createOrder(member.getId(), orderCreateRequest);
 
 		//then
 		assertAll(
@@ -141,7 +139,7 @@ class OrderServiceTest {
 			() -> assertEquals(orderItemList.stream().mapToLong(OrderItem::getPrice).sum(),
 				returnDto.totalPrice()),
 			() -> assertEquals(member.getId(), returnDto.memberId()),
-			() -> assertEquals(orderCreateRequestDto.status(), returnDto.status()),
+			() -> assertEquals(OrderStatus.ACCEPTED, returnDto.status()),
 			() -> assertEquals(9, itemOption1.getStockQuantity(), "주문을 하면 재고가 줄어들어야 한다.")
 		);
 	}
@@ -229,15 +227,14 @@ class OrderServiceTest {
 		List<OrderItemDto> orderItemDtoList =
 			OrderMapper.INSTANCE.orderItemListToOrderItemDtoList(orderItemList);
 
-		OrderCreateRequestDto orderCreateRequestDto = OrderCreateRequestDto.builder()
-			.status(OrderStatus.ACCEPTED)
+		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder()
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 
 		when(itemOptionRepository.findByItemIdListAndIdListWithLock(orderItemDtoList)).thenReturn(List.of(itemOption1));
 
 		//when & then
-		Assertions.assertThatThrownBy(() -> orderService.purchase(member.getId(), orderCreateRequestDto))
+		Assertions.assertThatThrownBy(() -> orderService.createOrder(member.getId(), orderCreateRequest))
 			.isInstanceOf(BadRequestException.class);
 	}
 
@@ -354,7 +351,7 @@ class OrderServiceTest {
 			EntityNotFoundException.class);
 
 		//when & then
-		Assertions.assertThatThrownBy(() -> orderService.findSingleOrderInfo(memberPayload, order.getId()))
+		Assertions.assertThatThrownBy(() -> orderService.findOrderInfo(memberPayload, order.getId()))
 			.isInstanceOf(EntityNotFoundException.class);
 	}
 
@@ -408,9 +405,6 @@ class OrderServiceTest {
 
 		when(orderRepository.findByIdAndMemberId(order.getId(), member.getId())).thenReturn(Optional.ofNullable(order));
 		when(orderItemRepository.findWithOrdersAndItemByOrderId(order.getId())).thenReturn(orderItemList);
-		when(imageRepository.findUrlByItemIds(orderItemList.stream()
-			.map(oi -> oi.getItem().getId())
-			.collect(Collectors.toList()))).thenReturn(thumbnailUrlList);
 
 		MemberPayload memberPayload = MemberPayload.builder()
 			.id(member.getId())
@@ -418,7 +412,7 @@ class OrderServiceTest {
 			.build();
 
 		//when
-		OrderInfoSingleResponse returnDto = orderService.findSingleOrderInfo(memberPayload, order.getId());
+		OrderInfoSingleResponse returnDto = orderService.findOrderInfo(memberPayload, order.getId());
 
 		//then
 		assertEquals(order.getId(), returnDto.orderId(), "사용자는 본인의 주문일 경우 주문 단건 조회에 성공한다.");
@@ -472,9 +466,6 @@ class OrderServiceTest {
 
 		when(orderRepository.findById(order.getId())).thenReturn(Optional.ofNullable(order));
 		when(orderItemRepository.findWithOrdersAndItemByOrderId(order.getId())).thenReturn(orderItemList);
-		when(imageRepository.findUrlByItemIds(orderItemList.stream()
-			.map(oi -> oi.getItem().getId())
-			.collect(Collectors.toList()))).thenReturn(thumbnailUrlList);
 
 		MemberPayload memberPayload = MemberPayload.builder()
 			.id(member.getId())
@@ -482,7 +473,7 @@ class OrderServiceTest {
 			.build();
 
 		//when
-		OrderInfoSingleResponse returnDto = orderService.findSingleOrderInfo(memberPayload, order.getId());
+		OrderInfoSingleResponse returnDto = orderService.findOrderInfo(memberPayload, order.getId());
 
 		//then
 		assertEquals(order.getId(), returnDto.orderId(), "관리자는 자신의 주문이 아니여도 단건 주문 조회에 성공한다.");

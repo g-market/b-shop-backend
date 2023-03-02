@@ -11,14 +11,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gabia.bshop.dto.OrderItemDto;
-import com.gabia.bshop.dto.request.OrderCreateRequestDto;
+import com.gabia.bshop.dto.request.OrderCreateRequest;
 import com.gabia.bshop.dto.request.OrderInfoSearchRequest;
 import com.gabia.bshop.dto.request.OrderUpdateStatusRequest;
-import com.gabia.bshop.dto.response.OrderCreateResponseDto;
+import com.gabia.bshop.dto.response.OrderCreateResponse;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
 import com.gabia.bshop.dto.response.OrderUpdateStatusResponse;
-import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.Order;
 import com.gabia.bshop.entity.OrderItem;
@@ -48,49 +47,40 @@ public class OrderService {
 	private final ItemOptionRepository itemOptionRepository;
 
 	@Transactional(readOnly = true)
-	public OrderInfoPageResponse findOrdersPagination(final Long memberId, final Pageable pageable) {
+	public OrderInfoPageResponse findOrderInfoList(final Long memberId, final Pageable pageable) {
 		final List<Order> orderList = orderRepository.findByMemberIdPagination(memberId, pageable);
 		final List<OrderItem> orderItemList = findOrderItemListByOrderList(orderList);
-		final List<ItemImage> itemImagesWithItem = itemImageRepository.findWithItemByItemIds(
-			orderItemList.stream().map(oi -> oi.getItem().getId()).collect(Collectors.toList()));
 
 		return OrderInfoMapper.INSTANCE.orderInfoRelatedEntitiesToOrderInfoPageResponse(orderList,
-			orderItemList,
-			itemImagesWithItem);
+			orderItemList);
 	}
 
 	@Transactional(readOnly = true)
-	public OrderInfoSingleResponse findSingleOrderInfo(final MemberPayload memberPayload, final Long orderId) {
+	public OrderInfoSingleResponse findOrderInfo(final MemberPayload memberPayload, final Long orderId) {
 		//권한 확인
 		if (memberPayload.isAdmin()) {
 			findOrderById(orderId);
 		} else {
 			findOrderByIdAndMemberId(orderId, memberPayload.id());
 		}
-
 		final List<OrderItem> orderInfoList = orderItemRepository.findWithOrdersAndItemByOrderId(orderId);
-		final List<String> thumbnailUrlList = itemImageRepository.findUrlByItemIds(orderInfoList.stream()
-			.map(oi -> oi.getItem().getId())
-			.collect(Collectors.toList()));
-		return OrderInfoMapper.INSTANCE.orderInfoSingleDTOResponse(orderInfoList, thumbnailUrlList);
+
+		return OrderInfoMapper.INSTANCE.orderInfoSingleDtoResponse(orderInfoList);
 	}
 
 	@Transactional(readOnly = true)
-	public OrderInfoPageResponse findAdminOrdersPagination(final OrderInfoSearchRequest orderInfoSearchRequest,
+	public OrderInfoPageResponse findAllOrderInfoList(final OrderInfoSearchRequest orderInfoSearchRequest,
 		final Pageable pageable) {
 		final List<Order> orderList = orderRepository.findAllByPeriodPagination(orderInfoSearchRequest.startAt(),
 			orderInfoSearchRequest.endAt(), pageable);
 		final List<OrderItem> orderItems = findOrderItemListByOrderList(orderList);
-		final List<ItemImage> itemImagesWithItem = itemImageRepository.findWithItemByItemIds(orderItems.stream()
-			.map(oi -> oi.getItem().getId())
-			.collect(Collectors.toList()));
 
-		return OrderInfoMapper.INSTANCE.orderInfoRelatedEntitiesToOrderInfoPageResponse(orderList, orderItems,
-			itemImagesWithItem);
+		return OrderInfoMapper.INSTANCE.orderInfoRelatedEntitiesToOrderInfoPageResponse(orderList, orderItems);
 	}
 
-	public OrderCreateResponseDto purchase(final Long memberId, final OrderCreateRequestDto orderCreateRequestDto) {
-		final Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(memberId, orderCreateRequestDto);
+	public OrderCreateResponse createOrder(final Long memberId,
+		final OrderCreateRequest orderCreateRequest) {
+		final Order order = OrderMapper.INSTANCE.orderCreateRequestToEntity(memberId, orderCreateRequest);
 
 		List<OrderItemDto> orderItemDtoList = orderCreateRequestDto.orderItemDtoList();
 		final List<ItemOption> itemOptionList = itemOptionRepository.findByItemIdListAndIdListWithLock(
@@ -112,7 +102,7 @@ public class OrderService {
 		order.createOrder(orderItemList);
 		orderRepository.save(order);
 
-		return OrderMapper.INSTANCE.ordersCreateResponseDto(order);
+		return OrderMapper.INSTANCE.orderCreateResponseToDto(order);
 	}
 
 	public void cancelOrder(final Long memberId, final Long orderId) {

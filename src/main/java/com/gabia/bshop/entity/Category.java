@@ -5,7 +5,7 @@ import java.util.Objects;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.envers.Audited;
 
-import com.gabia.bshop.dto.CategoryDto;
+import com.gabia.bshop.dto.request.CategoryUpdateRequest;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -22,7 +22,7 @@ import lombok.ToString;
 @Audited
 @ToString(exclude = {})
 @Getter
-@SQLDelete(sql = "update item set deleted = true where id = ?")
+@SQLDelete(sql = "update category set deleted = true where id = ?")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "category", indexes = {})
 @Entity
@@ -45,8 +45,8 @@ public class Category extends BaseEntity {
 		this.deleted = false;
 	}
 
-	public void update(final CategoryDto categoryDto) {
-		updateName(categoryDto.name());
+	public void update(final CategoryUpdateRequest categoryUpdateRequest) {
+		updateName(categoryUpdateRequest.name());
 	}
 
 	private void updateName(final String name) {

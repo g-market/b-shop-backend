@@ -190,7 +190,7 @@ class OrderServiceTest extends IntegrationTest {
 
 		PageRequest pageable = PageRequest.of(0, 10);
 		//when
-		OrderInfoPageResponse orderInfo = orderService.findOrdersPagination(member1.getId(),
+		OrderInfoPageResponse orderInfo = orderService.findOrderInfoList(member1.getId(),
 			pageable);
 		//then
 		Assertions.assertThat(orderInfo.resultCount()).isEqualTo(2);
@@ -203,10 +203,6 @@ class OrderServiceTest extends IntegrationTest {
 			.isEqualTo(order1.getStatus());
 
 		Assertions.assertThat(orderInfo.orderInfoList().get(1).orderId()).isEqualTo(order2.getId());
-		Assertions.assertThat(orderInfo.orderInfoList().get(1).thumbnailImage())
-			.isEqualTo(itemImage1.getUrl());
-		Assertions.assertThat(orderInfo.orderInfoList().get(1).representativeName())
-			.isEqualTo(item1.getName());
 		Assertions.assertThat(orderInfo.orderInfoList().get(1).itemTotalCount()).isEqualTo(2);
 		Assertions.assertThat(orderInfo.orderInfoList().get(1).orderStatus())
 			.isEqualTo(order2.getStatus());
@@ -277,7 +273,7 @@ class OrderServiceTest extends IntegrationTest {
 		entityManager.clear();
 
 		//when
-		OrderInfoPageResponse orderInfo = orderService.findOrdersPagination(member1.getId(),
+		OrderInfoPageResponse orderInfo = orderService.findOrderInfoList(member1.getId(),
 			pageable);
 
 		//then
@@ -382,7 +378,7 @@ class OrderServiceTest extends IntegrationTest {
 			.build();
 
 		//when
-		OrderInfoSingleResponse singleOrderInfo = orderService.findSingleOrderInfo(memberPayload, order1.getId());
+		OrderInfoSingleResponse singleOrderInfo = orderService.findOrderInfo(memberPayload, order1.getId());
 
 		//then
 		Assertions.assertThat(singleOrderInfo.orderId()).isEqualTo(order1.getId());
@@ -399,6 +395,7 @@ class OrderServiceTest extends IntegrationTest {
 		Assertions.assertThat(singleOrderInfo.orderItems().get(0).price()).isEqualTo(orderItem1.getPrice());
 		Assertions.assertThat(singleOrderInfo.orderItems().get(1).price()).isEqualTo(orderItem2.getPrice());
 		Assertions.assertThat(singleOrderInfo.orderItems().get(0).thumbnailImage()).isEqualTo(itemImage1.getUrl());
+		Assertions.assertThat(singleOrderInfo.orderItems().get(0).itemName()).isEqualTo(item1.getName());
 	}
 
 	@DisplayName("관리자 주문목록 조회를 수행하면 모든 유저의 주문내역들이 조회되어야한다")
@@ -509,7 +506,6 @@ class OrderServiceTest extends IntegrationTest {
 			.item(item2)
 			.url(UUID.randomUUID().toString())
 			.build();
-
 		item1.setThumbnail(itemImage1);
 		item2.setThumbnail(itemImage2);
 
@@ -526,16 +522,16 @@ class OrderServiceTest extends IntegrationTest {
 		PageRequest pageable = PageRequest.of(0, 10);
 		OrderInfoSearchRequest orderInfoSearchRequest = new OrderInfoSearchRequest(now.minusDays(1), now.plusDays(1));
 		//when
-		OrderInfoPageResponse orderInfo = orderService.findAdminOrdersPagination(orderInfoSearchRequest, pageable);
+		OrderInfoPageResponse orderInfo = orderService.findAllOrderInfoList(orderInfoSearchRequest, pageable);
 		//then
 		Assertions.assertThat(orderInfo.resultCount()).isEqualTo(2);
 		Assertions.assertThat(orderInfo.orderInfoList().get(0).orderId()).isEqualTo(order1.getId());
 		Assertions.assertThat(orderInfo.orderInfoList().get(0).thumbnailImage()).isEqualTo(itemImage1.getUrl());
+		Assertions.assertThat(orderInfo.orderInfoList().get(0).representativeName()).isEqualTo(item1.getName());
 		Assertions.assertThat(orderInfo.orderInfoList().get(0).itemTotalCount()).isEqualTo(1);
 		Assertions.assertThat(orderInfo.orderInfoList().get(0).orderStatus()).isEqualTo(order1.getStatus());
 
 		Assertions.assertThat(orderInfo.orderInfoList().get(1).orderId()).isEqualTo(order2.getId());
-		Assertions.assertThat(orderInfo.orderInfoList().get(1).thumbnailImage()).isEqualTo(itemImage2.getUrl());
 		Assertions.assertThat(orderInfo.orderInfoList().get(1).itemTotalCount()).isEqualTo(2);
 		Assertions.assertThat(orderInfo.orderInfoList().get(1).orderStatus()).isEqualTo(order2.getStatus());
 	}
