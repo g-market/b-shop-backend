@@ -10,9 +10,9 @@ import com.gabia.bshop.dto.request.CartCreateRequest;
 import com.gabia.bshop.dto.request.CartDeleteRequest;
 
 @Mapper(componentModel = "spring")
-public interface CartReqeuestMapper {
+public interface CartRequestMapper {
 
-	CartReqeuestMapper INSTANCE = Mappers.getMapper(CartReqeuestMapper.class);
+	CartRequestMapper INSTANCE = Mappers.getMapper(CartRequestMapper.class);
 
 	@Mappings({
 		@Mapping(source = "itemId", target = "itemId"),
