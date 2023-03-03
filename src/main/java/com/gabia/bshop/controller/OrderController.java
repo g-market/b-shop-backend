@@ -21,6 +21,7 @@ import com.gabia.bshop.dto.response.OrderUpdateStatusResponse;
 import com.gabia.bshop.security.CurrentMember;
 import com.gabia.bshop.security.Login;
 import com.gabia.bshop.security.MemberPayload;
+import com.gabia.bshop.service.CartService;
 import com.gabia.bshop.service.OrderService;
 import com.gabia.bshop.util.validator.LimitedSizePagination;
 
@@ -32,6 +33,7 @@ import lombok.RequiredArgsConstructor;
 public class OrderController {
 
 	private final OrderService orderService;
+	private final CartService cartService;
 
 	@Login
 	@GetMapping("/orders")
@@ -63,8 +65,11 @@ public class OrderController {
 	public ResponseEntity<OrderCreateResponse> createOrder(
 		@CurrentMember final MemberPayload memberPayload,
 		@RequestBody @Valid final OrderCreateRequest orderCreateRequest) {
+		final OrderCreateResponse orderCreateResponse = orderService.createOrder(memberPayload.id(),
+			orderCreateRequest);
+		cartService.deleteCartList(memberPayload.id(), orderCreateRequest.orderItemDtoList());
 		return ResponseEntity.status(HttpStatus.CREATED)
-			.body(orderService.createOrder(memberPayload.id(), orderCreateRequest));
+			.body(orderCreateResponse);
 	}
 
 	@Login
