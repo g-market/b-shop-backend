@@ -1,19 +1,20 @@
 server:
-  port: ${SERVER-PORT}
+  port: ${SERVER_PORT}
 
 spring:
   profiles:
-    active: ${ACTIVE-PROFILE}
+    active: ${ACTIVE_PROFILE}
   datasource:
-    url: ${DB-URL}
-    username: ${DB-USERNAME}
-    password: ${DB-PASSWORD}
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: ${DDL-AUTO}
+      ddl-auto: ${DDL_AUTO}
+      generate-dll: true
     properties:
       hibernate:
-        hibernate.default_batch_fetch_size: ${FETCH-SIZE}
+        hibernate.default_batch_fetch_size: ${FETCH_SIZE}
       jakarta:
         persistence:
           sharedCache:
@@ -21,46 +22,40 @@ spring:
     open-in-view: false
   data:
     redis:
-      host: ${REDIS-HOST}
-      port: ${REDIS-PORT}
+      host: ${REDIS_HOST}
+      port: ${REDIS_PORT}
 
 ---
 server:
   local:
-    domain: ${LOCAL-DOMAIN}
+    domain: ${LOCAL_DOMAIN}
   prod:
-    domain: ${PROD-DOMAIN}
-    url: ${PROD-URL}
-
-cart:
-  expired-time: ${CART-EXPIRED-TIME}
+    domain: ${PROD_DOMAIN}
+    url: ${PROD_URL}
 
 hiworks:
   client:
-    id: ${CLIENT-ID}
-    secret: ${CLIENT-SECRET}
+    id: ${CLIENT_ID}
+    secret: ${CLIENT_SECRET}
   url:
-    accessToken: ${ACCESSTOKEN-URL}
-    user: ${USER-URL}
+    accessToken: ${ACCESS_TOKEN_URL}
+    user: ${USER_URL}
 
 token:
-  access-expired-time: ${ACCESS-EXPIRED-TIME}
-  refresh-expired-time: ${REFRESH-EXPIRED-TIME}
-  secret: ${TOKEN-SECRET}
+  access-expired-time: ${ACCESS_EXPIRED_TIME}
+  refresh-expired-time: ${REFRESH_EXPIRED_TIME}
+  secret: ${TOKEN_SECRET}
 
 minio:
-  endpoint: ${MINIO-ENDPOINT}
+  endpoint: ${MINIO_ENDPOINT}
   user: ${MINIO_USER}
   password: ${MINIO_PASSWORD}
   bucket: ${MINIO_BUCKET}
   default:
     image: ${MINIO_NO_IMAGE_URL}
 
-shedlock:
-  table: shedlock
-
 sentry:
-  dsn: ${SENTRY-DSN}
+  dsn: ${SENTRY_DSN}
   exception-resolver-order: -2147483647
   traces-sample-rate: 1.0
 
@@ -68,4 +63,4 @@ logging:
   level:
     org:
       hibernate:
-        SQL: ${LOG-LEVEL}
+        SQL: ${LOG_LEVEL}
