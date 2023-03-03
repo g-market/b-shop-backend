@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gabia.bshop.dto.CartDto;
+import com.gabia.bshop.dto.OrderItemAble;
 import com.gabia.bshop.util.RedisValueSupport;
 
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import lombok.RequiredArgsConstructor;
 public class CartRepositoryImpl implements CartRepository {
 
 	public static final String CART_PREFIX = "cart:memberId-";
+	private static final String DELIMITER = "-";
 
 	private final RedisTemplate<String, String> redisTemplate;
 
@@ -72,12 +74,23 @@ public class CartRepositoryImpl implements CartRepository {
 		hashOperations.delete(key, hashKey);
 	}
 
+	@Override
+	@Transactional
+	public <T extends OrderItemAble> void deleteAllByItemIdAndItemOptionId(final Long memberId,
+		final List<T> orderItemAbleList) {
+		final String key = getKey(memberId);
+		for (final OrderItemAble orderItemAble : orderItemAbleList) {
+			final String hashKey = getHashKey(orderItemAble);
+			hashOperations.delete(key, hashKey);
+		}
+	}
+
 	private String getKey(final Long memberId) {
 		return CART_PREFIX + memberId;
 	}
 
-	private String getHashKey(final CartDto cartDto) {
-		return cartDto.itemId() + String.valueOf(cartDto.itemOptionId());
+	private String getHashKey(final OrderItemAble orderItemAble) {
+		return orderItemAble.itemId() + DELIMITER + orderItemAble.itemOptionId();
 	}
 
 	private boolean existsCartByKeyAndHashKey(final String key, final String hashKey) {

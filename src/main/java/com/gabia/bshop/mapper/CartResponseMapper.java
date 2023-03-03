@@ -18,15 +18,17 @@ public interface CartResponseMapper {
 
 	CartResponseMapper INSTANCE = Mappers.getMapper(CartResponseMapper.class);
 
+	String DELIMITER = "-";
+
 	default List<CartResponse> from(final List<ItemOption> itemOptionList, final List<CartDto> cartDtoList) {
 		final List<CartResponse> cartResponseList = new ArrayList<>();
 		final HashMap<String, Integer> map = new HashMap<>();
 		for (CartDto cartDto : cartDtoList) {
-			final String key = String.valueOf(cartDto.itemId()) + cartDto.itemOptionId();
+			final String key = String.valueOf(cartDto.itemId()) + DELIMITER + cartDto.itemOptionId();
 			map.put(key, cartDto.orderCount());
 		}
 		for (ItemOption itemOption : itemOptionList) {
-			final String key = String.valueOf(itemOption.getItem().getId()) + itemOption.getId();
+			final String key = String.valueOf(itemOption.getItem().getId()) + DELIMITER + itemOption.getId();
 			final Integer orderCount = map.get(key);
 			cartResponseList.add(this.from(itemOption, orderCount));
 		}
