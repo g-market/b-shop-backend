@@ -160,11 +160,10 @@ public class OrderService {
 		}
 	}
 
-	private boolean isEqualListSize(final List<OrderItemDto> orderItemDtoList,
+	private void isEqualListSize(final List<OrderItemDto> orderItemDtoList,
 		final List<ItemOption> validItemOptionList) {
 		if (orderItemDtoList.size() != validItemOptionList.size()) {
 			throw new BadRequestException(INVALID_ITEM_OPTION_NOT_FOUND_EXCEPTION);
 		}
-		return true;
 	}
 }
