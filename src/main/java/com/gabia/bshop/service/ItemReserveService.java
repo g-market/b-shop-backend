@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gabia.bshop.dto.request.ReservationChangeRequest;
+import com.gabia.bshop.dto.request.ReservationUpdateRequest;
 import com.gabia.bshop.dto.response.ItemReservationResponse;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.Reservation;
@@ -18,9 +18,7 @@ import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.ReservationRepository;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -28,7 +26,6 @@ public class ItemReserveService {
 	private final ReservationRepository reservationRepository;
 	private final ItemRepository itemRepository;
 
-	@Transactional
 	public ItemReservationResponse findItemReservation(final Long itemId) {
 		return ItemReservationMapper.INSTANCE.reservationToResponse(findReservationByItemId(itemId));
 	}
@@ -43,10 +40,10 @@ public class ItemReserveService {
 
 	@Transactional
 	public ItemReservationResponse updateItemReservation(final Long itemId,
-		final ReservationChangeRequest reservationChangeRequest) {
+		final ReservationUpdateRequest reservationUpdateRequest) {
 		Reservation reservation = findReservationByItemId(itemId);
 
-		final LocalDateTime openAt = reservationChangeRequest.openAt();
+		final LocalDateTime openAt = reservationUpdateRequest.openAt();
 
 		//현재시점보다 이전 시점인지 validate
 		if (openAt.isAfter(LocalDateTime.now())) {
@@ -75,5 +72,4 @@ public class ItemReserveService {
 			() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, itemId)
 		);
 	}
-
 }
