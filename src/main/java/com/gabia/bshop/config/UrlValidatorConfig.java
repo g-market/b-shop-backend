@@ -7,7 +7,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class UrlValidatorConfig {
 
-	private final String[] schema = {"http", "https"};
+	private final String[] schema = {"http"};
 
 	@Bean
 	public UrlValidator urlValidator() {

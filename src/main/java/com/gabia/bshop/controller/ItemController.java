@@ -21,9 +21,7 @@ import com.gabia.bshop.service.ItemService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class ItemController {
@@ -40,9 +38,6 @@ public class ItemController {
 		@RequestParam("categoryId") final Long categoryId) {
 		return ResponseEntity.ok().body(itemService.findItemList(pageable, categoryId));
 	}
-	//년도, 상의, 하의
-	// &category=상의&year=2022
-	//
 
 	@Login(admin = true)
 	@PostMapping("/items")

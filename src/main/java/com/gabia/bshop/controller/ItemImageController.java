@@ -14,16 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gabia.bshop.dto.ItemImageDto;
 import com.gabia.bshop.dto.request.ItemImageCreateRequest;
-import com.gabia.bshop.dto.request.ItemThumbnailChangeRequest;
+import com.gabia.bshop.dto.request.ItemThumbnailUpdateRequest;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.security.Login;
 import com.gabia.bshop.service.ItemImageService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class ItemImageController {
@@ -43,10 +41,11 @@ public class ItemImageController {
 
 	@Login(admin = true)
 	@PostMapping("/items/{itemId}/images")
-	public ResponseEntity<List<ItemImageDto>> creatItemImages(
+	public ResponseEntity<List<ItemImageDto>> createItemImageList(
 		@PathVariable final Long itemId,
 		@RequestBody @Valid final ItemImageCreateRequest itemImageCreateRequest) {
-		return ResponseEntity.ok().body(itemImageService.createItemImage(itemId, itemImageCreateRequest));
+		return ResponseEntity.status(HttpStatus.CREATED)
+			.body(itemImageService.createItemImage(itemId, itemImageCreateRequest));
 	}
 
 	@Login(admin = true)
@@ -54,15 +53,15 @@ public class ItemImageController {
 	public ResponseEntity<ItemImageDto> updateItemImage(
 		@PathVariable final Long itemId,
 		@RequestBody @Valid final ItemImageDto itemImageDto) {
-		return ResponseEntity.ok().body(itemImageService.changeItemImage(itemId, itemImageDto));
+		return ResponseEntity.ok().body(itemImageService.updateItemImage(itemId, itemImageDto));
 	}
 
 	@Login(admin = true)
 	@PatchMapping("/items/{itemId}/thumbnail")
 	public ResponseEntity<ItemResponse> updateItemThumbnail(
 		@PathVariable final Long itemId,
-		@RequestBody @Valid final ItemThumbnailChangeRequest itemThumbnailChangeRequest) {
-		return ResponseEntity.ok().body(itemImageService.changeItemThumbnail(itemId, itemThumbnailChangeRequest));
+		@RequestBody @Valid final ItemThumbnailUpdateRequest itemThumbnailUpdateRequest) {
+		return ResponseEntity.ok().body(itemImageService.updateItemThumbnail(itemId, itemThumbnailUpdateRequest));
 	}
 
 	@Login(admin = true)
@@ -71,6 +70,6 @@ public class ItemImageController {
 		@PathVariable final Long itemId,
 		@PathVariable final Long imageId) {
 		itemImageService.deleteItemImage(itemId, imageId);
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 }
