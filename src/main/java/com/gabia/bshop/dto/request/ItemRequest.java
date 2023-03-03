@@ -31,12 +31,12 @@ public record ItemRequest(
 
 	@PositiveOrZero(message = "basePrice 는 0 이상입니다.")
 	@NotNull
-	Integer basePrice,
+	int basePrice,
 	ItemStatus itemStatus,
 
 	@PositiveOrZero(message = "year 는 0 이상입니다.")
 	@NotNull
-	Integer year,
+	int year,
 
 	LocalDateTime openAt
 ) {
