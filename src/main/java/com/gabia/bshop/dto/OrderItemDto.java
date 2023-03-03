@@ -14,7 +14,7 @@ public record OrderItemDto(
 	Long itemOptionId,
 	@Positive(message = "주문량은 양수만 허용합니다.")
 	int orderCount
-) implements ItemIdAndItemOptionIdAble {
+) implements OrderItemAble {
 	public boolean equalsIds(final ItemOption itemOption) {
 		return itemOption.getItem().getId().equals(this.itemId)
 			&& itemOption.getId().equals(this.itemOptionId);
