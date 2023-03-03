@@ -8,12 +8,12 @@ import java.lang.annotation.Target;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
-@Target({ElementType.PARAMETER})
+@Target(ElementType.PARAMETER)
 @Retention(RetentionPolicy.RUNTIME)
-@Constraint(validatedBy = UrlListValidator.class)
-public @interface ValidUrlList {
+@Constraint(validatedBy = FileLengthValidator.class)
+public @interface ValidFileLength {
 
-	String message() default "urlList 가 비어있을 수 없습니다.";
+	String message() default "업로드 하려는 파일이 없습니다";
 
 	Class<?>[] groups() default {};
 

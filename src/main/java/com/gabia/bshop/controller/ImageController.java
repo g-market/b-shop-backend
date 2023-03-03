@@ -11,20 +11,25 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.gabia.bshop.dto.response.ImageResponse;
+import com.gabia.bshop.dto.validator.group.FileValidationGroups;
 import com.gabia.bshop.dto.validator.ValidFile;
+import com.gabia.bshop.dto.validator.ValidFileLength;
+import com.gabia.bshop.dto.validator.group.ValidationSequence;
 import com.gabia.bshop.service.ImageService;
 
 import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor
-@Validated
+@Validated(ValidationSequence.class)
 public class ImageController {
 	private final ImageService imageService;
 
 	@PostMapping("/images")
 	public ResponseEntity<List<ImageResponse>> uploadImage(
-		@RequestParam("fileList") @ValidFile final MultipartFile[] fileList) {
+		@RequestParam("fileList")
+		@ValidFile(groups = FileValidationGroups.NotSuppoertedFileGroup.class)
+		@ValidFileLength(groups = FileValidationGroups.NotEmptyFileListGroup.class) final MultipartFile[] fileList) {
 		return ResponseEntity.status(HttpStatus.CREATED).body(imageService.uploadImage(fileList));
 	}
 }
