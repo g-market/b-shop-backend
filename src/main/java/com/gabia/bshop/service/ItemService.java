@@ -20,7 +20,6 @@ import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
-import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.ItemMapper;
 import com.gabia.bshop.repository.CategoryRepository;
@@ -35,7 +34,6 @@ import lombok.extern.slf4j.Slf4j;
 @Transactional(readOnly = true)
 @Service
 public class ItemService {
-	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
 	private final ItemRepository itemRepository;
 	private final CategoryRepository categoryRepository;
 	private final ImageValidator imageValidator;
@@ -60,10 +58,6 @@ public class ItemService {
 	 *
 	 **/
 	public Page<ItemResponse> findItemList(final Pageable page, final Long categoryId) {
-
-		if (page.getPageSize() > MAX_PAGE_ELEMENT_REQUEST_SIZE) {
-			throw new ConflictException(MAX_PAGE_ELEMENT_REQUEST_SIZE_EXCEPTION, MAX_PAGE_ELEMENT_REQUEST_SIZE);
-		}
 		Page<Item> itemPage;
 		if (categoryId == null) {
 			itemPage = itemRepository.findAll(page);

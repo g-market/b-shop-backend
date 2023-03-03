@@ -16,6 +16,7 @@ import com.gabia.bshop.dto.CategoryDto;
 import com.gabia.bshop.dto.request.CategoryCreateRequest;
 import com.gabia.bshop.dto.request.CategoryUpdateRequest;
 import com.gabia.bshop.service.CategoryService;
+import com.gabia.bshop.util.validator.LimitedSizePagination;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,7 @@ public class CategoryController {
 	}
 
 	@GetMapping("/categories")
-	public ResponseEntity<Page<CategoryDto>> findCategoryList(final Pageable pageable) {
+	public ResponseEntity<Page<CategoryDto>> findCategoryList(@LimitedSizePagination final Pageable pageable) {
 		return ResponseEntity.ok(categoryService.findCategoryList(pageable));
 	}
 
