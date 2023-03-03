@@ -8,14 +8,15 @@ import jakarta.validation.ConstraintValidatorContext;
 
 @Component
 public class FileLengthValidator implements ConstraintValidator<ValidFileLength, MultipartFile[]> {
+
 	@Override
-	public boolean isValid(MultipartFile[] fileList, ConstraintValidatorContext context) {
+	public boolean isValid(final MultipartFile[] fileList, final ConstraintValidatorContext context) {
 
 		if (fileList == null || fileList.length == 0) {
 			return false;
 		}
 
-		for (MultipartFile file : fileList) {
+		for (final MultipartFile file : fileList) {
 			if (file.isEmpty()) {
 				return false;
 			}

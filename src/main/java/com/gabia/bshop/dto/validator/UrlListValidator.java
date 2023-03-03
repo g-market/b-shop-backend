@@ -9,9 +9,9 @@ import jakarta.validation.ConstraintValidatorContext;
 
 @Component
 public class UrlListValidator implements ConstraintValidator<ValidUrlList, List<String>> {
-	@Override
-	public boolean isValid(List<String> urlList, ConstraintValidatorContext context) {
 
+	@Override
+	public boolean isValid(final List<String> urlList, final ConstraintValidatorContext context) {
 		return !urlList.isEmpty();
 	}
 }

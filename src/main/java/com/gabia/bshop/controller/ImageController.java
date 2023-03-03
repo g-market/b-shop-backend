@@ -11,9 +11,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.gabia.bshop.dto.response.ImageResponse;
-import com.gabia.bshop.dto.validator.group.FileValidationGroups;
 import com.gabia.bshop.dto.validator.ValidFile;
 import com.gabia.bshop.dto.validator.ValidFileLength;
+import com.gabia.bshop.dto.validator.group.FileValidationGroups;
 import com.gabia.bshop.dto.validator.group.ValidationSequence;
 import com.gabia.bshop.service.ImageService;
 

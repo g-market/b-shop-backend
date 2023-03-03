@@ -1,6 +1,7 @@
 package com.gabia.bshop.dto.validator.group;
 
-import com.gabia.bshop.dto.validator.group.FileValidationGroups.*;
+import com.gabia.bshop.dto.validator.group.FileValidationGroups.NotEmptyFileListGroup;
+import com.gabia.bshop.dto.validator.group.FileValidationGroups.NotSuppoertedFileGroup;
 
 import jakarta.validation.GroupSequence;
 import jakarta.validation.groups.Default;
