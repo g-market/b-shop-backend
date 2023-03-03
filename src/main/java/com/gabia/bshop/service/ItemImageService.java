@@ -14,6 +14,7 @@ import com.gabia.bshop.dto.request.ItemThumbnailUpdateRequest;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
+import com.gabia.bshop.exception.BadRequestException;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.ItemImageMapper;
 import com.gabia.bshop.mapper.ItemMapper;
@@ -104,7 +105,7 @@ public class ItemImageService {
 		final boolean isValid = imageValidator.validate(url);
 
 		if (!isValid) {
-			throw new NotFoundException(INCORRECT_URL_EXCEPTION);
+			throw new BadRequestException(INCORRECT_URL_EXCEPTION);
 		}
 	}
 }
