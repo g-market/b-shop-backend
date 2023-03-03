@@ -1,7 +1,5 @@
 package com.gabia.bshop.controller;
 
-import static com.gabia.bshop.exception.ErrorCode.*;
-
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,11 +18,11 @@ import com.gabia.bshop.dto.response.OrderCreateResponse;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
 import com.gabia.bshop.dto.response.OrderUpdateStatusResponse;
-import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.security.CurrentMember;
 import com.gabia.bshop.security.Login;
 import com.gabia.bshop.security.MemberPayload;
 import com.gabia.bshop.service.OrderService;
+import com.gabia.bshop.util.validator.LimitedSizePagination;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,14 +31,12 @@ import lombok.RequiredArgsConstructor;
 @RestController
 public class OrderController {
 
-	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
 	private final OrderService orderService;
 
 	@Login
 	@GetMapping("/orders")
 	public ResponseEntity<OrderInfoPageResponse> findOrderInfoList(@CurrentMember final MemberPayload memberPayload,
-		final Pageable pageable) {
-		validatePageElementSize(pageable);
+		@LimitedSizePagination final Pageable pageable) {
 		return ResponseEntity.ok(orderService.findOrderInfoList(memberPayload.id(), pageable));
 	}
 
@@ -56,7 +52,7 @@ public class OrderController {
 	@GetMapping("/admin/orders")
 	public ResponseEntity<OrderInfoPageResponse> findAllOrderInfoList(
 		final OrderInfoSearchRequest orderInfoSearchRequest,
-		final Pageable pageable) {
+		@LimitedSizePagination final Pageable pageable) {
 		final OrderInfoPageResponse adminOrdersPagination = orderService.findAllOrderInfoList(
 			orderInfoSearchRequest, pageable);
 		return ResponseEntity.ok(adminOrdersPagination);
@@ -85,11 +81,4 @@ public class OrderController {
 		@RequestBody @Valid final OrderUpdateStatusRequest orderUpdateStatusRequest) {
 		return ResponseEntity.ok(orderService.updateOrderStatus(orderUpdateStatusRequest));
 	}
-
-	private void validatePageElementSize(final Pageable pageable) {
-		if (pageable.getPageSize() > MAX_PAGE_ELEMENT_REQUEST_SIZE) {
-			throw new ConflictException(MAX_PAGE_ELEMENT_REQUEST_SIZE_EXCEPTION, MAX_PAGE_ELEMENT_REQUEST_SIZE);
-		}
-	}
-
 }
