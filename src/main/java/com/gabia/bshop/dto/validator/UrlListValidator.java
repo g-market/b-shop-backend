@@ -11,6 +11,7 @@ import jakarta.validation.ConstraintValidatorContext;
 public class UrlListValidator implements ConstraintValidator<ValidUrlList, List<String>> {
 	@Override
 	public boolean isValid(List<String> urlList, ConstraintValidatorContext context) {
+
 		return !urlList.isEmpty();
 	}
 }
