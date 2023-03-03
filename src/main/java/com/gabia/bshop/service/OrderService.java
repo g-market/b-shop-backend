@@ -78,8 +78,7 @@ public class OrderService {
 		return OrderInfoMapper.INSTANCE.orderInfoRelatedEntitiesToOrderInfoPageResponse(orderList, orderItems);
 	}
 
-	public OrderCreateResponse createOrder(final Long memberId,
-		final OrderCreateRequest orderCreateRequest) {
+	public OrderCreateResponse createOrder(final Long memberId, final OrderCreateRequest orderCreateRequest) {
 		final Order order = OrderMapper.INSTANCE.orderCreateRequestToEntity(memberId, orderCreateRequest);
 
 		List<OrderItemDto> orderItemDtoList = orderCreateRequest.orderItemDtoList();

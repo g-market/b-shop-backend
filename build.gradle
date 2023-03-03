@@ -89,10 +89,6 @@ dependencies {
 
     // hibernate envers
     implementation 'org.springframework.data:spring-data-envers'
-
-    // Redisson
-    implementation 'org.redisson:redisson-spring-boot-starter:3.19.3'
-
 }
 
 tasks.named('test') {
