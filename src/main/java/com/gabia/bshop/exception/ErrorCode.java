@@ -13,6 +13,8 @@ public enum ErrorCode {
 
 	// 400(Bad request)
 	INCORRECT_URL_EXCEPTION(BAD_REQUEST, "유효하지 않은 URL 입니다"),
+	NOT_ACCEPTED_FILE_FORMAT_EXCEPTION(BAD_REQUEST, "유효하지 않는 파일 형식 입니다."),
+	NO_FILE_EXCEPTION(BAD_REQUEST, "지정된 파일이 없습니다."),
 	INVALID_ITEM_OPTION_NOT_FOUND_EXCEPTION(BAD_REQUEST, "유효하지 않은 상품이 존재합니다."),
 
 	// 401(Unauthorized)
