@@ -1,6 +1,9 @@
 package com.gabia.bshop.schedule;
 
+import static com.gabia.bshop.entity.enumtype.ItemStatus.*;
+
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,13 +30,18 @@ public class ReservationUpdateScheduler {
 		lockAtMostFor = "10s") // 최대 잠금 시간
 	@Transactional
 	public void updateReservationStatus() {
+
 		final List<Reservation> reservationList = reservationRepository.findAllByItemOpenAtBefore(LocalDateTime.now());
+		final List<Reservation> removeReservationList = new ArrayList<>();
+		final List<Long> updateItemIdList = new ArrayList<>();
 
 		for (Reservation reservation : reservationList) {
-			if (reservation.getItem().getItemStatus() == ItemStatus.PRIVATE) {
-				reservation.getItem().setItemStatus(ItemStatus.PUBLIC);
+			if (reservation.getItem().getItemStatus() == RESERVED) {
+				updateItemIdList.add(reservation.getItem().getId());
+				removeReservationList.add(reservation);
 			}
-			reservationRepository.delete(reservation); // deleteAll
 		}
+		reservationRepository.updateAllItemStatus(updateItemIdList, PUBLIC);
+		reservationRepository.deleteAllReservation(removeReservationList);
 	}
 }

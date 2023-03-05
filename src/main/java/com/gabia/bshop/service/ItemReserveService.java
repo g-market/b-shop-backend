@@ -11,6 +11,7 @@ import com.gabia.bshop.dto.request.ReservationUpdateRequest;
 import com.gabia.bshop.dto.response.ItemReservationResponse;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.Reservation;
+import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.ItemReservationMapper;
@@ -33,6 +34,8 @@ public class ItemReserveService {
 	@Transactional
 	public ItemReservationResponse createItemReservation(final Long itemId) {
 		final Item item = findItemById(itemId);
+
+		item.setItemStatus(ItemStatus.RESERVED);
 
 		final Reservation reservation = Reservation.builder().item(item).build();
 		return ItemReservationMapper.INSTANCE.reservationToResponse(reservationRepository.save(reservation));
