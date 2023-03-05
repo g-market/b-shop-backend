@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gabia.bshop.dto.ItemImageDto;
-import com.gabia.bshop.dto.request.ItemChangeRequest;
+import com.gabia.bshop.dto.request.ItemUpdateRequest;
 import com.gabia.bshop.dto.request.ItemRequest;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Category;
@@ -154,13 +154,13 @@ public class ItemService {
 	 7. 상태(status)
 	 **/
 	@Transactional
-	public ItemResponse updateItem(final ItemChangeRequest itemChangeRequest) {
-		Item item = findItemById(itemChangeRequest.itemId());
-		final Long categoryId = itemChangeRequest.categoryId();
+	public ItemResponse updateItem(final ItemUpdateRequest itemUpdateRequest) {
+		Item item = findItemById(itemUpdateRequest.itemId());
+		final Long categoryId = itemUpdateRequest.categoryId();
 
 		final Category category = findCategoryById(categoryId);
 
-		item.update(itemChangeRequest, category);
+		item.update(itemUpdateRequest, category);
 
 		return ItemMapper.INSTANCE.itemToItemResponse(item);
 	}

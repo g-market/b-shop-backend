@@ -12,7 +12,7 @@ import jakarta.validation.constraints.PositiveOrZero;
 import lombok.Builder;
 
 @Builder
-public record ItemChangeRequest(
+public record ItemUpdateRequest(
 	@NotNull(message = "itemId 는 필수 값입니다.")
 	Long itemId,
 	Long categoryId,
