@@ -26,8 +26,8 @@ public class ReservationUpdateScheduler {
 	@Scheduled(cron = "0 * * * * *") // 1분 마다 실행
 	@SchedulerLock(
 		name = "scheduledItemStatusUpdateTask",
-		lockAtLeastFor = "5s", // 최소 잠금 시간
-		lockAtMostFor = "10s") // 최대 잠금 시간
+		lockAtLeastFor = "10s", // 최소 잠금 시간
+		lockAtMostFor = "PT10M") // 최대 잠금 시간 10분
 	@Transactional
 	public void updateReservationStatus() {
 
