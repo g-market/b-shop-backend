@@ -12,12 +12,13 @@ import org.springframework.stereotype.Component;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 
 import com.gabia.bshop.entity.Reservation;
-import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.repository.ReservationRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ReservationUpdateScheduler {
@@ -32,16 +33,16 @@ public class ReservationUpdateScheduler {
 	public void updateReservationStatus() {
 
 		final List<Reservation> reservationList = reservationRepository.findAllByItemOpenAtBefore(LocalDateTime.now());
-		final List<Reservation> removeReservationList = new ArrayList<>();
+		final List<Long> removeReservationIdList = new ArrayList<>();
 		final List<Long> updateItemIdList = new ArrayList<>();
 
-		for (Reservation reservation : reservationList) {
+		for (final Reservation reservation : reservationList) {
 			if (reservation.getItem().getItemStatus() == RESERVED) {
 				updateItemIdList.add(reservation.getItem().getId());
-				removeReservationList.add(reservation);
 			}
+			removeReservationIdList.add(reservation.getId());
 		}
-		reservationRepository.updateAllItemStatus(updateItemIdList, PUBLIC);
-		reservationRepository.deleteAllReservation(removeReservationList);
+		reservationRepository.updateAllItemStatusAndDeleteReservation(removeReservationIdList, updateItemIdList,
+			PUBLIC);
 	}
 }
