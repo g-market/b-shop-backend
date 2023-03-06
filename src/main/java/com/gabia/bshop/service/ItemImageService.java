@@ -15,6 +15,7 @@ import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.exception.BadRequestException;
+import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.ItemImageMapper;
 import com.gabia.bshop.mapper.ItemMapper;
@@ -33,6 +34,8 @@ public class ItemImageService {
 
 	private final ImageValidator imageValidator;
 
+	private final int MAX_ITEM_IMAGE_COUNT = 100;
+
 	public ItemImageDto findItemImage(final Long itemId, final Long imageId) {
 		final ItemImage itemImage = findItemImageByImageIdAndItemId(imageId, itemId);
 		return ItemImageMapper.INSTANCE.itemImageToDto(itemImage);
@@ -48,6 +51,10 @@ public class ItemImageService {
 		final Item item = findItemById(itemId);
 
 		List<ItemImage> itemImageList = new ArrayList<>();
+
+		if (item.getItemImageList().size() >= MAX_ITEM_IMAGE_COUNT) {
+			throw new ConflictException(MAX_ITEM_IMAGE_LIMITATION_EXCEPTION, MAX_ITEM_IMAGE_COUNT);
+		}
 
 		for (String imageUrl : itemImageCreateRequest.urlList()) {
 			urlValidate(imageUrl); // image validate

@@ -23,6 +23,7 @@ public record ItemRequest(
 	List<ItemOptionDto> itemOptionDtoList,
 
 	@Valid
+	@Size(max = 100, message = "ItemImage 가 허용된 수 이상입니다. (최대 100개)")
 	List<ItemImageDto> itemImageDtoList,
 	@NotNull(message = "categoryId 는 필수 입니다")
 	Long categoryId,
@@ -31,7 +32,7 @@ public record ItemRequest(
 	@NotNull(message = "name 을 입력하세요.")
 	String name,
 
-	@NotNull(message = "description 을 입력하세요")
+	@NotNull(message = "item의 description 을 입력하세요")
 	@ByteSize(max = 64L, message = "description 의 크기가 허용된 크기 이상입니다.(64 Byte).")
 	String description,
 

@@ -12,7 +12,7 @@ public record ItemOptionDto(
 	Long id,
 
 	@Length(max = 255, message = "255자 이내로 입력해주세요.")
-	@NotBlank(message = "description 은 필수 값입니다.")
+	@NotBlank(message = "itemOption 의 description 은 필수 값입니다.")
 	String description,
 
 	int optionPrice,
