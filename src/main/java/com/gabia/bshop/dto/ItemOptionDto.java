@@ -14,7 +14,7 @@ public record ItemOptionDto(
 	@Length(max = 255, message = "255자 이내로 입력해주세요.")
 	@NotBlank(message = "itemOption 의 description 은 필수 값입니다.")
 	String description,
-
+	@PositiveOrZero(message = "optionPrice 는 0 이상입니다.")
 	int optionPrice,
 
 	@PositiveOrZero(message = "stockQuantity 는 0 이상입니다.")
