@@ -47,8 +47,8 @@ public class ItemOptionService {
 		Item item = itemRepository.findById(itemId).orElseThrow(
 			() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, itemId)
 		);
-
-		if (item.getItemOptionList().size() >= MAX_ITEM_OPTION_COUNT) {
+		final int totalItemOption = item.getItemOptionList().size() + 1;
+		if (totalItemOption > MAX_ITEM_OPTION_COUNT) {
 			throw new ConflictException(MAX_ITEM_OPTION_LIMITATION_EXCEPTION, MAX_ITEM_OPTION_COUNT);
 		}
 
