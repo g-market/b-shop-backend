@@ -65,7 +65,7 @@ public class ItemOptionService {
 		final Long optionId,
 		final ItemOptionRequest itemOptionRequest) {
 
-		final ItemOption itemOption = findItemOptionByItemIdAndOptionIdWithLock(itemId, optionId);
+		final ItemOption itemOption = findItemOptionByItemIdAndOptionId(itemId, optionId);
 
 		itemOption.update(itemOptionRequest);
 
@@ -80,11 +80,6 @@ public class ItemOptionService {
 
 	private ItemOption findItemOptionByItemIdAndOptionId(final Long itemId, final Long itemOptionId) {
 		return itemOptionRepository.findByIdAndItemId(itemOptionId, itemId)
-			.orElseThrow(() -> new NotFoundException(ITEM_OPTION_NOT_FOUND_EXCEPTION, itemId, itemOptionId));
-	}
-
-	private ItemOption findItemOptionByItemIdAndOptionIdWithLock(final Long itemId, final Long itemOptionId) {
-		return itemOptionRepository.findByIdAndItemIdWithLock(itemOptionId, itemId)
 			.orElseThrow(() -> new NotFoundException(ITEM_OPTION_NOT_FOUND_EXCEPTION, itemId, itemOptionId));
 	}
 }
