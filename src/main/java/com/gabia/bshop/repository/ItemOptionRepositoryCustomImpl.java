@@ -9,12 +9,14 @@ import java.util.List;
 
 import com.gabia.bshop.dto.CartDto;
 import com.gabia.bshop.dto.ItemIdAndItemOptionIdAble;
+import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.entity.ItemOption;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
+import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -29,6 +31,25 @@ public class ItemOptionRepositoryCustomImpl implements ItemOptionRepositoryCusto
 			.join(itemOption.item, item).fetchJoin()
 			.join(item.category, category).fetchJoin()
 			.where(Expressions.list(item.id, itemOption.id).in(searchItemIdAndItemOptionIdIn(cartDtoList)))
+			.fetch();
+	}
+
+	@Override
+	public List<ItemOption> findByItemIdListAndIdList(List<OrderItemDto> orderItemDtoList) {
+		return jpaQueryFactory.select(itemOption)
+			.from(itemOption)
+			.where(Expressions.list(item.id, itemOption.id).in(searchItemIdAndItemOptionIdIn(orderItemDtoList)))
+			.orderBy(item.id.asc(), itemOption.id.asc())
+			.fetch();
+	}
+
+	@Override
+	public List<ItemOption> findByItemIdListAndIdListWithLock(List<OrderItemDto> orderItemDtoList) {
+		return jpaQueryFactory.select(itemOption)
+			.from(itemOption)
+			.where(Expressions.list(item.id, itemOption.id).in(searchItemIdAndItemOptionIdIn(orderItemDtoList)))
+			.orderBy(item.id.asc(), itemOption.id.asc())
+			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
 			.fetch();
 	}
 

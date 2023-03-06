@@ -84,7 +84,7 @@ class OrderServiceTest extends IntegrationTest {
 			.grade(MemberGrade.BRONZE)
 			.build();
 		Category category1 = Category.builder()
-			.name("카테고리1")
+			.name("카테고리100")
 			.build();
 		Item item1 = Item.builder()
 			.category(category1)
@@ -164,7 +164,7 @@ class OrderServiceTest extends IntegrationTest {
 			.url(UUID.randomUUID().toString())
 			.build();
 		item1.setThumbnail(itemImage1);
-		item2.setThumbnail(itemImage2);
+		item2.setThumbnail(itemImage1);
 
 		memberRepository.save(member1);
 		categoryRepository.save(category1);
@@ -211,7 +211,7 @@ class OrderServiceTest extends IntegrationTest {
 			.grade(MemberGrade.BRONZE)
 			.build();
 		Category category1 = Category.builder()
-			.name("카테고리1")
+			.name("카테고리100")
 			.build();
 		Item item1 = Item.builder()
 			.category(category1)
@@ -283,7 +283,7 @@ class OrderServiceTest extends IntegrationTest {
 			.grade(MemberGrade.BRONZE)
 			.build();
 		Category category1 = Category.builder()
-			.name("카테고리1")
+			.name("카테고리100")
 			.build();
 		Item item1 = Item.builder()
 			.category(category1)
@@ -401,7 +401,7 @@ class OrderServiceTest extends IntegrationTest {
 			.grade(MemberGrade.BRONZE)
 			.build();
 		Category category1 = Category.builder()
-			.name("카테고리1")
+			.name("카테고리100")
 			.build();
 		Item item1 = Item.builder()
 			.category(category1)
@@ -466,7 +466,7 @@ class OrderServiceTest extends IntegrationTest {
 			.totalPrice(33333L)
 			.build();
 		OrderItem orderItem2Order2 = OrderItem.builder()
-			.item(item1)
+			.item(item2)
 			.order(order2)
 			.option(itemOption2)
 			.orderCount(1)
