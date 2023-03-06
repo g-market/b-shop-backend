@@ -148,7 +148,8 @@ public class OrderService {
 	private void validateStockQuantity(final ItemOption itemOption, final int orderCount) {
 		final int restStock = itemOption.getStockQuantity() - orderCount;
 		if (restStock < 0) {
-			throw new ConflictException(ITEM_OPTION_OUT_OF_STOCK_EXCEPTION, itemOption.getStockQuantity());
+			throw new ConflictException(ITEM_OPTION_OUT_OF_STOCK_EXCEPTION, itemOption.getId(),
+				itemOption.getStockQuantity());
 		}
 	}
 

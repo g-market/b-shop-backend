@@ -34,4 +34,6 @@ public interface ItemOptionRepository extends JpaRepository<ItemOption, Long>, I
 	Optional<ItemOption> findByIdAndItemIdWithLock(Long itemOptionId, Long itemId);
 
 	boolean existsByItem_IdAndIdAndStockQuantityIsGreaterThanEqual(Long itemId, Long itemOptionId, int stockQuantity);
+
+	List<ItemOption> findAllByOrderByIdAsc();
 }

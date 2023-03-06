@@ -15,7 +15,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.dto.request.ItemOptionRequest;
@@ -29,7 +28,6 @@ import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
-import com.gabia.bshop.entity.enumtype.OrderStatus;
 import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.integration.IntegrationTest;
 import com.gabia.bshop.repository.CategoryRepository;
@@ -74,10 +72,10 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 	private OrderService orderService;
 
 	@Autowired
-	private EntityManager entityManager;
+	private ItemOptionService itemOptionService;
 
 	@Autowired
-	private ItemOptionService itemOptionService;
+	private EntityManager entityManager;
 
 	@BeforeEach
 	void setUp() {
@@ -95,30 +93,6 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 			.email("2_ckdals1234@naver.com")
 			.hiworksId("2_asdfasdf")
 			.phoneNumber("01022223333")
-			.role(MemberRole.NORMAL)
-			.grade(MemberGrade.BRONZE)
-			.build();
-		Member member3 = Member.builder()
-			.name("3_test_name")
-			.email("3_ckdals1234@naver.com")
-			.hiworksId("3_asdfasdf")
-			.phoneNumber("00011113333")
-			.role(MemberRole.NORMAL)
-			.grade(MemberGrade.BRONZE)
-			.build();
-		Member member4 = Member.builder()
-			.name("4_test_name")
-			.email("4_ckdals1234@naver.com")
-			.hiworksId("4_asdfasdf")
-			.phoneNumber("01022224444")
-			.role(MemberRole.NORMAL)
-			.grade(MemberGrade.BRONZE)
-			.build();
-		Member member5 = Member.builder()
-			.name("5_test_name")
-			.email("5_ckdals1234@naver.com")
-			.hiworksId("5_asdfasdf")
-			.phoneNumber("01055555555")
 			.role(MemberRole.NORMAL)
 			.grade(MemberGrade.BRONZE)
 			.build();
@@ -212,7 +186,7 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 			.item(item2)
 			.description("temp_itemOption2_description")
 			.optionPrice(1000)
-			.stockQuantity(stockQuantity)
+			.stockQuantity(200)
 			.build();
 		ItemOption itemOption3 = ItemOption.builder()
 			.item(item3)
@@ -260,10 +234,10 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 			.item(item9)
 			.description("temp_itemOption10_description")
 			.optionPrice(1000)
-			.stockQuantity(stockQuantity)
+			.stockQuantity(500)
 			.build();
 
-		memberRepository.saveAll(List.of(member1, member2, member3, member4, member5));
+		memberRepository.saveAll(List.of(member1, member2));
 		categoryRepository.save(category1);
 		itemRepository.saveAll(List.of(item1, item2, item3, item4, item5, item6, item7, item8, item9));
 		itemOptionRepository.saveAll(
@@ -275,17 +249,18 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 	public void afterEach() {
 		orderItemRepository.deleteAll();
 		orderRepository.deleteAll();
+		memberRepository.deleteAll();
 		itemOptionRepository.deleteAll();
 		itemRepository.deleteAll();
 		categoryRepository.deleteAll();
-		memberRepository.deleteAll();
 	}
 
-	@DisplayName("동시에_100명이_주문을_한다.")
+	@DisplayName("동시에_1000명이_주문을_한다.")
 	@Test
 	void concurrencyOrder() throws InterruptedException {
 
-		List<ItemOption> itemOptionList = itemOptionRepository.findAll();
+		ItemOption beforeItemOption3 = itemOptionRepository.findByIdAndItemId(3L, 3L).orElseThrow();
+		ItemOption beforeItemOption10 = itemOptionRepository.findByIdAndItemId(10L, 9L).orElseThrow();
 
 		OrderItemDto orderItemDto1 = OrderItemDto.builder()
 			.itemId(1L)
@@ -303,15 +278,25 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 			.orderCount(1)
 			.build();
 
+		OrderItemDto orderItemDto10_2 = OrderItemDto.builder()
+			.itemId(9L)
+			.itemOptionId(10L)
+			.orderCount(2)
+			.build();
+
 		List<OrderItemDto> orderItemDtoList = List.of(orderItemDto1, orderItemDto3, orderItemDto10);
+		List<OrderItemDto> orderItemDtoList2 = List.of(orderItemDto3, orderItemDto10_2);
 
 		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder()
 			.orderItemDtoList(orderItemDtoList)
 			.build();
+		OrderCreateRequest orderCreateRequest2 = OrderCreateRequest.builder()
+			.orderItemDtoList(orderItemDtoList2)
+			.build();
 
 		int nThreahdsSize = 1000;
-		int repeatSize = 150;
-		int countDownLatchSize = 300;
+		int repeatSize = 500;
+		int countDownLatchSize = 1000;
 		ExecutorService executorService = Executors.newFixedThreadPool(nThreahdsSize);
 		CountDownLatch countDownLatch = new CountDownLatch(countDownLatchSize);
 
@@ -320,63 +305,52 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 				try {
 					orderService.createOrder(1L, orderCreateRequest);
 				} catch (ConflictException e) {
-					e.getMessage();
-					//System.out.println("주문 실패");
+					System.out.println(e.getExceptionResponse().message());
 				} finally {
 					countDownLatch.countDown();
 				}
 			});
 			executorService.submit(() -> {
 				try {
-					orderService.createOrder(2L, orderCreateRequest);
+					orderService.createOrder(2L, orderCreateRequest2);
 				} catch (ConflictException e) {
-					e.getMessage();
-					//System.out.println("주문 실패");
+					System.out.println(e.getExceptionResponse().message());
 				} finally {
 					countDownLatch.countDown();
 				}
 			});
 		}
 		countDownLatch.await();
-		ItemOption AfterItemOption1 = itemOptionRepository.findById(1L).orElseThrow();
-		ItemOption AfterItemOption3 = itemOptionRepository.findById(3L).orElseThrow();
-		ItemOption AfterItemOption10 = itemOptionRepository.findById(10L).orElseThrow();
 
+		ItemOption afterItemOption3 = itemOptionRepository.findById(3L).orElseThrow();
+		ItemOption afterItemOption10 = itemOptionRepository.findById(10L).orElseThrow();
 		List<Order> orderAll = orderRepository.findAll();
-		List<OrderItem> oi1 = orderItemRepository.findAllByOptionId(1L);
 		List<OrderItem> oi3 = orderItemRepository.findAllByOptionId(3L);
 		List<OrderItem> oi10 = orderItemRepository.findAllByOptionId(10L);
 
-		List<Order> oiO1 = orderRepository.findAllByMemberId(1L);
-		List<Order> oiO2 = orderRepository.findAllByMemberId(2L);
+		Assertions.assertThat(afterItemOption3.getStockQuantity()).isEqualTo(0);//3번 상품은 재고가 0이여야한다.
 
-		Assertions.assertThat(AfterItemOption1.getStockQuantity()).isEqualTo(0);
-		Assertions.assertThat(AfterItemOption3.getStockQuantity()).isEqualTo(0);
-		Assertions.assertThat(AfterItemOption10.getStockQuantity()).isEqualTo(0);
-		Assertions.assertThat(oi1.size() * orderItemDto1.orderCount())
-			.isEqualTo(itemOptionList.get(0).getStockQuantity());
-		Assertions.assertThat(oi3.size() * orderItemDto3.orderCount())
-			.isEqualTo(itemOptionList.get(3).getStockQuantity());
-		Assertions.assertThat(oi10.size() * orderItemDto10.orderCount())
-			.isEqualTo(itemOptionList.get(3).getStockQuantity());
-		Assertions.assertThat(orderAll.size()).isEqualTo(itemOptionList.get(0).getStockQuantity());
-
+		Assertions.assertThat(oi3.stream().mapToInt(orderItem -> orderItem.getOrderCount()).sum())
+			.isEqualTo(beforeItemOption3.getStockQuantity());//3번 상품의 orderItem의 orderCount합과 기존 재고가 일치해야 한다.
+		Assertions.assertThat(
+				oi10.stream().mapToInt(orderItem -> orderItem.getOrderCount()).sum() + afterItemOption10.getStockQuantity())
+			.isEqualTo(beforeItemOption10.getStockQuantity());
+		Assertions.assertThat(orderAll.size()).isEqualTo(beforeItemOption3.getStockQuantity());
 	}
 
 	@DisplayName("동시에_주문을_취소한다.")
 	@Test
 	void concurrencyOrderCancel() throws InterruptedException {
 
-		List<ItemOption> itemOptionList = itemOptionRepository.findAll();
+		List<ItemOption> beforeItemOptionList = itemOptionRepository.findAllByOrderByIdAsc();
 
 		List<OrderItemDto> orderItemDtoList = new ArrayList<>();
-		for (ItemOption now : itemOptionList) {
+		for (ItemOption now : beforeItemOptionList) {
 			OrderItemDto orderItemDto = OrderItemDto.builder()
 				.itemId(now.getItem().getId())
 				.itemOptionId(now.getId())
 				.orderCount(1)
 				.build();
-
 			orderItemDtoList.add(orderItemDto);
 		}
 
@@ -385,10 +359,8 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 			.build();
 
 		int nThreahdsSize = 1000;
-		int repeatSize = 300;
-		int countDownLatchSize = 300;
-		List<Long> orderIds = orderRepository.findAll().stream().map(order -> order.getId()).toList();
-		int repeatCount = orderIds.size();
+		int repeatSize = 500;
+		int countDownLatchSize = 500;
 		ExecutorService executorService = Executors.newFixedThreadPool(nThreahdsSize);
 		CountDownLatch countDownLatch = new CountDownLatch(countDownLatchSize);
 
@@ -396,10 +368,9 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 		for (int i = 0; i < repeatSize; i++) {
 			executorService.submit(() -> {
 				try {
-					orderService.createOrder(1L, orderCreateRequest);
+					orderService.createOrder(3L, orderCreateRequest);
 				} catch (ConflictException e) {
-					e.getMessage();
-					//System.out.println("주문 실패");
+					System.out.println(e.getExceptionResponse().message());
 				} finally {
 					countDownLatch.countDown();
 				}
@@ -407,27 +378,32 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 		}
 		countDownLatch.await();
 
+		List<Long> orderIds = orderRepository.findAll().stream().map(order -> order.getId()).toList();
+		int repeatCount = orderIds.size();
+
 		//n개를 동시에 주문 취소한다.
 		CountDownLatch countDownLatch2 = new CountDownLatch(repeatCount);
 		for (Long orderId : orderIds) {
 			executorService.submit(() -> {
 				try {
-					orderService.cancelOrder(1L, orderId);
+					orderService.cancelOrder(3L, orderId);
 				} finally {
-					countDownLatch.countDown();
+					countDownLatch2.countDown();
 				}
 			});
 		}
 		countDownLatch2.await();
 
-		ItemOption itemOption1 = itemOptionList.get(0);
-		ItemOption AfterItemOption1 = itemOptionRepository.findByIdAndItemId(itemOption1.getId(),
-			itemOption1.getItem().getId()).orElseThrow();
+		List<ItemOption> afterItemOptionList = itemOptionRepository.findAllByOrderByIdAsc();
 
-		Assertions.assertThat(itemOption1.getStockQuantity()).isEqualTo(AfterItemOption1.getStockQuantity());
+		// 주문 취소 후 처음 재고와 일치하는지 확인
+		for (int i = 0; i < afterItemOptionList.size(); i++) {
+			Assertions.assertThat(afterItemOptionList.get(i).getStockQuantity())
+				.isEqualTo(beforeItemOptionList.get(i).getStockQuantity());
+		}
 	}
 
-	@DisplayName("재고를_업데이트_한다.")
+	@DisplayName("주문과_동시에_재고를_업데이트_한다.")
 	@Test
 	void concurrencyStockUpdate() throws InterruptedException {
 
@@ -454,44 +430,42 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 			.build();
 
 		int nThreahdsSize = 1000;
-		int repeatSize = 150;
-		int countDownLatchSize = 301;
+		int repeatSize = 500;
+		int countDownLatchSize = 1001;
 		ExecutorService executorService = Executors.newFixedThreadPool(nThreahdsSize);
 		CountDownLatch countDownLatch = new CountDownLatch(countDownLatchSize);
 
 		ItemOption itemOption1 = itemOptionList.get(0);
 
+		//n개를 주문한다.
 		for (int i = 0; i < repeatSize; i++) {
 			executorService.submit(() -> {
 				try {
-					orderService.createOrder(1L, orderCreateRequest);
+					orderService.createOrder(5L, orderCreateRequest);
 				} catch (ConflictException e) {
-					e.getMessage();
-					//System.out.println("주문 실패");
+					System.out.println(e.getExceptionResponse().message());
 				} finally {
 					countDownLatch.countDown();
 				}
 			});
 			executorService.submit(() -> {
 				try {
-					orderService.createOrder(2L, orderCreateRequest);
+					orderService.createOrder(6L, orderCreateRequest);
 				} catch (ConflictException e) {
-					e.getMessage();
-					//System.out.println("주문 실패");
+					System.out.println(e.getExceptionResponse().message());
 				} finally {
 					countDownLatch.countDown();
 				}
 			});
 		}
 
-		//재고를 업데이트한다.
+		//재고를 0개로 업데이트한다.
 		executorService.submit(() -> {
 			try {
 				itemOptionService.changeItemOption(itemOption1.getItem().getId(), itemOption1.getId(),
 					itemOptionRequest);
 			} catch (ConflictException e) {
-				e.getMessage();
-				//System.out.println("주문 실패");
+				System.out.println(e.getExceptionResponse().message());
 			} finally {
 				countDownLatch.countDown();
 			}
@@ -502,10 +476,10 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 		List<OrderItem> orderItemList1 = orderItemRepository.findAllByOptionId(itemOption1.getId());
 		ItemOption AfterItemOption1 = itemOptionRepository.findByIdAndItemId(itemOption1.getId(),
 			itemOption1.getItem().getId()).orElseThrow();
-		List<Order> order1_member1 = orderRepository.findAllByMemberId(1L);
-		List<Order> order2_member2 = orderRepository.findAllByMemberId(2L);
+		List<Order> order1_member1 = orderRepository.findAllByMemberId(5L);
+		List<Order> order2_member2 = orderRepository.findAllByMemberId(6L);
 
-		Assertions.assertThat(AfterItemOption1.getStockQuantity()).isEqualTo(0);
+		Assertions.assertThat(AfterItemOption1.getStockQuantity()).isEqualTo(0);//재고가 0개로 update
 		Assertions.assertThat(orderItemList1.size()).isLessThanOrEqualTo(itemOption1.getStockQuantity());
 		Assertions.assertThat(order1_member1.size() + order2_member2.size()).isEqualTo(orderItemList1.size());
 	}
