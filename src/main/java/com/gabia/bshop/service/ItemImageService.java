@@ -42,7 +42,7 @@ public class ItemImageService {
 	}
 
 	public List<ItemImageDto> findItemImageList(final Long itemId) {
-		final List<ItemImage> itemImageList = itemImageRepository.findAllByItem_id(itemId);
+		final List<ItemImage> itemImageList = itemImageRepository.findAllByItemId(itemId);
 		return itemImageList.stream().map(ItemImageMapper.INSTANCE::itemImageToDto).toList();
 	}
 

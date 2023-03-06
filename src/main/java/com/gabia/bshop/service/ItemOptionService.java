@@ -35,7 +35,7 @@ public class ItemOptionService {
 	}
 
 	public List<ItemOptionResponse> findOptionList(final Long itemId) {
-		final List<ItemOption> itemOptionList = itemOptionRepository.findAllByItem_id(itemId);
+		final List<ItemOption> itemOptionList = itemOptionRepository.findAllByItemId(itemId);
 		if (itemOptionList.isEmpty()) {
 			throw new NotFoundException(ITEM_OPTION_NOT_FOUND_EXCEPTION);
 		}

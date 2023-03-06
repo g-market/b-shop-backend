@@ -11,7 +11,7 @@ import com.gabia.bshop.entity.Reservation;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long>, ReservationCustomRepository {
 
-	Optional<Reservation> findByItem_Id(final Long itemId);
+	Optional<Reservation> findByItemId(final Long itemId);
 
 	@Query("""
 		select r

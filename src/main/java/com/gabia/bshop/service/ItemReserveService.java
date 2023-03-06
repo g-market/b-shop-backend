@@ -65,7 +65,7 @@ public class ItemReserveService {
 	}
 
 	private Reservation findReservationByItemId(final Long itemId) {
-		return reservationRepository.findByItem_Id(itemId).orElseThrow(
+		return reservationRepository.findByItemId(itemId).orElseThrow(
 			() -> new NotFoundException(ITEM_RESERVATION_NOT_FOUND_EXCEPTION, itemId)
 		);
 	}
