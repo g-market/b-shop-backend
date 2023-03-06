@@ -18,9 +18,7 @@ import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.ItemRepository;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -50,7 +48,7 @@ public class ItemOptionService {
 			() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, itemId)
 		);
 
-		if(item.getItemOptionList().size() >= MAX_ITEM_OPTION_COUNT){
+		if (item.getItemOptionList().size() >= MAX_ITEM_OPTION_COUNT) {
 			throw new ConflictException(MAX_ITEM_OPTION_LIMITATION_EXCEPTION, MAX_ITEM_OPTION_COUNT);
 		}
 

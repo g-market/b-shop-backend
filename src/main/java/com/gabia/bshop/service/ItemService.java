@@ -12,8 +12,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gabia.bshop.dto.ItemImageDto;
-import com.gabia.bshop.dto.request.ItemUpdateRequest;
 import com.gabia.bshop.dto.request.ItemRequest;
+import com.gabia.bshop.dto.request.ItemUpdateRequest;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
@@ -28,9 +28,7 @@ import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.util.ImageValidator;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -74,9 +72,9 @@ public class ItemService {
 		return new PageImpl<>(itemPage.stream().map(ItemMapper.INSTANCE::itemToItemResponse).toList());
 	}
 
-	/*
-	상품 생성
-	*/
+	/**
+	 * 상품 생성
+	 **/
 	@Transactional
 	public ItemResponse createItem(final ItemRequest itemDto) {
 
