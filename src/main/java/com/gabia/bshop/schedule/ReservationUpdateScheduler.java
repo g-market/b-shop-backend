@@ -1,7 +1,5 @@
 package com.gabia.bshop.schedule;
 
-import static com.gabia.bshop.entity.enumtype.ItemStatus.*;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -12,6 +10,7 @@ import org.springframework.stereotype.Component;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 
 import com.gabia.bshop.entity.Reservation;
+import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.repository.ReservationRepository;
 
 import jakarta.transaction.Transactional;
@@ -37,12 +36,12 @@ public class ReservationUpdateScheduler {
 		final List<Long> updateItemIdList = new ArrayList<>();
 
 		for (final Reservation reservation : reservationList) {
-			if (reservation.getItem().getItemStatus() == RESERVED) {
+			if (reservation.getItem().getItemStatus() == ItemStatus.RESERVED) {
 				updateItemIdList.add(reservation.getItem().getId());
 			}
 			removeReservationIdList.add(reservation.getId());
 		}
 		reservationRepository.updateAllItemStatusAndDeleteReservation(removeReservationIdList, updateItemIdList,
-			PUBLIC);
+			ItemStatus.PUBLIC);
 	}
 }
