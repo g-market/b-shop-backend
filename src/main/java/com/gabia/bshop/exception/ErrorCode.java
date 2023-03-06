@@ -40,7 +40,7 @@ public enum ErrorCode {
 	ITEM_RESERVATION_NOT_FOUND_EXCEPTION(NOT_FOUND, "itemId : {0}에 대한 상품예약을 찾을 수 없습니다."),
 
 	// 409(Conflict)
-	ITEM_OPTION_OUT_OF_STOCK_EXCEPTION(CONFLICT, "상품의 재고가 부족합니다."),
+	ITEM_OPTION_OUT_OF_STOCK_EXCEPTION(CONFLICT, "itemOptionId: {0} 상품의 재고가 부족합니다.(현재 재고:{1})"),
 	ORDER_STATUS_ALREADY_COMPLETED_EXCEPTION(CONFLICT, "상품의 상태가 완료된 상태입니다."),
 	ORDER_STATUS_ALREADY_CANCELLED_EXCEPTION(CONFLICT, "상품의 상태가 취소된 상태입니다."),
 	MAX_PAGE_ELEMENT_REQUEST_SIZE_EXCEPTION(CONFLICT, "한 페이지의 최대 {0}개까지 조회가 가능합니다."),
