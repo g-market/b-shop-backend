@@ -20,6 +20,4 @@ public interface OrderItemRepository extends JpaRepository<OrderItem, Long> {
 		order by oi.item.id
 		""")
 	List<OrderItem> findWithOrdersAndItemByOrderId(Long orderId);
-
-	List<OrderItem> findAllByOptionId(Long optionId);
 }
