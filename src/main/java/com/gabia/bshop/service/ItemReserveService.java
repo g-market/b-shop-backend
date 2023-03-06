@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gabia.bshop.dto.request.ReservationChangeRequest;
+import com.gabia.bshop.dto.request.ReservationRequest;
 import com.gabia.bshop.dto.response.ItemReservationResponse;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.Reservation;
@@ -34,8 +34,14 @@ public class ItemReserveService {
 	}
 
 	@Transactional
-	public ItemReservationResponse createItemReservation(final Long itemId) {
+	public ItemReservationResponse createItemReservation(final Long itemId,
+		final ReservationRequest reservationRequest) {
+
 		final Item item = findItemById(itemId);
+		final LocalDateTime openAt = reservationRequest.openAt();
+
+		reservationTimeValid(openAt);
+		item.setOpenAt(openAt);
 
 		final Reservation reservation = Reservation.builder().item(item).build();
 		return ItemReservationMapper.INSTANCE.reservationToResponse(reservationRepository.save(reservation));
@@ -43,17 +49,13 @@ public class ItemReserveService {
 
 	@Transactional
 	public ItemReservationResponse updateItemReservation(final Long itemId,
-		final ReservationChangeRequest reservationChangeRequest) {
-		Reservation reservation = findReservationByItemId(itemId);
+		final ReservationRequest reservationRequest) {
 
-		final LocalDateTime openAt = reservationChangeRequest.openAt();
+		final Reservation reservation = findReservationByItemId(itemId);
+		final LocalDateTime openAt = reservationRequest.openAt();
 
-		//현재시점보다 이전 시점인지 validate
-		if (openAt.isAfter(LocalDateTime.now())) {
-			reservation.getItem().setOpenAt(openAt);
-		} else {
-			throw new ConflictException(RESERVATION_TIME_NOT_VALID_EXCEPTION, openAt);
-		}
+		reservationTimeValid(openAt);
+		reservation.getItem().setOpenAt(openAt);
 
 		return ItemReservationMapper.INSTANCE.reservationToResponse(reservation);
 	}
@@ -74,6 +76,12 @@ public class ItemReserveService {
 		return itemRepository.findById(itemId).orElseThrow(
 			() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, itemId)
 		);
+	}
+
+	private void reservationTimeValid(final LocalDateTime openAt) {
+		if (openAt.isBefore(LocalDateTime.now())) {
+			throw new ConflictException(RESERVATION_TIME_NOT_VALID_EXCEPTION, openAt);
+		}
 	}
 
 }

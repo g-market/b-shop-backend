@@ -30,7 +30,7 @@ public class ReservationUpdateScheduler {
 		final List<Reservation> reservationList = reservationRepository.findAllByItemOpenAtBefore(LocalDateTime.now());
 
 		for (Reservation reservation : reservationList) {
-			if (reservation.getItem().getItemStatus() == ItemStatus.PRIVATE) {
+			if (reservation.getItem().getItemStatus() == ItemStatus.RESERVED) {
 				reservation.getItem().setItemStatus(ItemStatus.PUBLIC);
 			}
 			reservationRepository.delete(reservation); // deleteAll

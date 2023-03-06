@@ -1,12 +1,13 @@
 package com.gabia.bshop.mapper;
 
+import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
 import com.gabia.bshop.dto.response.ItemReservationResponse;
 import com.gabia.bshop.entity.Reservation;
-
+@Mapper(componentModel = "spring")
 public interface ItemReservationMapper {
 
 	ItemReservationMapper INSTANCE = Mappers.getMapper(ItemReservationMapper.class);
