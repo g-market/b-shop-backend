@@ -1,6 +1,8 @@
 package com.gabia.bshop.mapper;
 
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
 import com.gabia.bshop.dto.response.HiworksProfileResponse;
@@ -14,7 +16,7 @@ public interface HiworksProfileMapper {
 	HiworksProfileMapper INSTANCE = Mappers.getMapper(HiworksProfileMapper.class);
 	String EMAIL_PROVIDER = "@gabia.com";
 
-	default Member toNormalMember(HiworksProfileResponse hiworksProfileResponse) {
+	default Member hiworksProfileResponseToMember(HiworksProfileResponse hiworksProfileResponse) {
 		return Member.builder()
 			.email(hiworksProfileResponse.email() + EMAIL_PROVIDER)
 			.name(hiworksProfileResponse.name())
