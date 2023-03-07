@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.ClassRule;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
@@ -36,7 +35,6 @@ public abstract class IntegrationTest {
 	static GenericContainer<?> MINIO_CONTAINER;
 
 	static {
-
 		REDIS_CONTAINER = new GenericContainer<>(REDIS_VERSION)
 			.withExposedPorts(REDIS_PORT);
 
@@ -56,15 +54,17 @@ public abstract class IntegrationTest {
 		REDIS_CONTAINER.start();
 		MINIO_CONTAINER.start();
 	}
-
+	private static String getContainerAddress(final GenericContainer<?> container, final int port){
+		return "http://" + container.getHost() + ":" + container.getMappedPort(port);
+	}
 	@DynamicPropertySource
 	private static void properties(DynamicPropertyRegistry registry) {
 		registry.add("spring.data.redis.host", REDIS_CONTAINER::getHost);
 		registry.add("spring.data.redis.port", () -> "" + REDIS_CONTAINER.getMappedPort(REDIS_PORT));
-		registry.add("minio.endpoint", () -> "http://localhost:" + MINIO_CONTAINER.getMappedPort(MINIO_PORT));
+		registry.add("minio.endpoint", () -> getContainerAddress(MINIO_CONTAINER, MINIO_PORT));
 		registry.add("minio.user", () -> MINIO_ROOT_USER);
 		registry.add("minio.password", () -> MINIO_ROOT_PASSWORD);
 		registry.add("minio.bucket", () -> "images");
-		registry.add("minio.default.image", () -> "http://localhost:9000/images/No_Image.jpg");
+		registry.add("minio.default.image", () -> getContainerAddress(MINIO_CONTAINER, MINIO_PORT) + "/images/No_Image.jpg");
 	}
 }
