@@ -39,9 +39,7 @@ class CategoryServiceTest extends IntegrationTest {
 		categoryRepository.save(category1);
 
 		//when
-		CategoryCreateRequest categoryCreateRequest = CategoryCreateRequest.builder()
-			.name("category test")
-			.build();
+		CategoryCreateRequest categoryCreateRequest = new CategoryCreateRequest("category test");
 		CategoryDto categoryDto = categoryService.createCategory(categoryCreateRequest);
 
 		//then
@@ -90,14 +88,10 @@ class CategoryServiceTest extends IntegrationTest {
 	void updateCategory() {
 		//given
 		final Category category1 = CategoryFixture.CATEGORY_1.getInstance();
-
 		categoryRepository.save(category1);
 
 		//when
-		CategoryUpdateRequest categoryUpdateRequest = CategoryUpdateRequest.builder()
-			.id(category1.getId())
-			.name("카테고리 수정")
-			.build();
+		CategoryUpdateRequest categoryUpdateRequest = new CategoryUpdateRequest(category1.getId(), "category update");
 		CategoryDto categoryDto = categoryService.updateCategory(categoryUpdateRequest);
 
 		//then
