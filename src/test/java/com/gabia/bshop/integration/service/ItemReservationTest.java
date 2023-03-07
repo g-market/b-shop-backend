@@ -11,6 +11,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gabia.bshop.dto.request.ReservationUpdateRequest;
+import com.gabia.bshop.dto.response.ItemReservationResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.Reservation;
@@ -24,6 +25,8 @@ import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.ReservationRepository;
 import com.gabia.bshop.schedule.ReservationUpdateScheduler;
 import com.gabia.bshop.service.ItemReserveService;
+
+import jakarta.persistence.EntityManager;
 
 @Transactional
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
@@ -44,6 +47,9 @@ class ItemReservationTest extends IntegrationTest {
 	@Autowired
 	private ReservationUpdateScheduler reservationUpdateScheduler;
 
+	@Autowired
+	private EntityManager entityManager;
+
 	@DisplayName("아이템의 오픈을 예약한다.")
 	@Test
 	void itemOpenReservation() {
@@ -60,8 +66,9 @@ class ItemReservationTest extends IntegrationTest {
 		final ReservationUpdateRequest reservationUpdateRequest = new ReservationUpdateRequest(now.plusMinutes(1L));
 		// when
 
-		itemReserveService.createItemReservation(item.getId(), reservationUpdateRequest);
-		final Long actual = reservationRepository.findByItemId(item.getId()).get().getId();
+		ItemReservationResponse itemReservationResponse = itemReserveService.createItemReservation(item.getId(),
+			reservationUpdateRequest);
+		final Long actual = itemReservationResponse.itemId();
 
 		// then
 		Assertions.assertEquals(expected, actual);
@@ -161,19 +168,22 @@ class ItemReservationTest extends IntegrationTest {
 		final Reservation reservation2 = Reservation.builder().item(item2).build();
 
 		reservationRepository.saveAll(List.of(reservation1, reservation2));
+
 		// when
 		reservationUpdateScheduler.updateReservationStatus();
+
+		entityManager.flush();
+		entityManager.clear();
 
 		// then
 		Assertions.assertAll(
 			() -> {
-				Assertions.assertEquals(item1.getItemStatus(), ItemStatus.RESERVED);
+				Assertions.assertEquals(ItemStatus.RESERVED,
+					itemRepository.findById(item1.getId()).orElseThrow().getItemStatus());
 			},
 			() -> {
-				Assertions.assertEquals(item2.getItemStatus(), ItemStatus.PUBLIC);
-			},
-			() -> {
-				Assertions.assertEquals(item1, reservationRepository.findByItemId(item1.getId()).get().getItem());
+				Assertions.assertEquals(ItemStatus.PUBLIC,
+					itemRepository.findById(item2.getId()).orElseThrow().getItemStatus());
 			},
 			() -> {
 				Assertions.assertThrows(
@@ -181,7 +191,6 @@ class ItemReservationTest extends IntegrationTest {
 					() -> {
 						itemReserveService.findItemReservation(item2.getId());
 					});
-
 			}
 		);
 	}

@@ -93,7 +93,7 @@ class ItemOptionServiceTest {
 			.map(ItemOptionMapper.INSTANCE::itemOptionToResponse)
 			.toList();
 
-		given(itemOptionRepository.findAllByItem_id(item1.getId())).willReturn(itemOptionList);
+		given(itemOptionRepository.findAllByItemId(item1.getId())).willReturn(itemOptionList);
 
 		// when
 		final List<ItemOptionResponse> actual = itemOptionService.findOptionList(item1.getId());
@@ -101,7 +101,7 @@ class ItemOptionServiceTest {
 		// then
 		assertAll(
 			() -> assertIterableEquals(itemOptionResponseList, actual),
-			() -> verify(itemOptionRepository).findAllByItem_id(item1.getId())
+			() -> verify(itemOptionRepository).findAllByItemId(item1.getId())
 		);
 	}
 
@@ -111,7 +111,7 @@ class ItemOptionServiceTest {
 		//given
 		final Long itemId = 99999L;
 
-		given(itemOptionRepository.findAllByItem_id(itemId)).willReturn(List.of());
+		given(itemOptionRepository.findAllByItemId(itemId)).willReturn(List.of());
 
 		// when & then
 		Assertions.assertThrows(
