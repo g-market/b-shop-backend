@@ -6,6 +6,8 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseCookie.ResponseCookieBuilder;
 import org.springframework.stereotype.Component;
 
+import com.gabia.bshop.config.TokenProperties;
+
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

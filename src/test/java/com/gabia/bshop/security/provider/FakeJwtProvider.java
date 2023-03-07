@@ -2,6 +2,7 @@ package com.gabia.bshop.security.provider;
 
 import java.util.Date;
 
+import com.gabia.bshop.config.TokenProperties;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 
 import io.jsonwebtoken.Jwts;

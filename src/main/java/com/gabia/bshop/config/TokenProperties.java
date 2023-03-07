@@ -1,10 +1,10 @@
-package com.gabia.bshop.security.provider;
+package com.gabia.bshop.config;
 
 import java.nio.charset.StandardCharsets;
 import java.security.Key;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.stereotype.Component;
+import org.springframework.context.annotation.Configuration;
 
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
@@ -13,8 +13,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@Component
-@ConfigurationProperties("token")
+@Configuration
+@ConfigurationProperties("application.token")
 public class TokenProperties {
 
 	private String secret;

@@ -1,4 +1,4 @@
-package com.gabia.bshop.security.provider;
+package com.gabia.bshop.config;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,13 +19,13 @@ class TokenPropertiesTest {
 	@Autowired
 	private TokenProperties tokenProperties;
 
-	@Value("${token.secret}")
+	@Value("${application.token.secret}")
 	private String secret;
 
-	@Value("${token.access-expired-time}")
+	@Value("${application.token.access-expired-time}")
 	private long accessExpiredTime;
 
-	@Value("${token.refresh-expired-time}")
+	@Value("${application.token.refresh-expired-time}")
 	private long refreshExpiredTime;
 
 	@Test

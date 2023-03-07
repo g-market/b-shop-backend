@@ -6,6 +6,7 @@ import java.util.Date;
 
 import org.springframework.stereotype.Component;
 
+import com.gabia.bshop.config.TokenProperties;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.exception.UnAuthorizedException;
 import com.gabia.bshop.security.MemberPayload;

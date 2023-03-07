@@ -2,13 +2,14 @@ package com.gabia.bshop.fixture;
 
 import java.nio.charset.StandardCharsets;
 
-import com.gabia.bshop.security.provider.TokenProperties;
+import com.gabia.bshop.config.TokenProperties;
 
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 public class TokenPropertiesFixture {
+
 	public static final String VALID_SECRET = "TESTSECRETKEYTESTSECRETKEYTESTSECRETKEYTESTSECRETKEY";
 	public static final String INVALID_SECRET = "INVALIDTESTSECRETKEYTESTSECRETKEYTESTSECRETKEYTESTSECRETKEY";
 	public static final long VALID_ACCESS_EXPIRED_TIME = 3600000L;
