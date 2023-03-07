@@ -23,10 +23,10 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 @Service
 public class ItemOptionService {
+
 	private final ItemRepository itemRepository;
 	private final ItemOptionRepository itemOptionRepository;
-
-	private final int MAX_ITEM_OPTION_COUNT = 100;
+	private static final int MAX_ITEM_OPTION_COUNT = 100;
 
 	public ItemOptionResponse findItemOption(final Long itemId, final Long optionId) {
 		final ItemOption itemOption = findItemOptionByItemIdAndOptionId(itemId, optionId);

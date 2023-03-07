@@ -42,7 +42,6 @@ public class OrderService {
 
 	private final OrderRepository orderRepository;
 	private final OrderItemRepository orderItemRepository;
-	private final ItemImageRepository itemImageRepository;
 	private final ItemOptionRepository itemOptionRepository;
 
 	@Transactional(readOnly = true)

@@ -33,12 +33,13 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 @Service
 public class ItemService {
-	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
+
 	private final ItemRepository itemRepository;
 	private final CategoryRepository categoryRepository;
 	private final ImageValidator imageValidator;
 	@Value("${minio.default.image}")
 	private String NO_IMAGE_URL;
+	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
 
 	/**
 	 * 상품 조회

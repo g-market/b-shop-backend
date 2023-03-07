@@ -28,9 +28,9 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class CategoryService {
 
-	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
 	private final CategoryRepository categoryRepository;
 	private final ItemRepository itemRepository;
+	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
 
 	//카테고리 단건 조회
 	public CategoryDto findCategory(final Long categoryId) {

@@ -24,6 +24,7 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 @Service
 public class ItemReserveService {
+
 	private final ReservationRepository reservationRepository;
 	private final ItemRepository itemRepository;
 
