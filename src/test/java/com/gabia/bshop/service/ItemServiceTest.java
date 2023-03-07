@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -19,7 +20,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import com.gabia.bshop.dto.ItemDto;
+import com.gabia.bshop.dto.request.ItemUpdateRequest;
+import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
@@ -42,7 +44,8 @@ class ItemServiceTest {
 	private ItemService itemService;
 
 	@Test
-	void 상품_조회() {
+	@DisplayName("상품을_조회한다")
+	void findItem() {
 		//given
 		Category category = Category.builder().id(1L).name("name").build();
 
@@ -54,7 +57,6 @@ class ItemServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -66,7 +68,6 @@ class ItemServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -81,7 +82,8 @@ class ItemServiceTest {
 	}
 
 	@Test
-	void 상품_목록_조회() {
+	@DisplayName("상품_목록을_조회한다")
+	void findItemList() {
 		// givn
 		Category category = Category.builder().id(1L).name("name").build();
 
@@ -93,7 +95,6 @@ class ItemServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -105,26 +106,26 @@ class ItemServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("description")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
 		itemList = List.of(item1, item2);
 
 		Pageable pageable = PageRequest.of(0, 10);
-		List<ItemDto> itemDtoList = itemList.stream().map(ItemMapper.INSTANCE::itemToDto).toList();
+		Page<ItemResponse> itemDtoList = new PageImpl<>(
+			itemList.stream().map(ItemMapper.INSTANCE::itemToItemResponse).toList());
 
 		Page<Item> itemPage = new PageImpl<>(Collections.unmodifiableList(itemList));
 
-		// when
 		when(itemRepository.findAll(pageable)).thenReturn(itemPage);
 
-		// then
-		assertEquals(itemDtoList, itemService.findItems(pageable));
+		// when & then
+		assertEquals(itemDtoList, itemService.findItemList(pageable, null));
 	}
 
 	@Test
-	void 상품_정보_수정() {
+	@DisplayName("상품을_수정한다")
+	void changeItem() {
 		// given
 		Category category = Category.builder().id(1L).name("name").build();
 
@@ -136,7 +137,6 @@ class ItemServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(10000)
 				.description("before")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
@@ -148,11 +148,10 @@ class ItemServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(20000)
 				.description("changed")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
-		ItemDto itemDto = ItemMapper.INSTANCE.itemToDto(item2);
+		ItemUpdateRequest itemDto = ItemMapper.INSTANCE.itemToItemChangeRequest(item2);
 
 		// when
 		when(categoryRepository.findById(1L)).thenReturn(Optional.ofNullable(category));
@@ -160,7 +159,7 @@ class ItemServiceTest {
 		when(itemRepository.save(item2)).thenReturn(item2);
 
 		// then
-		ItemDto changedItem = itemService.updateItem(itemDto);
+		ItemResponse changedItem = itemService.updateItem(itemDto);
 
 		assertAll(
 			() -> assertEquals(20000, changedItem.basePrice()),
@@ -168,7 +167,8 @@ class ItemServiceTest {
 	}
 
 	@Test
-	void 상품_생성() {
+	@DisplayName("상품을_생성한다")
+	void createItem() {
 		// given
 		Category category = Category.builder().id(1L).name("name").build();
 
@@ -180,14 +180,24 @@ class ItemServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(20000)
 				.description("item1")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
+		Item returnItem = Item.builder()
+			.id(1L)
+			.category(category)
+			.name("item")
+			.itemStatus(ItemStatus.PUBLIC)
+			.basePrice(20000)
+			.description("item1")
+			.openAt(LocalDateTime.now())
+			.build();
+
 		// when
 		when(categoryRepository.findById(1L)).thenReturn(Optional.ofNullable(category));
-		when(itemRepository.save(item)).thenReturn(item);
-		ItemDto itemDto = itemService.createItem(ItemMapper.INSTANCE.itemToDto(item));
+		when(itemRepository.save(any())).thenReturn(returnItem);
+
+		ItemResponse itemDto = itemService.createItem(ItemMapper.INSTANCE.itemToItemRequest(item));
 
 		// then
 		assertAll(
@@ -200,7 +210,8 @@ class ItemServiceTest {
 	}
 
 	@Test
-	void 상품_수정_실패_상품_없음() {
+	@DisplayName("상품_수정시_상품이_없으면_실패한다")
+	void failToDeleteItemWithNoitem() {
 		// given
 		Category category = Category.builder().id(1L).name("name").build(); // 존재하지 않는 카테고리
 
@@ -212,11 +223,10 @@ class ItemServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(20000)
 				.description("not exist")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
-		ItemDto itemDto = ItemMapper.INSTANCE.itemToDto(item);
+		ItemUpdateRequest itemUpdateRequest = ItemMapper.INSTANCE.itemToItemChangeRequest(item);
 
 		// when
 		when(itemRepository.save(item)).thenReturn(item);
@@ -225,12 +235,13 @@ class ItemServiceTest {
 		Assertions.assertThrows(
 			NotFoundException.class,
 			() -> {
-				itemService.updateItem(itemDto);
+				itemService.updateItem(itemUpdateRequest);
 			});
 	}
 
 	@Test
-	void 상품_수정_실패_카테고리_없음() {
+	@DisplayName("상품_수정시_카테고리가_없으면_실패한다")
+	void failToChangeItemWithoutCategory() {
 		// given
 		Category category = Category.builder().id(2L).name("name").build(); // 존재하지 않는 카테고리
 
@@ -242,11 +253,10 @@ class ItemServiceTest {
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(20000)
 				.description("changed")
-				.deleted(false)
 				.openAt(LocalDateTime.now())
 				.build();
 
-		ItemDto itemDto = ItemMapper.INSTANCE.itemToDto(item);
+		ItemUpdateRequest itemUpdateRequest = ItemMapper.INSTANCE.itemToItemChangeRequest(item);
 
 		// when
 		when(categoryRepository.findById(2L)).thenThrow(EntityNotFoundException.class);
@@ -255,16 +265,15 @@ class ItemServiceTest {
 		Assertions.assertThrows(
 			NotFoundException.class,
 			() -> {
-				itemService.updateItem(itemDto);
+				itemService.updateItem(itemUpdateRequest);
 			});
 	}
 
 	@Test
-	void 상품_제거_성공() {
+	@DisplayName("상품_제거에_성공한다")
+	void itemDeleteSuccess() {
 		// given
 		Long itemId1 = 1L;
-		Long itemId2 = 2L;
-
 		Category category = Category.builder().id(1L).name("name").build(); // 존재하지 않는 카테고리
 
 		Item item1 =
@@ -274,47 +283,31 @@ class ItemServiceTest {
 				.name("item2")
 				.itemStatus(ItemStatus.PUBLIC)
 				.basePrice(20000)
-				.description("changed")
-				.deleted(false)
+				.description("delete test item")
 				.openAt(LocalDateTime.now())
 				.build();
-
-		Item item2 =
-			Item.builder()
-				.id(itemId2)
-				.category(category)
-				.name("item2")
-				.itemStatus(ItemStatus.PUBLIC)
-				.basePrice(20000)
-				.description("changed")
-				.deleted(false)
-				.openAt(LocalDateTime.now())
-				.build();
-
 		// when
 		when(itemRepository.findById(itemId1)).thenReturn(Optional.ofNullable(item1));
-		when(itemRepository.findById(itemId2)).thenReturn(Optional.ofNullable(item2));
-
 		itemService.deleteItem(itemId1);
-		itemService.deleteItem(itemId2);
 
 		// then
-		verify(itemRepository, times(2)).deleteById(anyLong());
+		verify(itemRepository, times(1)).delete(any());
 	}
 
 	@Test
-	void 상품_제거_실패() {
+	@DisplayName("상품_제거에_실패하면_NotFoundException이_발생한다")
+	void failItemDelete() {
 		// given
 		Long itemId = 3L; // 존재하지 않는 상품
 
 		// when
-		when(itemRepository.findById(3L)).thenThrow(EntityNotFoundException.class);
+		when(itemRepository.findById(3L)).thenThrow(NotFoundException.class);
 
 		// then
 		Assertions.assertThrows(
-			EntityNotFoundException.class,
+			NotFoundException.class,
 			() -> {
-				itemService.deleteItem(3L);
+				itemService.deleteItem(itemId);
 			});
 	}
 }

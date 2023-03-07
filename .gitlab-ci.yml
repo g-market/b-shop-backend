@@ -1,32 +1,27 @@
 stages:
-  - build
   - test
-  - coverage
-#  - deploy
+  - visualization
+  - build
+  - package
+  - deploy
 
-build:
+variables:
+  IMAGE_NAME: mentoring-gitlab.gabia.com:5050/mentee/mentee_2023.01/team/g-market/gabia_b_shop_backend
+
+.merge_rules:
   rules:
-    -  if : '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
-  image: openjdk:17-alpine
-  stage: build
-  before_script:
-    - echo "$APPLICATION_YAML" > "src/main/resources/application.yml"
-  script:
-    - ./gradlew clean
-    - ./gradlew build -x test
-  artifacts:
-    paths:
-      - build/libs/*.jar
-    expire_in: 10 min
+    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+
+.push_rules:
+  rules:
+    - if : '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == "main"'
 
 test:
   rules:
-    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
+    - !reference [.merge_rules, rules]
   variables:
     GRADLE_OPTS: "-Dorg.gradle.daemon=false"
-    # Instruct Testcontainers to use the daemon of DinD.
     DOCKER_HOST: "tcp://docker:2375"
-    # Improve performance with overlayfs.
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: ""
 
@@ -38,7 +33,7 @@ test:
     - name: docker:dind
   script:
     - ./gradlew test
-  coverage: '/    - Instruction Coverage: ([0-9.]+)%/'
+  coverage: '/ - Instruction Coverage: ([0-9.]+)%/'
   artifacts:
     paths:
       - build/reports/jacoco/test/jacoco*.xml
@@ -46,16 +41,84 @@ test:
       junit: build/test-results/test/**/TEST-*.xml
 
 #https://docs.gitlab.com/ee/ci/testing/test_coverage_visualization.html
-coverage:
+visualization:
   rules:
-    - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
-  stage: coverage
+    - !reference [.merge_rules, rules]
+  stage: visualization
+  needs: ["test"]
   image: registry.gitlab.com/haynes/jacoco2cobertura:1.0.7
   script:
     - python /opt/cover2cover.py build/reports/jacoco/test/jacoco*.xml $CI_PROJECT_DIR/src/main/java/ > build/cobertura.xml
-  needs: ["test"]
   artifacts:
     reports:
       coverage_report:
         coverage_format: cobertura
         path: build/cobertura.xml
+
+
+build:
+  rules:
+    - !reference [.merge_rules, rules]
+    - !reference [.push_rules, rules]
+  image: openjdk:17-alpine
+  stage: build
+  script:
+    - ./gradlew clean
+    - ./gradlew build -x test
+  artifacts:
+    paths:
+      - build/libs/*.jar
+    expire_in: 10 min
+
+package:
+  rules:
+    - !reference [ .push_rules, rules ]
+  stage: package
+  needs: ["build"]
+  image: docker:latest
+  services:
+    - name: docker:dind
+  before_script:
+    - docker login -u $CI_REGISTRY_USER -p $CI_REGISTRY_PASSWORD $CI_REGISTRY
+  script:
+    - docker pull $IMAGE_NAME:latest || true
+    - docker build --cache-from $IMAGE_NAME:latest --tag $IMAGE_NAME:$CI_COMMIT_SHA --tag $IMAGE_NAME:latest .
+    - docker push $IMAGE_NAME:$CI_COMMIT_SHA
+    - docker push $IMAGE_NAME:latest
+  after_script:
+    - docker logout
+
+deploy:
+  rules:
+    - !reference [ .push_rules, rules ]
+  stage: deploy
+  needs: ["package"]
+  tags:
+    - deployer
+  before_script:
+    ## Activate ssh-agent
+    - eval $(ssh-agent -s)
+    - echo "$SSH_KEY" > id_rsa
+    - chmod 400 id_rsa
+    - ssh-add id_rsa
+    ## ADD ssh known hosts
+    - echo "$SSH_KNOWN_HOSTS" > known_hosts
+    - mkdir -p ~/.ssh
+    - mv known_hosts ~/.ssh/known_hosts
+    ## Change permission
+    - chmod 644 ~/.ssh/known_hosts
+    - chmod 700 ~/.ssh
+    - ssh-keygen -R localhost
+    ## Move deploy file and .env file
+    - scp -o "StrictHostKeyChecking=no" $BLUE_DEPLOY_YAML root@localhost:~/deploy/blue-deploy.yml
+    - scp -o "StrictHostKeyChecking=no" $GREEN_DEPLOY_YAML root@localhost:~/deploy/green-deploy.yml
+    - scp -o "StrictHostKeyChecking=no" $DEPLOY_ENV root@localhost:~/deploy/.env
+  script:
+    - |
+      ssh -tt -o StrictHostKeyChecking=no root@localhost <<EOF >/dev/null
+      cd deploy \
+      && docker pull $IMAGE_NAME:latest \
+      && docker-compose -f blue-deploy.yml --env-file .env up -d \
+      && docker-compose -f green-deploy.yml --env-file .env up -d \
+      && exit
+      EOF
