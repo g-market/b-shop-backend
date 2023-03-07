@@ -97,9 +97,7 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 			.grade(MemberGrade.BRONZE)
 			.build();
 
-		Category category1 = Category.builder()
-			.name("카테고리" + idx++)
-			.build();
+		Category category1 = Category.builder().name("카테고리" + idx++).build();
 
 		Item item1 = Item.builder()
 			.category(category1)
@@ -262,34 +260,16 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 		ItemOption beforeItemOption3 = itemOptionRepository.findByIdAndItemId(3L, 3L).orElseThrow();
 		ItemOption beforeItemOption10 = itemOptionRepository.findByIdAndItemId(10L, 9L).orElseThrow();
 
-		OrderItemDto orderItemDto1 = OrderItemDto.builder()
-			.itemId(1L)
-			.itemOptionId(1L)
-			.orderCount(1)
-			.build();
-		OrderItemDto orderItemDto3 = OrderItemDto.builder()
-			.itemId(3L)
-			.itemOptionId(3L)
-			.orderCount(1)
-			.build();
-		OrderItemDto orderItemDto10 = OrderItemDto.builder()
-			.itemId(9L)
-			.itemOptionId(10L)
-			.orderCount(1)
-			.build();
+		OrderItemDto orderItemDto1 = OrderItemDto.builder().itemId(1L).itemOptionId(1L).orderCount(1).build();
+		OrderItemDto orderItemDto3 = OrderItemDto.builder().itemId(3L).itemOptionId(3L).orderCount(1).build();
+		OrderItemDto orderItemDto10 = OrderItemDto.builder().itemId(9L).itemOptionId(10L).orderCount(1).build();
 
-		OrderItemDto orderItemDto10_2 = OrderItemDto.builder()
-			.itemId(9L)
-			.itemOptionId(10L)
-			.orderCount(2)
-			.build();
+		OrderItemDto orderItemDto10_2 = OrderItemDto.builder().itemId(9L).itemOptionId(10L).orderCount(2).build();
 
 		List<OrderItemDto> orderItemDtoList = List.of(orderItemDto1, orderItemDto3, orderItemDto10);
 		List<OrderItemDto> orderItemDtoList2 = List.of(orderItemDto3, orderItemDto10_2);
 
-		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder()
-			.orderItemDtoList(orderItemDtoList)
-			.build();
+		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder().orderItemDtoList(orderItemDtoList).build();
 		OrderCreateRequest orderCreateRequest2 = OrderCreateRequest.builder()
 			.orderItemDtoList(orderItemDtoList2)
 			.build();
@@ -354,15 +334,12 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 			orderItemDtoList.add(orderItemDto);
 		}
 
-		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder()
-			.orderItemDtoList(orderItemDtoList)
-			.build();
+		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder().orderItemDtoList(orderItemDtoList).build();
 
 		int nThreahdsSize = 1000;
 		int repeatSize = 500;
-		int countDownLatchSize = 500;
 		ExecutorService executorService = Executors.newFixedThreadPool(nThreahdsSize);
-		CountDownLatch countDownLatch = new CountDownLatch(countDownLatchSize);
+		CountDownLatch countDownLatch = new CountDownLatch(repeatSize);
 
 		//n개를 주문한다.
 		for (int i = 0; i < repeatSize; i++) {
@@ -420,9 +397,7 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 			orderItemDtoList.add(orderItemDto);
 		}
 
-		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder()
-			.orderItemDtoList(orderItemDtoList)
-			.build();
+		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder().orderItemDtoList(orderItemDtoList).build();
 
 		ItemOptionRequest itemOptionRequest = ItemOptionRequest.builder()
 			.description("item description")
