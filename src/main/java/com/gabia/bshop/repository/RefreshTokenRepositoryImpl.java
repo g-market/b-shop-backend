@@ -2,18 +2,17 @@ package com.gabia.bshop.repository;
 
 import static com.gabia.bshop.exception.ErrorCode.*;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.hash.HashMapper;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gabia.bshop.exception.UnAuthorizedRefreshTokenException;
 import com.gabia.bshop.security.RefreshToken;
+import com.gabia.bshop.util.RedisValueSupport;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,55 +21,51 @@ import lombok.RequiredArgsConstructor;
 @Repository
 public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
 
-	private final RedisTemplate<String, Object> redisTemplate;
+	private static final String REFRESH_TOKEN_PREFIX = "refreshToken-";
 
-	private final HashOperations<String, byte[], byte[]> hashOperations;
-
-	private final HashMapper<Object, byte[], byte[]> hashMapper;
+	private final RedisTemplate<String, String> redisTemplate;
+	private final StringRedisTemplate stringRedisTemplate;
+	private final RedisValueSupport redisValueSupport;
 
 	@Value("${token.refresh-expired-time}")
-	long expireLength;
+	private long expiredTimeMillis;
 
 	@Override
 	@Transactional
 	public RefreshToken save(final RefreshToken refreshToken) {
-		final String key = refreshToken.refreshToken();
-		if (hasSameRefreshToken(key)) {
+		final String key = getKey(refreshToken.refreshToken());
+		final String foundValue = getValue(key);
+		if (foundValue != null) {
 			throw new UnAuthorizedRefreshTokenException(REFRESH_TOKEN_DUPLICATED_SAVED_EXCEPTION);
 		}
-
-		final Map<byte[], byte[]> mappedHash = hashMapper.toHash(refreshToken);
-		hashOperations.putAll(key, mappedHash);
-		redisTemplate.expire(key, expireLength, TimeUnit.MILLISECONDS);
+		final String value = redisValueSupport.writeValueAsString(refreshToken);
+		stringRedisTemplate.opsForValue().set(key, value);
+		stringRedisTemplate.expire(key, expiredTimeMillis, TimeUnit.MILLISECONDS);
 		return refreshToken;
 	}
 
 	@Override
 	public RefreshToken findToken(final String savedTokenValue) {
-		final Map<byte[], byte[]> entries = hashOperations.entries(savedTokenValue);
-		hasRefreshTokenEntries(entries);
-		return convertRefreshToken(entries);
+		final String key = getKey(savedTokenValue);
+		final String foundValue = getValue(key);
+		if (foundValue == null) {
+			throw new UnAuthorizedRefreshTokenException(REFRESH_TOKEN_NOT_FOUND_EXCEPTION);
+		}
+		return redisValueSupport.readValue(foundValue, RefreshToken.class);
 	}
 
 	@Override
 	@Transactional
 	public void delete(final String savedTokenValue) {
-		final Map<byte[], byte[]> entries = hashOperations.entries(savedTokenValue);
-		hasRefreshTokenEntries(entries);
-		redisTemplate.delete(savedTokenValue);
+		final String key = getKey(savedTokenValue);
+		redisTemplate.delete(key);
 	}
 
-	private boolean hasSameRefreshToken(final String key) {
-		return !hashOperations.entries(key).isEmpty();
+	private String getKey(final String refreshToken) {
+		return REFRESH_TOKEN_PREFIX + refreshToken;
 	}
 
-	private void hasRefreshTokenEntries(final Map<byte[], byte[]> entries) {
-		if (entries.isEmpty()) {
-			throw new UnAuthorizedRefreshTokenException(REFRESH_TOKEN_NOT_FOUND_EXCEPTION);
-		}
-	}
-
-	private RefreshToken convertRefreshToken(final Map<byte[], byte[]> entries) {
-		return (RefreshToken)hashMapper.fromHash(entries);
+	private String getValue(final String key) {
+		return redisTemplate.opsForValue().get(key);
 	}
 }

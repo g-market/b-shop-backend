@@ -2,6 +2,12 @@ package com.gabia.bshop.entity;
 
 import java.util.Objects;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
+import org.hibernate.envers.Audited;
+
+import com.gabia.bshop.dto.request.ItemOptionRequest;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,8 +23,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+@Audited
 @ToString(exclude = {"item"})
 @Getter
+@SQLDelete(sql = "update item_option set deleted = true where id = ?")
+@Where(clause = "deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
 	name = "item_option",
@@ -38,28 +47,45 @@ public class ItemOption extends BaseEntity {
 	private String description;
 
 	@Column(nullable = false)
-	private int optionLevel;
-
-	@Column(nullable = false)
 	private int optionPrice;
 
 	@Column(nullable = false)
 	private int stockQuantity;
+
+	@Column(nullable = false)
+	private boolean deleted;
 
 	@Builder
 	private ItemOption(
 		final Long id,
 		final Item item,
 		final String description,
-		final int optionLevel,
 		final int optionPrice,
 		final int stockQuantity) {
 		this.id = id;
 		this.item = item;
 		this.description = description;
-		this.optionLevel = optionLevel;
 		this.optionPrice = optionPrice;
 		this.stockQuantity = stockQuantity;
+		this.deleted = false;
+	}
+
+	private void updateDescription(final String description) {
+		if (description != null) {
+			this.description = description;
+		}
+	}
+
+	private void updateOptionPrice(final Integer optionPrice) {
+		if (optionPrice != null) {
+			this.optionPrice = optionPrice;
+		}
+	}
+
+	private void updateOptionStock(final Integer stockQuantity) {
+		if (stockQuantity != null) {
+			this.stockQuantity = stockQuantity;
+		}
 	}
 
 	public void decreaseStockQuantity(final int orderCount) {
@@ -68,6 +94,18 @@ public class ItemOption extends BaseEntity {
 
 	public void increaseStockQuantity(final int orderCount) {
 		this.stockQuantity += orderCount;
+	}
+
+	public void update(ItemOptionRequest changeRequest) {
+		updateDescription(changeRequest.description());
+		updateOptionPrice(changeRequest.optionPrice());
+		updateOptionStock(changeRequest.stockQuantity());
+	}
+
+	public void update(Item item) {
+		if (item != null) {
+			this.item = item;
+		}
 	}
 
 	@Override

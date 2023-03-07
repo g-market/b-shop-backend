@@ -172,7 +172,7 @@ public class DataInit {
 			.basePrice(11111)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
-			.deleted(false)
+			.year(2022)
 			.build();
 		Item item2 = Item.builder()
 			.category(category1)
@@ -181,7 +181,7 @@ public class DataInit {
 			.basePrice(22222)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
-			.deleted(false)
+			.year(2022)
 			.build();
 		Item item3 = Item.builder()
 			.category(category1)
@@ -190,7 +190,7 @@ public class DataInit {
 			.basePrice(33333)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
-			.deleted(false)
+			.year(2022)
 			.build();
 		Item item4 = Item.builder()
 			.category(category1)
@@ -199,7 +199,7 @@ public class DataInit {
 			.basePrice(44444)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
-			.deleted(false)
+			.year(2023)
 			.build();
 		Item item5 = Item.builder()
 			.category(category1)
@@ -208,7 +208,7 @@ public class DataInit {
 			.basePrice(55555)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
-			.deleted(false)
+			.year(2023)
 			.build();
 		Item item6 = Item.builder()
 			.category(category1)
@@ -217,7 +217,7 @@ public class DataInit {
 			.basePrice(66666)
 			.itemStatus(ItemStatus.PRIVATE)
 			.openAt(now.minusDays(1L))
-			.deleted(false)
+			.year(2023)
 			.build();
 		Item item7 = Item.builder()
 			.category(category1)
@@ -226,7 +226,7 @@ public class DataInit {
 			.basePrice(77777)
 			.itemStatus(ItemStatus.PRIVATE)
 			.openAt(now.minusDays(1L))
-			.deleted(false)
+			.year(2023)
 			.build();
 		Item item8 = Item.builder()
 			.category(category1)
@@ -235,7 +235,7 @@ public class DataInit {
 			.basePrice(88888)
 			.itemStatus(ItemStatus.RESERVED)
 			.openAt(now.plusDays(1L))
-			.deleted(false)
+			.year(2023)
 			.build();
 		Item item9 = Item.builder()
 			.category(category1)
@@ -244,7 +244,7 @@ public class DataInit {
 			.basePrice(99999)
 			.itemStatus(ItemStatus.RESERVED)
 			.openAt(now.plusDays(1L))
-			.deleted(false)
+			.year(2023)
 			.build();
 		Item item10 = Item.builder()
 			.category(category1)
@@ -252,17 +252,15 @@ public class DataInit {
 			.description("temp_item_10_description " + UUID.randomUUID())
 			.basePrice(12345)
 			.itemStatus(ItemStatus.PUBLIC)
+			.year(2023)
 			.openAt(now)
-			.deleted(true)
-			.build();
-
+			.build();//deleted true
 		itemRepository.saveAll(
 			List.of(item1, item2, item3, item4, item5, item6, item7, item8, item9, item10));
 
 		ItemOption itemOption1 = ItemOption.builder()
 			.item(item1)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(0)
 			.stockQuantity(10)
 			.build();
@@ -270,7 +268,6 @@ public class DataInit {
 		ItemOption itemOption2 = ItemOption.builder()
 			.item(item2)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(1000)
 			.stockQuantity(5)
 			.build();
@@ -278,7 +275,6 @@ public class DataInit {
 		ItemOption itemOption3 = ItemOption.builder()
 			.item(item2)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(2000)
 			.stockQuantity(5)
 			.build();
@@ -286,7 +282,6 @@ public class DataInit {
 		ItemOption itemOption4 = ItemOption.builder()
 			.item(item6)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(2000)
 			.stockQuantity(5)
 			.build();
@@ -294,7 +289,6 @@ public class DataInit {
 		ItemOption itemOption5 = ItemOption.builder()
 			.item(item6)
 			.description("description")
-			.optionLevel(1)
 			.optionPrice(1999)
 			.stockQuantity(10)
 			.build();
@@ -388,6 +382,20 @@ public class DataInit {
 				itemImage9, itemImage10, itemImage11, itemImage12, itemImage13, itemImage14,
 				itemImage15, itemImage16,
 				itemImage17, itemImage18, itemImage19, itemImage20));
+
+		item1.setThumbnail(itemImage1);
+		item2.setThumbnail(itemImage3);
+		item3.setThumbnail(itemImage5);
+		item4.setThumbnail(itemImage7);
+		item5.setThumbnail(itemImage9);
+		item6.setThumbnail(itemImage11);
+		item7.setThumbnail(itemImage13);
+		item8.setThumbnail(itemImage15);
+		item9.setThumbnail(itemImage17);
+		item10.setThumbnail(itemImage19);
+
+		itemRepository.saveAll(
+			List.of(item1, item2, item3, item4, item5, item6, item7, item8, item9, item10));
 
 		Order order1 = Order.builder()
 			.member(member6)

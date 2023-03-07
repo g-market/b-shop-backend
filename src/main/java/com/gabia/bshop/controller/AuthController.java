@@ -18,14 +18,11 @@ import com.gabia.bshop.dto.response.IssuedTokensResponse;
 import com.gabia.bshop.dto.response.LoginResponse;
 import com.gabia.bshop.dto.response.LoginResult;
 import com.gabia.bshop.exception.UnAuthorizedRefreshTokenException;
-import com.gabia.bshop.mapper.LoginResponseMapper;
 import com.gabia.bshop.security.provider.RefreshTokenCookieProvider;
 import com.gabia.bshop.service.AuthService;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class AuthController {
@@ -38,10 +35,10 @@ public class AuthController {
 	public ResponseEntity<LoginResponse> login(@RequestParam("auth_code") final String authCode) {
 		final LoginResult loginResult = authService.login(authCode);
 		final String refreshToken = loginResult.refreshToken();
-		ResponseCookie cookie = refreshTokenCookieProvider.createCookie(refreshToken);
+		final ResponseCookie cookie = refreshTokenCookieProvider.createCookie(refreshToken);
 		return ResponseEntity.ok()
 			.header(HttpHeaders.SET_COOKIE, cookie.toString())
-			.body(LoginResponseMapper.INSTANCE.from(loginResult));
+			.body(new LoginResponse(loginResult.accessToken(), loginResult.memberResponse()));
 	}
 
 	@GetMapping("/login/admin")

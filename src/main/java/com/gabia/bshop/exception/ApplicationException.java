@@ -17,8 +17,9 @@ public class ApplicationException extends RuntimeException {
 		this.exceptionResponse = new ExceptionResponse(errorCode.getMessage());
 	}
 
-	protected ApplicationException(final ErrorCode errorCode, final Object parameter) {
+	protected ApplicationException(final ErrorCode errorCode, final Object... parameter) {
 		this.httpStatus = errorCode.getHttpStatus();
-		this.exceptionResponse = new ExceptionResponse(MessageFormat.format(errorCode.getMessage(), parameter));
+		this.exceptionResponse = new ExceptionResponse(
+			MessageFormat.format(errorCode.getMessage(), parameter));
 	}
 }
