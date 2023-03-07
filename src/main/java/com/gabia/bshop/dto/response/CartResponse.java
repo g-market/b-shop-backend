@@ -9,8 +9,10 @@ public record CartResponse(
 	int orderCount,
 	String name,
 	int basePrice,
+	String description,
 	int optionPrice,
+	int stockQuantity,
 	String category,
-	String thumbnailUrl
+	String itemThumbnailUrl
 ) {
 }
