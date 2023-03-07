@@ -12,6 +12,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import com.gabia.bshop.security.support.AuthArgumentResolver;
+import com.gabia.bshop.util.validator.PaginationArgumentResolver;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,6 +25,7 @@ public class WebConfig implements WebMvcConfigurer {
 
 	private final List<HandlerInterceptor> interceptors;
 	private final AuthArgumentResolver authArgumentResolver;
+	private final PaginationArgumentResolver paginationArgumentResolver;
 
 	@Value("${server.local.domain}")
 	private String localDomain;
@@ -51,5 +53,6 @@ public class WebConfig implements WebMvcConfigurer {
 	@Override
 	public void addArgumentResolvers(final List<HandlerMethodArgumentResolver> resolvers) {
 		resolvers.add(authArgumentResolver);
+		resolvers.add(paginationArgumentResolver);
 	}
 }

@@ -18,6 +18,7 @@ import com.gabia.bshop.dto.request.ItemRequest;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.security.Login;
 import com.gabia.bshop.service.ItemService;
+import com.gabia.bshop.util.validator.LimitedSizePagination;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -34,7 +35,7 @@ public class ItemController {
 
 	@GetMapping("/items")
 	public ResponseEntity<Page<ItemResponse>> findItemList(
-		final Pageable pageable,
+		@LimitedSizePagination final Pageable pageable,
 		@RequestParam("categoryId") final Long categoryId) {
 		return ResponseEntity.ok().body(itemService.findItemList(pageable, categoryId));
 	}

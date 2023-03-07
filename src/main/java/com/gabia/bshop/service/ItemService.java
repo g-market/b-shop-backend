@@ -59,7 +59,6 @@ public class ItemService {
 	 *
 	 **/
 	public Page<ItemResponse> findItemList(final Pageable page, final Long categoryId) {
-
 		if (page.getPageSize() > MAX_PAGE_ELEMENT_REQUEST_SIZE) {
 			throw new ConflictException(MAX_PAGE_ELEMENT_REQUEST_SIZE_EXCEPTION, MAX_PAGE_ELEMENT_REQUEST_SIZE);
 		}
