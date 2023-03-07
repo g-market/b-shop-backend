@@ -15,6 +15,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.dto.request.ItemOptionRequest;
@@ -42,8 +43,8 @@ import com.gabia.bshop.service.OrderService;
 
 import jakarta.persistence.EntityManager;
 
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class ConcurrencyOrderServiceTest extends IntegrationTest {
+@SpringBootTest
+public class ConcurrencyOrderServiceTest {
 
 	static int idx = 0;
 
