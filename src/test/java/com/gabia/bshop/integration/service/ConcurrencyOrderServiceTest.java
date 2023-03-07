@@ -399,10 +399,7 @@ public class ConcurrencyOrderServiceTest extends IntegrationTest {
 
 		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder().orderItemDtoList(orderItemDtoList).build();
 
-		ItemOptionRequest itemOptionRequest = ItemOptionRequest.builder()
-			.description("item description")
-			.stockQuantity(0)
-			.build();
+		ItemOptionRequest itemOptionRequest = new ItemOptionRequest("item description",0, 0);
 
 		int nThreahdsSize = 1000;
 		int repeatSize = 500;
