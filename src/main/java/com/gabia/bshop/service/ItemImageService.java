@@ -10,10 +10,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gabia.bshop.dto.ItemImageDto;
 import com.gabia.bshop.dto.request.ItemImageCreateRequest;
-import com.gabia.bshop.dto.request.ItemThumbnailChangeRequest;
+import com.gabia.bshop.dto.request.ItemThumbnailUpdateRequest;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
+import com.gabia.bshop.exception.BadRequestException;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.ItemImageMapper;
 import com.gabia.bshop.mapper.ItemMapper;
@@ -38,7 +39,7 @@ public class ItemImageService {
 	}
 
 	public List<ItemImageDto> findItemImageList(final Long itemId) {
-		final List<ItemImage> itemImageList = itemImageRepository.findAllByItem_id(itemId);
+		final List<ItemImage> itemImageList = itemImageRepository.findAllByItemId(itemId);
 		return itemImageList.stream().map(ItemImageMapper.INSTANCE::itemImageToDto).toList();
 	}
 
@@ -53,23 +54,22 @@ public class ItemImageService {
 			itemImageList.add(ItemImage.builder().item(item).url(imageUrl).build());
 		}
 		itemImageList = itemImageRepository.saveAll(itemImageList);
-
 		return itemImageList.stream().map(ItemImageMapper.INSTANCE::itemImageToDto).toList();
 	}
 
 	@Transactional
-	public ItemImageDto changeItemImage(final Long itemId, final ItemImageDto itemImageDto) {
-		ItemImage itemImage = findItemImageByImageIdAndItemId(itemImageDto.id(), itemId);
-		urlValidate(itemImageDto.url()); // image validate
+	public ItemImageDto updateItemImage(final Long itemId, final ItemImageDto itemImageDto) {
+		ItemImage itemImage = findItemImageByImageIdAndItemId(itemImageDto.imageId(), itemId);
+		urlValidate(itemImageDto.url());
 		itemImage.updateUrl(itemImageDto.url());
 		return ItemImageMapper.INSTANCE.itemImageToDto(itemImage);
 	}
 
 	@Transactional
-	public ItemResponse changeItemThumbnail(final Long itemId,
-		final ItemThumbnailChangeRequest itemThumbnailChangeRequest) {
+	public ItemResponse updateItemThumbnail(final Long itemId,
+		final ItemThumbnailUpdateRequest itemThumbnailUpdateRequest) {
 		Item item = findItemById(itemId);
-		final ItemImage itemImage = findItemImageByImageIdAndItemId(itemThumbnailChangeRequest.imageId(), itemId);
+		final ItemImage itemImage = findItemImageByImageIdAndItemId(itemThumbnailUpdateRequest.imageId(), itemId);
 
 		urlValidate(itemImage.getUrl()); // image validate
 		item.setThumbnail(itemImage);
@@ -104,7 +104,7 @@ public class ItemImageService {
 		final boolean isValid = imageValidator.validate(url);
 
 		if (!isValid) {
-			throw new NotFoundException(INCORRECT_URL_EXCEPTION);
+			throw new BadRequestException(INCORRECT_URL_EXCEPTION);
 		}
 	}
 }

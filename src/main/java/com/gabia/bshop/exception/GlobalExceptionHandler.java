@@ -1,8 +1,11 @@
 package com.gabia.bshop.exception;
 
+import static com.gabia.bshop.exception.ErrorCode.*;
+
 import java.net.BindException;
 import java.text.MessageFormat;
 
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -13,6 +16,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.util.WebUtils;
 
 import com.gabia.bshop.security.provider.RefreshTokenCookieProvider;
@@ -20,6 +24,7 @@ import com.gabia.bshop.security.provider.RefreshTokenCookieProvider;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ValidationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -31,7 +36,7 @@ public class GlobalExceptionHandler {
 	private static final String REFRESH_TOKEN = "refreshToken";
 	private static final String REQUEST_DUPLICATED_MESSAGE = "요청이 중복될 수 없습니다";
 	private static final String REQUEST_DATA_FORMAT_ERROR_MESSAGE = "요청으로 넘어온 값의 HTTP Body 형식에 맞지 않습니다.";
-	private static final String INTERNAL_SERVER_ERROR_MESSAGE_FORMAT = "서버 오류가 발생했습니다. : \n\n {}";
+	private static final String INTERNAL_SERVER_ERROR_MESSAGE_FORMAT = "서버 오류가 발생했습니다.: {0}";
 	private static final String LOG_FORMAT = "Class : {}, Message : {}";
 
 	private final RefreshTokenCookieProvider refreshTokenCookieProvider;
@@ -99,6 +104,22 @@ public class GlobalExceptionHandler {
 			.append(System.lineSeparator()));
 		return ResponseEntity.badRequest()
 			.body(new ExceptionResponse(stringBuilder.toString()));
+	}
+
+	@ExceptionHandler(MultipartException.class)
+	public ResponseEntity<ExceptionResponse> handleMultipartException(
+		final MultipartException exception) {
+		log.info(LOG_FORMAT, exception.getClass().getSimpleName(), exception.getMessage());
+		return ResponseEntity.badRequest()
+			.body(new ExceptionResponse(NO_FILE_EXCEPTION.getMessage()));
+	}
+
+	@ExceptionHandler({ConstraintViolationException.class, ValidationException.class})
+	public ResponseEntity<ExceptionResponse> handleMultipartException(
+		final Exception exception) {
+		log.info(LOG_FORMAT, exception.getClass().getSimpleName(), exception.getMessage());
+		return ResponseEntity.badRequest()
+			.body(new ExceptionResponse(exception.getMessage()));
 	}
 
 	// TODO: 수정 필요 (로그 레벨에 대한 학습과, message를 client에 제공하는 것은 위험하다의 피드백)

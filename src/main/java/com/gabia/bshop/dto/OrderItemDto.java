@@ -12,7 +12,6 @@ public record OrderItemDto(
 	Long itemId,
 	@NotNull(message = "옵션 ID는 필수값입니다.")
 	Long itemOptionId,
-	@NotNull(message = "주문량은 필수값입니다.")
 	@Positive(message = "주문량은 양수만 허용합니다.")
 	int orderCount
 ) implements ItemIdAndItemOptionIdAble {
