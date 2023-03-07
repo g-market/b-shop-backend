@@ -10,32 +10,30 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gabia.bshop.dto.OrderItemDto;
-import com.gabia.bshop.dto.request.OrderCreateRequestDto;
+import com.gabia.bshop.dto.request.OrderCreateRequest;
 import com.gabia.bshop.dto.request.OrderInfoSearchRequest;
-import com.gabia.bshop.dto.response.OrderCreateResponseDto;
+import com.gabia.bshop.dto.request.OrderUpdateStatusRequest;
+import com.gabia.bshop.dto.response.OrderCreateResponse;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
 import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
-import com.gabia.bshop.entity.ItemImage;
+import com.gabia.bshop.dto.response.OrderUpdateStatusResponse;
 import com.gabia.bshop.entity.ItemOption;
-import com.gabia.bshop.entity.Member;
 import com.gabia.bshop.entity.Order;
 import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
+import com.gabia.bshop.exception.BadRequestException;
 import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.OrderInfoMapper;
 import com.gabia.bshop.mapper.OrderMapper;
-import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemOptionRepository;
-import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
+import com.gabia.bshop.security.MemberPayload;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 @Transactional
 @Service
@@ -43,65 +41,57 @@ public class OrderService {
 
 	private final OrderRepository orderRepository;
 	private final OrderItemRepository orderItemRepository;
-	private final ItemImageRepository itemImageRepository;
-	private final MemberRepository memberRepository;
 	private final ItemOptionRepository itemOptionRepository;
 
 	@Transactional(readOnly = true)
-	public OrderInfoPageResponse findOrdersPagination(final Long memberId, final Pageable pageable) {
-		findMemberById(memberId);
-
+	public OrderInfoPageResponse findOrderInfoList(final Long memberId, final Pageable pageable) {
 		final List<Order> orderList = orderRepository.findByMemberIdPagination(memberId, pageable);
 		final List<OrderItem> orderItemList = findOrderItemListByOrderList(orderList);
-		final List<ItemImage> itemImagesWithItem = itemImageRepository.findWithItemByItemIds(
-			orderItemList.stream().map(oi -> oi.getItem().getId()).collect(Collectors.toList()));
 
 		return OrderInfoMapper.INSTANCE.orderInfoRelatedEntitiesToOrderInfoPageResponse(orderList,
-			orderItemList,
-			itemImagesWithItem);
+			orderItemList);
 	}
 
 	@Transactional(readOnly = true)
-	public OrderInfoSingleResponse findSingleOrderInfo(final Long orderId) {
-		final List<OrderItem> orderInfo = orderItemRepository.findWithOrdersAndItemByOrderId(orderId);
-		final List<String> thumbnailUrls = itemImageRepository.findUrlByItemIds(orderInfo.stream()
-			.map(oi -> oi.getItem().getId())
-			.collect(Collectors.toList()));
-		return OrderInfoMapper.INSTANCE.orderInfoSingleDTOResponse(orderInfo, thumbnailUrls);
+	public OrderInfoSingleResponse findOrderInfo(final MemberPayload memberPayload, final Long orderId) {
+		//권한 확인
+		if (memberPayload.isAdmin()) {
+			findOrderById(orderId);
+		} else {
+			findOrderByIdAndMemberId(orderId, memberPayload.id());
+		}
+		final List<OrderItem> orderInfoList = orderItemRepository.findWithOrdersAndItemByOrderId(orderId);
+
+		return OrderInfoMapper.INSTANCE.orderInfoSingleDtoResponse(orderInfoList);
 	}
 
 	@Transactional(readOnly = true)
-	public OrderInfoPageResponse findAdminOrdersPagination(final OrderInfoSearchRequest orderInfoSearchRequest,
+	public OrderInfoPageResponse findAllOrderInfoList(final OrderInfoSearchRequest orderInfoSearchRequest,
 		final Pageable pageable) {
 		final List<Order> orderList = orderRepository.findAllByPeriodPagination(orderInfoSearchRequest.startAt(),
 			orderInfoSearchRequest.endAt(), pageable);
 		final List<OrderItem> orderItems = findOrderItemListByOrderList(orderList);
-		final List<ItemImage> itemImagesWithItem = itemImageRepository.findWithItemByItemIds(orderItems.stream()
-			.map(oi -> oi.getItem().getId())
-			.collect(Collectors.toList()));
 
-		return OrderInfoMapper.INSTANCE.orderInfoRelatedEntitiesToOrderInfoPageResponse(orderList, orderItems,
-			itemImagesWithItem);
+		return OrderInfoMapper.INSTANCE.orderInfoRelatedEntitiesToOrderInfoPageResponse(orderList, orderItems);
 	}
 
-	//TODO: 인증 로직 추가 필요
-	public OrderCreateResponseDto createOrder(final OrderCreateRequestDto orderCreateRequestDto) {
-		findMemberById(orderCreateRequestDto.memberId());
-		final Order order = OrderMapper.INSTANCE.ordersCreateDtoToEntity(orderCreateRequestDto);
+	public OrderCreateResponse createOrder(final Long memberId,
+		final OrderCreateRequest orderCreateRequest) {
+		final Order order = OrderMapper.INSTANCE.orderCreateRequestToEntity(memberId, orderCreateRequest);
 
 		//DB에서 OptionItem 값 한번에 조회
 		final List<ItemOption> findAllItemOptionList = itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(
-			orderCreateRequestDto.orderItemDtoList().stream().map(OrderItemDto::itemId).toList(),
-			orderCreateRequestDto.orderItemDtoList().stream().map(OrderItemDto::itemOptionId).toList()
+			orderCreateRequest.orderItemDtoList().stream().map(OrderItemDto::itemId).toList(),
+			orderCreateRequest.orderItemDtoList().stream().map(OrderItemDto::itemOptionId).toList()
 		);
 
 		//유효한 ItemOption값 인지 검사
-		final List<OrderItemDto> validItemOptionList = orderCreateRequestDto.orderItemDtoList().stream()
+		final List<OrderItemDto> validItemOptionList = orderCreateRequest.orderItemDtoList().stream()
 			.filter(oi -> findAllItemOptionList.stream().anyMatch(oi::equalsIds))
 			.toList();
 
 		//요청 List와 검증한 List size가 일치하지 않다면
-		isEqualListSize(orderCreateRequestDto, validItemOptionList);
+		isEqualListSize(orderCreateRequest, validItemOptionList);
 
 		final List<OrderItem> orderItemList = validItemOptionList.stream().map(orderItemDto -> {
 			final ItemOption itemOption = findAllItemOptionList.stream()
@@ -117,19 +107,20 @@ public class OrderService {
 		order.createOrder(orderItemList);
 		orderRepository.save(order);
 
-		return OrderMapper.INSTANCE.ordersCreateResponseDto(order);
+		return OrderMapper.INSTANCE.orderCreateResponseToDto(order);
 	}
 
-	public void cancelOrder(final Long id) {
-		final Order order = findOrderById(id);
-
+	public void cancelOrder(final Long memberId, final Long orderId) {
+		final Order order = findOrderByIdAndMemberId(orderId, memberId);
 		validateOrderStatus(order);
-		order.cancel();
+		order.cancelOrder();
 	}
 
-	private Member findMemberById(final Long memberId) {
-		return memberRepository.findById(memberId)
-			.orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND_EXCEPTION, memberId));
+	public OrderUpdateStatusResponse updateOrderStatus(final OrderUpdateStatusRequest orderUpdateStatusRequest) {
+		final Order order = findOrderById(orderUpdateStatusRequest.orderId());
+		order.updateOrderStatus(orderUpdateStatusRequest.status());
+
+		return OrderMapper.INSTANCE.orderToOrderUpdateStatusResponse(order);
 	}
 
 	private Order findOrderById(final Long orderId) {
@@ -137,8 +128,13 @@ public class OrderService {
 			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
 	}
 
+	private Order findOrderByIdAndMemberId(final Long orderId, final Long memberId) {
+		return orderRepository.findByIdAndMemberId(orderId, memberId)
+			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
+	}
+
 	private List<OrderItem> findOrderItemListByOrderList(final List<Order> orderList) {
-		return orderItemRepository.findByOrderIds(orderList.stream()
+		return orderItemRepository.findByOrderIdIn(orderList.stream()
 			.map(order -> order.getId())
 			.collect(Collectors.toList()));
 	}
@@ -165,10 +161,10 @@ public class OrderService {
 		}
 	}
 
-	private boolean isEqualListSize(final OrderCreateRequestDto orderCreateRequestDto,
+	private boolean isEqualListSize(final OrderCreateRequest orderCreateRequest,
 		final List<OrderItemDto> validItemOptionList) {
-		if (orderCreateRequestDto.orderItemDtoList().size() != validItemOptionList.size()) {
-			throw new ConflictException(ITEM_ITEMOPTION_NOT_FOUND_EXCEPTION);
+		if (orderCreateRequest.orderItemDtoList().size() != validItemOptionList.size()) {
+			throw new BadRequestException(INVALID_ITEM_OPTION_NOT_FOUND_EXCEPTION);
 		}
 		return true;
 	}

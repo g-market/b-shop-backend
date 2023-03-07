@@ -15,62 +15,80 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
 configurations {
-	compileOnly {
-		extendsFrom annotationProcessor
-	}
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
 }
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
 
 dependencies {
-	implementation 'org.springframework.boot:spring-boot-starter-web'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    // spring
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
     // @ConfigurationProperties
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
 
-	// validation
-	implementation 'org.springframework.boot:spring-boot-starter-validation'
+    // validation
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
 
-	// redis
-	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+    // redis
+    implementation 'org.springframework.boot:spring-boot-starter-data-redis'
 
-	// jwt
+    // jwt
     implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
-	runtimeOnly 'com.mysql:mysql-connector-j:8.0.31'
+    runtimeOnly 'com.mysql:mysql-connector-j:8.0.31'
 
-	// json parser
-	implementation 'org.json:json:20220924'
+    // json parser
+    implementation 'org.json:json:20220924'
 
-	// querydsl
-	implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
-	annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
-	annotationProcessor "jakarta.annotation:jakarta.annotation-api"
-	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
+    // querydsl
+    implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta'
+    annotationProcessor "com.querydsl:querydsl-apt:${dependencyManagement.importedProperties['querydsl.version']}:jakarta"
+    annotationProcessor "jakarta.annotation:jakarta.annotation-api"
+    annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
-	// lombok
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
-	testCompileOnly 'org.projectlombok:lombok'
-	testAnnotationProcessor 'org.projectlombok:lombok'
+    // sentry
+    implementation 'io.sentry:sentry-spring-boot-starter-jakarta:6.14.0'
+    implementation 'io.sentry:sentry-logback:6.14.0'
 
-	// test Containers
-	testImplementation "org.testcontainers:junit-jupiter:1.17.6"
-	testImplementation "org.testcontainers:mysql:1.17.6"
+    // lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    // test Containers
+    testImplementation "org.testcontainers:junit-jupiter:1.17.6"
+    testImplementation "org.testcontainers:mysql:1.17.6"
 
     // mockServer
     testImplementation 'org.mock-server:mockserver-netty:5.15.0'
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
 
-	// mapstruct
-	implementation 'org.mapstruct:mapstruct:1.4.2.Final'
-	annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+    // mapstruct
+    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+
+    // minio
+    implementation 'io.minio:minio:8.3.6'
+
+    // url-validator
+    implementation 'commons-validator:commons-validator:1.6'
+
+    // shed-lock
+    implementation 'net.javacrumbs.shedlock:shedlock-spring:4.42.0'
+    implementation 'net.javacrumbs.shedlock:shedlock-provider-jdbc-template:4.42.0'
+
+    // hibernate envers
+    implementation 'org.springframework.data:spring-data-envers'
 }
 
 tasks.named('test') {
@@ -110,7 +128,7 @@ jacocoTestCoverageVerification {
     violationRules {
         rule {
             element = 'CLASS'
-            enabled = false;
+            enabled = false
 
             limit {
                 counter = 'LINE'
@@ -130,7 +148,6 @@ jacocoTestCoverageVerification {
     }
 }
 
-
 // ============================ check style =======================
 tasks.withType(Checkstyle) {
     reports {
@@ -142,4 +159,8 @@ tasks.withType(Checkstyle) {
 checkstyle {
     configFile = file("${rootDir}/checkstyle/naver-checkstyle-rules.xml")
     configProperties = ["suppressionFile": "${rootDir}/checkstyle/naver-checkstyle-suppressions.xml"]
+}
+
+jar {
+    enabled = false
 }

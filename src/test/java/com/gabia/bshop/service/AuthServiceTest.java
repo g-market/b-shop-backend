@@ -27,6 +27,7 @@ import com.gabia.bshop.exception.ForbiddenException;
 import com.gabia.bshop.exception.UnAuthorizedException;
 import com.gabia.bshop.exception.UnAuthorizedRefreshTokenException;
 import com.gabia.bshop.mapper.HiworksProfileMapper;
+import com.gabia.bshop.mapper.MemberResponseMapper;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.RefreshTokenRepository;
 import com.gabia.bshop.security.RefreshToken;
@@ -78,12 +79,12 @@ class AuthServiceTest {
 		given(refreshTokenRepository.save(refreshToken)).willReturn(refreshToken);
 
 		// when
-		LoginResult loginResult = authService.login(authCode);
+		final LoginResult loginResult = authService.login(authCode);
 
 		// then
 		assertAll(
 			() -> assertThat(loginResult.accessToken()).isEqualTo(applicationToken),
-			() -> assertThat(loginResult.member()).isEqualTo(member),
+			() -> assertThat(loginResult.memberResponse()).isEqualTo(MemberResponseMapper.INSTANCE.from(member)),
 			() -> assertThat(loginResult.refreshToken()).isEqualTo(refreshTokenValue),
 			() -> verify(hiworksOauthClient).getAccessToken(authCode),
 			() -> verify(hiworksOauthClient).getProfile(accessToken),
@@ -119,12 +120,12 @@ class AuthServiceTest {
 		given(refreshTokenRepository.save(refreshToken)).willReturn(refreshToken);
 
 		// when
-		LoginResult loginResult = authService.login(authCode);
+		final LoginResult loginResult = authService.login(authCode);
 
 		// then
 		assertAll(
 			() -> assertThat(loginResult.accessToken()).isEqualTo(applicationToken),
-			() -> assertThat(loginResult.member()).isEqualTo(member),
+			() -> assertThat(loginResult.memberResponse()).isEqualTo(MemberResponseMapper.INSTANCE.from(member)),
 			() -> verify(hiworksOauthClient).getAccessToken(authCode),
 			() -> verify(hiworksOauthClient).getProfile(accessToken),
 			() -> verify(memberRepository).findByHiworksId(hiworksProfileResponse.hiworksId()),
