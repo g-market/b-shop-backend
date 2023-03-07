@@ -23,6 +23,7 @@ import com.gabia.bshop.security.RefreshToken;
 import com.gabia.bshop.security.client.HiworksOauthClient;
 import com.gabia.bshop.security.provider.JwtProvider;
 import com.gabia.bshop.security.provider.RefreshTokenProvider;
+import com.gabia.bshop.config.DefaultImageProperties;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,7 @@ public class AuthService {
 	private final JwtProvider jwtProvider;
 	private final RefreshTokenProvider refreshTokenProvider;
 	private final RefreshTokenRepository refreshTokenRepository;
+	private final DefaultImageProperties defaultImageProperties;
 
 	@Transactional
 	public LoginResult login(final String authCode) {
@@ -93,10 +95,11 @@ public class AuthService {
 	}
 
 	private Member addOrUpdateMember(final HiworksProfileResponse hiworksProfileResponse) {
-		final Member requestedMember = HiworksProfileMapper.INSTANCE.toNormalMember(hiworksProfileResponse);
+		final Member requestedMember = HiworksProfileMapper.INSTANCE.hiworksProfileResponseToMember(hiworksProfileResponse);
+		requestedMember.setDefaultProfileImageUrl(defaultImageProperties.getProfileImageUrl());
 		final Member member = memberRepository.findByHiworksId(hiworksProfileResponse.hiworksId())
 			.orElseGet(() -> memberRepository.save(requestedMember));
-		member.update(requestedMember);
+		member.updateEmailAndNameAndHiworksId(requestedMember);
 		return member;
 	}
 
