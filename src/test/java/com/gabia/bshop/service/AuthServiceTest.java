@@ -75,7 +75,8 @@ class AuthServiceTest {
 			.willReturn(hiworksProfileResponse);
 		given(memberRepository.findByHiworksId(hiworksProfileResponse.hiworksId()))
 			.willReturn(Optional.empty());
-		given(memberRepository.save(HiworksProfileMapper.INSTANCE.hiworksProfileResponseToMember(hiworksProfileResponse)))
+		given(
+			memberRepository.save(HiworksProfileMapper.INSTANCE.hiworksProfileResponseToMember(hiworksProfileResponse)))
 			.willReturn(member);
 		given(jwtProvider.createAccessToken(member.getId(), member.getRole()))
 			.willReturn(applicationToken);
@@ -95,7 +96,8 @@ class AuthServiceTest {
 			() -> verify(hiworksOauthClient).getAccessToken(authCode),
 			() -> verify(hiworksOauthClient).getProfile(accessToken),
 			() -> verify(memberRepository).findByHiworksId(hiworksProfileResponse.hiworksId()),
-			() -> verify(memberRepository).save(HiworksProfileMapper.INSTANCE.hiworksProfileResponseToMember(hiworksProfileResponse)),
+			() -> verify(memberRepository).save(
+				HiworksProfileMapper.INSTANCE.hiworksProfileResponseToMember(hiworksProfileResponse)),
 			() -> verify(jwtProvider).createAccessToken(memberId, member.getRole()),
 			() -> verify(refreshTokenProvider).createToken(memberId),
 			() -> verify(refreshTokenRepository).save(refreshToken)

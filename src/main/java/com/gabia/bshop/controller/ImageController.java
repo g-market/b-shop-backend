@@ -23,6 +23,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 @Validated(ValidationSequence.class)
 public class ImageController {
+
 	private final ImageService imageService;
 
 	@PostMapping("/images")
