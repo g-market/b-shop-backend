@@ -12,14 +12,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gabia.bshop.dto.ItemImageDto;
-import com.gabia.bshop.dto.request.ItemChangeRequest;
 import com.gabia.bshop.dto.request.ItemRequest;
+import com.gabia.bshop.dto.request.ItemUpdateRequest;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
+import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.ItemMapper;
 import com.gabia.bshop.repository.CategoryRepository;
@@ -27,18 +28,18 @@ import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.util.ImageValidator;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class ItemService {
+
 	private final ItemRepository itemRepository;
 	private final CategoryRepository categoryRepository;
 	private final ImageValidator imageValidator;
 	@Value("${minio.default.image}")
 	private String NO_IMAGE_URL;
+	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
 
 	/**
 	 * 상품 조회
@@ -58,6 +59,9 @@ public class ItemService {
 	 *
 	 **/
 	public Page<ItemResponse> findItemList(final Pageable page, final Long categoryId) {
+		if (page.getPageSize() > MAX_PAGE_ELEMENT_REQUEST_SIZE) {
+			throw new ConflictException(MAX_PAGE_ELEMENT_REQUEST_SIZE_EXCEPTION, MAX_PAGE_ELEMENT_REQUEST_SIZE);
+		}
 		Page<Item> itemPage;
 		if (categoryId == null) {
 			itemPage = itemRepository.findAll(page);
@@ -68,9 +72,9 @@ public class ItemService {
 		return new PageImpl<>(itemPage.stream().map(ItemMapper.INSTANCE::itemToItemResponse).toList());
 	}
 
-	/*
-	상품 생성
-	*/
+	/**
+	 * 상품 생성
+	 **/
 	@Transactional
 	public ItemResponse createItem(final ItemRequest itemDto) {
 
@@ -148,13 +152,13 @@ public class ItemService {
 	 7. 상태(status)
 	 **/
 	@Transactional
-	public ItemResponse updateItem(final ItemChangeRequest itemChangeRequest) {
-		Item item = findItemById(itemChangeRequest.itemId());
-		final Long categoryId = itemChangeRequest.categoryId();
+	public ItemResponse updateItem(final ItemUpdateRequest itemUpdateRequest) {
+		Item item = findItemById(itemUpdateRequest.itemId());
+		final Long categoryId = itemUpdateRequest.categoryId();
 
 		final Category category = findCategoryById(categoryId);
 
-		item.update(itemChangeRequest, category);
+		item.update(itemUpdateRequest, category);
 
 		return ItemMapper.INSTANCE.itemToItemResponse(item);
 	}

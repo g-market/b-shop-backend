@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gabia.bshop.dto.request.ReservationRequest;
+import com.gabia.bshop.dto.request.ReservationUpdateRequest;
 import com.gabia.bshop.dto.response.ItemReservationResponse;
 import com.gabia.bshop.security.Login;
 import com.gabia.bshop.service.ItemReserveService;
@@ -34,17 +34,17 @@ public class ItemReserveController {
 	@PostMapping("/reservations/{itemId}")
 	public ResponseEntity<ItemReservationResponse> createReservation(
 		@PathVariable final Long itemId,
-		@RequestBody @Valid final ReservationRequest reservationRequest) {
-		return ResponseEntity.ok().body(itemReserveService.createItemReservation(itemId, reservationRequest));
+		@RequestBody @Valid final ReservationUpdateRequest reservationUpdateRequest) {
+		return ResponseEntity.ok().body(itemReserveService.createItemReservation(itemId, reservationUpdateRequest));
 	}
 
 	@Login(admin = true)
 	@PatchMapping("/reservations/{itemId}")
 	public ResponseEntity<ItemReservationResponse> updateReservation(
 		@PathVariable final Long itemId,
-		@RequestBody @Valid final ReservationRequest reservationRequest
+		@RequestBody @Valid final ReservationUpdateRequest reservationUpdateRequest
 	) {
-		return ResponseEntity.ok().body(itemReserveService.updateItemReservation(itemId, reservationRequest));
+		return ResponseEntity.ok().body(itemReserveService.updateItemReservation(itemId, reservationUpdateRequest));
 	}
 
 	@Login(admin = true)

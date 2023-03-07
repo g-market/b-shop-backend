@@ -7,10 +7,11 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gabia.bshop.dto.request.ReservationRequest;
+import com.gabia.bshop.dto.request.ReservationUpdateRequest;
 import com.gabia.bshop.dto.response.ItemReservationResponse;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.Reservation;
+import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.ItemReservationMapper;
@@ -18,30 +19,30 @@ import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.ReservationRepository;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class ItemReserveService {
+
 	private final ReservationRepository reservationRepository;
 	private final ItemRepository itemRepository;
 
-	@Transactional
 	public ItemReservationResponse findItemReservation(final Long itemId) {
 		return ItemReservationMapper.INSTANCE.reservationToResponse(findReservationByItemId(itemId));
 	}
 
 	@Transactional
 	public ItemReservationResponse createItemReservation(final Long itemId,
-		final ReservationRequest reservationRequest) {
+		final ReservationUpdateRequest reservationUpdateRequest) {
 
 		final Item item = findItemById(itemId);
-		final LocalDateTime openAt = reservationRequest.openAt();
+		final LocalDateTime openAt = reservationUpdateRequest.openAt();
 
 		reservationTimeValid(openAt);
 		item.setOpenAt(openAt);
+
+		item.setItemStatus(ItemStatus.RESERVED);
 
 		final Reservation reservation = Reservation.builder().item(item).build();
 		return ItemReservationMapper.INSTANCE.reservationToResponse(reservationRepository.save(reservation));
@@ -49,10 +50,10 @@ public class ItemReserveService {
 
 	@Transactional
 	public ItemReservationResponse updateItemReservation(final Long itemId,
-		final ReservationRequest reservationRequest) {
+		final ReservationUpdateRequest reservationUpdateRequest) {
+		Reservation reservation = findReservationByItemId(itemId);
 
-		final Reservation reservation = findReservationByItemId(itemId);
-		final LocalDateTime openAt = reservationRequest.openAt();
+		final LocalDateTime openAt = reservationUpdateRequest.openAt();
 
 		reservationTimeValid(openAt);
 		reservation.getItem().setOpenAt(openAt);
@@ -67,7 +68,7 @@ public class ItemReserveService {
 	}
 
 	private Reservation findReservationByItemId(final Long itemId) {
-		return reservationRepository.findByItem_Id(itemId).orElseThrow(
+		return reservationRepository.findByItemId(itemId).orElseThrow(
 			() -> new NotFoundException(ITEM_RESERVATION_NOT_FOUND_EXCEPTION, itemId)
 		);
 	}

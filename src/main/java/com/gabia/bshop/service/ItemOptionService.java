@@ -11,21 +11,22 @@ import com.gabia.bshop.dto.request.ItemOptionRequest;
 import com.gabia.bshop.dto.response.ItemOptionResponse;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemOption;
+import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.ItemOptionMapper;
 import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.ItemRepository;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class ItemOptionService {
+
 	private final ItemRepository itemRepository;
 	private final ItemOptionRepository itemOptionRepository;
+	private static final int MAX_ITEM_OPTION_COUNT = 100;
 
 	public ItemOptionResponse findItemOption(final Long itemId, final Long optionId) {
 		final ItemOption itemOption = findItemOptionByItemIdAndOptionId(itemId, optionId);
@@ -34,7 +35,7 @@ public class ItemOptionService {
 	}
 
 	public List<ItemOptionResponse> findOptionList(final Long itemId) {
-		final List<ItemOption> itemOptionList = itemOptionRepository.findAllByItem_id(itemId);
+		final List<ItemOption> itemOptionList = itemOptionRepository.findAllByItemId(itemId);
 		if (itemOptionList.isEmpty()) {
 			throw new NotFoundException(ITEM_OPTION_NOT_FOUND_EXCEPTION);
 		}
@@ -46,6 +47,10 @@ public class ItemOptionService {
 		Item item = itemRepository.findById(itemId).orElseThrow(
 			() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, itemId)
 		);
+		final int totalItemOption = item.getItemOptionList().size() + 1;
+		if (totalItemOption > MAX_ITEM_OPTION_COUNT) {
+			throw new ConflictException(MAX_ITEM_OPTION_LIMITATION_EXCEPTION, MAX_ITEM_OPTION_COUNT);
+		}
 
 		final ItemOption itemOption = ItemOptionMapper.INSTANCE.itemOptionRequestToEntity(itemOptionRequest);
 

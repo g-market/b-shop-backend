@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gabia.bshop.dto.request.ReservationRequest;
+import com.gabia.bshop.dto.request.ReservationUpdateRequest;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.Reservation;
@@ -57,11 +57,11 @@ class ItemReservationTest extends IntegrationTest {
 		itemRepository.save(item);
 		final Long expected = item.getId();
 
-		final ReservationRequest reservationRequest = new ReservationRequest(now.plusMinutes(1L));
+		final ReservationUpdateRequest reservationUpdateRequest = new ReservationUpdateRequest(now.plusMinutes(1L));
 		// when
 
-		itemReserveService.createItemReservation(item.getId(), reservationRequest);
-		final Long actual = reservationRepository.findByItem_Id(item.getId()).get().getId();
+		itemReserveService.createItemReservation(item.getId(), reservationUpdateRequest);
+		final Long actual = reservationRepository.findByItemId(item.getId()).get().getId();
 
 		// then
 		Assertions.assertEquals(expected, actual);
@@ -79,12 +79,12 @@ class ItemReservationTest extends IntegrationTest {
 		final Item item = ItemFixture.ITEM_1.getInstance(category);
 		itemRepository.save(item);
 
-		final ReservationRequest reservationRequest = new ReservationRequest(now.plusMinutes(1L));
-		final LocalDateTime expected = reservationRequest.openAt();
+		final ReservationUpdateRequest reservationUpdateRequest = new ReservationUpdateRequest(now.plusMinutes(1L));
+		final LocalDateTime expected = reservationUpdateRequest.openAt();
 		final Reservation reservation = Reservation.builder().item(item).build();
 		reservationRepository.save(reservation);
 		// when
-		itemReserveService.updateItemReservation(item.getId(), reservationRequest);
+		itemReserveService.updateItemReservation(item.getId(), reservationUpdateRequest);
 		final LocalDateTime actual = itemRepository.findById(item.getId()).orElseThrow().getOpenAt();
 
 		// then
@@ -173,7 +173,7 @@ class ItemReservationTest extends IntegrationTest {
 				Assertions.assertEquals(item2.getItemStatus(), ItemStatus.PUBLIC);
 			},
 			() -> {
-				Assertions.assertEquals(item1, reservationRepository.findByItem_Id(item1.getId()).get().getItem());
+				Assertions.assertEquals(item1, reservationRepository.findByItemId(item1.getId()).get().getItem());
 			},
 			() -> {
 				Assertions.assertThrows(

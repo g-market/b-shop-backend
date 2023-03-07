@@ -7,6 +7,7 @@ import org.mapstruct.factory.Mappers;
 
 import com.gabia.bshop.dto.response.ItemReservationResponse;
 import com.gabia.bshop.entity.Reservation;
+
 @Mapper(componentModel = "spring")
 public interface ItemReservationMapper {
 

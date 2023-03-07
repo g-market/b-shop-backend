@@ -15,6 +15,7 @@ import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.exception.BadRequestException;
+import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.ItemImageMapper;
 import com.gabia.bshop.mapper.ItemMapper;
@@ -28,10 +29,11 @@ import lombok.RequiredArgsConstructor;
 @Transactional(readOnly = true)
 @Service
 public class ItemImageService {
+
 	private final ItemRepository itemRepository;
 	private final ItemImageRepository itemImageRepository;
-
 	private final ImageValidator imageValidator;
+	private static final int MAX_ITEM_IMAGE_COUNT = 100;
 
 	public ItemImageDto findItemImage(final Long itemId, final Long imageId) {
 		final ItemImage itemImage = findItemImageByImageIdAndItemId(imageId, itemId);
@@ -48,9 +50,14 @@ public class ItemImageService {
 		final Item item = findItemById(itemId);
 
 		List<ItemImage> itemImageList = new ArrayList<>();
+		final int totalImageSize = item.getItemImageList().size() + itemImageCreateRequest.urlList().size();
+
+		if (totalImageSize > MAX_ITEM_IMAGE_COUNT) {
+			throw new ConflictException(MAX_ITEM_IMAGE_LIMITATION_EXCEPTION, MAX_ITEM_IMAGE_COUNT);
+		}
 
 		for (String imageUrl : itemImageCreateRequest.urlList()) {
-			urlValidate(imageUrl); // image validate
+			urlValidate(imageUrl);
 			itemImageList.add(ItemImage.builder().item(item).url(imageUrl).build());
 		}
 		itemImageList = itemImageRepository.saveAll(itemImageList);
