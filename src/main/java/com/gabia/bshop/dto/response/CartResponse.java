@@ -13,6 +13,6 @@ public record CartResponse(
 	int optionPrice,
 	int stockQuantity,
 	String category,
-	String itemThumbnailUrl
+	String thumbnailUrl  // TODO: itemThumbnailUrl
 ) {
 }
