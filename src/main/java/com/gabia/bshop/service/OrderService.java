@@ -28,7 +28,6 @@ import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.OrderInfoMapper;
 import com.gabia.bshop.mapper.OrderMapper;
-import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
@@ -43,7 +42,6 @@ public class OrderService {
 
 	private final OrderRepository orderRepository;
 	private final OrderItemRepository orderItemRepository;
-	private final ItemImageRepository itemImageRepository;
 	private final ItemOptionRepository itemOptionRepository;
 
 	@Transactional(readOnly = true)

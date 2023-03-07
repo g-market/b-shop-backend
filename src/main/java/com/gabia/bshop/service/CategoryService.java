@@ -28,7 +28,6 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class CategoryService {
 
-	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
 	private final CategoryRepository categoryRepository;
 	private final ItemRepository itemRepository;
 
@@ -40,11 +39,8 @@ public class CategoryService {
 	}
 
 	//카테고리 목록 조회
-	public Page<CategoryDto> findCategoryList(final Pageable page) {
-		if (page.getPageSize() > MAX_PAGE_ELEMENT_REQUEST_SIZE) {
-			throw new ConflictException(MAX_PAGE_ELEMENT_REQUEST_SIZE_EXCEPTION, MAX_PAGE_ELEMENT_REQUEST_SIZE);
-		}
-		final Page<Category> categoryPage = categoryRepository.findAll(page);
+	public Page<CategoryDto> findCategoryList(final Pageable pageable) {
+		final Page<Category> categoryPage = categoryRepository.findAll(pageable);
 		return new PageImpl<>(categoryPage.stream().map(CategoryMapper.INSTANCE::categoryToDto).toList());
 	}
 

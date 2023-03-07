@@ -18,22 +18,18 @@ import com.gabia.bshop.exception.InternalServerException;
 import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
 public class ImageService {
 
 	private final MinioClient minioClient;
-
-	private final int MAX_IMAGE_UPLOAD_COUNT = 10; // TO_BE_CHANGED
 	@Value("${minio.bucket}")
 	private String bucketName;
-
 	@Value("${minio.endpoint}")
 	private String endpoint;
+	private static final int MAX_IMAGE_UPLOAD_COUNT = 10;
 
 	public List<ImageResponse> uploadImage(final MultipartFile[] fileList) {
 

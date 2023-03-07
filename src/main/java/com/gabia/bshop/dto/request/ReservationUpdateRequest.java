@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 
 import jakarta.validation.constraints.NotNull;
 
-public record ReservationChangeRequest(
+public record ReservationUpdateRequest(
 
 	@NotNull(message = "openAt 은 필수 값 입니다.")
 	LocalDateTime openAt

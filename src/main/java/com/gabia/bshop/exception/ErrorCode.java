@@ -13,6 +13,8 @@ public enum ErrorCode {
 
 	// 400(Bad request)
 	INCORRECT_URL_EXCEPTION(BAD_REQUEST, "유효하지 않은 URL 입니다"),
+	NOT_ACCEPTED_FILE_FORMAT_EXCEPTION(BAD_REQUEST, "유효하지 않는 파일 형식 입니다."),
+	NO_FILE_EXCEPTION(BAD_REQUEST, "지정된 파일이 없습니다."),
 	INVALID_ITEM_OPTION_NOT_FOUND_EXCEPTION(BAD_REQUEST, "유효하지 않은 상품이 존재합니다."),
 
 	// 401(Unauthorized)
@@ -48,6 +50,8 @@ public enum ErrorCode {
 	ITEM_STATUS_NOT_PUBLIC_EXCEPTION(CONFLICT, "현재 판매하지 않는 상품이 존재합니다."),
 	RESERVATION_TIME_NOT_VALID_EXCEPTION(CONFLICT, "예약시간: {0} 은 현재시간 이후의 시간이어야 합니다."),
 	CATEGORY_ITEM_DELETE_EXCEPTION(CONFLICT, "categoryId: {0}인 상품이 존재합니다."),
+	MAX_ITEM_OPTION_LIMITATION_EXCEPTION(CONFLICT, "최대로 등록할 수 있는 상품 옵션의 수는 {0}개 입니다."),
+	MAX_ITEM_IMAGE_LIMITATION_EXCEPTION(CONFLICT, "최대로 등록할 수 있는 상품 이미지의 수는 {0}개 입니다."),
 
 	// 500(Internal Server Error)
 	OAUTH_PROCESSING_EXCEPTION(INTERNAL_SERVER_ERROR, "Oauth 진행 중 예상치 못한 문제가 생겼습니다."),

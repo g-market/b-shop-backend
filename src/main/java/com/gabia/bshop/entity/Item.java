@@ -10,7 +10,7 @@ import org.hibernate.annotations.Where;
 import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
 
-import com.gabia.bshop.dto.request.ItemChangeRequest;
+import com.gabia.bshop.dto.request.ItemUpdateRequest;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 
 import jakarta.persistence.CascadeType;
@@ -150,13 +150,13 @@ public class Item extends BaseEntity {
 		}
 	}
 
-	public void update(final ItemChangeRequest itemChangeRequest, final Category category) {
-		updateName(itemChangeRequest.name());
-		updatePrice(itemChangeRequest.basePrice());
-		updateDescription(itemChangeRequest.description());
-		updateOpenAt(itemChangeRequest.openAt());
-		updateItemStatus(itemChangeRequest.itemStatus());
-		updateYear(itemChangeRequest.year());
+	public void update(final ItemUpdateRequest itemUpdateRequest, final Category category) {
+		updateName(itemUpdateRequest.name());
+		updatePrice(itemUpdateRequest.basePrice());
+		updateDescription(itemUpdateRequest.description());
+		updateOpenAt(itemUpdateRequest.openAt());
+		updateItemStatus(itemUpdateRequest.itemStatus());
+		updateYear(itemUpdateRequest.year());
 		updateCategory(category);
 	}
 

@@ -13,17 +13,16 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gabia.bshop.dto.request.ItemChangeRequest;
+import com.gabia.bshop.dto.request.ItemUpdateRequest;
 import com.gabia.bshop.dto.request.ItemRequest;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.security.Login;
 import com.gabia.bshop.service.ItemService;
+import com.gabia.bshop.util.validator.LimitedSizePagination;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class ItemController {
@@ -36,13 +35,10 @@ public class ItemController {
 
 	@GetMapping("/items")
 	public ResponseEntity<Page<ItemResponse>> findItemList(
-		final Pageable pageable,
+		@LimitedSizePagination final Pageable pageable,
 		@RequestParam("categoryId") final Long categoryId) {
 		return ResponseEntity.ok().body(itemService.findItemList(pageable, categoryId));
 	}
-	//년도, 상의, 하의
-	// &category=상의&year=2022
-	//
 
 	@Login(admin = true)
 	@PostMapping("/items")
@@ -52,8 +48,8 @@ public class ItemController {
 
 	@Login(admin = true)
 	@PatchMapping("/items")
-	public ResponseEntity<ItemResponse> updateItem(@RequestBody @Valid final ItemChangeRequest itemChangeRequest) {
-		return ResponseEntity.ok().body(itemService.updateItem(itemChangeRequest));
+	public ResponseEntity<ItemResponse> updateItem(@RequestBody @Valid final ItemUpdateRequest itemUpdateRequest) {
+		return ResponseEntity.ok().body(itemService.updateItem(itemUpdateRequest));
 	}
 
 	@Login(admin = true)

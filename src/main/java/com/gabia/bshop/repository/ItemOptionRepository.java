@@ -13,7 +13,7 @@ import jakarta.persistence.LockModeType;
 
 public interface ItemOptionRepository extends JpaRepository<ItemOption, Long>, ItemOptionRepositoryCustom {
 
-	List<ItemOption> findAllByItem_id(Long itemId);
+	List<ItemOption> findAllByItemId(Long itemId);
 
 	@Query("""
 		select io from ItemOption io
