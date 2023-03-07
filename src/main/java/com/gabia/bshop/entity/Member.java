@@ -54,9 +54,12 @@ public class Member extends BaseEntity {
 	@Column(columnDefinition = "varchar(255)", unique = true, nullable = false)
 	private String hiworksId;
 
+	@Column(name = "profile_image_url", nullable = false)
+	private String profileImageUrl;
+
 	@Builder
 	private Member(final Long id, final String email, final String phoneNumber, final String name,
-		final MemberRole role, final MemberGrade grade, final String hiworksId) {
+		final MemberRole role, final MemberGrade grade, final String hiworksId, final String profileImageUrl) {
 		this.id = id;
 		this.email = email;
 		this.phoneNumber = phoneNumber;
@@ -64,16 +67,22 @@ public class Member extends BaseEntity {
 		this.role = role;
 		this.grade = grade;
 		this.hiworksId = hiworksId;
+		this.profileImageUrl = profileImageUrl;
 	}
 
-	public void update(final Member updateMember) {
-		updateHiworksId(updateMember.hiworksId);
+	public void updateEmailAndNameAndHiworksId(final Member updateMember) {
 		updateEmail(updateMember.email);
 		updateName(updateMember.name);
+		updateHiworksId(updateMember.hiworksId);
 	}
 
-	public void updatePhoneNumber(final String phoneNumber) {
+	public void updateProfile(final String phoneNumber, final String profileImageUrl) {
 		this.phoneNumber = phoneNumber;
+		this.profileImageUrl = profileImageUrl;
+	}
+
+	public void setDefaultProfileImageUrl(final String profileImageUrl) {
+		this.profileImageUrl = profileImageUrl;
 	}
 
 	// TODO: 사전에 가격을 정하던지, Grade 변경 메서드 추후 리팩터링 필요
