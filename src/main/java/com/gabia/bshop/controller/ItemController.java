@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gabia.bshop.dto.request.ItemChangeRequest;
+import com.gabia.bshop.dto.request.ItemUpdateRequest;
 import com.gabia.bshop.dto.request.ItemRequest;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.security.Login;
@@ -48,8 +48,8 @@ public class ItemController {
 
 	@Login(admin = true)
 	@PatchMapping("/items")
-	public ResponseEntity<ItemResponse> updateItem(@RequestBody @Valid final ItemChangeRequest itemChangeRequest) {
-		return ResponseEntity.ok().body(itemService.updateItem(itemChangeRequest));
+	public ResponseEntity<ItemResponse> updateItem(@RequestBody @Valid final ItemUpdateRequest itemUpdateRequest) {
+		return ResponseEntity.ok().body(itemService.updateItem(itemUpdateRequest));
 	}
 
 	@Login(admin = true)

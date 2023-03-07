@@ -20,7 +20,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import com.gabia.bshop.dto.request.ItemChangeRequest;
+import com.gabia.bshop.dto.request.ItemUpdateRequest;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
@@ -151,7 +151,7 @@ class ItemServiceTest {
 				.openAt(LocalDateTime.now())
 				.build();
 
-		ItemChangeRequest itemDto = ItemMapper.INSTANCE.itemToItemChangeRequest(item2);
+		ItemUpdateRequest itemDto = ItemMapper.INSTANCE.itemToItemChangeRequest(item2);
 
 		// when
 		when(categoryRepository.findById(1L)).thenReturn(Optional.ofNullable(category));
@@ -226,7 +226,7 @@ class ItemServiceTest {
 				.openAt(LocalDateTime.now())
 				.build();
 
-		ItemChangeRequest itemChangeRequest = ItemMapper.INSTANCE.itemToItemChangeRequest(item);
+		ItemUpdateRequest itemUpdateRequest = ItemMapper.INSTANCE.itemToItemChangeRequest(item);
 
 		// when
 		when(itemRepository.save(item)).thenReturn(item);
@@ -235,7 +235,7 @@ class ItemServiceTest {
 		Assertions.assertThrows(
 			NotFoundException.class,
 			() -> {
-				itemService.updateItem(itemChangeRequest);
+				itemService.updateItem(itemUpdateRequest);
 			});
 	}
 
@@ -256,7 +256,7 @@ class ItemServiceTest {
 				.openAt(LocalDateTime.now())
 				.build();
 
-		ItemChangeRequest itemChangeRequest = ItemMapper.INSTANCE.itemToItemChangeRequest(item);
+		ItemUpdateRequest itemUpdateRequest = ItemMapper.INSTANCE.itemToItemChangeRequest(item);
 
 		// when
 		when(categoryRepository.findById(2L)).thenThrow(EntityNotFoundException.class);
@@ -265,7 +265,7 @@ class ItemServiceTest {
 		Assertions.assertThrows(
 			NotFoundException.class,
 			() -> {
-				itemService.updateItem(itemChangeRequest);
+				itemService.updateItem(itemUpdateRequest);
 			});
 	}
 
