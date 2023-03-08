@@ -1,5 +1,7 @@
 package com.gabia.bshop.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
@@ -9,11 +11,12 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gabia.bshop.dto.request.ItemRequest;
+import com.gabia.bshop.dto.searchConditions.ItemSearchConditions;
+import com.gabia.bshop.dto.request.ItemCreateRequest;
 import com.gabia.bshop.dto.request.ItemUpdateRequest;
+import com.gabia.bshop.dto.response.ItemPageResponse;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.security.Login;
 import com.gabia.bshop.service.ItemService;
@@ -29,26 +32,25 @@ public class ItemController {
 
 	@GetMapping("/items/{id}")
 	public ResponseEntity<ItemResponse> findItem(@PathVariable final Long id) {
-		return ResponseEntity.ok().body(itemService.findItem(id));
+		return ResponseEntity.ok(itemService.findItem(id));
 	}
 
 	@GetMapping("/items")
-	public ResponseEntity<Page<ItemResponse>> findItemList(
-		@LimitedSizePagination final Pageable pageable,
-		@RequestParam("categoryId") final Long categoryId) {
-		return ResponseEntity.ok().body(itemService.findItemList(pageable, categoryId));
+	public ResponseEntity<Page<ItemPageResponse>> findItemList(@LimitedSizePagination final Pageable pageable,
+		final ItemSearchConditions itemSearchConditions) {
+		return ResponseEntity.ok(itemService.findItemListByItemSearchConditions(pageable, itemSearchConditions));
 	}
 
 	@Login(admin = true)
 	@PostMapping("/items")
-	public ResponseEntity<ItemResponse> createItem(@RequestBody @Valid final ItemRequest itemRequest) {
-		return ResponseEntity.ok().body(itemService.createItem(itemRequest));
+	public ResponseEntity<ItemResponse> createItem(@RequestBody @Valid final ItemCreateRequest itemCreateRequest) {
+		return ResponseEntity.ok(itemService.createItem(itemCreateRequest));
 	}
 
 	@Login(admin = true)
 	@PatchMapping("/items")
 	public ResponseEntity<ItemResponse> updateItem(@RequestBody @Valid final ItemUpdateRequest itemUpdateRequest) {
-		return ResponseEntity.ok().body(itemService.updateItem(itemUpdateRequest));
+		return ResponseEntity.ok(itemService.updateItem(itemUpdateRequest));
 	}
 
 	@Login(admin = true)
@@ -56,5 +58,10 @@ public class ItemController {
 	public ResponseEntity<Void> deleteItem(@PathVariable final Long id) {
 		itemService.deleteItem(id);
 		return ResponseEntity.noContent().build();
+	}
+
+	@GetMapping("/item-years")
+	public ResponseEntity<List<Integer>> findYears() {
+		return ResponseEntity.ok(itemService.findItemYears());
 	}
 }
