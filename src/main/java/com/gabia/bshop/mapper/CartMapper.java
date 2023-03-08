@@ -15,7 +15,7 @@ import com.gabia.bshop.dto.request.CartDeleteRequest;
 import com.gabia.bshop.dto.response.CartResponse;
 import com.gabia.bshop.entity.ItemOption;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface CartMapper {
 
 	CartMapper INSTANCE = Mappers.getMapper(CartMapper.class);
