@@ -53,6 +53,7 @@ public class DataInit {
 			.phoneNumber("01000000001")
 			.role(MemberRole.ADMIN)
 			.grade(MemberGrade.DIAMOND)
+			.profileImageUrl(imageDefaultProperties.getProfileImageUrl())
 			.build();
 		Member member2 = Member.builder()
 			.name("admin02")
@@ -61,6 +62,7 @@ public class DataInit {
 			.phoneNumber("01000000002")
 			.role(MemberRole.ADMIN)
 			.grade(MemberGrade.DIAMOND)
+			.profileImageUrl(imageDefaultProperties.getProfileImageUrl())
 			.build();
 		Member member3 = Member.builder()
 			.name("admin03")
@@ -69,6 +71,7 @@ public class DataInit {
 			.phoneNumber("01000000003")
 			.role(MemberRole.ADMIN)
 			.grade(MemberGrade.DIAMOND)
+			.profileImageUrl(imageDefaultProperties.getProfileImageUrl())
 			.build();
 		Member member4 = Member.builder()
 			.name("admin04")
@@ -77,6 +80,7 @@ public class DataInit {
 			.phoneNumber("01000000004")
 			.role(MemberRole.ADMIN)
 			.grade(MemberGrade.DIAMOND)
+			.profileImageUrl(imageDefaultProperties.getProfileImageUrl())
 			.build();
 		Member member5 = Member.builder()
 			.name("admin05")
@@ -85,6 +89,7 @@ public class DataInit {
 			.phoneNumber("01000000005")
 			.role(MemberRole.ADMIN)
 			.grade(MemberGrade.DIAMOND)
+			.profileImageUrl(imageDefaultProperties.getProfileImageUrl())
 			.build();
 		Member member6 = Member.builder()
 			.name("normal06")
@@ -93,6 +98,7 @@ public class DataInit {
 			.phoneNumber("01000000006")
 			.role(MemberRole.NORMAL)
 			.grade(MemberGrade.BRONZE)
+			.profileImageUrl(imageDefaultProperties.getProfileImageUrl())
 			.build();
 		Member member7 = Member.builder()
 			.name("normal07")
@@ -101,6 +107,7 @@ public class DataInit {
 			.phoneNumber("01000000007")
 			.role(MemberRole.NORMAL)
 			.grade(MemberGrade.SILVER)
+			.profileImageUrl(imageDefaultProperties.getProfileImageUrl())
 			.build();
 		Member member8 = Member.builder()
 			.name("normal08")
@@ -109,6 +116,7 @@ public class DataInit {
 			.phoneNumber("01000000008")
 			.role(MemberRole.NORMAL)
 			.grade(MemberGrade.GOLD)
+			.profileImageUrl(imageDefaultProperties.getProfileImageUrl())
 			.build();
 		Member member9 = Member.builder()
 			.name("normal09")
@@ -117,6 +125,7 @@ public class DataInit {
 			.phoneNumber("01000000009")
 			.role(MemberRole.NORMAL)
 			.grade(MemberGrade.PLATINUM)
+			.profileImageUrl(imageDefaultProperties.getProfileImageUrl())
 			.build();
 		Member member10 = Member.builder()
 			.name("normal10")
@@ -125,6 +134,7 @@ public class DataInit {
 			.phoneNumber("01000000010")
 			.role(MemberRole.NORMAL)
 			.grade(MemberGrade.DIAMOND)
+			.profileImageUrl(imageDefaultProperties.getProfileImageUrl())
 			.build();
 
 		memberRepository.saveAll(

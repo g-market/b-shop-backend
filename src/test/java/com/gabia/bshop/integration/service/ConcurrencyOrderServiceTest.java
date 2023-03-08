@@ -1,5 +1,7 @@
 package com.gabia.bshop.integration.service;
 
+import static com.gabia.bshop.fixture.MemberFixture.*;
+
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -27,8 +29,6 @@ import com.gabia.bshop.entity.Member;
 import com.gabia.bshop.entity.Order;
 import com.gabia.bshop.entity.OrderItem;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
-import com.gabia.bshop.entity.enumtype.MemberGrade;
-import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemOptionRepository;
@@ -74,22 +74,8 @@ public class ConcurrencyOrderServiceTest {
 	@BeforeEach
 	void setUp() {
 		LocalDateTime now = LocalDateTime.now();
-		Member member1 = Member.builder()
-			.name("1_test_name")
-			.email("1_ckdals1234@naver.com")
-			.hiworksId("1_asdfasdf")
-			.phoneNumber("01000000001")
-			.role(MemberRole.NORMAL)
-			.grade(MemberGrade.BRONZE)
-			.build();
-		Member member2 = Member.builder()
-			.name("2_test_name")
-			.email("2_ckdals1234@naver.com")
-			.hiworksId("2_asdfasdf")
-			.phoneNumber("01022223333")
-			.role(MemberRole.NORMAL)
-			.grade(MemberGrade.BRONZE)
-			.build();
+		Member member1 = JENNA.getInstance();
+		Member member2 = JAIME.getInstance();
 
 		Category category1 = Category.builder().name("카테고리" + idx++).build();
 

@@ -5,7 +5,7 @@ import static com.gabia.bshop.exception.ErrorCode.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gabia.bshop.config.DefaultImageProperties;
+import com.gabia.bshop.config.ImageDefaultProperties;
 import com.gabia.bshop.dto.response.AdminLoginResponse;
 import com.gabia.bshop.dto.response.HiworksProfileResponse;
 import com.gabia.bshop.dto.response.IssuedTokensResponse;
@@ -39,7 +39,7 @@ public class AuthService {
 	private final JwtProvider jwtProvider;
 	private final RefreshTokenProvider refreshTokenProvider;
 	private final RefreshTokenRepository refreshTokenRepository;
-	private final DefaultImageProperties defaultImageProperties;
+	private final ImageDefaultProperties imageDefaultProperties;
 
 	@Transactional
 	public LoginResult login(final String authCode) {
@@ -95,9 +95,9 @@ public class AuthService {
 	}
 
 	private Member addOrUpdateMember(final HiworksProfileResponse hiworksProfileResponse) {
-		final Member requestedMember = HiworksProfileMapper.INSTANCE.hiworksProfileResponseToMember(
-			hiworksProfileResponse);
-		requestedMember.setDefaultProfileImageUrl(defaultImageProperties.getProfileImageUrl());
+		final Member requestedMember = HiworksProfileMapper.INSTANCE
+			.hiworksProfileResponseToMember(hiworksProfileResponse);
+		requestedMember.setDefaultProfileImageUrl(imageDefaultProperties.getProfileImageUrl());
 		final Member member = memberRepository.findByHiworksId(hiworksProfileResponse.hiworksId())
 			.orElseGet(() -> memberRepository.save(requestedMember));
 		member.updateEmailAndNameAndHiworksId(requestedMember);

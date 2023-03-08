@@ -18,7 +18,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.gabia.bshop.config.DefaultImageProperties;
+import com.gabia.bshop.config.ImageDefaultProperties;
 import com.gabia.bshop.dto.response.AdminLoginResponse;
 import com.gabia.bshop.dto.response.HiworksProfileResponse;
 import com.gabia.bshop.dto.response.IssuedTokensResponse;
@@ -55,7 +55,7 @@ class AuthServiceTest {
 	@Mock
 	private RefreshTokenRepository refreshTokenRepository;
 	@Mock
-	private DefaultImageProperties defaultImageProperties;
+	private ImageDefaultProperties imageDefaultProperties;
 
 	@Test
 	@DisplayName("하이웍스 인증 코드가 들어왔을 때 회원정보가 없으면 회원 정보를 저장하고 회원 정보와 토큰을 반환한다")
@@ -83,7 +83,7 @@ class AuthServiceTest {
 		given(refreshTokenProvider.createToken(memberId))
 			.willReturn(refreshToken);
 		given(refreshTokenRepository.save(refreshToken)).willReturn(refreshToken);
-		given(defaultImageProperties.getProfileImageUrl()).willReturn("http://b-shop.com/profile/me");
+		given(imageDefaultProperties.getProfileImageUrl()).willReturn("http://b-shop.com/profile/me");
 
 		// when
 		final LoginResult loginResult = authService.login(authCode);
@@ -127,7 +127,7 @@ class AuthServiceTest {
 		given(refreshTokenProvider.createToken(memberId))
 			.willReturn(refreshToken);
 		given(refreshTokenRepository.save(refreshToken)).willReturn(refreshToken);
-		given(defaultImageProperties.getProfileImageUrl()).willReturn("http://b-shop.com/profile/me");
+		given(imageDefaultProperties.getProfileImageUrl()).willReturn("http://b-shop.com/profile/me");
 
 		// when
 		final LoginResult loginResult = authService.login(authCode);
