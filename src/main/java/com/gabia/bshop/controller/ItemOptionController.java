@@ -19,9 +19,7 @@ import com.gabia.bshop.service.ItemOptionService;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @RequiredArgsConstructor
 @RestController
 public class ItemOptionController {
@@ -42,7 +40,7 @@ public class ItemOptionController {
 
 	@Login(admin = true)
 	@PostMapping("/items/{itemId}/options")
-	public ResponseEntity<ItemOptionResponse> creatItemOption(
+	public ResponseEntity<ItemOptionResponse> createItemOption(
 		@PathVariable final Long itemId,
 		@RequestBody @Valid final ItemOptionRequest itemOptionRequest) {
 		return ResponseEntity.ok().body(itemOptionService.createItemOption(itemId, itemOptionRequest));
