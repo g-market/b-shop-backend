@@ -14,7 +14,7 @@ import com.gabia.bshop.dto.CartDto;
 import com.gabia.bshop.dto.request.CartCreateRequest;
 import com.gabia.bshop.dto.request.CartDeleteRequest;
 import com.gabia.bshop.dto.response.CartResponse;
-import com.gabia.bshop.mapper.CartRequestMapper;
+import com.gabia.bshop.mapper.CartMapper;
 import com.gabia.bshop.security.CurrentMember;
 import com.gabia.bshop.security.Login;
 import com.gabia.bshop.security.MemberPayload;
@@ -39,17 +39,34 @@ public class CartController {
 	@PostMapping("/carts")
 	public ResponseEntity<CartDto> createCart(@CurrentMember MemberPayload memberPayload,
 		@RequestBody @Valid CartCreateRequest cartCreateRequest) {
-		final CartDto cartDto = CartRequestMapper.INSTANCE.toCartDto(cartCreateRequest);
+		final CartDto cartDto = CartMapper.INSTANCE.cartCreateRequestToCartDto(cartCreateRequest);
 		return ResponseEntity.status(HttpStatus.CREATED)
 			.body(cartService.createCart(memberPayload.id(), cartDto));
 	}
 
+	/**
+	 * 장바구니 단건 삭제
+	 */
 	@Login
-	@DeleteMapping("/carts")
+	@DeleteMapping("/cart")
 	public ResponseEntity<Void> deleteCart(@CurrentMember MemberPayload memberPayload,
 		@RequestBody @Valid CartDeleteRequest cartDeleteRequest) {
-		final CartDto cartDto = CartRequestMapper.INSTANCE.toCartDto(cartDeleteRequest);
+		final CartDto cartDto = CartMapper.INSTANCE.cartDeleteRequestToCartDto(cartDeleteRequest);
 		cartService.deleteCart(memberPayload.id(), cartDto);
+		return ResponseEntity.noContent().build();
+	}
+
+	/**
+	 * 사용된 장바구니 전체 삭제하는 메서드
+	 */
+	@Login
+	@DeleteMapping("/carts")
+	public ResponseEntity<Void> deleteCartList(@CurrentMember MemberPayload memberPayload,
+		@RequestBody @Valid List<CartDeleteRequest> cartDeleteRequestList) {
+		final List<CartDto> cartDtoList = cartDeleteRequestList.stream()
+			.map(CartMapper.INSTANCE::cartDeleteRequestToCartDto)
+			.toList();
+		cartService.deleteCartList(memberPayload.id(), cartDtoList);
 		return ResponseEntity.noContent().build();
 	}
 }
