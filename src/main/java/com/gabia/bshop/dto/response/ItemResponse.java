@@ -17,7 +17,7 @@ import com.gabia.bshop.entity.enumtype.ItemStatus;
  * ItemImage list entity
  **/
 public record ItemResponse(
-	Long id,
+	Long itemId,
 	List<ItemOptionDto> itemOptionDtoList,
 	List<ItemImageDto> itemImageDtoList,
 	CategoryDto categoryDto,
@@ -27,6 +27,6 @@ public record ItemResponse(
 	String thumbnail,
 	ItemStatus itemStatus,
 	Integer year,
-	LocalDateTime openAt) {
-
+	LocalDateTime openAt
+) {
 }
