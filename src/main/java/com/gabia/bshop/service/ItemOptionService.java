@@ -24,9 +24,10 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class ItemOptionService {
 
+	private static final int MAX_ITEM_OPTION_COUNT = 100;
+
 	private final ItemRepository itemRepository;
 	private final ItemOptionRepository itemOptionRepository;
-	private static final int MAX_ITEM_OPTION_COUNT = 100;
 
 	public ItemOptionResponse findItemOption(final Long itemId, final Long optionId) {
 		final ItemOption itemOption = findItemOptionByItemIdAndOptionId(itemId, optionId);
