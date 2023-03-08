@@ -10,10 +10,9 @@ public record CartResponse(
 	String itemOptionDescription,
 	String itemName,
 	int basePrice,
-	String description,
 	int optionPrice,
 	int stockQuantity,
 	String category,
-	String thumbnailUrl  // TODO: itemThumbnailUrl
+	String itemThumbnailUrl
 ) {
 }
