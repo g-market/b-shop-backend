@@ -4,12 +4,12 @@ import static com.gabia.bshop.exception.ErrorCode.*;
 
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gabia.bshop.config.TokenProperties;
 import com.gabia.bshop.exception.UnAuthorizedRefreshTokenException;
 import com.gabia.bshop.security.RefreshToken;
 import com.gabia.bshop.util.RedisValueSupport;
@@ -26,9 +26,7 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
 	private final RedisTemplate<String, String> redisTemplate;
 	private final StringRedisTemplate stringRedisTemplate;
 	private final RedisValueSupport redisValueSupport;
-
-	@Value("${token.refresh-expired-time}")
-	private long expiredTimeMillis;
+	private final TokenProperties tokenProperties;
 
 	@Override
 	@Transactional
@@ -40,7 +38,7 @@ public class RefreshTokenRepositoryImpl implements RefreshTokenRepository {
 		}
 		final String value = redisValueSupport.writeValueAsString(refreshToken);
 		stringRedisTemplate.opsForValue().set(key, value);
-		stringRedisTemplate.expire(key, expiredTimeMillis, TimeUnit.MILLISECONDS);
+		stringRedisTemplate.expire(key, tokenProperties.getRefreshExpiredTime(), TimeUnit.MILLISECONDS);
 		return refreshToken;
 	}
 

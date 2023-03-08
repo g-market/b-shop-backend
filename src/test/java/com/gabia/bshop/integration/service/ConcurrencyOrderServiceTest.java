@@ -14,9 +14,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.gabia.bshop.config.ImageDefaultProperties;
 import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.dto.request.ItemOptionRequest;
 import com.gabia.bshop.dto.request.OrderCreateRequest;
@@ -30,9 +30,7 @@ import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.exception.ConflictException;
-import com.gabia.bshop.integration.IntegrationTest;
 import com.gabia.bshop.repository.CategoryRepository;
-import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.MemberRepository;
@@ -40,8 +38,6 @@ import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
 import com.gabia.bshop.service.ItemOptionService;
 import com.gabia.bshop.service.OrderService;
-
-import jakarta.persistence.EntityManager;
 
 @SpringBootTest
 public class ConcurrencyOrderServiceTest {
@@ -67,16 +63,13 @@ public class ConcurrencyOrderServiceTest {
 	private OrderItemRepository orderItemRepository;
 
 	@Autowired
-	private ItemImageRepository itemImageRepository;
-
-	@Autowired
 	private OrderService orderService;
 
 	@Autowired
 	private ItemOptionService itemOptionService;
 
 	@Autowired
-	private EntityManager entityManager;
+	private ImageDefaultProperties imageDefaultProperties;
 
 	@BeforeEach
 	void setUp() {
@@ -107,6 +100,8 @@ public class ConcurrencyOrderServiceTest {
 			.basePrice(11111)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
+			.thumbnail(imageDefaultProperties.getItemImageUrl())
+			.year(2023)
 			.build();
 		Item item2 = Item.builder()
 			.category(category1)
@@ -115,6 +110,8 @@ public class ConcurrencyOrderServiceTest {
 			.basePrice(22222)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
+			.thumbnail(imageDefaultProperties.getItemImageUrl())
+			.year(2023)
 			.build();
 		Item item3 = Item.builder()
 			.category(category1)
@@ -123,6 +120,8 @@ public class ConcurrencyOrderServiceTest {
 			.basePrice(22222)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
+			.thumbnail(imageDefaultProperties.getItemImageUrl())
+			.year(2023)
 			.build();
 		Item item4 = Item.builder()
 			.category(category1)
@@ -131,6 +130,8 @@ public class ConcurrencyOrderServiceTest {
 			.basePrice(22222)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
+			.thumbnail(imageDefaultProperties.getItemImageUrl())
+			.year(2023)
 			.build();
 		Item item5 = Item.builder()
 			.category(category1)
@@ -139,6 +140,8 @@ public class ConcurrencyOrderServiceTest {
 			.basePrice(22222)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
+			.thumbnail(imageDefaultProperties.getItemImageUrl())
+			.year(2023)
 			.build();
 		Item item6 = Item.builder()
 			.category(category1)
@@ -147,6 +150,8 @@ public class ConcurrencyOrderServiceTest {
 			.basePrice(22222)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
+			.thumbnail(imageDefaultProperties.getItemImageUrl())
+			.year(2023)
 			.build();
 		Item item7 = Item.builder()
 			.category(category1)
@@ -155,6 +160,8 @@ public class ConcurrencyOrderServiceTest {
 			.basePrice(22222)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
+			.thumbnail(imageDefaultProperties.getItemImageUrl())
+			.year(2023)
 			.build();
 		Item item8 = Item.builder()
 			.category(category1)
@@ -163,6 +170,8 @@ public class ConcurrencyOrderServiceTest {
 			.basePrice(22222)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
+			.thumbnail(imageDefaultProperties.getItemImageUrl())
+			.year(2023)
 			.build();
 		Item item9 = Item.builder()
 			.category(category1)
@@ -171,6 +180,8 @@ public class ConcurrencyOrderServiceTest {
 			.basePrice(22222)
 			.itemStatus(ItemStatus.PUBLIC)
 			.openAt(now)
+			.thumbnail(imageDefaultProperties.getItemImageUrl())
+			.year(2023)
 			.build();
 
 		int stockQuantity = 300;
@@ -400,7 +411,7 @@ public class ConcurrencyOrderServiceTest {
 
 		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder().orderItemDtoList(orderItemDtoList).build();
 
-		ItemOptionRequest itemOptionRequest = new ItemOptionRequest("item description",0, 0);
+		ItemOptionRequest itemOptionRequest = new ItemOptionRequest("item description", 0, 0);
 
 		int nThreahdsSize = 1000;
 		int repeatSize = 500;

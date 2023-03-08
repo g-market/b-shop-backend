@@ -32,6 +32,13 @@ server:
     domain: ${PROD_DOMAIN}
     url: ${PROD_URL}
 
+  default:
+    profile-image-url: ${PROFILE_IMAGE_URL}
+    item-image-url: ${ITEM_IMAGE_URL}
+
+cart:
+  expired-time: ${CART_EXPIRED_TIME}
+
 hiworks:
   client:
     id: ${CLIENT_ID}
@@ -50,11 +57,12 @@ minio:
   user: ${MINIO_USER}
   password: ${MINIO_PASSWORD}
   bucket: ${MINIO_BUCKET}
-  default:
-    image: ${MINIO_NO_IMAGE_URL}
+
+shedlock:
+  table: shedlock
 
 sentry:
-  dsn: ${SENTRY_DSN}
+  dsn: ${SENTRY-DSN}
   exception-resolver-order: -2147483647
   traces-sample-rate: 1.0
 
@@ -62,4 +70,4 @@ logging:
   level:
     org:
       hibernate:
-        SQL: ${LOG_LEVEL}
+        SQL: ${LOG-LEVEL}

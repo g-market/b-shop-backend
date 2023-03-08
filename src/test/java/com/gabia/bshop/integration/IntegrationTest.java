@@ -21,12 +21,12 @@ public abstract class IntegrationTest {
 	private static final String MINIO_VERSION = "quay.io/minio/minio:latest";
 	private static final int MINIO_PORT = 9000;
 	private static final Map<String, String> MINIO_ENV = new HashMap<>();
+	private static final String MINIO_ROOT_USER = "minio";
+	private static final String MINIO_ROOT_PASSWORD = "minio1234";
 	@ClassRule
 	static GenericContainer<?> REDIS_CONTAINER;
 	@ClassRule
 	static GenericContainer<?> MINIO_CONTAINER;
-	private static final String MINIO_ROOT_USER = "minio";
-	private static final String MINIO_ROOT_PASSWORD = "minio1234";
 
 	static {
 		REDIS_CONTAINER = new GenericContainer<>(REDIS_VERSION)
