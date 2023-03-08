@@ -84,7 +84,7 @@ public interface OrderMapper {
 			.orderId(order.getId())
 			.totalPrice(order.getTotalPrice())
 			.createdAt(order.getCreatedAt())
-			.status(order.getStatus())
+			.orderStatus(order.getStatus())
 			.orderItemList(orderItemList.stream()
 				.map(
 					orderItem -> OrderInfoResponse.SingleOrder.builder()
