@@ -3,26 +3,29 @@ package com.gabia.bshop.service;
 import static com.gabia.bshop.exception.ErrorCode.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gabia.bshop.config.ImageDefaultProperties;
 import com.gabia.bshop.dto.ItemImageDto;
-import com.gabia.bshop.dto.request.ItemRequest;
+import com.gabia.bshop.dto.ItemSearchConditions;
+import com.gabia.bshop.dto.request.ItemCreateRequest;
 import com.gabia.bshop.dto.request.ItemUpdateRequest;
+import com.gabia.bshop.dto.response.ItemPageResponse;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
-import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.ItemMapper;
+import com.gabia.bshop.mapper.ItemPageResponseMapper;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.util.ImageValidator;
@@ -37,20 +40,20 @@ public class ItemService {
 	private final ItemRepository itemRepository;
 	private final CategoryRepository categoryRepository;
 	private final ImageValidator imageValidator;
-	@Value("${minio.default.image}")
-	private String NO_IMAGE_URL;
-	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
+	private final ImageDefaultProperties imageDefaultProperties;
 
 	/**
 	 * 상품 조회
 	 * 1. fetch join
 	 ** */
 	public ItemResponse findItem(final Long id) {
-		final Item item = itemRepository.findById(id).orElseThrow(
-			() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, id)
-		);
+		return ItemMapper.INSTANCE.itemToItemResponse(findItemById(id));
+	}
 
-		return ItemMapper.INSTANCE.itemToItemResponse(item);
+	public Page<ItemPageResponse> findItemListByItemSearchConditions(final Pageable pageable,
+		final ItemSearchConditions itemSearchConditions) {
+		return itemRepository.findItemListByItemSearchConditions(pageable, itemSearchConditions)
+			.map(ItemPageResponseMapper.INSTANCE::from);
 	}
 
 	/**
@@ -59,9 +62,6 @@ public class ItemService {
 	 *
 	 **/
 	public Page<ItemResponse> findItemList(final Pageable page, final Long categoryId) {
-		if (page.getPageSize() > MAX_PAGE_ELEMENT_REQUEST_SIZE) {
-			throw new ConflictException(MAX_PAGE_ELEMENT_REQUEST_SIZE_EXCEPTION, MAX_PAGE_ELEMENT_REQUEST_SIZE);
-		}
 		Page<Item> itemPage;
 		if (categoryId == null) {
 			itemPage = itemRepository.findAll(page);
@@ -76,26 +76,26 @@ public class ItemService {
 	 * 상품 생성
 	 **/
 	@Transactional
-	public ItemResponse createItem(final ItemRequest itemDto) {
+	public ItemResponse createItem(final ItemCreateRequest itemCreateRequest) {
 
 		// 1. Category 조회
-		final Long categoryId = itemDto.categoryId();
+		final Long categoryId = itemCreateRequest.categoryId();
 		final Category category = findCategoryById(categoryId);
 
 		// 2. Item 생성
 		final Item item = Item.builder()
-			.name(itemDto.name())
-			.description(itemDto.description())
-			.basePrice(itemDto.basePrice())
+			.name(itemCreateRequest.name())
+			.description(itemCreateRequest.description())
+			.basePrice(itemCreateRequest.basePrice())
 			.category(category)
-			.openAt(getOpenedAt(itemDto.openAt()))
-			.year(itemDto.year())
-			.itemStatus(getItemStatus(itemDto.itemStatus()))
+			.openAt(getOpenedAt(itemCreateRequest.openAt()))
+			.year(itemCreateRequest.year())
+			.itemStatus(getItemStatus(itemCreateRequest.itemStatus()))
 			.build();
 
 		// 3. Option 생성
-		if (itemDto.itemOptionDtoList() != null && !itemDto.itemOptionDtoList().isEmpty()) {
-			itemDto.itemOptionDtoList()
+		if (itemCreateRequest.itemOptionDtoList() != null && !itemCreateRequest.itemOptionDtoList().isEmpty()) {
+			itemCreateRequest.itemOptionDtoList()
 				.stream()
 				.map(
 					itemOptionDto -> ItemOption.builder()
@@ -106,9 +106,9 @@ public class ItemService {
 						.build()
 				).forEach(item::addItemOption);
 		} else {
-			ItemOption itemOption = ItemOption.builder()
+			final ItemOption itemOption = ItemOption.builder()
 				.item(item)
-				.description(itemDto.name()) // 기본 option은 item의 option과 동일
+				.description(itemCreateRequest.name()) // 기본 option은 item의 option과 동일
 				.stockQuantity(0)
 				.optionPrice(0)
 				.build();
@@ -116,8 +116,8 @@ public class ItemService {
 		}
 
 		// 4. Image 생성
-		if (itemDto.itemImageDtoList() != null && !itemDto.itemImageDtoList().isEmpty()) {
-			for (ItemImageDto itemImageDto : itemDto.itemImageDtoList()) {
+		if (itemCreateRequest.itemImageDtoList() != null && !itemCreateRequest.itemImageDtoList().isEmpty()) {
+			for (ItemImageDto itemImageDto : itemCreateRequest.itemImageDtoList()) {
 				final boolean isValid = imageValidator.validate(itemImageDto.url());
 
 				if (!isValid) {
@@ -129,9 +129,9 @@ public class ItemService {
 					.build());
 			}
 		} else {
-			ItemImage itemImage = ItemImage.builder()
+			final ItemImage itemImage = ItemImage.builder()
 				.item(item)
-				.url(NO_IMAGE_URL)
+				.url(imageDefaultProperties.getItemImageUrl())
 				.build();
 			item.addItemImage(itemImage);
 		}
@@ -153,7 +153,7 @@ public class ItemService {
 	 **/
 	@Transactional
 	public ItemResponse updateItem(final ItemUpdateRequest itemUpdateRequest) {
-		Item item = findItemById(itemUpdateRequest.itemId());
+		final Item item = findItemById(itemUpdateRequest.itemId());
 		final Long categoryId = itemUpdateRequest.categoryId();
 
 		final Category category = findCategoryById(categoryId);
@@ -170,6 +170,10 @@ public class ItemService {
 	public void deleteItem(final Long id) {
 		final Item item = findItemById(id);
 		itemRepository.delete(item);
+	}
+
+	public List<Integer> findItemYears() {
+		return itemRepository.findItemYears();
 	}
 
 	private Item findItemById(final Long itemId) {
