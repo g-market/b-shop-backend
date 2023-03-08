@@ -33,7 +33,7 @@ class RefreshTokenRepositoryImplTest extends IntegrationTest {
 	@Autowired
 	private TokenProperties tokenProperties;
 
-	@Value("${application.token.refresh-expired-time}")
+	@Value("${token.refresh-expired-time}")
 	private long expireLength;
 
 	private final LocalDateTime expiredAt = LocalDateTime.now().plusDays(TimeUnit.MILLISECONDS.toDays(expireLength));

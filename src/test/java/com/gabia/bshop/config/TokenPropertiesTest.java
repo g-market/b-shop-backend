@@ -19,13 +19,13 @@ class TokenPropertiesTest {
 	@Autowired
 	private TokenProperties tokenProperties;
 
-	@Value("${application.token.secret}")
+	@Value("${token.secret}")
 	private String secret;
 
-	@Value("${application.token.access-expired-time}")
+	@Value("${token.access-expired-time}")
 	private long accessExpiredTime;
 
-	@Value("${application.token.refresh-expired-time}")
+	@Value("${token.refresh-expired-time}")
 	private long refreshExpiredTime;
 
 	@Test
