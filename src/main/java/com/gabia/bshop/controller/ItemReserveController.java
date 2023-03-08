@@ -1,6 +1,5 @@
 package com.gabia.bshop.controller;
 
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,8 +31,10 @@ public class ItemReserveController {
 
 	@Login(admin = true)
 	@PostMapping("/reservations/{itemId}")
-	public ResponseEntity<ItemReservationResponse> createReservation(@PathVariable final Long itemId) {
-		return ResponseEntity.ok().body(itemReserveService.createItemReservation(itemId));
+	public ResponseEntity<ItemReservationResponse> createReservation(
+		@PathVariable final Long itemId,
+		@RequestBody @Valid final ReservationUpdateRequest reservationUpdateRequest) {
+		return ResponseEntity.ok().body(itemReserveService.createItemReservation(itemId, reservationUpdateRequest));
 	}
 
 	@Login(admin = true)
@@ -49,6 +50,6 @@ public class ItemReserveController {
 	@DeleteMapping("/reservations/{itemId}")
 	public ResponseEntity<Void> deleteReservation(@PathVariable final Long itemId) {
 		itemReserveService.removeReservation(itemId);
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 }

@@ -15,9 +15,7 @@ import com.gabia.bshop.repository.ReservationRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 
-@Slf4j
 @Component
 @RequiredArgsConstructor
 public class ReservationUpdateScheduler {
