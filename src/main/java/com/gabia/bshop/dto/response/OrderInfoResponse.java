@@ -12,7 +12,7 @@ public record OrderInfoResponse(
 	Long orderId,
 	long totalPrice,
 	LocalDateTime createdAt,
-	OrderStatus status,
+	OrderStatus orderStatus,
 	List<SingleOrder> orderItemList
 ) {
 
