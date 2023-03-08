@@ -29,7 +29,6 @@ import com.gabia.bshop.service.ItemReserveService;
 import jakarta.persistence.EntityManager;
 
 @Transactional
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 class ItemReservationTest extends IntegrationTest {
 
 	@Autowired
@@ -64,8 +63,8 @@ class ItemReservationTest extends IntegrationTest {
 		final Long expected = item.getId();
 
 		final ReservationUpdateRequest reservationUpdateRequest = new ReservationUpdateRequest(now.plusMinutes(1L));
-		// when
 
+		// when
 		ItemReservationResponse itemReservationResponse = itemReserveService.createItemReservation(item.getId(),
 			reservationUpdateRequest);
 		final Long actual = itemReservationResponse.itemId();

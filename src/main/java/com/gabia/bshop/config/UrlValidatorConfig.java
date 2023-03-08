@@ -13,6 +13,6 @@ public class UrlValidatorConfig {
 
 	@Bean
 	public UrlValidator urlValidator() {
-		return new UrlValidator(schema, NO_FRAGMENTS + ALLOW_LOCAL_URLS);
+		return new UrlValidator(schema,  ALLOW_LOCAL_URLS);
 	}
 }

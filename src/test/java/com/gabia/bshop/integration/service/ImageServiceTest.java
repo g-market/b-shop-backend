@@ -38,7 +38,6 @@ import io.minio.MinioClient;
 import io.minio.PutObjectArgs;
 
 @Transactional
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ImageServiceTest extends IntegrationTest {
 	@Autowired
@@ -86,7 +85,6 @@ class ImageServiceTest extends IntegrationTest {
 	void validatorTest() {
 		// given
 		final String NoImageUrl = ENDPOINT + "/images/No_Image.jpg";
-
 		// when
 		boolean isOk = imageValidator.validate(NoImageUrl);
 
@@ -171,9 +169,10 @@ class ImageServiceTest extends IntegrationTest {
 		final ItemImageDto itemImageDto = new ItemImageDto(itemImage.getId(), expected);
 		itemImageService.updateItemImage(item.getId(), itemImageDto);
 
-		final ItemImage updatedItemImage = itemImageRepository.findByIdAndItemId(itemImageDto.imageId(), item.getId()).orElseThrow(
-			() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, itemImageDto.imageId())
-		);
+		final ItemImage updatedItemImage = itemImageRepository.findByIdAndItemId(itemImageDto.imageId(), item.getId())
+			.orElseThrow(
+				() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, itemImageDto.imageId())
+			);
 
 		final String actual = updatedItemImage.getUrl();
 
