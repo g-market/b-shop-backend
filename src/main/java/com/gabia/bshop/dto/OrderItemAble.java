@@ -1,6 +1,6 @@
 package com.gabia.bshop.dto;
 
-public interface ItemIdAndItemOptionIdAble {
+public interface OrderItemAble {
 
 	Long itemId();
 

@@ -14,7 +14,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Configuration
-@ConfigurationProperties("application.token")
+@ConfigurationProperties("token")
 public class TokenProperties {
 
 	private String secret;

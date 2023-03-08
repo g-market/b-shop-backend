@@ -30,10 +30,11 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class ItemImageService {
 
+	private static final int MAX_ITEM_IMAGE_COUNT = 100;
+
 	private final ItemRepository itemRepository;
 	private final ItemImageRepository itemImageRepository;
 	private final ImageValidator imageValidator;
-	private static final int MAX_ITEM_IMAGE_COUNT = 100;
 
 	public ItemImageDto findItemImage(final Long itemId, final Long imageId) {
 		final ItemImage itemImage = findItemImageByImageIdAndItemId(imageId, itemId);
@@ -61,13 +62,12 @@ public class ItemImageService {
 			itemImageList.add(ItemImage.builder().item(item).url(imageUrl).build());
 		}
 		itemImageList = itemImageRepository.saveAll(itemImageList);
-
 		return itemImageList.stream().map(ItemImageMapper.INSTANCE::itemImageToDto).toList();
 	}
 
 	@Transactional
 	public ItemImageDto updateItemImage(final Long itemId, final ItemImageDto itemImageDto) {
-		ItemImage itemImage = findItemImageByImageIdAndItemId(itemImageDto.id(), itemId);
+		ItemImage itemImage = findItemImageByImageIdAndItemId(itemImageDto.imageId(), itemId);
 		urlValidate(itemImageDto.url());
 		itemImage.updateUrl(itemImageDto.url());
 		return ItemImageMapper.INSTANCE.itemImageToDto(itemImage);
@@ -80,7 +80,7 @@ public class ItemImageService {
 		final ItemImage itemImage = findItemImageByImageIdAndItemId(itemThumbnailUpdateRequest.imageId(), itemId);
 
 		urlValidate(itemImage.getUrl()); // image validate
-		item.setThumbnail(itemImage);
+		item.updateThumbnail(itemImage.getUrl());
 
 		return ItemMapper.INSTANCE.itemToItemResponse(item);
 	}

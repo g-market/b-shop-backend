@@ -5,8 +5,9 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
+import com.gabia.bshop.dto.request.ItemCreateRequest;
 import com.gabia.bshop.dto.request.ItemUpdateRequest;
-import com.gabia.bshop.dto.request.ItemRequest;
+import com.gabia.bshop.dto.response.ItemPageResponse;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Item;
 
@@ -16,6 +17,7 @@ public interface ItemMapper {
 	ItemMapper INSTANCE = Mappers.getMapper(ItemMapper.class);
 
 	@Mappings({
+		@Mapping(source = "id", target = "itemId"),
 		@Mapping(source = "category", target = "categoryDto"),
 		@Mapping(source = "itemImageList", target = "itemImageDtoList"),
 		@Mapping(source = "itemOptionList", target = "itemOptionDtoList"),
@@ -27,11 +29,17 @@ public interface ItemMapper {
 		@Mapping(source = "itemImageList", target = "itemImageDtoList"),
 		@Mapping(source = "itemOptionList", target = "itemOptionDtoList")
 	})
-	ItemRequest itemToItemRequest(Item item);
+	ItemCreateRequest itemToItemCreateRequest(Item item);
 
 	@Mappings({
+		@Mapping(source = "id", target = "itemId"),
 		@Mapping(source = "category.id", target = "categoryId"),
-		@Mapping(source = "item.id", target = "itemId"),
 	})
-	ItemUpdateRequest itemToItemChangeRequest(Item item);
+	ItemUpdateRequest itemToItemUpdateRequest(Item item);
+
+	@Mappings({
+		@Mapping(source = "id", target = "itemId"),
+		@Mapping(source = "category", target = "categoryDto"),
+	})
+	ItemPageResponse itemToItemPageResponse(Item item);
 }

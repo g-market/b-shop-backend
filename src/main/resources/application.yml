@@ -25,6 +25,33 @@ spring:
       port: ${REDIS_PORT}
 
 ---
+server:
+  local:
+    domain: ${LOCAL_DOMAIN}
+  prod:
+    domain: ${PROD_DOMAIN}
+    url: ${PROD_URL}
+
+  default:
+    profile-image-url: ${PROFILE_IMAGE_URL}
+    item-image-url: ${ITEM_IMAGE_URL}
+
+cart:
+  expired-time: ${CART_EXPIRED_TIME}
+
+hiworks:
+  client:
+    id: ${CLIENT_ID}
+    secret: ${CLIENT_SECRET}
+  url:
+    accessToken: ${ACCESS_TOKEN_URL}
+    user: ${USER_URL}
+
+token:
+  access-expired-time: ${ACCESS_EXPIRED_TIME}
+  refresh-expired-time: ${REFRESH_EXPIRED_TIME}
+  secret: ${TOKEN_SECRET}
+
 minio:
   endpoint: ${MINIO_ENDPOINT}
   user: ${MINIO_USER}
@@ -44,31 +71,3 @@ logging:
     org:
       hibernate:
         SQL: ${LOG_LEVEL}
-
----
-application:
-  local:
-    domain: ${LOCAL_DOMAIN}
-  prod:
-    domain: ${PROD_DOMAIN}
-    url: ${PROD_URL}
-
-  default:
-    profile-image-url: ${PROFILE_IMAGE_URL}
-    item-image-url: ${ITEM_IMAGE_URL}
-
-  cart:
-    expired-time: ${CART_EXPIRED_TIME}
-
-  hiworks:
-    client:
-      id: ${CLIENT_ID}
-      secret: ${CLIENT_SECRET}
-    url:
-      accessToken: ${ACCESS_TOKEN_URL}
-      user: ${USER_URL}
-
-  token:
-    access-expired-time: ${ACCESS_EXPIRED_TIME}
-    refresh-expired-time: ${REFRESH_EXPIRED_TIME}
-    secret: ${TOKEN_SECRET}

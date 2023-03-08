@@ -3,6 +3,7 @@ package com.gabia.bshop.entity;
 import java.util.Objects;
 
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.hibernate.envers.Audited;
 
 import com.gabia.bshop.dto.request.CategoryUpdateRequest;
@@ -23,6 +24,7 @@ import lombok.ToString;
 @ToString(exclude = {})
 @Getter
 @SQLDelete(sql = "update category set deleted = true where id = ?")
+@Where(clause = "deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "category", indexes = {})
 @Entity
@@ -32,7 +34,7 @@ public class Category extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(columnDefinition = "varchar(255)", unique = true, nullable = false)
+	@Column(unique = true, nullable = false)
 	private String name;
 
 	@Column(nullable = false)

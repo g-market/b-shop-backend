@@ -1,5 +1,6 @@
 package com.gabia.bshop.controller;
 
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,12 +13,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gabia.bshop.dto.request.OrderCreateRequest;
-import com.gabia.bshop.dto.request.OrderInfoSearchRequest;
 import com.gabia.bshop.dto.request.OrderUpdateStatusRequest;
 import com.gabia.bshop.dto.response.OrderCreateResponse;
 import com.gabia.bshop.dto.response.OrderInfoPageResponse;
-import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
+import com.gabia.bshop.dto.response.OrderInfoResponse;
 import com.gabia.bshop.dto.response.OrderUpdateStatusResponse;
+import com.gabia.bshop.dto.searchConditions.OrderSearchConditions;
 import com.gabia.bshop.security.CurrentMember;
 import com.gabia.bshop.security.Login;
 import com.gabia.bshop.security.MemberPayload;
@@ -35,27 +36,24 @@ public class OrderController {
 
 	@Login
 	@GetMapping("/orders")
-	public ResponseEntity<OrderInfoPageResponse> findOrderInfoList(@CurrentMember final MemberPayload memberPayload,
-		@LimitedSizePagination final Pageable pageable) {
-		return ResponseEntity.ok(orderService.findOrderInfoList(memberPayload.id(), pageable));
+	public ResponseEntity<Page<OrderInfoPageResponse>> findOrderInfoList(
+		@CurrentMember final MemberPayload memberPayload,
+		@LimitedSizePagination final Pageable pageable, final OrderSearchConditions orderSearchConditions) {
+		return ResponseEntity.ok(orderService.findOrderInfoList(pageable, memberPayload.id(), orderSearchConditions));
 	}
 
 	@Login
 	@GetMapping("/orders/{orderId}")
-	public ResponseEntity<OrderInfoSingleResponse> findOrderInfo(@CurrentMember final MemberPayload memberPayload,
+	public ResponseEntity<OrderInfoResponse> findOrderInfo(@CurrentMember final MemberPayload memberPayload,
 		@PathVariable("orderId") final Long orderId) {
-		final OrderInfoSingleResponse singleOrderInfo = orderService.findOrderInfo(memberPayload, orderId);
-		return ResponseEntity.ok(singleOrderInfo);
+		return ResponseEntity.ok(orderService.findOrderInfo(memberPayload, orderId));
 	}
 
 	@Login(admin = true)
 	@GetMapping("/admin/orders")
-	public ResponseEntity<OrderInfoPageResponse> findAllOrderInfoList(
-		final OrderInfoSearchRequest orderInfoSearchRequest,
-		@LimitedSizePagination final Pageable pageable) {
-		final OrderInfoPageResponse adminOrdersPagination = orderService.findAllOrderInfoList(
-			orderInfoSearchRequest, pageable);
-		return ResponseEntity.ok(adminOrdersPagination);
+	public ResponseEntity<Page<OrderInfoPageResponse>> findAllOrderInfoList(
+		@LimitedSizePagination final Pageable pageable, final OrderSearchConditions orderSearchConditions) {
+		return ResponseEntity.ok(orderService.findAllOrderInfoList(orderSearchConditions, pageable));
 	}
 
 	@Login

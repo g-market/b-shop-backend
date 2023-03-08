@@ -24,9 +24,10 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class ItemOptionService {
 
+	private static final int MAX_ITEM_OPTION_COUNT = 100;
+
 	private final ItemRepository itemRepository;
 	private final ItemOptionRepository itemOptionRepository;
-	private static final int MAX_ITEM_OPTION_COUNT = 100;
 
 	public ItemOptionResponse findItemOption(final Long itemId, final Long optionId) {
 		final ItemOption itemOption = findItemOptionByItemIdAndOptionId(itemId, optionId);
@@ -70,7 +71,7 @@ public class ItemOptionService {
 		final Long optionId,
 		final ItemOptionRequest itemOptionRequest) {
 
-		final ItemOption itemOption = findItemOptionByItemIdAndOptionId(itemId, optionId);
+		final ItemOption itemOption = findItemOptionByItemIdAndOptionIdWithLock(itemId, optionId);
 
 		itemOption.update(itemOptionRequest);
 
@@ -85,6 +86,11 @@ public class ItemOptionService {
 
 	private ItemOption findItemOptionByItemIdAndOptionId(final Long itemId, final Long itemOptionId) {
 		return itemOptionRepository.findByIdAndItemId(itemOptionId, itemId)
+			.orElseThrow(() -> new NotFoundException(ITEM_OPTION_NOT_FOUND_EXCEPTION, itemId, itemOptionId));
+	}
+
+	private ItemOption findItemOptionByItemIdAndOptionIdWithLock(final Long itemId, final Long itemOptionId) {
+		return itemOptionRepository.findByIdAndItemIdWithLock(itemOptionId, itemId)
 			.orElseThrow(() -> new NotFoundException(ITEM_OPTION_NOT_FOUND_EXCEPTION, itemId, itemOptionId));
 	}
 }

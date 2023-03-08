@@ -19,7 +19,7 @@ import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.dto.request.OrderCreateRequest;
 import com.gabia.bshop.dto.request.OrderUpdateStatusRequest;
 import com.gabia.bshop.dto.response.OrderCreateResponse;
-import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
+import com.gabia.bshop.dto.response.OrderInfoResponse;
 import com.gabia.bshop.dto.response.OrderUpdateStatusResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
@@ -32,8 +32,11 @@ import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
 import com.gabia.bshop.exception.BadRequestException;
+import com.gabia.bshop.fixture.CategoryFixture;
+import com.gabia.bshop.fixture.ItemFixture;
+import com.gabia.bshop.fixture.ItemOptionFixture;
+import com.gabia.bshop.fixture.MemberFixture;
 import com.gabia.bshop.mapper.OrderMapper;
-import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
@@ -47,7 +50,6 @@ import jakarta.persistence.EntityNotFoundException;
     2. 취소
     3. (optional) 수정
  */
-
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
 
@@ -60,9 +62,6 @@ class OrderServiceTest {
 	@Mock
 	private ItemOptionRepository itemOptionRepository;
 
-	@Mock
-	private ItemImageRepository imageRepository;
-
 	@InjectMocks
 	private OrderService orderService;
 
@@ -70,55 +69,14 @@ class OrderServiceTest {
 	@Test
 	void createOrder() {
 		//given
-		Member member = Member.builder()
-			.id(1L)
-			.email("test@test.com")
-			.grade(MemberGrade.BRONZE)
-			.name("testName")
-			.phoneNumber("01000001111")
-			.hiworksId("hiworks")
-			.role(MemberRole.NORMAL)
-			.build();
+		Member member = MemberFixture.JENNA.getInstance(1L);
+		Category category = CategoryFixture.CATEGORY_1.getInstance(1L);
+		Item item1 = ItemFixture.ITEM_1.getInstance(1L, category);
+		Item item2 = ItemFixture.ITEM_2.getInstance(2L, category);
+		ItemOption itemOption1 = ItemOptionFixture.ITEM_OPTION_1.getInstance(1L, item1);
+		ItemOption itemOption2 = ItemOptionFixture.ITEM_OPTION_2.getInstance(2L, item2);
 
-		Category category = Category.builder().id(1L).name("name").build();
-
-		Item item1 =
-			Item.builder()
-				.id(1L)
-				.category(category)
-				.name("item")
-				.itemStatus(ItemStatus.PUBLIC)
-				.basePrice(10000)
-				.description("description")
-				.openAt(LocalDateTime.now())
-				.build();
-
-		Item item2 =
-			Item.builder()
-				.id(2L)
-				.category(category)
-				.name("item")
-				.itemStatus(ItemStatus.PUBLIC)
-				.basePrice(10000)
-				.description("description")
-				.openAt(LocalDateTime.now())
-				.build();
-
-		ItemOption itemOption1 = ItemOption.builder()
-			.id(1L)
-			.item(item1)
-			.description("description")
-			.optionPrice(0)
-			.stockQuantity(10)
-			.build();
-
-		ItemOption itemOption2 = ItemOption.builder()
-			.id(2L)
-			.item(item2)
-			.description("description")
-			.optionPrice(1000)
-			.stockQuantity(5)
-			.build();
+		int Stock_Origin = itemOption1.getStockQuantity();
 
 		Order order = Order.builder()
 			.id(1L)
@@ -153,7 +111,7 @@ class OrderServiceTest {
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 
-		when(itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(List.of(1L, 2L), List.of(1L, 2L))).thenReturn(
+		when(itemOptionRepository.findByItemIdListAndIdListWithLock(orderItemDtoList)).thenReturn(
 			List.of(itemOption1, itemOption2));
 
 		//when
@@ -166,7 +124,8 @@ class OrderServiceTest {
 				returnDto.totalPrice()),
 			() -> assertEquals(member.getId(), returnDto.memberId()),
 			() -> assertEquals(OrderStatus.ACCEPTED, returnDto.status()),
-			() -> assertEquals(9, itemOption1.getStockQuantity(), "주문을 하면 재고가 줄어들어야 한다.")
+			() -> assertEquals(Stock_Origin - orderItem1.getOrderCount(), itemOption1.getStockQuantity(),
+				"주문을 하면 재고가 줄어들어야 한다.")
 		);
 	}
 
@@ -257,8 +216,7 @@ class OrderServiceTest {
 			.orderItemDtoList(orderItemDtoList)
 			.build();
 
-		when(itemOptionRepository.findWithItemByItemIdsAndItemOptionIds(List.of(1L, 1L), List.of(1L, 2L))).thenReturn(
-			List.of(itemOption1, itemOption2));
+		when(itemOptionRepository.findByItemIdListAndIdListWithLock(orderItemDtoList)).thenReturn(List.of(itemOption1));
 
 		//when & then
 		Assertions.assertThatThrownBy(() -> orderService.createOrder(member.getId(), orderCreateRequest))
@@ -315,7 +273,8 @@ class OrderServiceTest {
 			.orderItemList(orderItemList)
 			.build();
 
-		when(orderRepository.findByIdAndMemberId(order.getId(), member.getId())).thenReturn(Optional.ofNullable(order));
+		when(orderRepository.findByIdAndMemberIdWithLock(order.getId(), member.getId())).thenReturn(
+			Optional.ofNullable(order));
 
 		//when
 		orderService.cancelOrder(member.getId(), order.getId());
@@ -426,12 +385,11 @@ class OrderServiceTest {
 
 		List<OrderItem> orderItemList = List.of(orderItem1);
 
-		//TODO: 썸네일 기능 추가 후 변경 필요
 		String thumbnailUrl = "thumbnailUrl_test";
 		List<String> thumbnailUrlList = List.of(thumbnailUrl);
 
 		when(orderRepository.findByIdAndMemberId(order.getId(), member.getId())).thenReturn(Optional.ofNullable(order));
-		when(orderItemRepository.findWithOrdersAndItemByOrderId(order.getId())).thenReturn(orderItemList);
+		when(orderItemRepository.findWithOrderAndItemByOrderId(order.getId())).thenReturn(orderItemList);
 
 		MemberPayload memberPayload = MemberPayload.builder()
 			.id(member.getId())
@@ -439,8 +397,7 @@ class OrderServiceTest {
 			.build();
 
 		//when
-		OrderInfoSingleResponse returnDto = orderService.findOrderInfo(memberPayload, order.getId());
-
+		OrderInfoResponse returnDto = orderService.findOrderInfo(memberPayload, order.getId());
 		//then
 		assertEquals(order.getId(), returnDto.orderId(), "사용자는 본인의 주문일 경우 주문 단건 조회에 성공한다.");
 	}
@@ -488,12 +445,11 @@ class OrderServiceTest {
 
 		List<OrderItem> orderItemList = List.of(orderItem1);
 
-		//TODO: 썸네일 기능 추가 후 변경 필요
 		String thumbnailUrl = "thumbnailUrl_test";
 		List<String> thumbnailUrlList = List.of(thumbnailUrl);
 
 		when(orderRepository.findById(order.getId())).thenReturn(Optional.ofNullable(order));
-		when(orderItemRepository.findWithOrdersAndItemByOrderId(order.getId())).thenReturn(orderItemList);
+		when(orderItemRepository.findWithOrderAndItemByOrderId(order.getId())).thenReturn(orderItemList);
 
 		MemberPayload memberPayload = MemberPayload.builder()
 			.id(member.getId())
@@ -501,7 +457,7 @@ class OrderServiceTest {
 			.build();
 
 		//when
-		OrderInfoSingleResponse returnDto = orderService.findOrderInfo(memberPayload, order.getId());
+		OrderInfoResponse returnDto = orderService.findOrderInfo(memberPayload, order.getId());
 
 		//then
 		assertEquals(order.getId(), returnDto.orderId(), "관리자는 자신의 주문이 아니여도 단건 주문 조회에 성공한다.");

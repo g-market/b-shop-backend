@@ -8,13 +8,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.gabia.bshop.dto.CartDto;
-import com.gabia.bshop.dto.ItemIdAndItemOptionIdAble;
+import com.gabia.bshop.dto.OrderItemAble;
+import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.entity.ItemOption;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 
+import jakarta.persistence.LockModeType;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -32,6 +34,25 @@ public class ItemOptionRepositoryCustomImpl implements ItemOptionRepositoryCusto
 			.fetch();
 	}
 
+	@Override
+	public List<ItemOption> findByItemIdListAndIdList(List<OrderItemDto> orderItemDtoList) {
+		return jpaQueryFactory.select(itemOption)
+			.from(itemOption)
+			.where(Expressions.list(item.id, itemOption.id).in(searchItemIdAndItemOptionIdIn(orderItemDtoList)))
+			.orderBy(item.id.asc(), itemOption.id.asc())
+			.fetch();
+	}
+
+	@Override
+	public List<ItemOption> findByItemIdListAndIdListWithLock(List<OrderItemDto> orderItemDtoList) {
+		return jpaQueryFactory.select(itemOption)
+			.from(itemOption)
+			.where(Expressions.list(item.id, itemOption.id).in(searchItemIdAndItemOptionIdIn(orderItemDtoList)))
+			.orderBy(item.id.asc(), itemOption.id.asc())
+			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
+			.fetch();
+	}
+
 	private BooleanExpression itemIdEq(Long itemId) {
 		return itemId != null ? item.id.eq(itemId) : null;
 	}
@@ -40,7 +61,7 @@ public class ItemOptionRepositoryCustomImpl implements ItemOptionRepositoryCusto
 		return itemOptionId != null ? itemOption.id.eq(itemOptionId) : null;
 	}
 
-	private <T extends ItemIdAndItemOptionIdAble> Expression[] searchItemIdAndItemOptionIdIn(
+	private <T extends OrderItemAble> Expression[] searchItemIdAndItemOptionIdIn(
 		List<T> itemIdAndItemOptionIdList) {
 		List<Expression<Object>> tuples = new ArrayList<>();
 		for (T cartDto : itemIdAndItemOptionIdList) {

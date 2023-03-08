@@ -6,7 +6,7 @@ public class ConflictException extends ApplicationException {
 		super(errorCode);
 	}
 
-	public ConflictException(final ErrorCode errorCode, final Object parameter) {
+	public ConflictException(final ErrorCode errorCode, final Object... parameter) {
 		super(errorCode, parameter);
 	}
 }

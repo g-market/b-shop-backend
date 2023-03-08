@@ -129,10 +129,10 @@ class CartServiceTest {
 		final ItemOption itemOption2 = ITEM_OPTION_2.getInstance(newItemOptionId, item2);
 
 		final CartResponse cartResponse1 = new CartResponse(itemId, itemOptionId, cartDto1.orderCount(),
-			item1.getName(), item1.getBasePrice(), itemOption1.getDescription(),
+			itemOption1.getDescription(), item1.getName(), item1.getBasePrice(),
 			itemOption1.getOptionPrice(), itemOption1.getStockQuantity(), category1.getName(), item1.getThumbnail());
 		final CartResponse cartResponse2 = new CartResponse(newItemId, newItemOptionId, cartDto2.orderCount(),
-			item2.getName(), item2.getBasePrice(), itemOption2.getDescription(),
+			itemOption2.getDescription(), item2.getName(), item2.getBasePrice(),
 			itemOption2.getOptionPrice(), itemOption2.getStockQuantity(), category1.getName(), item2.getThumbnail());
 
 		given(cartRepository.findAllByMemberId(memberId)).willReturn(List.of(cartDto1, cartDto2));

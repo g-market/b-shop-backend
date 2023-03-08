@@ -23,36 +23,34 @@ logging:
     org.hibernate.SQL: debug
 
 ---
-minio:
-  endpoint: http://localhost:9000
-  user: minio
-  password: minio1234
-  bucket: images
-
----
-application:
+server:
   local:
     domain: http://b-shop.com
   prod:
     domain: https://b-shop.com
     url: https://123.456.789.1
-
   default:
-    profile-image-url: http://b-shop.com/profile/me
-    item-image-url: http://b-shop.com:9000/images/No_Image.jpg
+    profile-image-url: http://localhost:9000/images/me
+    item-image-url: http://localhost:9000/images/No_Image.jpg
 
-  cart:
-    expired-time: 86400000
+cart:
+  expired-time: 86400000
 
-  hiworks:
-    client:
-      id: clientId
-      secret: clientSecret
-    url:
-      accessToken: http://localhost:8888/login/oauth/access_token
-      user: http://localhost:8888/user
+hiworks:
+  client:
+    id: clientId
+    secret: clientSecret
+  url:
+    accessToken: http://localhost:8888/login/oauth/access_token
+    user: http://localhost:8888/user
 
-  token:
-    access-expired-time: 3600000  # 2시간
-    refresh-expired-time: 2420000000  # 28일
-    secret: testkey1234567891011121314151617181920
+token:
+  access-expired-time: 3600000  # 2시간
+  refresh-expired-time: 2420000000  # 28일
+  secret: testkey1234567891011121314151617181920
+
+minio:
+  endpoint: http://localhost:9000
+  user: minio
+  password: minio1234
+  bucket: images

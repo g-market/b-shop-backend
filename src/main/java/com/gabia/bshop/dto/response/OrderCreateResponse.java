@@ -1,5 +1,6 @@
 package com.gabia.bshop.dto.response;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.gabia.bshop.dto.OrderItemDto;
@@ -13,6 +14,7 @@ public record OrderCreateResponse(
 	Long memberId,
 	List<OrderItemDto> orderItemDtoList,
 	OrderStatus status,
-	long totalPrice
+	long totalPrice,
+	LocalDateTime createdAt
 ) {
 }
