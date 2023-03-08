@@ -79,7 +79,7 @@ public class ItemImageService {
 		final ItemImage itemImage = findItemImageByImageIdAndItemId(itemThumbnailUpdateRequest.imageId(), itemId);
 
 		urlValidate(itemImage.getUrl()); // image validate
-		item.setThumbnail(itemImage);
+		item.updateThumbnail(itemImage.getUrl());
 
 		return ItemMapper.INSTANCE.itemToItemResponse(item);
 	}

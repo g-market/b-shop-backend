@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.gabia.bshop.config.ImageDefaultProperties;
 import com.gabia.bshop.dto.ItemImageDto;
-import com.gabia.bshop.dto.ItemSearchConditions;
+import com.gabia.bshop.dto.searchConditions.ItemSearchConditions;
 import com.gabia.bshop.dto.request.ItemCreateRequest;
 import com.gabia.bshop.dto.request.ItemUpdateRequest;
 import com.gabia.bshop.dto.response.ItemPageResponse;
@@ -25,7 +25,6 @@ import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.ItemMapper;
-import com.gabia.bshop.mapper.ItemPageResponseMapper;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.util.ImageValidator;
@@ -53,7 +52,7 @@ public class ItemService {
 	public Page<ItemPageResponse> findItemListByItemSearchConditions(final Pageable pageable,
 		final ItemSearchConditions itemSearchConditions) {
 		return itemRepository.findItemListByItemSearchConditions(pageable, itemSearchConditions)
-			.map(ItemPageResponseMapper.INSTANCE::from);
+			.map(ItemMapper.INSTANCE::itemToItemPageResponse);
 	}
 
 	/**
@@ -136,7 +135,7 @@ public class ItemService {
 			item.addItemImage(itemImage);
 		}
 		// 6. 썸네일 설정
-		item.setThumbnail(item.getItemImageList().get(0)); // 0 번째 이미지를 썸네일로
+		item.updateThumbnail(item.getItemImageList().get(0).getUrl()); // 0 번째 이미지를 썸네일로
 
 		return ItemMapper.INSTANCE.itemToItemResponse(itemRepository.save(item));
 	}
