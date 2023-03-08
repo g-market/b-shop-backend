@@ -1,11 +1,9 @@
 package com.gabia.bshop.config;
 
-import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.gabia.bshop.integration.IntegrationTest;
@@ -13,7 +11,6 @@ import com.gabia.bshop.integration.IntegrationTest;
 import io.minio.BucketExistsArgs;
 import io.minio.MakeBucketArgs;
 import io.minio.MinioClient;
-import lombok.RequiredArgsConstructor;
 
 @SpringBootTest
 class MinioConfigTest extends IntegrationTest {
@@ -22,7 +19,7 @@ class MinioConfigTest extends IntegrationTest {
 
 	@DisplayName("Minio 연결 후 테스트 버킷을 생성한다")
 	@Test
-	void configTest() throws Exception{
+	void configTest() throws Exception {
 		// given
 		final String bucket = "test-bucket";
 		minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());
@@ -31,6 +28,6 @@ class MinioConfigTest extends IntegrationTest {
 		final boolean isExist = minioClient.bucketExists(BucketExistsArgs.builder().bucket(bucket).build());
 
 		// then
-		Assertions.assertEquals(true, isExist);
+		Assertions.assertTrue(isExist);
 	}
 }
