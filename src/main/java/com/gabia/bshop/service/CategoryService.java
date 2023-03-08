@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gabia.bshop.dto.CategoryDto;
 import com.gabia.bshop.dto.request.CategoryCreateRequest;
@@ -20,11 +21,10 @@ import com.gabia.bshop.mapper.CategoryMapper;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemRepository;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 @Service
 public class CategoryService {
 
@@ -38,19 +38,21 @@ public class CategoryService {
 		return CategoryMapper.INSTANCE.categoryToDto(category);
 	}
 
-	//카테고리 목록 조회
+	//카테고리 페이지 조회
 	public Page<CategoryDto> findCategoryList(final Pageable pageable) {
 		final Page<Category> categoryPage = categoryRepository.findAll(pageable);
 		return new PageImpl<>(categoryPage.stream().map(CategoryMapper.INSTANCE::categoryToDto).toList());
 	}
 
 	//카테고리 생성
+	@Transactional
 	public CategoryDto createCategory(final CategoryCreateRequest categoryCreateRequest) {
 		Category category = CategoryMapper.INSTANCE.CategoryRequestToEntity(categoryCreateRequest);
 		return CategoryMapper.INSTANCE.categoryToDto(categoryRepository.save(category));
 	}
 
 	//카테고리 수정
+	@Transactional
 	public CategoryDto updateCategory(final CategoryUpdateRequest categoryUpdateRequest) {
 		final Category category = findCategoryById(categoryUpdateRequest.id());
 		category.update(categoryUpdateRequest);
@@ -58,11 +60,17 @@ public class CategoryService {
 	}
 
 	//카테고리 삭제
+	@Transactional
 	public void deleteCategory(final Long categoryId) {
 		final Category category = findCategoryById(categoryId);
 		validateDeleteCategoryById(categoryId);
 
 		categoryRepository.delete(category);
+	}
+
+	// 카테고리 목록 조회
+	public List<String> findCategoryNames() {
+		return categoryRepository.findCategoryNames();
 	}
 
 	private Category findCategoryById(final Long categoryId) {
@@ -76,5 +84,4 @@ public class CategoryService {
 			throw new ConflictException(CATEGORY_ITEM_DELETE_EXCEPTION, categoryId);
 		}
 	}
-
 }
