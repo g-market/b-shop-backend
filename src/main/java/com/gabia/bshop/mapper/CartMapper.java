@@ -10,25 +10,37 @@ import org.mapstruct.Mappings;
 import org.mapstruct.factory.Mappers;
 
 import com.gabia.bshop.dto.CartDto;
+import com.gabia.bshop.dto.request.CartCreateRequest;
+import com.gabia.bshop.dto.request.CartDeleteRequest;
 import com.gabia.bshop.dto.response.CartResponse;
 import com.gabia.bshop.entity.ItemOption;
 
 @Mapper(componentModel = "spring")
-public interface CartResponseMapper {
+public interface CartMapper {
 
-	CartResponseMapper INSTANCE = Mappers.getMapper(CartResponseMapper.class);
+	CartMapper INSTANCE = Mappers.getMapper(CartMapper.class);
 
-	default List<CartResponse> from(final List<ItemOption> itemOptionList, final List<CartDto> cartDtoList) {
-		final List<CartResponse> cartResponseList = new ArrayList<>();
-		final HashMap<String, Integer> map = new HashMap<>();
+	String DELIMITER = "-";
+
+	CartDto cartCreateRequestToCartDto(final CartCreateRequest cartCreateRequest);
+
+	@Mappings({
+		@Mapping(target = "orderCount", ignore = true)
+	})
+	CartDto cartDeleteRequestToCartDto(final CartDeleteRequest cartDeleteRequest);
+
+	default List<CartResponse> itemOptionListAndCartDtoToCartResponse(final List<ItemOption> itemOptionList,
+		final List<CartDto> cartDtoList) {
+		final List<CartResponse> cartResponseList = new ArrayList<>(itemOptionList.size());
+		final HashMap<String, Integer> map = new HashMap<>(cartDtoList.size());
 		for (CartDto cartDto : cartDtoList) {
-			final String key = String.valueOf(cartDto.itemId()) + cartDto.itemOptionId();
+			final String key = cartDto.itemId() + DELIMITER + cartDto.itemOptionId();
 			map.put(key, cartDto.orderCount());
 		}
 		for (ItemOption itemOption : itemOptionList) {
-			final String key = String.valueOf(itemOption.getItem().getId()) + itemOption.getId();
+			final String key = itemOption.getItem().getId() + DELIMITER + itemOption.getId();
 			final Integer orderCount = map.get(key);
-			cartResponseList.add(this.from(itemOption, orderCount));
+			cartResponseList.add(this.itemOptionAndOrderCountToCartResponse(itemOption, orderCount));
 		}
 		return cartResponseList;
 	}
@@ -43,5 +55,5 @@ public interface CartResponseMapper {
 		@Mapping(source = "itemOption.item.category.name", target = "category"),
 		@Mapping(source = "itemOption.item.thumbnail", target = "thumbnailUrl"),
 	})
-	CartResponse from(ItemOption itemOption, Integer orderCount);
+	CartResponse itemOptionAndOrderCountToCartResponse(ItemOption itemOption, Integer orderCount);
 }
