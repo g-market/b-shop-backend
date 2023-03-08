@@ -10,7 +10,7 @@ import lombok.Setter;
 @Setter
 @Configuration
 @ConfigurationProperties("server.default")
-public class ImageProperties {
+public class ImageDefaultProperties {
 
 	private String profileImageUrl;
 	private String itemImageUrl;
