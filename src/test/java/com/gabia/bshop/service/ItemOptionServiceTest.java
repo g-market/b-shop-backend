@@ -163,7 +163,7 @@ class ItemOptionServiceTest {
 			changeditemOptionResponse.stockQuantity()
 		);
 
-		given(itemOptionRepository.findByIdAndItemId(beforeItemOption.getId(), item1.getId())).willReturn(
+		given(itemOptionRepository.findByIdAndItemIdWithLock(beforeItemOption.getId(), item1.getId())).willReturn(
 			Optional.of(beforeItemOption));
 
 		// when
@@ -173,7 +173,7 @@ class ItemOptionServiceTest {
 		// then
 		assertAll(
 			() -> assertThat(actual).usingRecursiveComparison().isEqualTo(changeditemOptionResponse),
-			() -> verify(itemOptionRepository).findByIdAndItemId(beforeItemOption.getId(), item1.getId())
+			() -> verify(itemOptionRepository).findByIdAndItemIdWithLock(beforeItemOption.getId(), item1.getId())
 		);
 	}
 

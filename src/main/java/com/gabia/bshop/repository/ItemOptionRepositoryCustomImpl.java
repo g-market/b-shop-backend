@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.gabia.bshop.dto.CartDto;
-import com.gabia.bshop.dto.ItemIdAndItemOptionIdAble;
+import com.gabia.bshop.dto.OrderItemAble;
 import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.entity.ItemOption;
 import com.querydsl.core.types.Expression;
@@ -61,7 +61,7 @@ public class ItemOptionRepositoryCustomImpl implements ItemOptionRepositoryCusto
 		return itemOptionId != null ? itemOption.id.eq(itemOptionId) : null;
 	}
 
-	private <T extends ItemIdAndItemOptionIdAble> Expression[] searchItemIdAndItemOptionIdIn(
+	private <T extends OrderItemAble> Expression[] searchItemIdAndItemOptionIdIn(
 		List<T> itemIdAndItemOptionIdList) {
 		List<Expression<Object>> tuples = new ArrayList<>();
 		for (T cartDto : itemIdAndItemOptionIdList) {
