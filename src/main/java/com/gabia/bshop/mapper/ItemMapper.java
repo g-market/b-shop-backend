@@ -17,6 +17,7 @@ public interface ItemMapper {
 	ItemMapper INSTANCE = Mappers.getMapper(ItemMapper.class);
 
 	@Mappings({
+		@Mapping(source = "id", target = "itemId"),
 		@Mapping(source = "category", target = "categoryDto"),
 		@Mapping(source = "itemImageList", target = "itemImageDtoList"),
 		@Mapping(source = "itemOptionList", target = "itemOptionDtoList"),
@@ -31,8 +32,8 @@ public interface ItemMapper {
 	ItemCreateRequest itemToItemCreateRequest(Item item);
 
 	@Mappings({
-		@Mapping(source = "category.id", target = "categoryId"),
 		@Mapping(source = "id", target = "itemId"),
+		@Mapping(source = "category.id", target = "categoryId"),
 	})
 	ItemUpdateRequest itemToItemUpdateRequest(Item item);
 
