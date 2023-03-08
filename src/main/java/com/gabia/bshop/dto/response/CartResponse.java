@@ -7,9 +7,11 @@ public record CartResponse(
 	Long itemId,
 	Long itemOptionId,
 	int orderCount,
+	String description,
 	String name,
 	int basePrice,
 	int optionPrice,
+	int stockQuantity,
 	String category,
 	String thumbnailUrl
 ) {

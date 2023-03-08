@@ -49,9 +49,11 @@ public interface CartMapper {
 		@Mapping(source = "itemOption.item.id", target = "itemId"),
 		@Mapping(source = "itemOption.id", target = "itemOptionId"),
 		@Mapping(source = "orderCount", target = "orderCount"),
+		@Mapping(source = "itemOption.description", target = "description"),
 		@Mapping(source = "itemOption.item.name", target = "name"),
 		@Mapping(source = "itemOption.item.basePrice", target = "basePrice"),
 		@Mapping(source = "itemOption.optionPrice", target = "optionPrice"),
+		@Mapping(source = "itemOption.stockQuantity", target = "stockQuantity"),
 		@Mapping(source = "itemOption.item.category.name", target = "category"),
 		@Mapping(source = "itemOption.item.thumbnail", target = "thumbnailUrl"),
 	})
