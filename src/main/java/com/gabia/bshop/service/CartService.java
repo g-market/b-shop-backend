@@ -13,7 +13,7 @@ import com.gabia.bshop.dto.OrderItemAble;
 import com.gabia.bshop.dto.response.CartResponse;
 import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.exception.NotFoundException;
-import com.gabia.bshop.mapper.CartResponseMapper;
+import com.gabia.bshop.mapper.CartMapper;
 import com.gabia.bshop.repository.CartRepository;
 import com.gabia.bshop.repository.ItemOptionRepository;
 
@@ -34,7 +34,7 @@ public class CartService {
 		}
 		final List<ItemOption> itemOptionList = itemOptionRepository.findWithItemAndCategoryAndImageByItemIdListAndIdList(
 			cartDtoList);
-		return CartResponseMapper.INSTANCE.from(itemOptionList, cartDtoList);
+		return CartMapper.INSTANCE.itemOptionListAndCartDtoToCartResponse(itemOptionList, cartDtoList);
 	}
 
 	@Transactional
@@ -57,6 +57,6 @@ public class CartService {
 
 	@Transactional
 	public <T extends OrderItemAble> void deleteCartList(final Long memberId, final List<T> orderItemAbleList) {
-		cartRepository.deleteAllByItemIdAndItemOptionId(memberId, orderItemAbleList);
+		cartRepository.deleteAll(memberId, orderItemAbleList);
 	}
 }

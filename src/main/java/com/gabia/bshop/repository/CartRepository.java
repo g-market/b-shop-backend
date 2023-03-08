@@ -13,5 +13,5 @@ public interface CartRepository {
 
 	void delete(Long memberId, CartDto cartDto);
 
-	<T extends OrderItemAble> void deleteAllByItemIdAndItemOptionId(Long memberId, List<T> orderItemAbleList);
+	<T extends OrderItemAble> void deleteAll(Long memberId, List<T> orderItemAbleList);
 }

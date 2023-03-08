@@ -21,7 +21,7 @@ import lombok.RequiredArgsConstructor;
 @Repository
 public class CartRepositoryImpl implements CartRepository {
 
-	public static final String CART_PREFIX = "cart:memberId-";
+	private static final String CART_PREFIX = "cart:memberId-";
 	private static final String DELIMITER = "-";
 
 	private final RedisTemplate<String, String> redisTemplate;
@@ -76,8 +76,7 @@ public class CartRepositoryImpl implements CartRepository {
 
 	@Override
 	@Transactional
-	public <T extends OrderItemAble> void deleteAllByItemIdAndItemOptionId(final Long memberId,
-		final List<T> orderItemAbleList) {
+	public <T extends OrderItemAble> void deleteAll(final Long memberId, final List<T> orderItemAbleList) {
 		final String key = getKey(memberId);
 		for (final OrderItemAble orderItemAble : orderItemAbleList) {
 			final String hashKey = getHashKey(orderItemAble);
