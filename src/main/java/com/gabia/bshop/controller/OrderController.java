@@ -36,7 +36,8 @@ public class OrderController {
 
 	@Login
 	@GetMapping("/orders")
-	public ResponseEntity<Page<OrderInfoPageResponse>> findOrderInfoList(@CurrentMember final MemberPayload memberPayload,
+	public ResponseEntity<Page<OrderInfoPageResponse>> findOrderInfoList(
+		@CurrentMember final MemberPayload memberPayload,
 		@LimitedSizePagination final Pageable pageable, final OrderSearchConditions orderSearchConditions) {
 		return ResponseEntity.ok(orderService.findOrderInfoList(pageable, memberPayload.id(), orderSearchConditions));
 	}
@@ -45,8 +46,7 @@ public class OrderController {
 	@GetMapping("/orders/{orderId}")
 	public ResponseEntity<OrderInfoResponse> findOrderInfo(@CurrentMember final MemberPayload memberPayload,
 		@PathVariable("orderId") final Long orderId) {
-		final OrderInfoResponse singleOrderInfo = orderService.findOrderInfo(memberPayload, orderId);
-		return ResponseEntity.ok(singleOrderInfo);
+		return ResponseEntity.ok(orderService.findOrderInfo(memberPayload, orderId));
 	}
 
 	@Login(admin = true)

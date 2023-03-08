@@ -1,13 +1,9 @@
 package com.gabia.bshop.fixture;
 
-import static com.gabia.bshop.entity.enumtype.OrderStatus.*;
-
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemOption;
-import com.gabia.bshop.entity.Member;
 import com.gabia.bshop.entity.Order;
 import com.gabia.bshop.entity.OrderItem;
-import com.gabia.bshop.entity.enumtype.OrderStatus;
 
 public enum OrderItemFixture {
 
@@ -29,7 +25,8 @@ public enum OrderItemFixture {
 		return getInstance(null, item, order, itemOption);
 	}
 
-	public OrderItem getInstance(final Long orderItemId, final Item item, final Order order, final ItemOption itemOption) {
+	public OrderItem getInstance(final Long orderItemId, final Item item, final Order order,
+		final ItemOption itemOption) {
 		return OrderItem.builder()
 			.id(orderItemId)
 			.item(item)
