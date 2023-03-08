@@ -20,7 +20,7 @@ public record ItemUpdateRequest(
 	@Length(max = 255, message = "255자 이내로 입력해주세요.")
 	String name,
 
-	@ByteSize(max = 64L, message = "description 의 크기가 허용된 크기 이상입니다.(64 Byte).")
+	@ByteSize(max = 64L, message = "itemOptionDescription 의 크기가 허용된 크기 이상입니다.(64 Byte).")
 	String description,
 
 	@PositiveOrZero(message = "basePrice 는 0 이상입니다.")

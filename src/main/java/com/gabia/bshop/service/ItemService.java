@@ -6,18 +6,17 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.gabia.bshop.config.ImageDefaultProperties;
 import com.gabia.bshop.dto.ItemImageDto;
-import com.gabia.bshop.dto.searchConditions.ItemSearchConditions;
 import com.gabia.bshop.dto.request.ItemCreateRequest;
 import com.gabia.bshop.dto.request.ItemUpdateRequest;
 import com.gabia.bshop.dto.response.ItemPageResponse;
 import com.gabia.bshop.dto.response.ItemResponse;
+import com.gabia.bshop.dto.searchConditions.ItemSearchConditions;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
@@ -49,26 +48,15 @@ public class ItemService {
 		return ItemMapper.INSTANCE.itemToItemResponse(findItemById(id));
 	}
 
-	public Page<ItemPageResponse> findItemListByItemSearchConditions(final Pageable pageable,
-		final ItemSearchConditions itemSearchConditions) {
-		return itemRepository.findItemListByItemSearchConditions(pageable, itemSearchConditions)
-			.map(ItemMapper.INSTANCE::itemToItemPageResponse);
-	}
-
 	/**
 	 * 상품 목록 조회
 	 * 비활성, Private 상태의 아이템?
 	 *
 	 **/
-	public Page<ItemResponse> findItemList(final Pageable page, final Long categoryId) {
-		Page<Item> itemPage;
-		if (categoryId == null) {
-			itemPage = itemRepository.findAll(page);
-		} else {
-			final Category category = findCategoryById(categoryId);
-			itemPage = itemRepository.findByCategory(category, page);
-		}
-		return new PageImpl<>(itemPage.stream().map(ItemMapper.INSTANCE::itemToItemResponse).toList());
+	public Page<ItemPageResponse> findItemListByItemSearchConditions(final Pageable pageable,
+		final ItemSearchConditions itemSearchConditions) {
+		return itemRepository.findItemListByItemSearchConditions(pageable, itemSearchConditions)
+			.map(ItemMapper.INSTANCE::itemToItemPageResponse);
 	}
 
 	/**
@@ -145,7 +133,7 @@ public class ItemService {
 	 1. 상품의 카테고리 수정 -> Category 변경
 	 2. 이름(name)
 	 3. 기본가격(basePrice)
-	 4. 설명(description)
+	 4. 설명(itemOptionDescription)
 	 5. 오픈시간(openAt)
 	 6. 년도(year)
 	 7. 상태(status)

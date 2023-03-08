@@ -9,7 +9,6 @@ import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -25,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 
 import com.gabia.bshop.config.ImageDefaultProperties;
 import com.gabia.bshop.dto.request.ItemUpdateRequest;
+import com.gabia.bshop.dto.response.ItemPageResponse;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
@@ -59,28 +59,36 @@ class ItemServiceTest {
 		when(itemRepository.findById(2L)).thenReturn(Optional.ofNullable(item2));
 
 		// then
-		assertEquals(1L, itemService.findItem(1L).id());
-		assertEquals(2L, itemService.findItem(2L).id());
+		assertEquals(1L, itemService.findItem(1L).itemId());
+		assertEquals(2L, itemService.findItem(2L).itemId());
 	}
 
 	@Test
-	@DisplayName("상품_목록을_조회한다")
-	void findItemList() {
+	@DisplayName("검색 조건 없이 게시글을 검색하면 게시글 페이지를 반환한다")
+	void findItemListWithoutSearchConditions() {
 		// given
 		Category category = CATEGORY_1.getInstance(1L);
 		Item item1 = ITEM_1.getInstance(1L, category);
 		Item item2 = ITEM_2.getInstance(2L, category);
+		Item item3 = ITEM_3.getInstance(3L, category);
+		Item item4 = ITEM_4.getInstance(4L, category);
+		Item item5 = ITEM_5.getInstance(5L, category);
 
-		Pageable pageable = PageRequest.of(0, 10);
-		Page<ItemResponse> itemDtoList = new PageImpl<>(
-			Stream.of(item1, item2).map(ItemMapper.INSTANCE::itemToItemResponse).toList());
+		List<Item> expectedItemList = List.of(item1, item2, item3, item4, item5);
+		List<ItemPageResponse> expected = expectedItemList.stream()
+			.map(ItemMapper.INSTANCE::itemToItemPageResponse)
+			.toList();
 
-		Page<Item> itemPage = new PageImpl<>(List.of(item1, item2));
+		Pageable pageable = PageRequest.ofSize(12);
+		when(itemRepository.findItemListByItemSearchConditions(pageable, null))
+			.thenReturn(new PageImpl<>(expectedItemList, pageable, 5));
 
-		when(itemRepository.findAll(pageable)).thenReturn(itemPage);
+		// when
+		Page<ItemPageResponse> itemPageResponsePage = itemService.findItemListByItemSearchConditions(pageable,
+			null);
 
-		// when & then
-		assertEquals(itemDtoList, itemService.findItemList(pageable, null));
+		// then
+		assertThat(itemPageResponsePage.getContent()).usingRecursiveComparison().isEqualTo(expected);
 	}
 
 	@Test
