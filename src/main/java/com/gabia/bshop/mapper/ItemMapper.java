@@ -7,6 +7,7 @@ import org.mapstruct.factory.Mappers;
 
 import com.gabia.bshop.dto.request.ItemCreateRequest;
 import com.gabia.bshop.dto.request.ItemUpdateRequest;
+import com.gabia.bshop.dto.response.ItemPageResponse;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Item;
 
@@ -31,7 +32,13 @@ public interface ItemMapper {
 
 	@Mappings({
 		@Mapping(source = "category.id", target = "categoryId"),
-		@Mapping(source = "item.id", target = "itemId"),
+		@Mapping(source = "id", target = "itemId"),
 	})
 	ItemUpdateRequest itemToItemUpdateRequest(Item item);
+
+	@Mappings({
+		@Mapping(source = "id", target = "itemId"),
+		@Mapping(source = "category", target = "categoryDto"),
+	})
+	ItemPageResponse itemToItemPageResponse(Item item);
 }
