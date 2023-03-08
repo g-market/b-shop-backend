@@ -3,7 +3,6 @@ package com.gabia.bshop.integration.service;
 import java.util.List;
 
 import org.assertj.core.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,8 +61,7 @@ class CategoryServiceTest {
 		Assertions.assertThat(categoryDto.id()).isEqualTo(category1.getId());
 	}
 
-	@Disabled("동시성 트랜잭션 롤백을 안시키는 것으로 인해 추후 이를 수정하고 테스트 코드에 반영이 필요하다.")
-	@DisplayName("카테고리를_리스트로_조회한다.")
+	@DisplayName("카테고리를_페이지로_조회한다.")
 	@Test
 	void findCategoryList() {
 		//given
@@ -72,7 +70,6 @@ class CategoryServiceTest {
 		final Category category3 = CategoryFixture.CATEGORY_3.getInstance();
 
 		categoryRepository.saveAll(List.of(category1, category2, category3));
-
 		//when
 		Pageable pageable = PageRequest.of(0, 10);
 		Page<CategoryDto> categoryDtoPage = categoryService.findCategoryList(pageable);
@@ -112,5 +109,26 @@ class CategoryServiceTest {
 
 		//then
 		Assertions.assertThat(categoryRepository.findById(category1.getId()).isPresent()).isEqualTo(false);
+	}
+
+	@DisplayName("카테고리 이름을 리스트로 조회한다.")
+	@Test
+	void findCategoryNames() {
+		// given
+		final Category category1 = CategoryFixture.CATEGORY_1.getInstance();
+		final Category category2 = CategoryFixture.CATEGORY_2.getInstance();
+		final Category category3 = CategoryFixture.CATEGORY_3.getInstance();
+		final Category category4 = CategoryFixture.CATEGORY_4.getInstance();
+		final Category category5 = CategoryFixture.CATEGORY_5.getInstance();
+		categoryRepository.saveAll(List.of(category1, category2, category3, category4, category5));
+
+		// when
+		final List<String> categoryNames = categoryService.findCategoryNames();
+
+		// then
+		Assertions.assertThat(categoryRepository.findCategoryNames())
+			.usingRecursiveComparison()
+			.isEqualTo(List.of(category1.getName(), category2.getName(), category3.getName(), category4.getName(),
+				category5.getName()));
 	}
 }
