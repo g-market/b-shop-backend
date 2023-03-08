@@ -19,7 +19,7 @@ import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.dto.request.OrderCreateRequest;
 import com.gabia.bshop.dto.request.OrderUpdateStatusRequest;
 import com.gabia.bshop.dto.response.OrderCreateResponse;
-import com.gabia.bshop.dto.response.OrderInfoSingleResponse;
+import com.gabia.bshop.dto.response.OrderInfoResponse;
 import com.gabia.bshop.dto.response.OrderUpdateStatusResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
@@ -37,7 +37,6 @@ import com.gabia.bshop.fixture.ItemFixture;
 import com.gabia.bshop.fixture.ItemOptionFixture;
 import com.gabia.bshop.fixture.MemberFixture;
 import com.gabia.bshop.mapper.OrderMapper;
-import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
@@ -51,7 +50,6 @@ import jakarta.persistence.EntityNotFoundException;
     2. 취소
     3. (optional) 수정
  */
-
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
 
@@ -63,9 +61,6 @@ class OrderServiceTest {
 
 	@Mock
 	private ItemOptionRepository itemOptionRepository;
-
-	@Mock
-	private ItemImageRepository imageRepository;
 
 	@InjectMocks
 	private OrderService orderService;
@@ -394,7 +389,7 @@ class OrderServiceTest {
 		List<String> thumbnailUrlList = List.of(thumbnailUrl);
 
 		when(orderRepository.findByIdAndMemberId(order.getId(), member.getId())).thenReturn(Optional.ofNullable(order));
-		when(orderItemRepository.findWithOrdersAndItemByOrderId(order.getId())).thenReturn(orderItemList);
+		when(orderItemRepository.findWithOrderAndItemByOrderId(order.getId())).thenReturn(orderItemList);
 
 		MemberPayload memberPayload = MemberPayload.builder()
 			.id(member.getId())
@@ -402,8 +397,7 @@ class OrderServiceTest {
 			.build();
 
 		//when
-		OrderInfoSingleResponse returnDto = orderService.findOrderInfo(memberPayload, order.getId());
-
+		OrderInfoResponse returnDto = orderService.findOrderInfo(memberPayload, order.getId());
 		//then
 		assertEquals(order.getId(), returnDto.orderId(), "사용자는 본인의 주문일 경우 주문 단건 조회에 성공한다.");
 	}
@@ -455,7 +449,7 @@ class OrderServiceTest {
 		List<String> thumbnailUrlList = List.of(thumbnailUrl);
 
 		when(orderRepository.findById(order.getId())).thenReturn(Optional.ofNullable(order));
-		when(orderItemRepository.findWithOrdersAndItemByOrderId(order.getId())).thenReturn(orderItemList);
+		when(orderItemRepository.findWithOrderAndItemByOrderId(order.getId())).thenReturn(orderItemList);
 
 		MemberPayload memberPayload = MemberPayload.builder()
 			.id(member.getId())
@@ -463,7 +457,7 @@ class OrderServiceTest {
 			.build();
 
 		//when
-		OrderInfoSingleResponse returnDto = orderService.findOrderInfo(memberPayload, order.getId());
+		OrderInfoResponse returnDto = orderService.findOrderInfo(memberPayload, order.getId());
 
 		//then
 		assertEquals(order.getId(), returnDto.orderId(), "관리자는 자신의 주문이 아니여도 단건 주문 조회에 성공한다.");
