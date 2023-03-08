@@ -9,6 +9,7 @@ import java.util.List;
 
 import com.gabia.bshop.dto.CartDto;
 import com.gabia.bshop.dto.OrderItemAble;
+import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.entity.ItemOption;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.BooleanExpression;
