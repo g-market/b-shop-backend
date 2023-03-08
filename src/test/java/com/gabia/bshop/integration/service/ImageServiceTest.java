@@ -24,6 +24,7 @@ import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
 import com.gabia.bshop.exception.NotFoundException;
+import com.gabia.bshop.fixture.CategoryFixture;
 import com.gabia.bshop.integration.IntegrationTest;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemImageRepository;
@@ -63,7 +64,6 @@ class ImageServiceTest extends IntegrationTest {
 
 	@BeforeAll
 	void before() throws Exception {
-
 		final String fileName = "No_Image.jpg";
 		minioClient.makeBucket(MakeBucketArgs.builder().bucket(BUCKET).build());
 
@@ -77,7 +77,6 @@ class ImageServiceTest extends IntegrationTest {
 			.build();
 
 		minioClient.putObject(uploadObject);
-
 	}
 
 	@DisplayName("정상적인 이미지 경로인지 확인한다")
@@ -124,13 +123,11 @@ class ImageServiceTest extends IntegrationTest {
 			"image/jpg", "create image".getBytes());
 		final List<ImageResponse> imageResponseList = imageService.uploadImage(new MultipartFile[] {multipartFile});
 
-		final Category category1 = Category.builder()
-			.name("카테고리1")
-			.build();
+		final Category category = CategoryFixture.CATEGORY_1.getInstance();
 
-		categoryRepository.save(category1);
+		categoryRepository.save(category);
 
-		final Item item = itemRepository.save(ITEM_1.getInstance(category1));
+		final Item item = itemRepository.save(ITEM_1.getInstance(category));
 
 		final List<String> urlList = List.of(imageResponseList.get(0).url());
 		final ItemImageCreateRequest itemImageCreateRequest = new ItemImageCreateRequest(urlList);
@@ -150,13 +147,11 @@ class ImageServiceTest extends IntegrationTest {
 			"image/jpg", "create image".getBytes());
 		final List<ImageResponse> imageResponseList = imageService.uploadImage(new MultipartFile[] {multipartFile});
 
-		final Category category1 = Category.builder()
-			.name("카테고리1")
-			.build();
+		final Category category = CategoryFixture.CATEGORY_2.getInstance();
 
-		categoryRepository.save(category1);
+		categoryRepository.save(category);
 
-		final Item item = itemRepository.save(ITEM_1.getInstance(category1));
+		final Item item = itemRepository.save(ITEM_1.getInstance(category));
 		final String url = imageResponseList.get(0).url();
 
 		final ItemImage itemImage = ItemImage.builder().item(item).url(url).build();
@@ -189,13 +184,11 @@ class ImageServiceTest extends IntegrationTest {
 			"image/jpg", "create image".getBytes());
 		final List<ImageResponse> imageResponseList = imageService.uploadImage(new MultipartFile[] {multipartFile});
 
-		final Category category1 = Category.builder()
-			.name("카테고리1")
-			.build();
+		final Category category = CategoryFixture.CATEGORY_3.getInstance();
 
-		categoryRepository.save(category1);
+		categoryRepository.save(category);
 
-		final Item item = itemRepository.save(ITEM_1.getInstance(category1));
+		final Item item = itemRepository.save(ITEM_1.getInstance(category));
 		final String url = imageResponseList.get(0).url();
 
 		final ItemImage itemImage = ItemImage.builder().item(item).url(url).build();

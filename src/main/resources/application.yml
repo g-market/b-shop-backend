@@ -11,7 +11,6 @@ spring:
   jpa:
     hibernate:
       ddl-auto: ${DDL_AUTO}
-      generate-dll: true
     properties:
       hibernate:
         hibernate.default_batch_fetch_size: ${FETCH_SIZE}

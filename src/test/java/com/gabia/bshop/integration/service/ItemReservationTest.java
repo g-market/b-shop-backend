@@ -158,7 +158,7 @@ class ItemReservationTest extends IntegrationTest {
 		item1.setOpenAt(now.plusMinutes(10L));
 		item1.setItemStatus(ItemStatus.RESERVED);
 
-		item2.setOpenAt(now);
+		item2.setOpenAt(now.minusMinutes(1L));
 		item2.setItemStatus(ItemStatus.RESERVED);
 
 		itemRepository.saveAll(List.of(item1, item2));
