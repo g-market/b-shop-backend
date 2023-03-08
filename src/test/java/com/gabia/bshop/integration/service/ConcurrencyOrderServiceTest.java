@@ -31,7 +31,6 @@ import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.repository.CategoryRepository;
-import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.repository.MemberRepository;
@@ -39,8 +38,6 @@ import com.gabia.bshop.repository.OrderItemRepository;
 import com.gabia.bshop.repository.OrderRepository;
 import com.gabia.bshop.service.ItemOptionService;
 import com.gabia.bshop.service.OrderService;
-
-import jakarta.persistence.EntityManager;
 
 @SpringBootTest
 public class ConcurrencyOrderServiceTest {
