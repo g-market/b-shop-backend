@@ -58,7 +58,7 @@ public class OrderService {
 		}
 
 		final List<OrderItem> orderInfoList = orderItemRepository.findWithOrderAndItemByOrderId(orderId);
-		return OrderMapper.INSTANCE.orderInfoSingleResponse(orderInfoList);
+		return OrderMapper.INSTANCE.orderItemListToOrderInfoResponse(orderInfoList);
 	}
 
 	public Page<OrderInfoPageResponse> findAllOrderInfoList(final OrderSearchConditions orderSearchConditions,

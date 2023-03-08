@@ -75,7 +75,7 @@ public interface OrderMapper {
 			.build();
 	}
 
-	default OrderInfoResponse orderInfoSingleResponse(final List<OrderItem> orderItemList) {
+	default OrderInfoResponse orderItemListToOrderInfoResponse(final List<OrderItem> orderItemList) {
 		if (orderItemList == null) {
 			return null;
 		}
