@@ -9,8 +9,7 @@ public enum ItemOptionFixture {
 	ITEM_OPTION_2("아이템 옵션 2", 2000, 200),
 	ITEM_OPTION_3("아이템 옵션 3", 3000, 300),
 	ITEM_OPTION_4("아이템 옵션 4", 4000, 400),
-	ITEM_OPTION_5("아이템 옵션 5", 5000, 500),
-	;
+	ITEM_OPTION_5("아이템 옵션 5", 5000, 500);
 
 	private final String description;
 	private final int optionPrice;
@@ -24,6 +23,10 @@ public enum ItemOptionFixture {
 
 	public ItemOption getInstance(final Item item) {
 		return getInstance(null, item);
+	}
+
+	public ItemOption getInstance(final Long itemOptionId) {
+		return getInstance(itemOptionId, null);
 	}
 
 	public ItemOption getInstance(final Long itemOptionId, final Item item) {

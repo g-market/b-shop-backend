@@ -2,7 +2,6 @@ package com.gabia.bshop.controller;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gabia.bshop.dto.request.ItemUpdateRequest;
 import com.gabia.bshop.dto.request.ItemRequest;
+import com.gabia.bshop.dto.request.ItemUpdateRequest;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.security.Login;
 import com.gabia.bshop.service.ItemService;
@@ -56,6 +55,6 @@ public class ItemController {
 	@DeleteMapping("/items/{id}")
 	public ResponseEntity<Void> deleteItem(@PathVariable final Long id) {
 		itemService.deleteItem(id);
-		return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+		return ResponseEntity.noContent().build();
 	}
 }

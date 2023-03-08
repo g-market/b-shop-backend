@@ -61,13 +61,12 @@ public class ItemImageService {
 			itemImageList.add(ItemImage.builder().item(item).url(imageUrl).build());
 		}
 		itemImageList = itemImageRepository.saveAll(itemImageList);
-
 		return itemImageList.stream().map(ItemImageMapper.INSTANCE::itemImageToDto).toList();
 	}
 
 	@Transactional
 	public ItemImageDto updateItemImage(final Long itemId, final ItemImageDto itemImageDto) {
-		ItemImage itemImage = findItemImageByImageIdAndItemId(itemImageDto.id(), itemId);
+		ItemImage itemImage = findItemImageByImageIdAndItemId(itemImageDto.imageId(), itemId);
 		urlValidate(itemImageDto.url());
 		itemImage.updateUrl(itemImageDto.url());
 		return ItemImageMapper.INSTANCE.itemImageToDto(itemImage);
