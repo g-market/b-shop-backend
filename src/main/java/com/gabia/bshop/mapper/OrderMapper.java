@@ -10,6 +10,8 @@ import org.mapstruct.factory.Mappers;
 import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.dto.request.OrderCreateRequest;
 import com.gabia.bshop.dto.response.OrderCreateResponse;
+import com.gabia.bshop.dto.response.OrderInfoPageResponse;
+import com.gabia.bshop.dto.response.OrderInfoResponse;
 import com.gabia.bshop.dto.response.OrderUpdateStatusResponse;
 import com.gabia.bshop.entity.Order;
 import com.gabia.bshop.entity.OrderItem;
@@ -53,4 +55,49 @@ public interface OrderMapper {
 	@Mapping(source = "id", target = "orderId")
 	@Mapping(source = "member.id", target = "memberId")
 	OrderUpdateStatusResponse orderToOrderUpdateStatusResponse(Order order);
+
+	default OrderInfoPageResponse orderToOrderInfoPageResponse(Order order) {
+		return OrderInfoPageResponse.builder()
+			.orderId(order.getId())
+			.orderItemDtoList(order.getOrderItemList().stream().map(orderItem ->
+				OrderItemDto.builder()
+					.itemId(orderItem.getItem().getId())
+					.itemOptionId(orderItem.getOption().getId())
+					.orderCount(orderItem.getOrderCount())
+					.build()
+			).toList())
+			.itemThumbnail(order.getOrderItemList().get(0).getItem().getThumbnail())
+			.itemName(order.getOrderItemList().get(0).getItem().getName())
+			.itemTotalCount(order.getOrderItemList().size())
+			.orderStatus(order.getStatus())
+			.totalPrice(order.getTotalPrice())
+			.createdAt(order.getCreatedAt())
+			.build();
+	}
+
+	default OrderInfoResponse orderInfoSingleResponse(final List<OrderItem> orderItemList) {
+		if (orderItemList == null) {
+			return null;
+		}
+		final Order order = orderItemList.get(0).getOrder();
+		return OrderInfoResponse.builder()
+			.orderId(order.getId())
+			.totalPrice(order.getTotalPrice())
+			.createdAt(order.getCreatedAt())
+			.status(order.getStatus())
+			.orderItemList(orderItemList.stream()
+				.map(
+					orderItem -> OrderInfoResponse.SingleOrder.builder()
+						.orderItemId(orderItem.getId())
+						.itemId(orderItem.getItem().getId())
+						.itemOptionId(orderItem.getOption().getId())
+						.itemName(orderItem.getItem().getName())
+						.itemOptionDescription(orderItem.getOption().getDescription())
+						.orderCount(orderItem.getOrderCount())
+						.price(orderItem.getPrice())
+						.itemThumbnail(orderItem.getItem().getThumbnail())
+						.build())
+				.toList())
+			.build();
+	}
 }
