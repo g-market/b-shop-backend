@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.Duration;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseCookie;
 
@@ -16,7 +17,8 @@ class RefreshTokenCookieProviderTest {
 		new RefreshTokenCookieProvider(TokenPropertiesFixture.VALID_TOKEN_PROPERTIES);
 
 	@Test
-	void 리프레시_토큰으로_쿠키를_생성한다() {
+	@DisplayName("리프레시 토큰으로 쿠키를 생성한다")
+	void createCookieByRefreshToken() {
 		// given
 		final String refreshTokenValue = "refreshTokenValue";
 		// when
@@ -30,7 +32,8 @@ class RefreshTokenCookieProviderTest {
 	}
 
 	@Test
-	void 생성된_쿠키를_만료시킨_뒤_반환한다() {
+	@DisplayName("쿠키를 만료 시킨뒤에 이를 반환한다")
+	void createLogoutCookie() {
 		// when
 		ResponseCookie responseCookie = provider.createLogoutCookie();
 		// then
