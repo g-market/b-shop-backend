@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
+import com.gabia.bshop.config.TokenProperties;
 import com.gabia.bshop.exception.UnAuthorizedRefreshTokenException;
 import com.gabia.bshop.integration.IntegrationTest;
 import com.gabia.bshop.security.RefreshToken;
@@ -28,6 +29,9 @@ class RefreshTokenRepositoryImplTest extends IntegrationTest {
 
 	@Autowired
 	private RedisTemplate<String, String> redisTemplate;
+
+	@Autowired
+	private TokenProperties tokenProperties;
 
 	@Value("${token.refresh-expired-time}")
 	private long expireLength;
@@ -75,7 +79,7 @@ class RefreshTokenRepositoryImplTest extends IntegrationTest {
 			TimeUnit.MILLISECONDS);
 
 		// then
-		assertThat(actual).isCloseTo(expireLength, withinPercentage(5L));
+		assertThat(actual).isCloseTo(tokenProperties.getRefreshExpiredTime(), withinPercentage(5L));
 	}
 
 	@Test

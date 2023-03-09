@@ -27,20 +27,13 @@ public class MemberService {
 	}
 
 	@Transactional
-	public void updateLoggedInMember(final Long memberId, MemberUpdateRequest memberUpdateRequest) {
+	public MemberResponse updateLoggedInMember(final Long memberId, final MemberUpdateRequest memberUpdateRequest) {
 		final Member member = findMember(memberId);
-		member.updatePhoneNumber(memberUpdateRequest.phoneNumber());
+		member.updateProfile(memberUpdateRequest.phoneNumber(), memberUpdateRequest.profileImageUrl());
+		return MemberResponseMapper.INSTANCE.from(member);
 	}
 
 	private Member findMember(final Long memberId) {
-		return findMemberById(memberId);
-	}
-
-	private boolean isNotLoggedIn(final Long loggedInId) {
-		return loggedInId == null;
-	}
-
-	private Member findMemberById(final Long memberId) {
 		return memberRepository.findById(memberId)
 			.orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND_EXCEPTION, memberId));
 	}

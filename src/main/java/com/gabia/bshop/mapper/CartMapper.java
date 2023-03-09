@@ -55,7 +55,7 @@ public interface CartMapper {
 		@Mapping(source = "itemOption.optionPrice", target = "optionPrice"),
 		@Mapping(source = "itemOption.stockQuantity", target = "stockQuantity"),
 		@Mapping(source = "itemOption.item.category.name", target = "category"),
-		@Mapping(source = "itemOption.item.thumbnail", target = "thumbnailUrl"),
+		@Mapping(source = "itemOption.item.thumbnail", target = "itemThumbnailUrl"),
 	})
 	CartResponse itemOptionAndOrderCountToCartResponse(ItemOption itemOption, Integer orderCount);
 }
