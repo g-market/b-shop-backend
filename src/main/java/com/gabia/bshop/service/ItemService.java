@@ -149,9 +149,13 @@ public class ItemService {
 	@Transactional
 	public ItemResponse updateItem(final ItemUpdateRequest itemUpdateRequest) {
 		Item item = findItemById(itemUpdateRequest.itemId());
-		final Long categoryId = itemUpdateRequest.categoryId();
+		final Category category;
 
-		final Category category = findCategoryById(categoryId);
+		if(itemUpdateRequest.categoryId() == null){
+			category = item.getCategory();
+		}else{
+			category = findCategoryById(itemUpdateRequest.categoryId());
+		}
 
 		item.update(itemUpdateRequest, category);
 
