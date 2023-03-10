@@ -14,7 +14,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.gabia.bshop.dto.OrderItemDto;
@@ -30,7 +29,6 @@ import com.gabia.bshop.entity.enumtype.ItemStatus;
 import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.exception.ConflictException;
-import com.gabia.bshop.integration.IntegrationTest;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemImageRepository;
 import com.gabia.bshop.repository.ItemOptionRepository;
@@ -400,7 +398,7 @@ public class ConcurrencyOrderServiceTest {
 
 		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder().orderItemDtoList(orderItemDtoList).build();
 
-		ItemOptionRequest itemOptionRequest = new ItemOptionRequest("item description",0, 0);
+		ItemOptionRequest itemOptionRequest = new ItemOptionRequest("item description", 0, 0);
 
 		int nThreahdsSize = 1000;
 		int repeatSize = 500;

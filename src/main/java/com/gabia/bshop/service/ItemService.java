@@ -151,9 +151,9 @@ public class ItemService {
 		Item item = findItemById(itemUpdateRequest.itemId());
 		final Category category;
 
-		if(itemUpdateRequest.categoryId() == null){
+		if (itemUpdateRequest.categoryId() == null) {
 			category = item.getCategory();
-		}else{
+		} else {
 			category = findCategoryById(itemUpdateRequest.categoryId());
 		}
 
