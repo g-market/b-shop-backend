@@ -39,7 +39,6 @@ public class ItemService {
 	private final ImageValidator imageValidator;
 	@Value("${minio.default.image}")
 	private String NO_IMAGE_URL;
-	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
 
 	/**
 	 * 상품 조회
@@ -59,9 +58,6 @@ public class ItemService {
 	 *
 	 **/
 	public Page<ItemResponse> findItemList(final Pageable page, final Long categoryId) {
-		if (page.getPageSize() > MAX_PAGE_ELEMENT_REQUEST_SIZE) {
-			throw new ConflictException(MAX_PAGE_ELEMENT_REQUEST_SIZE_EXCEPTION, MAX_PAGE_ELEMENT_REQUEST_SIZE);
-		}
 		Page<Item> itemPage;
 		if (categoryId == null) {
 			itemPage = itemRepository.findAll(page);
