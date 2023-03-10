@@ -50,6 +50,7 @@ public enum ErrorCode {
 	ITEM_STATUS_NOT_PUBLIC_EXCEPTION(CONFLICT, "현재 판매하지 않는 상품이 존재합니다."),
 	RESERVATION_TIME_NOT_VALID_EXCEPTION(CONFLICT, "예약시간: {0} 은 현재시간 이후의 시간이어야 합니다."),
 	CATEGORY_ITEM_DELETE_EXCEPTION(CONFLICT, "categoryId: {0}인 상품이 존재합니다."),
+	CATEGORY_NAME_UNIQUE_EXCEPTION(CONFLICT, "categoryName: {0}인 카테고리가 존재합니다."),
 	MAX_ITEM_OPTION_LIMITATION_EXCEPTION(CONFLICT, "최대로 등록할 수 있는 상품 옵션의 수는 {0}개 입니다."),
 	MAX_ITEM_IMAGE_LIMITATION_EXCEPTION(CONFLICT, "최대로 등록할 수 있는 상품 이미지의 수는 {0}개 입니다."),
 

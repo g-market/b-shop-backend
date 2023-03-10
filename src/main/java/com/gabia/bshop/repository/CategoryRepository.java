@@ -8,5 +8,7 @@ import com.gabia.bshop.entity.Category;
 
 public interface CategoryRepository extends JpaRepository<Category, Long> {
 
+	boolean existsByName(String categoryName);
+
 	Page<Category> findAll(Pageable page);
 }

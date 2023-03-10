@@ -31,33 +31,29 @@ public class CategoryService {
 	private final CategoryRepository categoryRepository;
 	private final ItemRepository itemRepository;
 
-	//카테고리 단건 조회
 	public CategoryDto findCategory(final Long categoryId) {
 		final Category category = findCategoryById(categoryId);
-
 		return CategoryMapper.INSTANCE.categoryToDto(category);
 	}
 
-	//카테고리 목록 조회
 	public Page<CategoryDto> findCategoryList(final Pageable pageable) {
 		final Page<Category> categoryPage = categoryRepository.findAll(pageable);
 		return new PageImpl<>(categoryPage.stream().map(CategoryMapper.INSTANCE::categoryToDto).toList());
 	}
 
-	//카테고리 생성
 	public CategoryDto createCategory(final CategoryCreateRequest categoryCreateRequest) {
+		existCategoryByName(categoryCreateRequest.name());
 		Category category = CategoryMapper.INSTANCE.CategoryRequestToEntity(categoryCreateRequest);
 		return CategoryMapper.INSTANCE.categoryToDto(categoryRepository.save(category));
 	}
 
-	//카테고리 수정
 	public CategoryDto updateCategory(final CategoryUpdateRequest categoryUpdateRequest) {
+		existCategoryByName(categoryUpdateRequest.name());
 		final Category category = findCategoryById(categoryUpdateRequest.id());
 		category.update(categoryUpdateRequest);
 		return CategoryMapper.INSTANCE.categoryToDto(category);
 	}
 
-	//카테고리 삭제
 	public void deleteCategory(final Long categoryId) {
 		final Category category = findCategoryById(categoryId);
 		validateDeleteCategoryById(categoryId);
@@ -70,11 +66,17 @@ public class CategoryService {
 			.orElseThrow(() -> new NotFoundException(CATEGORY_NOT_FOUND_EXCEPTION, categoryId));
 	}
 
+	private void existCategoryByName(final String categoryName) {
+		final boolean isExistCategoryName = categoryRepository.existsByName(categoryName);
+		if (isExistCategoryName) {
+			throw new ConflictException(CATEGORY_NAME_UNIQUE_EXCEPTION, categoryName);
+		}
+	}
+
 	private void validateDeleteCategoryById(final Long categoryId) {
 		final List<Item> itemList = itemRepository.findAllByCategoryId(categoryId);
 		if (itemList.size() != 0) {
 			throw new ConflictException(CATEGORY_ITEM_DELETE_EXCEPTION, categoryId);
 		}
 	}
-
 }

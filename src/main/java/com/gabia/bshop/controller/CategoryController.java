@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.gabia.bshop.dto.CategoryDto;
 import com.gabia.bshop.dto.request.CategoryCreateRequest;
 import com.gabia.bshop.dto.request.CategoryUpdateRequest;
+import com.gabia.bshop.security.Login;
 import com.gabia.bshop.service.CategoryService;
 import com.gabia.bshop.util.validator.LimitedSizePagination;
 
@@ -27,6 +28,7 @@ public class CategoryController {
 
 	private final CategoryService categoryService;
 
+	@Login(admin = true)
 	@GetMapping("/categories/{categoryId}")
 	public ResponseEntity<CategoryDto> findCategory(@PathVariable final Long categoryId) {
 		return ResponseEntity.ok(categoryService.findCategory(categoryId));
