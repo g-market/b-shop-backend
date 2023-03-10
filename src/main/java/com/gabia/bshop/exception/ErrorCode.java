@@ -43,8 +43,8 @@ public enum ErrorCode {
 
 	// 409(Conflict)
 	ITEM_OPTION_OUT_OF_STOCK_EXCEPTION(CONFLICT, "itemOptionId: {0} 상품의 재고가 부족합니다.(현재 재고:{1})"),
-	ORDER_STATUS_ALREADY_COMPLETED_EXCEPTION(CONFLICT, "상품의 상태가 완료된 상태입니다."),
-	ORDER_STATUS_ALREADY_CANCELLED_EXCEPTION(CONFLICT, "상품의 상태가 취소된 상태입니다."),
+	ORDER_STATUS_ALREADY_CANCELLED_EXCEPTION(CONFLICT, "상품의 상태가 이미 취소된 상태입니다."),
+	ORDER_STATUS_ALREADY_UPDATED_EXCEPTION(CONFLICT, "상품의 상태가 이미 {0} 상태입니다."),
 	MAX_PAGE_ELEMENT_REQUEST_SIZE_EXCEPTION(CONFLICT, "한 페이지의 최대 {0}개까지 조회가 가능합니다."),
 	MAX_FILE_UPLOAD_REQUEST_EXCEPTION(CONFLICT, "한번에 최대 {0}개의 파일만 업로드 가능합니다"),
 	ITEM_STATUS_NOT_PUBLIC_EXCEPTION(CONFLICT, "현재 판매하지 않는 상품이 존재합니다."),

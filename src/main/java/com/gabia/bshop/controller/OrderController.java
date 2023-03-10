@@ -75,7 +75,7 @@ public class OrderController {
 	}
 
 	@Login(admin = true)
-	@PatchMapping("/orders/{orderId}")
+	@PatchMapping("/orders")
 	public ResponseEntity<OrderUpdateStatusResponse> updateOrderStatus(
 		@RequestBody @Valid final OrderUpdateStatusRequest orderUpdateStatusRequest) {
 		return ResponseEntity.ok(orderService.updateOrderStatus(orderUpdateStatusRequest));
