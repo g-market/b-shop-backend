@@ -51,8 +51,7 @@ public class OrderController {
 	@Login(admin = true)
 	@GetMapping("/admin/orders")
 	public ResponseEntity<OrderInfoPageResponse> findAllOrderInfoList(
-		final OrderInfoSearchRequest orderInfoSearchRequest,
-		@LimitedSizePagination final Pageable pageable) {
+		final OrderInfoSearchRequest orderInfoSearchRequest, @LimitedSizePagination final Pageable pageable) {
 		final OrderInfoPageResponse adminOrdersPagination = orderService.findAllOrderInfoList(
 			orderInfoSearchRequest, pageable);
 		return ResponseEntity.ok(adminOrdersPagination);
