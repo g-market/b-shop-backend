@@ -149,19 +149,19 @@ class OrderServiceTest extends IntegrationTest {
 			.build();
 		ItemImage itemImage1 = ItemImage.builder()
 			.item(item1)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage2 = ItemImage.builder()
 			.item(item1)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage3 = ItemImage.builder()
 			.item(item2)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage4 = ItemImage.builder()
 			.item(item2)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		item1.setThumbnail(itemImage1);
 		item2.setThumbnail(itemImage1);
@@ -184,7 +184,7 @@ class OrderServiceTest extends IntegrationTest {
 		//then
 		Assertions.assertThat(orderInfo.resultCount()).isEqualTo(2);
 		Assertions.assertThat(orderInfo.orderInfoList().get(0).orderId()).isEqualTo(order1.getId());
-		Assertions.assertThat(orderInfo.orderInfoList().get(0).thumbnailImage()).isEqualTo(itemImage1.getUrl());
+		Assertions.assertThat(orderInfo.orderInfoList().get(0).thumbnailImage()).isEqualTo(itemImage1.getImageName());
 		Assertions.assertThat(orderInfo.orderInfoList().get(0).representativeName())
 			.isEqualTo(item1.getName());
 		Assertions.assertThat(orderInfo.orderInfoList().get(0).itemTotalCount()).isEqualTo(1);
@@ -243,11 +243,11 @@ class OrderServiceTest extends IntegrationTest {
 			.build();
 		ItemImage itemImage1 = ItemImage.builder()
 			.item(item1)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage2 = ItemImage.builder()
 			.item(item1)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 
 		memberRepository.save(member1);
@@ -336,19 +336,19 @@ class OrderServiceTest extends IntegrationTest {
 			.build();
 		ItemImage itemImage1 = ItemImage.builder()
 			.item(item1)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage2 = ItemImage.builder()
 			.item(item1)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage3 = ItemImage.builder()
 			.item(item2)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage4 = ItemImage.builder()
 			.item(item2)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		item1.setThumbnail(itemImage1);
 		item2.setThumbnail(itemImage2);
@@ -383,7 +383,7 @@ class OrderServiceTest extends IntegrationTest {
 		Assertions.assertThat(singleOrderInfo.orderItems().get(1).orderCount()).isEqualTo(orderItem2.getOrderCount());
 		Assertions.assertThat(singleOrderInfo.orderItems().get(0).price()).isEqualTo(orderItem1.getPrice());
 		Assertions.assertThat(singleOrderInfo.orderItems().get(1).price()).isEqualTo(orderItem2.getPrice());
-		Assertions.assertThat(singleOrderInfo.orderItems().get(0).thumbnailImage()).isEqualTo(itemImage1.getUrl());
+		Assertions.assertThat(singleOrderInfo.orderItems().get(0).thumbnailImage()).isEqualTo(itemImage1.getImageName());
 		Assertions.assertThat(singleOrderInfo.orderItems().get(0).itemName()).isEqualTo(item1.getName());
 	}
 
@@ -481,19 +481,19 @@ class OrderServiceTest extends IntegrationTest {
 			.build();
 		ItemImage itemImage1 = ItemImage.builder()
 			.item(item1)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage2 = ItemImage.builder()
 			.item(item1)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage3 = ItemImage.builder()
 			.item(item2)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage4 = ItemImage.builder()
 			.item(item2)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		item1.setThumbnail(itemImage1);
 		item2.setThumbnail(itemImage2);
@@ -515,7 +515,7 @@ class OrderServiceTest extends IntegrationTest {
 		//then
 		Assertions.assertThat(orderInfo.resultCount()).isEqualTo(2);
 		Assertions.assertThat(orderInfo.orderInfoList().get(0).orderId()).isEqualTo(order1.getId());
-		Assertions.assertThat(orderInfo.orderInfoList().get(0).thumbnailImage()).isEqualTo(itemImage1.getUrl());
+		Assertions.assertThat(orderInfo.orderInfoList().get(0).thumbnailImage()).isEqualTo(itemImage1.getImageName());
 		Assertions.assertThat(orderInfo.orderInfoList().get(0).representativeName()).isEqualTo(item1.getName());
 		Assertions.assertThat(orderInfo.orderInfoList().get(0).itemTotalCount()).isEqualTo(1);
 		Assertions.assertThat(orderInfo.orderInfoList().get(0).orderStatus()).isEqualTo(order1.getStatus());

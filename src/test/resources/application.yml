@@ -48,6 +48,7 @@ token:
 
 minio:
   endpoint: http://localhost:9000
+  prefix: http://localhost:9000/images
   user: minio
   password: minio1234
   bucket: images

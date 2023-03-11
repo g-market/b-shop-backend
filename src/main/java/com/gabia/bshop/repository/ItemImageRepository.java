@@ -24,7 +24,7 @@ public interface ItemImageRepository extends JpaRepository<ItemImage, Long> {
 	List<ItemImage> findWithItemByItemIds(List<Long> itemIds);
 
 	@Query("""
-		select ii.url
+		select ii.imageName
 		from ItemImage ii
 		where ii.id
 		in (select min(t.id)

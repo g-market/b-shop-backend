@@ -4,9 +4,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.gabia.bshop.dto.CategoryDto;
-import com.gabia.bshop.dto.ItemImageDto;
-import com.gabia.bshop.dto.ItemOptionDto;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
+
+import lombok.Builder;
 
 /**
  * Item 에 관련된 상세 정보
@@ -16,10 +16,11 @@ import com.gabia.bshop.entity.enumtype.ItemStatus;
  * Option list entity
  * ItemImage list entity
  **/
+@Builder
 public record ItemResponse(
 	Long id,
-	List<ItemOptionDto> itemOptionDtoList,
-	List<ItemImageDto> itemImageDtoList,
+	List<ItemOptionResponse> itemOptionResponseList,
+	List<ItemImageResponse> itemImageResponseList,
 	CategoryDto categoryDto,
 	String name,
 	String description,

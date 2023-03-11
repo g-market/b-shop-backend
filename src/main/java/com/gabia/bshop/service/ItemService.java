@@ -38,7 +38,7 @@ public class ItemService {
 	private final CategoryRepository categoryRepository;
 	private final ImageValidator imageValidator;
 	@Value("${minio.default.image}")
-	private String NO_IMAGE_URL;
+	private String NO_IMAGE;
 	private static final int MAX_PAGE_ELEMENT_REQUEST_SIZE = 100;
 
 	/**
@@ -108,7 +108,7 @@ public class ItemService {
 		} else {
 			ItemOption itemOption = ItemOption.builder()
 				.item(item)
-				.description(itemDto.name()) // 기본 option은 item의 option과 동일
+				.description(itemDto.name())
 				.stockQuantity(0)
 				.optionPrice(0)
 				.build();
@@ -118,25 +118,28 @@ public class ItemService {
 		// 4. Image 생성
 		if (itemDto.itemImageDtoList() != null && !itemDto.itemImageDtoList().isEmpty()) {
 			for (ItemImageDto itemImageDto : itemDto.itemImageDtoList()) {
-				final boolean isValid = imageValidator.validate(itemImageDto.url());
-
+				final boolean isValid = imageValidator.validate(itemImageDto.imageUrl());
 				if (!isValid) {
 					throw new NotFoundException(INCORRECT_URL_EXCEPTION);
 				}
+
+				final String imageName = itemImageDto.imageUrl()
+					.substring(itemImageDto.imageUrl().lastIndexOf("/") + 1);
+
 				item.addItemImage(ItemImage.builder()
 					.item(item)
-					.url(itemImageDto.url())
+					.imageName(imageName)
 					.build());
 			}
 		} else {
 			ItemImage itemImage = ItemImage.builder()
 				.item(item)
-				.url(NO_IMAGE_URL)
+				.imageName(NO_IMAGE)
 				.build();
 			item.addItemImage(itemImage);
 		}
 		// 6. 썸네일 설정
-		item.setThumbnail(item.getItemImageList().get(0)); // 0 번째 이미지를 썸네일로
+		item.setThumbnail(item.getItemImageList().get(0));
 
 		return ItemMapper.INSTANCE.itemToItemResponse(itemRepository.save(item));
 	}

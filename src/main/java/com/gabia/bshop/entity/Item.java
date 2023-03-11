@@ -162,7 +162,7 @@ public class Item extends BaseEntity {
 
 	public void setThumbnail(ItemImage itemImage) {
 		if (itemImage != null) {
-			this.thumbnail = itemImage.getUrl();
+			this.thumbnail = itemImage.getImageName();
 		}
 	}
 

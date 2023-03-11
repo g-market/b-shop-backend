@@ -12,14 +12,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.gabia.bshop.dto.ItemImageDto;
 import com.gabia.bshop.dto.request.ItemImageCreateRequest;
+import com.gabia.bshop.dto.request.ItemImageUpdateRequest;
 import com.gabia.bshop.dto.response.ImageResponse;
+import com.gabia.bshop.dto.response.ItemImageResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
@@ -132,10 +132,10 @@ class ImageServiceTest extends IntegrationTest {
 		final List<String> urlList = List.of(imageResponseList.get(0).url());
 		final ItemImageCreateRequest itemImageCreateRequest = new ItemImageCreateRequest(urlList);
 		// when
-		final List<ItemImageDto> expected = itemImageService.createItemImage(item.getId(), itemImageCreateRequest);
-		final List<ItemImageDto> actual = itemImageService.findItemImageList(item.getId());
+		final List<ItemImageResponse> expected = itemImageService.createItemImage(item.getId(), itemImageCreateRequest);
+		final List<ItemImageResponse> actual = itemImageService.findItemImageList(item.getId());
 		// then
-		Assertions.assertEquals(actual.get(0).url(), expected.get(0).url());
+		Assertions.assertEquals(actual.get(0).imageUrl(), expected.get(0).imageUrl());
 	}
 
 	@DisplayName("상품의 이미지를 업데이트한다")
@@ -154,22 +154,23 @@ class ImageServiceTest extends IntegrationTest {
 		final Item item = itemRepository.save(ITEM_1.getInstance(category));
 		final String url = imageResponseList.get(0).url();
 
-		final ItemImage itemImage = ItemImage.builder().item(item).url(url).build();
+		final ItemImage itemImage = ItemImage.builder().item(item).imageName(url).build();
 		itemImageRepository.save(itemImage);
 
 		// when
 		final String expected =
 			ENDPOINT + "/" + BUCKET + "/" + "No_Image.jpg"; // http://localhost:{port}/images/No_Image.jpg
 
-		final ItemImageDto itemImageDto = new ItemImageDto(itemImage.getId(), expected);
-		itemImageService.updateItemImage(item.getId(), itemImageDto);
+		final ItemImageUpdateRequest itemImageUpdateRequest = new ItemImageUpdateRequest(itemImage.getId(), expected);
+		itemImageService.updateItemImage(item.getId(), itemImageUpdateRequest);
 
-		final ItemImage updatedItemImage = itemImageRepository.findByIdAndItemId(itemImageDto.imageId(), item.getId())
+		final ItemImage updatedItemImage = itemImageRepository.findByIdAndItemId(itemImageUpdateRequest.imageId(),
+				item.getId())
 			.orElseThrow(
-				() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, itemImageDto.imageId())
+				() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, itemImageUpdateRequest.imageId())
 			);
 
-		final String actual = updatedItemImage.getUrl();
+		final String actual = updatedItemImage.getImageName();
 
 		// then
 		Assertions.assertEquals(expected, actual);
@@ -191,7 +192,7 @@ class ImageServiceTest extends IntegrationTest {
 		final Item item = itemRepository.save(ITEM_1.getInstance(category));
 		final String url = imageResponseList.get(0).url();
 
-		final ItemImage itemImage = ItemImage.builder().item(item).url(url).build();
+		final ItemImage itemImage = ItemImage.builder().item(item).imageName(url).build();
 		itemImageRepository.save(itemImage);
 
 		// when
