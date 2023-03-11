@@ -62,7 +62,6 @@ class CategoryServiceTest {
 		Assertions.assertThat(categoryDto.id()).isEqualTo(category1.getId());
 	}
 
-	@Disabled
 	@DisplayName("카테고리를_페이지로_조회한다.")
 	@Test
 	void findCategoryList() {
