@@ -1,5 +1,7 @@
 package com.gabia.bshop.controller;
 
+import java.util.List;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -53,5 +55,11 @@ public class CategoryController {
 	public ResponseEntity<Void> deleteCategory(@PathVariable final Long categoryId) {
 		categoryService.deleteCategory(categoryId);
 		return ResponseEntity.noContent().build();
+	}
+
+	// categoryNames 조회
+	@GetMapping("/category-names")
+	public ResponseEntity<List<String>> findCategoryNames() {
+		return ResponseEntity.ok(categoryService.findCategoryNames());
 	}
 }

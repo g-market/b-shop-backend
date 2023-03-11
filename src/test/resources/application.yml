@@ -29,6 +29,9 @@ server:
   prod:
     domain: https://b-shop.com
     url: https://123.456.789.1
+  default:
+    profile-image-url: http://localhost:9000/images/me
+    item-image-url: http://localhost:9000/images/No_Image.jpg
 
 cart:
   expired-time: 86400000
@@ -52,5 +55,3 @@ minio:
   user: minio
   password: minio1234
   bucket: images
-  default:
-    image: http://localhost:9000/images/No_Image.jpg

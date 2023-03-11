@@ -41,6 +41,7 @@ import io.minio.PutObjectArgs;
 @Transactional
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class ImageServiceTest extends IntegrationTest {
+
 	@Autowired
 	private MinioClient minioClient;
 	@Autowired

@@ -33,7 +33,7 @@ class RedisTransactionTest extends IntegrationTest {
 	}
 
 	@Test
-	void multi_exec_test() {
+	void multiExecTest() {
 		// given
 		stringRedisTemplate.execute(new SessionCallback() {
 			@Override
@@ -55,7 +55,7 @@ class RedisTransactionTest extends IntegrationTest {
 	}
 
 	@Test
-	void multi_exec_2() {
+	void multiExecTest2() {
 		// given : 중간에 비정상적으로 실패하면 데이터 업데이트 적용안됨
 		assertThatThrownBy(() -> stringRedisTemplate.execute(new SessionCallback() {
 			@Override
@@ -80,8 +80,8 @@ class RedisTransactionTest extends IntegrationTest {
 	}
 
 	@Test
-	@DisplayName("@transaction stringredistemplate 트랜잭션 테스트")
-	void transaction_stringRedisTemplate() {
+	@DisplayName("@transaction string redisTemplate 트랜잭션 보장한지에 대해 검증한다")
+	void validTransactionStringRedisTemplate() {
 		assertThatThrownBy(() -> transactionService.stringRedisTemplateCheckRollback()).isInstanceOf(
 			RuntimeException.class);
 
@@ -93,8 +93,8 @@ class RedisTransactionTest extends IntegrationTest {
 	}
 
 	@Test
-	@DisplayName("@transaction redisTemplate 트랜잭션 테스트")
-	void transaction_redisTemplate() {
+	@DisplayName("@transaction redisTemplate 트랜잭션 보장한지에 대해 검증한다")
+	void validTransactionRedisTemplate() {
 		assertThatThrownBy(() -> transactionService.redisTemplateCheckRollback()).isInstanceOf(
 			RuntimeException.class);
 

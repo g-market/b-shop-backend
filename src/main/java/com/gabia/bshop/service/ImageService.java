@@ -24,16 +24,15 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class ImageService {
 
+	private static final int MAX_IMAGE_UPLOAD_COUNT = 10;
+
 	private final MinioClient minioClient;
 	@Value("${minio.bucket}")
 	private String bucketName;
 	@Value("${minio.prefix}")
 	private String IMAGE_SERVER_PREFIX;
 
-	private static final int MAX_IMAGE_UPLOAD_COUNT = 10;
-
 	public List<ImageResponse> uploadImage(final MultipartFile[] fileList) {
-
 		if (fileList.length > MAX_IMAGE_UPLOAD_COUNT) {
 			throw new ConflictException(MAX_FILE_UPLOAD_REQUEST_EXCEPTION, MAX_IMAGE_UPLOAD_COUNT);
 		}

@@ -17,7 +17,7 @@ import jakarta.validation.constraints.Size;
 import lombok.Builder;
 
 @Builder
-public record ItemRequest(
+public record ItemCreateRequest(
 	@Valid
 	@Size(max = 100, message = "ItemOption 이 허용된 수 이상입니다. (최대 100개)")
 	List<ItemOptionDto> itemOptionDtoList,

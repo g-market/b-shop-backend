@@ -31,10 +31,11 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class ItemImageService {
 
+	private static final int MAX_ITEM_IMAGE_COUNT = 100;
+
 	private final ItemRepository itemRepository;
 	private final ItemImageRepository itemImageRepository;
 	private final ImageValidator imageValidator;
-	private static final int MAX_ITEM_IMAGE_COUNT = 100;
 
 	public ItemImageResponse findItemImage(final Long itemId, final Long imageId) {
 		final ItemImage itemImage = findItemImageByImageIdAndItemId(imageId, itemId);
@@ -86,8 +87,8 @@ public class ItemImageService {
 		Item item = findItemById(itemId);
 		final ItemImage itemImage = findItemImageByImageIdAndItemId(itemThumbnailUpdateRequest.imageId(), itemId);
 
-		urlValidate(itemImage.getImageName());
-		item.setThumbnail(itemImage);
+		urlValidate(itemImage.getImageName()); // image validate
+		item.updateThumbnail(itemImage);
 
 		return ItemMapper.INSTANCE.itemToItemResponse(item);
 	}

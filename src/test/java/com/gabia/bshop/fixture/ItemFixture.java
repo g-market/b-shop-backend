@@ -8,16 +8,16 @@ import com.gabia.bshop.entity.enumtype.ItemStatus;
 
 public enum ItemFixture {
 
-	ITEM_1("아이템 1", "아이템 1 description", 10000, ItemStatus.PUBLIC,
-		LocalDateTime.now()),
-	ITEM_2("아이템 2", "아이템 2 description", 20000, ItemStatus.PUBLIC,
-		LocalDateTime.now()),
-	ITEM_3("아이템 3", "아이템 3 description", 30000, ItemStatus.PUBLIC,
-		LocalDateTime.now()),
-	ITEM_4("아이템 4", "아이템 4 description", 40000, ItemStatus.PRIVATE,
-		LocalDateTime.now()),
-	ITEM_5("아이템 5", "아이템 5 description", 50000, ItemStatus.RESERVED,
-		LocalDateTime.now().plusDays(3L)),
+	ITEM_1("아이템 1", "아이템 1 itemOptionDescription", 10000, ItemStatus.PUBLIC,
+		LocalDateTime.now(), "http://b-shop.com:9000/images/No_Image.jpg", 2023),
+	ITEM_2("아이템 2", "아이템 2 itemOptionDescription", 20000, ItemStatus.PUBLIC,
+		LocalDateTime.now(), "http://b-shop.com:9000/images/No_Image.jpg", 2023),
+	ITEM_3("아이템 3", "아이템 3 itemOptionDescription", 30000, ItemStatus.PUBLIC,
+		LocalDateTime.now(), "http://b-shop.com:9000/images/No_Image.jpg", 2022),
+	ITEM_4("아이템 4", "아이템 4 itemOptionDescription", 40000, ItemStatus.PRIVATE,
+		LocalDateTime.now(), "http://b-shop.com:9000/images/No_Image.jpg", 2022),
+	ITEM_5("아이템 5", "아이템 5 itemOptionDescription", 50000, ItemStatus.RESERVED,
+		LocalDateTime.now().plusDays(3L), "http://b-shop.com:9000/images/No_Image.jpg", 2022),
 	;
 
 	private final String name;
@@ -25,14 +25,18 @@ public enum ItemFixture {
 	private final int basePrice;
 	private final ItemStatus itemStatus;
 	private final LocalDateTime openAt;
+	private final String thumbnail;
+	private final int year;
 
 	ItemFixture(final String name, final String description, final int basePrice, final ItemStatus itemStatus,
-		final LocalDateTime openAt) {
+		final LocalDateTime openAt, final String thumbnail, final int year) {
 		this.name = name;
 		this.description = description;
 		this.basePrice = basePrice;
 		this.itemStatus = itemStatus;
 		this.openAt = openAt;
+		this.thumbnail = thumbnail;
+		this.year = year;
 	}
 
 	public Item getInstance(final Category category) {
@@ -48,6 +52,8 @@ public enum ItemFixture {
 			.basePrice(basePrice)
 			.itemStatus(itemStatus)
 			.openAt(openAt)
+			.thumbnail(thumbnail)
+			.year(year)
 			.build();
 	}
 }
