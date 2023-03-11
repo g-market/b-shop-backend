@@ -63,7 +63,6 @@ public class CategoryController {
 		return ResponseEntity.noContent().build();
 	}
 
-	// categoryNames 조회
 	@GetMapping("/category-names")
 	public ResponseEntity<List<String>> findCategoryNames() {
 		return ResponseEntity.ok(categoryService.findCategoryNames());

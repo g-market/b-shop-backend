@@ -79,11 +79,11 @@ public class Item extends BaseEntity {
 
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
 	@AuditJoinTable(name = "item_option_aud")
-	private List<ItemOption> itemOptionList = new ArrayList<>();
+	private final List<ItemOption> itemOptionList = new ArrayList<>();
 
 	@OneToMany(mappedBy = "item", cascade = CascadeType.ALL, orphanRemoval = true)
 	@AuditJoinTable(name = "item_image_aud")
-	private List<ItemImage> itemImageList = new ArrayList<>();
+	private final List<ItemImage> itemImageList = new ArrayList<>();
 
 	@Builder
 	public Item(final Long id, final Category category, final String name, final String description,

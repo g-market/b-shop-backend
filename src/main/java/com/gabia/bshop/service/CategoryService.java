@@ -61,6 +61,10 @@ public class CategoryService {
 		categoryRepository.delete(category);
 	}
 
+	public List<String> findCategoryNames() {
+		return categoryRepository.findCategoryNames();
+	}
+
 	private Category findCategoryById(final Long categoryId) {
 		return categoryRepository.findById(categoryId)
 			.orElseThrow(() -> new NotFoundException(CATEGORY_NOT_FOUND_EXCEPTION, categoryId));

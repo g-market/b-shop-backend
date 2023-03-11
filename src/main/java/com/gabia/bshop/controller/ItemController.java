@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gabia.bshop.dto.request.ItemRequest;
-import com.gabia.bshop.dto.request.ItemUpdateRequest;
 import com.gabia.bshop.dto.request.ItemCreateRequest;
 import com.gabia.bshop.dto.request.ItemUpdateRequest;
 import com.gabia.bshop.dto.response.ItemPageResponse;
