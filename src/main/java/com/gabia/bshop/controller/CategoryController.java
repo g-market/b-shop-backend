@@ -63,6 +63,7 @@ public class CategoryController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@Login(admin = true)
 	@GetMapping("/category-names")
 	public ResponseEntity<List<String>> findCategoryNames() {
 		return ResponseEntity.ok(categoryService.findCategoryNames());
