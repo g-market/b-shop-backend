@@ -45,14 +45,14 @@ public class ItemController {
 	@Login(admin = true)
 	@GetMapping("/admin/items/{id}")
 	public ResponseEntity<ItemResponse> findItemWithDeleted(@PathVariable final Long id) {
-		return ResponseEntity.ok().body(itemService.findItemWithDeleted(id));
+		return ResponseEntity.ok(itemService.findItemWithDeleted(id));
 	}
 
 	@Login(admin = true)
 	@GetMapping("/admin/items")
-	public ResponseEntity<Page<ItemResponse>> findItemListWithDeleted(
-		@LimitedSizePagination final Pageable pageable) {
-		return ResponseEntity.ok().body(itemService.findItemListWithDeleted(pageable));
+	public ResponseEntity<Page<ItemPageResponse>> findItemListWithDeleted(
+		@LimitedSizePagination final Pageable pageable, final ItemSearchConditions itemSearchConditions) {
+		return ResponseEntity.ok(itemService.findItemListWithDeleted(pageable, itemSearchConditions));
 	}
 
 	@Login(admin = true)

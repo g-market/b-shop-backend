@@ -6,7 +6,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,7 +45,12 @@ public class ItemService {
 	 * 1. fetch join
 	 ** */
 	public ItemResponse findItem(final Long id) {
-		return ItemMapper.INSTANCE.itemToItemResponse(findItemById(id));
+		final Item item = findItemById(id);
+		//PRIVATE인 상품은 일반 조회 불가능
+		if (item.getItemStatus() == ItemStatus.PRIVATE || item.isDeleted()) {
+			throw new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, item.getId());
+		}
+		return ItemMapper.INSTANCE.itemToItemResponse(item);
 	}
 
 	/**
@@ -61,16 +65,16 @@ public class ItemService {
 	}
 
 	public ItemResponse findItemWithDeleted(final Long itemId) {
-		final Item item = itemRepository.findIdWithDeleted(itemId).orElseThrow(
+		final Item item = itemRepository.findById(itemId).orElseThrow(
 			() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, itemId)
 		);
 		return ItemMapper.INSTANCE.itemToItemResponse(item);
 	}
 
-	public Page<ItemResponse> findItemListWithDeleted(final Pageable page) {
-		Page<Item> itemPage;
-		itemPage = itemRepository.findAllWithDeleted(page);
-		return new PageImpl<>(itemPage.stream().map(ItemMapper.INSTANCE::itemToItemResponse).toList());
+	public Page<ItemPageResponse> findItemListWithDeleted(final Pageable pageable,
+		final ItemSearchConditions itemSearchConditions) {
+		return itemRepository.findItemListWithDeletedByItemSearchConditions(pageable, itemSearchConditions)
+			.map(ItemMapper.INSTANCE::itemToItemPageResponse);
 	}
 
 	/**
