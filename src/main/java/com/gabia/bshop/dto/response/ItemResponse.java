@@ -27,6 +27,7 @@ public record ItemResponse(
 	String thumbnail,
 	ItemStatus itemStatus,
 	Integer year,
-	LocalDateTime openAt) {
+	LocalDateTime openAt,
+	boolean deleted) {
 
 }

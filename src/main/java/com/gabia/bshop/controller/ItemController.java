@@ -35,9 +35,21 @@ public class ItemController {
 
 	@GetMapping("/items")
 	public ResponseEntity<Page<ItemResponse>> findItemList(
-		@LimitedSizePagination final Pageable pageable,
-		@RequestParam("categoryId") final Long categoryId) {
+		@LimitedSizePagination final Pageable pageable, @RequestParam("categoryId") final Long categoryId) {
 		return ResponseEntity.ok().body(itemService.findItemList(pageable, categoryId));
+	}
+
+	@Login(admin = true)
+	@GetMapping("/admin/items/{id}")
+	public ResponseEntity<ItemResponse> findItemWithDeleted(@PathVariable final Long id) {
+		return ResponseEntity.ok().body(itemService.findItemWithDeleted(id));
+	}
+
+	@Login(admin = true)
+	@GetMapping("/admin/items")
+	public ResponseEntity<Page<ItemResponse>> findItemListWithDeleted(
+		@LimitedSizePagination final Pageable pageable) {
+		return ResponseEntity.ok().body(itemService.findItemListWithDeleted(pageable));
 	}
 
 	@Login(admin = true)

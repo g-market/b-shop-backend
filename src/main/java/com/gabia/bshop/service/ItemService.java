@@ -67,6 +67,19 @@ public class ItemService {
 		return new PageImpl<>(itemPage.stream().map(ItemMapper.INSTANCE::itemToItemResponse).toList());
 	}
 
+	public ItemResponse findItemWithDeleted(final Long itemId) {
+		final Item item = itemRepository.findIdWithDeleted(itemId).orElseThrow(
+			() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, itemId)
+		);
+		return ItemMapper.INSTANCE.itemToItemResponse(item);
+	}
+
+	public Page<ItemResponse> findItemListWithDeleted(final Pageable page) {
+		Page<Item> itemPage;
+		itemPage = itemRepository.findAllWithDeleted(page);
+		return new PageImpl<>(itemPage.stream().map(ItemMapper.INSTANCE::itemToItemResponse).toList());
+	}
+
 	/**
 	 * 상품 생성
 	 **/
