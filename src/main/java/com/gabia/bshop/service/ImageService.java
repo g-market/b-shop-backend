@@ -32,7 +32,6 @@ public class ImageService {
 	private String endpoint;
 
 	public List<ImageResponse> uploadImage(final MultipartFile[] fileList) {
-
 		if (fileList.length > MAX_IMAGE_UPLOAD_COUNT) {
 			throw new ConflictException(MAX_FILE_UPLOAD_REQUEST_EXCEPTION, MAX_IMAGE_UPLOAD_COUNT);
 		}
@@ -60,6 +59,5 @@ public class ImageService {
 		}
 
 		return imageResponseList;
-
 	}
 }

@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gabia.bshop.dto.CategoryDto;
 import com.gabia.bshop.dto.request.CategoryCreateRequest;
@@ -20,11 +21,10 @@ import com.gabia.bshop.mapper.CategoryMapper;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemRepository;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 @Service
 public class CategoryService {
 

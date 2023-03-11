@@ -11,7 +11,7 @@ import org.springframework.data.jpa.repository.Query;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 
-public interface ItemRepository extends JpaRepository<Item, Long> {
+public interface ItemRepository extends JpaRepository<Item, Long>, ItemRepositoryCustom {
 
 	Page<Item> findAll(Pageable page);
 
@@ -24,5 +24,4 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 	Page<Item> findByCategory(Category category, Pageable page);
 
 	List<Item> findAllByCategoryId(Long categoryId);
-
 }

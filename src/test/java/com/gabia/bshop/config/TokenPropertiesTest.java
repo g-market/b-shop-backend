@@ -1,4 +1,4 @@
-package com.gabia.bshop.security.provider;
+package com.gabia.bshop.config;
 
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;

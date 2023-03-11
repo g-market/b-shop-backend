@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.*;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,7 +29,8 @@ class MemberServiceTest {
 	private MemberRepository memberRepository;
 
 	@Test
-	void 로그인된_회원_아이디를_통해_로그인_사용자_정보를_반환한다() {
+	@DisplayName("로그인된 회원 아이디를 통해 로그인 사용자 정보를 반환한다")
+	void given_savedMember_when_findLoggedInMember_then_return_memberResponse() {
 		// given
 		final Member jaime = JAIME.getInstance(1L);
 		given(memberRepository.findById(1L))
@@ -47,23 +49,35 @@ class MemberServiceTest {
 				.hasFieldOrPropertyWithValue("name", jaime.getName())
 				.hasFieldOrPropertyWithValue("role", jaime.getRole())
 				.hasFieldOrPropertyWithValue("grade", jaime.getGrade())
+				.hasFieldOrPropertyWithValue("profileImageUrl", jaime.getProfileImageUrl())
 		);
 	}
 
 	@Test
-	void 회원정보를_업데이트_한다() {
+	@DisplayName("회원정보를 휴대전화 번호와 프로필 이미지를 업데이트 한다")
+	void given_phoneNumberAndProfileImageUrl_when_updateLoggedInMember_then_return_memberResponse() {
 		// given
 		final Member jaime = JAIME.getInstance(1L);
 		given(memberRepository.findById(1L))
 			.willReturn(Optional.of(jaime));
 
 		// when
-		memberService.updateLoggedInMember(1L, new MemberUpdateRequest("01012341234"));
+		final MemberResponse memberResponse = memberService.updateLoggedInMember(1L,
+			new MemberUpdateRequest("01012341234", "http://b-shop.com/profile/me"));
 
 		// then
 		assertAll(
 			() -> verify(memberRepository).findById(1L),
-			() -> assertThat(jaime.getPhoneNumber()).isEqualTo("01012341234")
+			() -> assertThat(jaime.getPhoneNumber()).isEqualTo("01012341234"),
+			() -> assertThat(jaime.getProfileImageUrl()).isEqualTo("http://b-shop.com/profile/me"),
+			() -> assertThat(memberResponse)
+				.hasFieldOrPropertyWithValue("id", 1L)
+				.hasFieldOrPropertyWithValue("email", jaime.getEmail())
+				.hasFieldOrPropertyWithValue("phoneNumber", "01012341234")
+				.hasFieldOrPropertyWithValue("name", jaime.getName())
+				.hasFieldOrPropertyWithValue("role", jaime.getRole())
+				.hasFieldOrPropertyWithValue("grade", jaime.getGrade())
+				.hasFieldOrPropertyWithValue("profileImageUrl", jaime.getProfileImageUrl())
 		);
 	}
 }
