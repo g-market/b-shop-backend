@@ -73,7 +73,7 @@ public class ItemImageService {
 		ItemImage itemImage = findItemImageByImageIdAndItemId(itemImageUpdateRequest.imageId(), itemId);
 		urlValidate(itemImageUpdateRequest.imageUrl());
 
-		final String imageName = itemImage.getImageName()
+		final String imageName = itemImageUpdateRequest.imageUrl()
 			.substring(itemImageUpdateRequest.imageUrl().lastIndexOf("/") + 1);
 
 		itemImage.updateImageName(imageName);
@@ -88,7 +88,7 @@ public class ItemImageService {
 		final ItemImage itemImage = findItemImageByImageIdAndItemId(itemThumbnailUpdateRequest.imageId(), itemId);
 
 		urlValidate(itemImage.getImageName()); // image validate
-		item.updateThumbnail(itemImage);
+		item.updateThumbnail(itemImage.getImageName());
 
 		return ItemMapper.INSTANCE.itemToItemResponse(item);
 	}

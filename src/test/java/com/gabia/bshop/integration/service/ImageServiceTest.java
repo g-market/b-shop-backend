@@ -158,11 +158,12 @@ class ImageServiceTest extends IntegrationTest {
 		final ItemImage itemImage = ItemImage.builder().item(item).imageName(url).build();
 		itemImageRepository.save(itemImage);
 
-		// when
-		final String expected =
+		final String changedUrl =
 			ENDPOINT + "/" + BUCKET + "/" + "No_Image.jpg"; // http://localhost:{port}/images/No_Image.jpg
 
-		final ItemImageUpdateRequest itemImageUpdateRequest = new ItemImageUpdateRequest(itemImage.getId(), expected);
+		final ItemImageUpdateRequest itemImageUpdateRequest = new ItemImageUpdateRequest(itemImage.getId(), changedUrl);
+
+		// when
 		itemImageService.updateItemImage(item.getId(), itemImageUpdateRequest);
 
 		final ItemImage updatedItemImage = itemImageRepository.findByIdAndItemId(itemImageUpdateRequest.imageId(),
@@ -174,7 +175,7 @@ class ImageServiceTest extends IntegrationTest {
 		final String actual = updatedItemImage.getImageName();
 
 		// then
-		Assertions.assertEquals(expected, actual);
+		Assertions.assertEquals("No_Image.jpg", actual);
 	}
 
 	@DisplayName("상품의 이미지를 제거한다")

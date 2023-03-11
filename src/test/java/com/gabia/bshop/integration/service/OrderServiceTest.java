@@ -184,7 +184,7 @@ class OrderServiceTest {
 		Assertions.assertThat(orderInfoList.getTotalElements()).isEqualTo(2);
 		Assertions.assertThat(orderInfoList.getContent().get(0).orderId()).isEqualTo(order1.getId());
 		Assertions.assertThat(orderInfoList.getContent().get(0).itemThumbnail())
-			.isEqualTo(itemImage1.getUrl());
+			.isEqualTo(itemImage1.getImageName());
 		Assertions.assertThat(orderInfoList.getContent().get(0).itemName())
 			.isEqualTo(item1.getName());
 		Assertions.assertThat(orderInfoList.getContent().get(0).itemTotalCount()).isEqualTo(1);
@@ -340,8 +340,8 @@ class OrderServiceTest {
 			.item(item2)
 			.imageName(UUID.randomUUID().toString())
 			.build();
-		item1.updateThumbnail(itemImage1.getUrl());
-		item2.updateThumbnail(itemImage2.getUrl());
+		item1.updateThumbnail(itemImage1.getImageName());
+		item2.updateThumbnail(itemImage2.getImageName());
 
 		memberRepository.save(member1);
 		categoryRepository.save(category1);
@@ -481,8 +481,8 @@ class OrderServiceTest {
 			.item(item2)
 			.imageName(UUID.randomUUID().toString())
 			.build();
-		item1.updateThumbnail(itemImage1.getUrl());
-		item2.updateThumbnail(itemImage2.getUrl());
+		item1.updateThumbnail(itemImage1.getImageName());
+		item2.updateThumbnail(itemImage2.getImageName());
 
 		memberRepository.save(member1);
 		categoryRepository.save(category1);
@@ -500,15 +500,14 @@ class OrderServiceTest {
 		Page<OrderInfoPageResponse> orderInfoList = orderService.findAllOrderInfoList(orderSearchConditions,
 			pageable);
 		//then
-		Assertions.assertThat(orderInfo.resultCount()).isEqualTo(2);
-		Assertions.assertThat(orderInfo.orderInfoList().get(0).orderId()).isEqualTo(order1.getId());
-		Assertions.assertThat(orderInfo.orderInfoList().get(0).thumbnailImage()).isEqualTo(itemImage1.getUrl());
-		Assertions.assertThat(orderInfo.orderInfoList().get(0).representativeName()).isEqualTo(item1.getName());
-		Assertions.assertThat(orderInfo.orderInfoList().get(0).itemTotalCount()).isEqualTo(1);
-		Assertions.assertThat(orderInfo.orderInfoList().get(0).orderStatus()).isEqualTo(order1.getStatus());
-
-		Assertions.assertThat(orderInfo.orderInfoList().get(1).orderId()).isEqualTo(order2.getId());
-		Assertions.assertThat(orderInfo.orderInfoList().get(1).itemTotalCount()).isEqualTo(2);
-		Assertions.assertThat(orderInfo.orderInfoList().get(1).orderStatus()).isEqualTo(order2.getStatus());
+		Assertions.assertThat(orderInfoList.getTotalElements()).isEqualTo(2);
+		Assertions.assertThat(orderInfoList.getContent().get(0).orderId()).isEqualTo(order1.getId());
+		Assertions.assertThat(orderInfoList.getContent().get(0).itemTotalCount()).isEqualTo(1);
+		Assertions.assertThat(orderInfoList.getContent().get(0).orderStatus()).isEqualTo(order1.getStatus());
+		Assertions.assertThat(orderInfoList.getContent().get(0).itemThumbnail()).isEqualTo(item1.getThumbnail());
+		Assertions.assertThat(orderInfoList.getContent().get(1).itemThumbnail()).isEqualTo(item2.getThumbnail());
+		Assertions.assertThat(orderInfoList.getContent().get(1).orderId()).isEqualTo(order2.getId());
+		Assertions.assertThat(orderInfoList.getContent().get(1).itemTotalCount()).isEqualTo(2);
+		Assertions.assertThat(orderInfoList.getContent().get(1).orderStatus()).isEqualTo(order2.getStatus());
 	}
 }

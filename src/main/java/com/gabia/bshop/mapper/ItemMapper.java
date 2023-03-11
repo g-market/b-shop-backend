@@ -1,5 +1,7 @@
 package com.gabia.bshop.mapper;
 
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
@@ -8,14 +10,12 @@ import org.mapstruct.factory.Mappers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
-import com.gabia.bshop.dto.request.ItemCreateRequest;
-import com.gabia.bshop.dto.request.ItemUpdateRequest;
-import com.gabia.bshop.dto.response.ItemPageResponse;
 import com.gabia.bshop.dto.CategoryDto;
-import com.gabia.bshop.dto.request.ItemRequest;
+import com.gabia.bshop.dto.request.ItemCreateRequest;
 import com.gabia.bshop.dto.request.ItemUpdateRequest;
 import com.gabia.bshop.dto.response.ItemImageResponse;
 import com.gabia.bshop.dto.response.ItemOptionResponse;
+import com.gabia.bshop.dto.response.ItemPageResponse;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Item;
 
@@ -28,21 +28,23 @@ public abstract class ItemMapper {
 	private String MINIO_PREFIX;
 
 	@Mappings({
-		@Mapping(source = "id", target = "itemId"),
-		@Mapping(source = "category", target = "categoryDto"),
-		@Mapping(source = "category.id", target = "categoryId"),
-		@Mapping(source = "itemOptionList", target = "itemOptionDtoList"),
-		@Mapping(source = "itemImageList", target = "itemImageDtoList")})
-	public abstract ItemRequest itemToItemRequest(Item item);
-
-	@Mappings({
 		@Mapping(source = "category.id", target = "categoryId"),
 		@Mapping(source = "itemImageList", target = "itemImageDtoList"),
 		@Mapping(source = "itemOptionList", target = "itemOptionDtoList")
 	})
-	ItemCreateRequest itemToItemCreateRequest(Item item);
-		@Mapping(source = "item.id", target = "itemId")})
-	public abstract ItemUpdateRequest itemToItemChangeRequest(Item item);
+	public abstract ItemCreateRequest itemToItemCreateRequest(Item item);
+
+	@Mappings({
+		@Mapping(source = "id", target = "itemId"),
+		@Mapping(source = "category.id", target = "categoryId"),
+	})
+	public abstract ItemUpdateRequest itemToItemUpdateRequest(Item item);
+
+	@Mappings({
+		@Mapping(source = "id", target = "itemId"),
+		@Mapping(source = "category", target = "categoryDto"),
+	})
+	public abstract ItemPageResponse itemToItemPageResponse(Item item);
 
 	@Named("itemToItemResponse")
 	public ItemResponse itemToItemResponse(Item item) {
@@ -73,20 +75,8 @@ public abstract class ItemMapper {
 				.imageUrl(MINIO_PREFIX + "/" + itemImage.getImageName())
 				.build())
 			.toList();
-
-	@Mappings({
-		@Mapping(source = "id", target = "itemId"),
-		@Mapping(source = "category.id", target = "categoryId"),
-	})
-	ItemUpdateRequest itemToItemUpdateRequest(Item item);
-
-	@Mappings({
-		@Mapping(source = "id", target = "itemId"),
-		@Mapping(source = "category", target = "categoryDto"),
-	})
-	ItemPageResponse itemToItemPageResponse(Item item);
 		ItemResponse itemResponse = ItemResponse.builder()
-			.id(item.getId())
+			.itemId(item.getId())
 			.itemOptionResponseList(itemOptionResponseList)
 			.itemImageResponseList(itemImageResponseList)
 			.categoryDto(categoryDto)
@@ -99,7 +89,6 @@ public abstract class ItemMapper {
 			.year(item.getYear())
 			.openAt(item.getOpenAt())
 			.build();
-
 		return itemResponse;
 	}
 
