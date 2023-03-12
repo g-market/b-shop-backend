@@ -14,6 +14,7 @@ import com.gabia.bshop.config.ImageDefaultProperties;
 import com.gabia.bshop.dto.ItemImageDto;
 import com.gabia.bshop.dto.request.ItemCreateRequest;
 import com.gabia.bshop.dto.request.ItemUpdateRequest;
+import com.gabia.bshop.dto.response.ItemAllInfoResponse;
 import com.gabia.bshop.dto.response.ItemPageResponse;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.dto.searchConditions.ItemSearchConditions;
@@ -45,7 +46,12 @@ public class ItemService {
 	 * 1. fetch join
 	 ** */
 	public ItemResponse findItem(final Long id) {
-		return ItemMapper.INSTANCE.itemToItemResponse(findItemById(id));
+		final Item item = findItemById(id);
+		//PRIVATE인 상품은 일반 조회 불가능
+		if (item.getItemStatus() == ItemStatus.PRIVATE || item.isDeleted()) {
+			throw new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, item.getId());
+		}
+		return ItemMapper.INSTANCE.itemToItemResponse(item);
 	}
 
 	/**
@@ -57,6 +63,19 @@ public class ItemService {
 		final ItemSearchConditions itemSearchConditions) {
 		return itemRepository.findItemListByItemSearchConditions(pageable, itemSearchConditions)
 			.map(ItemMapper.INSTANCE::itemToItemPageResponse);
+	}
+
+	public ItemAllInfoResponse findItemWithDeleted(final Long itemId) {
+		final Item item = itemRepository.findById(itemId).orElseThrow(
+			() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, itemId)
+		);
+		return ItemMapper.INSTANCE.itemToItemAllInfoResponse(item);
+	}
+
+	public Page<ItemAllInfoResponse> findItemListWithDeleted(final Pageable pageable,
+		final ItemSearchConditions itemSearchConditions) {
+		return itemRepository.findItemListWithDeletedByItemSearchConditions(pageable, itemSearchConditions)
+			.map(ItemMapper.INSTANCE::itemToItemAllInfoResponse);
 	}
 
 	/**
@@ -145,9 +164,12 @@ public class ItemService {
 	@Transactional
 	public ItemResponse updateItem(final ItemUpdateRequest itemUpdateRequest) {
 		final Item item = findItemById(itemUpdateRequest.itemId());
-		final Long categoryId = itemUpdateRequest.categoryId();
-
-		final Category category = findCategoryById(categoryId);
+		final Category category;
+		if (itemUpdateRequest.categoryId() == null) {
+			category = item.getCategory();
+		} else {
+			category = findCategoryById(itemUpdateRequest.categoryId());
+		}
 
 		item.update(itemUpdateRequest, category);
 

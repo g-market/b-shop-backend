@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
 
@@ -36,7 +35,6 @@ import lombok.ToString;
 @ToString(exclude = {"category"})
 @Getter
 @SQLDelete(sql = "update item set deleted = true where id = ?")
-@Where(clause = "deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
 	name = "item",

@@ -97,14 +97,14 @@ public class OrderService {
 	@Transactional
 	public void cancelOrder(final Long memberId, final Long orderId) {
 		final Order order = findOrderByIdAndMemberIdWithLock(orderId, memberId);
-		validateOrderStatus(order);
+		validateCancelOrderStatus(order);
 		order.cancelOrder();
 	}
 
 	@Transactional
 	public OrderUpdateStatusResponse updateOrderStatus(final OrderUpdateStatusRequest orderUpdateStatusRequest) {
 		final Order order = findOrderById(orderUpdateStatusRequest.orderId());
-		validateOrderStatus(order);
+		validateUpdateOrderStatus(orderUpdateStatusRequest, order);
 		order.updateOrderStatus(orderUpdateStatusRequest.status());
 
 		return OrderMapper.INSTANCE.orderToOrderUpdateStatusResponse(order);
@@ -139,11 +139,15 @@ public class OrderService {
 		}
 	}
 
-	private void validateOrderStatus(final Order order) {
-		if (order.getStatus() == OrderStatus.COMPLETED) {
-			throw new ConflictException(ORDER_STATUS_ALREADY_COMPLETED_EXCEPTION);
-		} else if (order.getStatus() == OrderStatus.CANCELLED) {
-			throw new ConflictException(ORDER_STATUS_ALREADY_CANCELLED_EXCEPTION);
+	private void validateCancelOrderStatus(final Order order) {
+		if (order.getStatus() != OrderStatus.ACCEPTED) {
+			throw new ConflictException(ORDER_STATUS_ALREADY_CANCELLED_EXCEPTION, order.getStatus());
+		}
+	}
+
+	private void validateUpdateOrderStatus(final OrderUpdateStatusRequest orderUpdateStatusRequest, final Order order) {
+		if (orderUpdateStatusRequest.status() == order.getStatus()) {
+			throw new ConflictException(ORDER_STATUS_ALREADY_UPDATED_EXCEPTION, order.getStatus());
 		}
 	}
 

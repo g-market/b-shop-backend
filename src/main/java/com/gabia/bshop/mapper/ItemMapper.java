@@ -15,6 +15,7 @@ import com.gabia.bshop.dto.ItemImageDto;
 import com.gabia.bshop.dto.ItemOptionDto;
 import com.gabia.bshop.dto.request.ItemCreateRequest;
 import com.gabia.bshop.dto.request.ItemUpdateRequest;
+import com.gabia.bshop.dto.response.ItemAllInfoResponse;
 import com.gabia.bshop.dto.response.ItemPageResponse;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Item;
@@ -26,6 +27,14 @@ public abstract class ItemMapper {
 
 	@Value("${minio.prefix}")
 	private String MINIO_PREFIX;
+
+	@Mappings({
+		@Mapping(source = "id", target = "itemId"),
+		@Mapping(source = "category", target = "categoryDto"),
+		@Mapping(source = "itemImageList", target = "itemImageDtoList"),
+		@Mapping(source = "itemOptionList", target = "itemOptionDtoList"),
+	})
+	ItemAllInfoResponse itemToItemAllInfoResponse(Item item);
 
 	@Mappings({
 		@Mapping(source = "category.id", target = "categoryId"),
