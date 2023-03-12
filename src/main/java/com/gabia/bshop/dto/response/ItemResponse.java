@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.gabia.bshop.dto.CategoryDto;
+import com.gabia.bshop.dto.ItemImageDto;
+import com.gabia.bshop.dto.ItemOptionDto;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 
 import lombok.Builder;
@@ -19,8 +21,8 @@ import lombok.Builder;
 @Builder
 public record ItemResponse(
 	Long itemId,
-	List<ItemOptionResponse> itemOptionResponseList,
-	List<ItemImageResponse> itemImageResponseList,
+	List<ItemOptionDto> itemOptionDtoList,
+	List<ItemImageDto> itemImageDtoList,
 	CategoryDto categoryDto,
 	String name,
 	String description,

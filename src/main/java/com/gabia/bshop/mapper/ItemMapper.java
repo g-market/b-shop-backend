@@ -11,10 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import com.gabia.bshop.dto.CategoryDto;
+import com.gabia.bshop.dto.ItemImageDto;
+import com.gabia.bshop.dto.ItemOptionDto;
 import com.gabia.bshop.dto.request.ItemCreateRequest;
 import com.gabia.bshop.dto.request.ItemUpdateRequest;
-import com.gabia.bshop.dto.response.ItemImageResponse;
-import com.gabia.bshop.dto.response.ItemOptionResponse;
 import com.gabia.bshop.dto.response.ItemPageResponse;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Item;
@@ -57,28 +57,28 @@ public abstract class ItemMapper {
 			.name(item.getCategory().getName())
 			.build();
 
-		List<ItemOptionResponse> itemOptionResponseList = item.getItemOptionList()
+		List<ItemOptionDto> itemOptionDtoList = item.getItemOptionList()
 			.stream()
-			.map(itemOption -> ItemOptionResponse.builder()
-				.itemId(item.getId())
-				.optionId(itemOption.getId())
+			.map(itemOption -> ItemOptionDto.builder()
+				.id(itemOption.getId())
 				.optionPrice(itemOption.getOptionPrice())
 				.stockQuantity(itemOption.getStockQuantity())
 				.description(itemOption.getDescription())
 				.build())
 			.toList();
 
-		List<ItemImageResponse> itemImageResponseList = item.getItemImageList()
+		List<ItemImageDto> itemImageDtoList = item.getItemImageList()
 			.stream()
-			.map(itemImage -> ItemImageResponse.builder()
+			.map(itemImage -> ItemImageDto.builder()
 				.imageId(itemImage.getId())
 				.imageUrl(MINIO_PREFIX + "/" + itemImage.getImageName())
 				.build())
 			.toList();
+
 		ItemResponse itemResponse = ItemResponse.builder()
 			.itemId(item.getId())
-			.itemOptionResponseList(itemOptionResponseList)
-			.itemImageResponseList(itemImageResponseList)
+			.itemOptionDtoList(itemOptionDtoList)
+			.itemImageDtoList(itemImageDtoList)
 			.categoryDto(categoryDto)
 			.name(item.getName())
 			.itemStatus(item.getItemStatus())
