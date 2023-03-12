@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.gabia.bshop.dto.request.ItemCreateRequest;
 import com.gabia.bshop.dto.request.ItemUpdateRequest;
+import com.gabia.bshop.dto.response.ItemAllInfoResponse;
 import com.gabia.bshop.dto.response.ItemPageResponse;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.dto.searchConditions.ItemSearchConditions;
@@ -44,13 +45,13 @@ public class ItemController {
 
 	@Login(admin = true)
 	@GetMapping("/admin/items/{id}")
-	public ResponseEntity<ItemResponse> findItemWithDeleted(@PathVariable final Long id) {
+	public ResponseEntity<ItemAllInfoResponse> findItemWithDeleted(@PathVariable final Long id) {
 		return ResponseEntity.ok(itemService.findItemWithDeleted(id));
 	}
 
 	@Login(admin = true)
 	@GetMapping("/admin/items")
-	public ResponseEntity<Page<ItemPageResponse>> findItemListWithDeleted(
+	public ResponseEntity<Page<ItemAllInfoResponse>> findItemListWithDeleted(
 		@LimitedSizePagination final Pageable pageable, final ItemSearchConditions itemSearchConditions) {
 		return ResponseEntity.ok(itemService.findItemListWithDeleted(pageable, itemSearchConditions));
 	}

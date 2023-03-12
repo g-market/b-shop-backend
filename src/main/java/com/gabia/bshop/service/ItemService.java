@@ -14,6 +14,7 @@ import com.gabia.bshop.config.ImageDefaultProperties;
 import com.gabia.bshop.dto.ItemImageDto;
 import com.gabia.bshop.dto.request.ItemCreateRequest;
 import com.gabia.bshop.dto.request.ItemUpdateRequest;
+import com.gabia.bshop.dto.response.ItemAllInfoResponse;
 import com.gabia.bshop.dto.response.ItemPageResponse;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.dto.searchConditions.ItemSearchConditions;
@@ -64,17 +65,17 @@ public class ItemService {
 			.map(ItemMapper.INSTANCE::itemToItemPageResponse);
 	}
 
-	public ItemResponse findItemWithDeleted(final Long itemId) {
+	public ItemAllInfoResponse findItemWithDeleted(final Long itemId) {
 		final Item item = itemRepository.findById(itemId).orElseThrow(
 			() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, itemId)
 		);
-		return ItemMapper.INSTANCE.itemToItemResponse(item);
+		return ItemMapper.INSTANCE.itemToItemAllInfoResponse(item);
 	}
 
-	public Page<ItemPageResponse> findItemListWithDeleted(final Pageable pageable,
+	public Page<ItemAllInfoResponse> findItemListWithDeleted(final Pageable pageable,
 		final ItemSearchConditions itemSearchConditions) {
 		return itemRepository.findItemListWithDeletedByItemSearchConditions(pageable, itemSearchConditions)
-			.map(ItemMapper.INSTANCE::itemToItemPageResponse);
+			.map(ItemMapper.INSTANCE::itemToItemAllInfoResponse);
 	}
 
 	/**
