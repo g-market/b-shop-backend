@@ -147,22 +147,22 @@ class OrderServiceTest {
 			.build();
 		ItemImage itemImage1 = ItemImage.builder()
 			.item(item1)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage2 = ItemImage.builder()
 			.item(item1)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage3 = ItemImage.builder()
 			.item(item2)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage4 = ItemImage.builder()
 			.item(item2)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
-		item1.updateThumbnail(itemImage1.getUrl());
-		item2.updateThumbnail(itemImage1.getUrl());
+		item1.updateThumbnail(itemImage1.getImageName());
+		item2.updateThumbnail(itemImage1.getImageName());
 
 		memberRepository.save(member1);
 		categoryRepository.save(category1);
@@ -184,7 +184,7 @@ class OrderServiceTest {
 		Assertions.assertThat(orderInfoList.getTotalElements()).isEqualTo(2);
 		Assertions.assertThat(orderInfoList.getContent().get(0).orderId()).isEqualTo(order1.getId());
 		Assertions.assertThat(orderInfoList.getContent().get(0).itemThumbnail())
-			.isEqualTo(itemImage1.getUrl());
+			.isEqualTo(itemImage1.getImageName());
 		Assertions.assertThat(orderInfoList.getContent().get(0).itemName())
 			.isEqualTo(item1.getName());
 		Assertions.assertThat(orderInfoList.getContent().get(0).itemTotalCount()).isEqualTo(1);
@@ -240,11 +240,11 @@ class OrderServiceTest {
 			.build();
 		ItemImage itemImage1 = ItemImage.builder()
 			.item(item1)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage2 = ItemImage.builder()
 			.item(item1)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 
 		memberRepository.save(member1);
@@ -326,22 +326,22 @@ class OrderServiceTest {
 			.build();
 		ItemImage itemImage1 = ItemImage.builder()
 			.item(item1)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage2 = ItemImage.builder()
 			.item(item1)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage3 = ItemImage.builder()
 			.item(item2)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage4 = ItemImage.builder()
 			.item(item2)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
-		item1.updateThumbnail(itemImage1.getUrl());
-		item2.updateThumbnail(itemImage2.getUrl());
+		item1.updateThumbnail(itemImage1.getImageName());
+		item2.updateThumbnail(itemImage2.getImageName());
 
 		memberRepository.save(member1);
 		categoryRepository.save(category1);
@@ -467,22 +467,22 @@ class OrderServiceTest {
 			.build();
 		ItemImage itemImage1 = ItemImage.builder()
 			.item(item1)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage2 = ItemImage.builder()
 			.item(item1)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage3 = ItemImage.builder()
 			.item(item2)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage4 = ItemImage.builder()
 			.item(item2)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
-		item1.updateThumbnail(itemImage1.getUrl());
-		item2.updateThumbnail(itemImage2.getUrl());
+		item1.updateThumbnail(itemImage1.getImageName());
+		item2.updateThumbnail(itemImage2.getImageName());
 
 		memberRepository.save(member1);
 		categoryRepository.save(category1);
