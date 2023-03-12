@@ -89,6 +89,9 @@ dependencies {
 
     // hibernate envers
     implementation 'org.springframework.data:spring-data-envers'
+
+    // actuator
+    implementation 'org.springframework.boot:spring-boot-starter-actuator:3.0.4'
 }
 
 tasks.named('test') {
