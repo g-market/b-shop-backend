@@ -35,15 +35,6 @@ public class ItemOptionRepositoryCustomImpl implements ItemOptionRepositoryCusto
 	}
 
 	@Override
-	public List<ItemOption> findByItemIdListAndIdList(List<OrderItemDto> orderItemDtoList) {
-		return jpaQueryFactory.select(itemOption)
-			.from(itemOption)
-			.where(Expressions.list(item.id, itemOption.id).in(searchItemIdAndItemOptionIdIn(orderItemDtoList)))
-			.orderBy(item.id.asc(), itemOption.id.asc())
-			.fetch();
-	}
-
-	@Override
 	public List<ItemOption> findByItemIdListAndIdListWithLock(List<OrderItemDto> orderItemDtoList) {
 		return jpaQueryFactory.select(itemOption)
 			.from(itemOption)
