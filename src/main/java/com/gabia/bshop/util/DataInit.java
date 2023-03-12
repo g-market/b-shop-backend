@@ -740,83 +740,83 @@ public class DataInit {
 
 		ItemImage itemImage1 = ItemImage.builder()
 			.item(item1)
-			.url("http://127.0.0.1:9000/images/1.png")
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage2 = ItemImage.builder()
 			.item(item1)
-			.url("http://127.0.0.1:9000/images/2.png")
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage3 = ItemImage.builder()
-			.item(item1)
-			.url("http://127.0.0.1:9000/images/3.png")
+			.item(item2)
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage4 = ItemImage.builder()
 			.item(item2)
-			.url("http://127.0.0.1:9000/images/1.png")
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage5 = ItemImage.builder()
 			.item(item3)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage6 = ItemImage.builder()
 			.item(item3)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage7 = ItemImage.builder()
 			.item(item4)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage8 = ItemImage.builder()
 			.item(item4)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage9 = ItemImage.builder()
 			.item(item5)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage10 = ItemImage.builder()
 			.item(item5)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage11 = ItemImage.builder()
 			.item(item6)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage12 = ItemImage.builder()
 			.item(item6)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage13 = ItemImage.builder()
 			.item(item7)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage14 = ItemImage.builder()
 			.item(item7)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage15 = ItemImage.builder()
 			.item(item8)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage16 = ItemImage.builder()
 			.item(item8)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage17 = ItemImage.builder()
 			.item(item9)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage18 = ItemImage.builder()
 			.item(item9)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage19 = ItemImage.builder()
 			.item(item10)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 		ItemImage itemImage20 = ItemImage.builder()
 			.item(item10)
-			.url(UUID.randomUUID().toString())
+			.imageName(UUID.randomUUID().toString())
 			.build();
 
 		itemImageRepository.saveAll(

@@ -29,8 +29,8 @@ public class ImageService {
 	private final MinioClient minioClient;
 	@Value("${minio.bucket}")
 	private String bucketName;
-	@Value("${minio.endpoint}")
-	private String endpoint;
+	@Value("${minio.prefix}")
+	private String IMAGE_SERVER_PREFIX;
 
 	public List<ImageResponse> uploadImage(final MultipartFile[] fileList) {
 		if (fileList.length > MAX_IMAGE_UPLOAD_COUNT) {
@@ -52,7 +52,7 @@ public class ImageService {
 
 				imageResponseList.add(ImageResponse.builder()
 					.fileName(file.getOriginalFilename())
-					.url(endpoint + "/" + bucketName + "/" + fileName).build()
+					.url(IMAGE_SERVER_PREFIX + "/" + fileName).build()
 				);
 			}
 		} catch (Exception e) {

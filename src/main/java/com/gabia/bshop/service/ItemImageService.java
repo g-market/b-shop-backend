@@ -8,9 +8,10 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.gabia.bshop.dto.ItemImageDto;
 import com.gabia.bshop.dto.request.ItemImageCreateRequest;
+import com.gabia.bshop.dto.request.ItemImageUpdateRequest;
 import com.gabia.bshop.dto.request.ItemThumbnailUpdateRequest;
+import com.gabia.bshop.dto.response.ItemImageResponse;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
@@ -36,18 +37,19 @@ public class ItemImageService {
 	private final ItemImageRepository itemImageRepository;
 	private final ImageValidator imageValidator;
 
-	public ItemImageDto findItemImage(final Long itemId, final Long imageId) {
+	public ItemImageResponse findItemImage(final Long itemId, final Long imageId) {
 		final ItemImage itemImage = findItemImageByImageIdAndItemId(imageId, itemId);
-		return ItemImageMapper.INSTANCE.itemImageToDto(itemImage);
+		return ItemImageMapper.INSTANCE.itemImageToItemImageResponse(itemImage);
 	}
 
-	public List<ItemImageDto> findItemImageList(final Long itemId) {
+	public List<ItemImageResponse> findItemImageList(final Long itemId) {
 		final List<ItemImage> itemImageList = itemImageRepository.findAllByItemId(itemId);
-		return itemImageList.stream().map(ItemImageMapper.INSTANCE::itemImageToDto).toList();
+		return itemImageList.stream().map(ItemImageMapper.INSTANCE::itemImageToItemImageResponse).toList();
 	}
 
 	@Transactional
-	public List<ItemImageDto> createItemImage(final Long itemId, final ItemImageCreateRequest itemImageCreateRequest) {
+	public List<ItemImageResponse> createItemImage(final Long itemId,
+		final ItemImageCreateRequest itemImageCreateRequest) {
 		final Item item = findItemById(itemId);
 
 		List<ItemImage> itemImageList = new ArrayList<>();
@@ -59,18 +61,24 @@ public class ItemImageService {
 
 		for (String imageUrl : itemImageCreateRequest.urlList()) {
 			urlValidate(imageUrl);
-			itemImageList.add(ItemImage.builder().item(item).url(imageUrl).build());
+			final String imageName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+			itemImageList.add(ItemImage.builder().item(item).imageName(imageName).build());
 		}
 		itemImageList = itemImageRepository.saveAll(itemImageList);
-		return itemImageList.stream().map(ItemImageMapper.INSTANCE::itemImageToDto).toList();
+		return itemImageList.stream().map(ItemImageMapper.INSTANCE::itemImageToItemImageResponse).toList();
 	}
 
 	@Transactional
-	public ItemImageDto updateItemImage(final Long itemId, final ItemImageDto itemImageDto) {
-		ItemImage itemImage = findItemImageByImageIdAndItemId(itemImageDto.imageId(), itemId);
-		urlValidate(itemImageDto.url());
-		itemImage.updateUrl(itemImageDto.url());
-		return ItemImageMapper.INSTANCE.itemImageToDto(itemImage);
+	public ItemImageResponse updateItemImage(final Long itemId, final ItemImageUpdateRequest itemImageUpdateRequest) {
+		ItemImage itemImage = findItemImageByImageIdAndItemId(itemImageUpdateRequest.imageId(), itemId);
+		urlValidate(itemImageUpdateRequest.imageUrl());
+
+		final String imageName = itemImageUpdateRequest.imageUrl()
+			.substring(itemImageUpdateRequest.imageUrl().lastIndexOf("/") + 1);
+
+		itemImage.updateImageName(imageName);
+
+		return ItemImageMapper.INSTANCE.itemImageToItemImageResponse(itemImage);
 	}
 
 	@Transactional
@@ -79,8 +87,8 @@ public class ItemImageService {
 		Item item = findItemById(itemId);
 		final ItemImage itemImage = findItemImageByImageIdAndItemId(itemThumbnailUpdateRequest.imageId(), itemId);
 
-		urlValidate(itemImage.getUrl()); // image validate
-		item.updateThumbnail(itemImage.getUrl());
+		urlValidate(itemImage.getImageName()); // image validate
+		item.updateThumbnail(itemImage.getImageName());
 
 		return ItemMapper.INSTANCE.itemToItemResponse(item);
 	}
@@ -89,12 +97,6 @@ public class ItemImageService {
 	public void deleteItemImage(final Long itemId, final Long imageId) {
 		final ItemImage itemImage = findItemImageByImageIdAndItemId(imageId, itemId);
 		itemImageRepository.delete(itemImage);
-	}
-
-	private ItemImage findItemImageById(final Long imageId) {
-		return itemImageRepository.findById(imageId).orElseThrow(
-			() -> new NotFoundException(IMAGE_NOT_FOUND_EXCEPTION, imageId)
-		);
 	}
 
 	private ItemImage findItemImageByImageIdAndItemId(final Long imageId, final Long itemId) {
