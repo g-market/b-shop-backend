@@ -66,6 +66,14 @@ sentry:
   exception-resolver-order: -2147483647
   traces-sample-rate: 1.0
 
+management:
+  endpoints:
+    web:
+      base-path: /application
+  endpoint:
+    health:
+      show-details: always
+
 logging:
   level:
     org:
