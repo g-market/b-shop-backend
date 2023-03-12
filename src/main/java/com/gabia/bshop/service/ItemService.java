@@ -40,7 +40,7 @@ public class ItemService {
 	private final ImageValidator imageValidator;
 	private final ImageDefaultProperties imageDefaultProperties;
 
-	/**
+		/**
 	 * 상품 조회
 	 * 1. fetch join
 	 ** */
@@ -105,25 +105,29 @@ public class ItemService {
 		// 4. Image 생성
 		if (itemCreateRequest.itemImageDtoList() != null && !itemCreateRequest.itemImageDtoList().isEmpty()) {
 			for (ItemImageDto itemImageDto : itemCreateRequest.itemImageDtoList()) {
-				final boolean isValid = imageValidator.validate(itemImageDto.url());
+				final boolean isValid = imageValidator.validate(itemImageDto.imageUrl());
 
 				if (!isValid) {
 					throw new NotFoundException(INCORRECT_URL_EXCEPTION);
 				}
+
+				final String imageName = itemImageDto.imageUrl()
+					.substring(itemImageDto.imageUrl().lastIndexOf("/") + 1);
+
 				item.addItemImage(ItemImage.builder()
 					.item(item)
-					.url(itemImageDto.url())
+					.imageName(imageName)
 					.build());
 			}
 		} else {
 			final ItemImage itemImage = ItemImage.builder()
 				.item(item)
-				.url(imageDefaultProperties.getItemImageUrl())
+				.imageName(imageDefaultProperties.getItemImageUrl())
 				.build();
 			item.addItemImage(itemImage);
 		}
 		// 6. 썸네일 설정
-		item.updateThumbnail(item.getItemImageList().get(0).getUrl()); // 0 번째 이미지를 썸네일로
+		item.updateThumbnail(item.getItemImageList().get(0).getImageName()); // 0 번째 이미지를 썸네일로
 
 		return ItemMapper.INSTANCE.itemToItemResponse(itemRepository.save(item));
 	}

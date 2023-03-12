@@ -1,5 +1,8 @@
 package com.gabia.bshop.dto.response;
 
+import lombok.Builder;
+
+@Builder
 public record ItemOptionResponse(
 	Long itemId,
 	Long optionId,
@@ -7,5 +10,4 @@ public record ItemOptionResponse(
 	int optionPrice,
 	int stockQuantity
 ) {
-
 }
