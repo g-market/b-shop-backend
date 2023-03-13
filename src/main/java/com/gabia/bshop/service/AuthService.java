@@ -17,7 +17,7 @@ import com.gabia.bshop.exception.ForbiddenException;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.exception.UnAuthorizedRefreshTokenException;
 import com.gabia.bshop.mapper.HiworksProfileMapper;
-import com.gabia.bshop.mapper.MemberResponseMapper;
+import com.gabia.bshop.mapper.MemberMapper;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.RefreshTokenRepository;
 import com.gabia.bshop.security.RefreshToken;
@@ -50,7 +50,7 @@ public class AuthService {
 			member.getRole());
 		final RefreshToken refreshToken = refreshTokenProvider.createToken(memberId);
 		refreshTokenRepository.save(refreshToken);
-		final MemberResponse memberResponse = MemberResponseMapper.INSTANCE.from(member);
+		final MemberResponse memberResponse = MemberMapper.INSTANCE.memberToMemberResponse(member);
 		return new LoginResult(refreshToken.refreshToken(), applicationAccessToken, memberResponse);
 	}
 

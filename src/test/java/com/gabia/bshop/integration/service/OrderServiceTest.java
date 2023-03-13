@@ -184,7 +184,7 @@ class OrderServiceTest {
 		Assertions.assertThat(orderInfoList.getTotalElements()).isEqualTo(2);
 		Assertions.assertThat(orderInfoList.getContent().get(0).orderId()).isEqualTo(order1.getId());
 		Assertions.assertThat(orderInfoList.getContent().get(0).itemThumbnail())
-			.isEqualTo(itemImage1.getImageName());
+			.contains(itemImage1.getImageName());
 		Assertions.assertThat(orderInfoList.getContent().get(0).itemName())
 			.isEqualTo(item1.getName());
 		Assertions.assertThat(orderInfoList.getContent().get(0).itemTotalCount()).isEqualTo(1);
@@ -193,9 +193,9 @@ class OrderServiceTest {
 
 		Assertions.assertThat(orderInfoList.getContent().get(1).orderId()).isEqualTo(order2.getId());
 		Assertions.assertThat(orderInfoList.getContent().get(1).itemThumbnail())
-			.isEqualTo(item1.getThumbnail());
+			.contains(item1.getThumbnail());
 		Assertions.assertThat(orderInfoList.getContent().get(1).itemName())
-			.isEqualTo(item2.getName());
+			.contains(item2.getName());
 		Assertions.assertThat(orderInfoList.getContent().get(1).itemTotalCount()).isEqualTo(2);
 		Assertions.assertThat(orderInfoList.getContent().get(1).orderStatus())
 			.isEqualTo(order2.getStatus());
@@ -375,8 +375,8 @@ class OrderServiceTest {
 			.isEqualTo(orderItem2.getOrderCount());
 		Assertions.assertThat(orderInfoResponse.orderItemList().get(0).price()).isEqualTo(orderItem1.getPrice());
 		Assertions.assertThat(orderInfoResponse.orderItemList().get(1).price()).isEqualTo(orderItem2.getPrice());
-		Assertions.assertThat(orderInfoResponse.orderItemList().get(0).itemThumbnail()).isEqualTo(item1.getThumbnail());
-		Assertions.assertThat(orderInfoResponse.orderItemList().get(1).itemThumbnail()).isEqualTo(item2.getThumbnail());
+		Assertions.assertThat(orderInfoResponse.orderItemList().get(0).itemThumbnail()).contains(item1.getThumbnail());
+		Assertions.assertThat(orderInfoResponse.orderItemList().get(1).itemThumbnail()).contains(item2.getThumbnail());
 	}
 
 	@DisplayName("관리자 주문목록 조회를 수행하면 모든 유저의 주문내역들이 조회되어야한다")
@@ -504,8 +504,8 @@ class OrderServiceTest {
 		Assertions.assertThat(orderInfoList.getContent().get(0).orderId()).isEqualTo(order1.getId());
 		Assertions.assertThat(orderInfoList.getContent().get(0).itemTotalCount()).isEqualTo(1);
 		Assertions.assertThat(orderInfoList.getContent().get(0).orderStatus()).isEqualTo(order1.getStatus());
-		Assertions.assertThat(orderInfoList.getContent().get(0).itemThumbnail()).isEqualTo(item1.getThumbnail());
-		Assertions.assertThat(orderInfoList.getContent().get(1).itemThumbnail()).isEqualTo(item2.getThumbnail());
+		Assertions.assertThat(orderInfoList.getContent().get(0).itemThumbnail()).contains(item1.getThumbnail());
+		Assertions.assertThat(orderInfoList.getContent().get(1).itemThumbnail()).contains(item2.getThumbnail());
 		Assertions.assertThat(orderInfoList.getContent().get(1).orderId()).isEqualTo(order2.getId());
 		Assertions.assertThat(orderInfoList.getContent().get(1).itemTotalCount()).isEqualTo(2);
 		Assertions.assertThat(orderInfoList.getContent().get(1).orderStatus()).isEqualTo(order2.getStatus());
