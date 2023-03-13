@@ -12,6 +12,6 @@ public abstract class MemberResponseMapper extends MapperSupporter {
 
 	public static final MemberResponseMapper INSTANCE = Mappers.getMapper(MemberResponseMapper.class);
 
-	@Mapping(target = "profileImageUrl", expression = "java(addPrefixToProfileUlr(member))")
+	@Mapping(target = "profileImageUrl", expression = "java(addPrefixToProfileUrl(member))")
 	public abstract MemberResponse memberToMemberResponse(Member member);
 }

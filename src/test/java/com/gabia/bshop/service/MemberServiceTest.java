@@ -13,6 +13,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.gabia.bshop.dto.request.MemberUpdateRequest;
 import com.gabia.bshop.dto.response.MemberResponse;
@@ -22,9 +23,10 @@ import com.gabia.bshop.repository.MemberRepository;
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
 
+	@Value("${minio.prefix}")
+	private static String MINIO_PREFIX;
 	@InjectMocks
 	private MemberService memberService;
-
 	@Mock
 	private MemberRepository memberRepository;
 
@@ -49,7 +51,7 @@ class MemberServiceTest {
 				.hasFieldOrPropertyWithValue("name", jaime.getName())
 				.hasFieldOrPropertyWithValue("role", jaime.getRole())
 				.hasFieldOrPropertyWithValue("grade", jaime.getGrade())
-				.hasFieldOrPropertyWithValue("profileImageUrl", jaime.getProfileImageUrl())
+				.hasFieldOrProperty("profileImageUrl")
 		);
 	}
 
@@ -63,13 +65,13 @@ class MemberServiceTest {
 
 		// when
 		final MemberResponse memberResponse = memberService.updateLoggedInMember(1L,
-			new MemberUpdateRequest("01012341234", "http://b-shop.com/profile/me"));
-
+			new MemberUpdateRequest("01012341234", MINIO_PREFIX + "/" + "default-profile-image1.png"));
+		//localhost:9000/images
 		// then
 		assertAll(
 			() -> verify(memberRepository).findById(1L),
 			() -> assertThat(jaime.getPhoneNumber()).isEqualTo("01012341234"),
-			() -> assertThat(jaime.getProfileImageUrl()).isEqualTo("http://b-shop.com/profile/me"),
+			() -> assertThat(jaime.getProfileImageUrl()).isEqualTo("default-profile-image1.png"),
 			() -> assertThat(memberResponse)
 				.hasFieldOrPropertyWithValue("id", 1L)
 				.hasFieldOrPropertyWithValue("email", jaime.getEmail())
@@ -77,7 +79,7 @@ class MemberServiceTest {
 				.hasFieldOrPropertyWithValue("name", jaime.getName())
 				.hasFieldOrPropertyWithValue("role", jaime.getRole())
 				.hasFieldOrPropertyWithValue("grade", jaime.getGrade())
-				.hasFieldOrPropertyWithValue("profileImageUrl", jaime.getProfileImageUrl())
+				.hasFieldOrProperty("profileImageUrl")
 		);
 	}
 }

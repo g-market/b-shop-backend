@@ -46,7 +46,7 @@ public class MapperSupporter {
 		return addPrefixToString(itemImage.getImageName());
 	}
 
-	public String addPrefixToProfileUlr(Member member) {
+	public String addPrefixToProfileUrl(Member member) {
 		if (member == null) {
 			return null;
 		}

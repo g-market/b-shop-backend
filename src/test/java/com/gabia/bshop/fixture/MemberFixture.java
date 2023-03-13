@@ -9,21 +9,21 @@ import com.gabia.bshop.entity.enumtype.MemberRole;
 public enum MemberFixture {
 
 	JAIME("jaime@gabia.com", "01011112222", "제이미", MemberRole.NORMAL,
-		MemberGrade.GOLD, "jaime", "http://b-shop.com/profile/me"),
+		MemberGrade.GOLD, "jaime", "default-profile-image.png"),
 	SUMMER("summer@gabia.com", "01022223333", "썸머", MemberRole.NORMAL,
-		MemberGrade.PLATINUM, "summer", "http://b-shop.com/profile/me"),
+		MemberGrade.PLATINUM, "summer", "default-profile-image.png"),
 
 	JENNA("jenna@gabia.com", "01033334444", "제나", MemberRole.NORMAL,
-		MemberGrade.PLATINUM, "jenna", "http://b-shop.com/profile/me"),
+		MemberGrade.PLATINUM, "jenna", "default-profile-image.png"),
 
 	BECKER("becker@gabia.com", "01044445555", "벡커", MemberRole.NORMAL,
-		MemberGrade.PLATINUM, "becker", "http://b-shop.com/profile/me"),
+		MemberGrade.PLATINUM, "becker", "default-profile-image.png"),
 
 	AIDEN("aiden@gabia.com", "01055556666", "에이든", MemberRole.ADMIN,
-		MemberGrade.PLATINUM, "aiden", "http://b-shop.com/profile/me"),
+		MemberGrade.PLATINUM, "aiden", "default-profile-image.png"),
 
 	ENDO("endo@gabia.com", "01066667777", "엔도", MemberRole.ADMIN,
-		MemberGrade.PLATINUM, "endo", "http://b-shop.com/profile/me");
+		MemberGrade.PLATINUM, "endo", "default-profile-image.png");
 
 	private final String email;
 	private final String phoneNumber;
