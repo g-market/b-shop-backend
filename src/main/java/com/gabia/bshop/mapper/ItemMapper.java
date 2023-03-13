@@ -34,7 +34,7 @@ public abstract class ItemMapper {
 		@Mapping(source = "itemImageList", target = "itemImageDtoList"),
 		@Mapping(source = "itemOptionList", target = "itemOptionDtoList"),
 	})
-	ItemAllInfoResponse itemToItemAllInfoResponse(Item item);
+	public abstract ItemAllInfoResponse itemToItemAllInfoResponse(Item item);
 
 	@Mappings({
 		@Mapping(source = "category.id", target = "categoryId"),
