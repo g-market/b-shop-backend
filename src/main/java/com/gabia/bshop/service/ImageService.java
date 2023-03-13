@@ -25,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 public class ImageService {
 
 	private static final int MAX_IMAGE_UPLOAD_COUNT = 10;
-
 	private final MinioClient minioClient;
 	@Value("${minio.bucket}")
 	private String bucketName;

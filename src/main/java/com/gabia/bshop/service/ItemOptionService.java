@@ -25,7 +25,6 @@ import lombok.RequiredArgsConstructor;
 public class ItemOptionService {
 
 	private static final int MAX_ITEM_OPTION_COUNT = 100;
-
 	private final ItemRepository itemRepository;
 	private final ItemOptionRepository itemOptionRepository;
 
