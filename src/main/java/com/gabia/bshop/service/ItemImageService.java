@@ -32,7 +32,6 @@ import lombok.RequiredArgsConstructor;
 public class ItemImageService {
 
 	private static final int MAX_ITEM_IMAGE_COUNT = 100;
-
 	private final ItemRepository itemRepository;
 	private final ItemImageRepository itemImageRepository;
 	private final ImageValidator imageValidator;

@@ -13,4 +13,7 @@ public interface ItemRepositoryCustom {
 	List<Integer> findItemYears();
 
 	Page<Item> findItemListByItemSearchConditions(Pageable pageable, ItemSearchConditions itemSearchConditions);
+
+	Page<Item> findItemListWithDeletedByItemSearchConditions(Pageable pageable,
+		ItemSearchConditions itemSearchConditions);
 }

@@ -15,14 +15,6 @@ public interface ItemOptionRepository extends JpaRepository<ItemOption, Long>, I
 
 	List<ItemOption> findAllByItemId(Long itemId);
 
-	@Query("""
-		select io from ItemOption io
-		join fetch io.item
-		where io.item.id in :itemIdList
-		and io.id in :itemOptionIdList
-		""")
-	List<ItemOption> findWithItemByItemIdsAndItemOptionIds(List<Long> itemIdList, List<Long> itemOptionIdList);
-
 	Optional<ItemOption> findByIdAndItemId(Long itemOptionId, Long itemId);
 
 	@Query("""

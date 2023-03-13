@@ -39,7 +39,8 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
 			.join(item.category, category).fetchJoin()
 			.where(eqCategoryName(itemSearchConditions.categoryName()),
 				containsItemName(itemSearchConditions.itemName()),
-				eqItemYear(itemSearchConditions.year()), item.itemStatus.ne(ItemStatus.PRIVATE))
+				eqItemYear(itemSearchConditions.year()),
+				item.deleted.eq(false), item.itemStatus.ne(ItemStatus.PRIVATE))
 			.offset(pageable.getOffset())
 			.limit(pageable.getPageSize())
 			.fetch();
@@ -48,7 +49,30 @@ public class ItemRepositoryCustomImpl implements ItemRepositoryCustom {
 			.from(item)
 			.where(eqCategoryName(itemSearchConditions.categoryName()),
 				containsItemName(itemSearchConditions.itemName()),
-				eqItemYear(itemSearchConditions.year()), item.itemStatus.ne(ItemStatus.PRIVATE));
+				eqItemYear(itemSearchConditions.year()),
+				item.deleted.eq(false), item.itemStatus.ne(ItemStatus.PRIVATE));
+
+		return PageableExecutionUtils.getPage(contents, pageable, countQuery::fetchOne);
+	}
+
+	@Override
+	public Page<Item> findItemListWithDeletedByItemSearchConditions(Pageable pageable,
+		ItemSearchConditions itemSearchConditions) {
+		final List<Item> contents = jpaQueryFactory.select(item)
+			.from(item)
+			.join(item.category, category).fetchJoin()
+			.where(eqCategoryName(itemSearchConditions.categoryName()),
+				containsItemName(itemSearchConditions.itemName()),
+				eqItemYear(itemSearchConditions.year()))
+			.offset(pageable.getOffset())
+			.limit(pageable.getPageSize())
+			.fetch();
+
+		final JPAQuery<Long> countQuery = jpaQueryFactory.select(item.count())
+			.from(item)
+			.where(eqCategoryName(itemSearchConditions.categoryName()),
+				containsItemName(itemSearchConditions.itemName()),
+				eqItemYear(itemSearchConditions.year()));
 
 		return PageableExecutionUtils.getPage(contents, pageable, countQuery::fetchOne);
 	}
