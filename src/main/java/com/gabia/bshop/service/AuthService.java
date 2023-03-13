@@ -50,7 +50,7 @@ public class AuthService {
 			member.getRole());
 		final RefreshToken refreshToken = refreshTokenProvider.createToken(memberId);
 		refreshTokenRepository.save(refreshToken);
-		final MemberResponse memberResponse = MemberResponseMapper.INSTANCE.from(member);
+		final MemberResponse memberResponse = MemberResponseMapper.INSTANCE.memberToMemberResponse(member);
 		return new LoginResult(refreshToken.refreshToken(), applicationAccessToken, memberResponse);
 	}
 

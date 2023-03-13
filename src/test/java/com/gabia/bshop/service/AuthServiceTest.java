@@ -91,7 +91,7 @@ class AuthServiceTest {
 		// then
 		assertAll(
 			() -> assertThat(loginResult.accessToken()).isEqualTo(applicationToken),
-			() -> assertThat(loginResult.memberResponse()).isEqualTo(MemberResponseMapper.INSTANCE.from(member)),
+			() -> assertThat(loginResult.memberResponse()).isEqualTo(MemberResponseMapper.INSTANCE.memberToMemberResponse(member)),
 			() -> assertThat(loginResult.refreshToken()).isEqualTo(refreshTokenValue),
 			() -> verify(hiworksOauthClient).getAccessToken(authCode),
 			() -> verify(hiworksOauthClient).getProfile(accessToken),
@@ -135,7 +135,7 @@ class AuthServiceTest {
 		// then
 		assertAll(
 			() -> assertThat(loginResult.accessToken()).isEqualTo(applicationToken),
-			() -> assertThat(loginResult.memberResponse()).isEqualTo(MemberResponseMapper.INSTANCE.from(member)),
+			() -> assertThat(loginResult.memberResponse()).isEqualTo(MemberResponseMapper.INSTANCE.memberToMemberResponse(member)),
 			() -> verify(hiworksOauthClient).getAccessToken(authCode),
 			() -> verify(hiworksOauthClient).getProfile(accessToken),
 			() -> verify(memberRepository).findByHiworksId(hiworksProfileResponse.hiworksId()),

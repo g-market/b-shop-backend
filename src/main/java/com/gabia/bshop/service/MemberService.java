@@ -23,14 +23,18 @@ public class MemberService {
 
 	public MemberResponse findLoggedInMember(final Long loggedInId) {
 		final Member member = findMember(loggedInId);
-		return MemberResponseMapper.INSTANCE.from(member);
+		return MemberResponseMapper.INSTANCE.memberToMemberResponse(member);
 	}
 
 	@Transactional
 	public MemberResponse updateLoggedInMember(final Long memberId, final MemberUpdateRequest memberUpdateRequest) {
 		final Member member = findMember(memberId);
-		member.updateProfile(memberUpdateRequest.phoneNumber(), memberUpdateRequest.profileImageUrl());
-		return MemberResponseMapper.INSTANCE.from(member);
+		final String profileImageUrl = memberUpdateRequest.profileImageUrl();
+		final String profileImage = profileImageUrl.substring(profileImageUrl.lastIndexOf("/") + 1);
+
+		member.updateProfile(memberUpdateRequest.phoneNumber(), profileImage);
+
+		return MemberResponseMapper.INSTANCE.memberToMemberResponse(member);
 	}
 
 	private Member findMember(final Long memberId) {
