@@ -13,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
 
 import com.gabia.bshop.dto.request.MemberUpdateRequest;
 import com.gabia.bshop.dto.response.MemberResponse;
@@ -23,8 +22,9 @@ import com.gabia.bshop.repository.MemberRepository;
 @ExtendWith(MockitoExtension.class)
 class MemberServiceTest {
 
-	@Value("${minio.prefix}")
-	private static String MINIO_PREFIX;
+	private static final String MINIO_PREFIX = "http://localhost:9000/images";
+	private static final String DELIMITER = "/";
+
 	@InjectMocks
 	private MemberService memberService;
 	@Mock
@@ -60,13 +60,12 @@ class MemberServiceTest {
 	void given_phoneNumberAndProfileImageUrl_when_updateLoggedInMember_then_return_memberResponse() {
 		// given
 		final Member jaime = JAIME.getInstance(1L);
-		given(memberRepository.findById(1L))
-			.willReturn(Optional.of(jaime));
+		given(memberRepository.findById(1L)).willReturn(Optional.of(jaime));
 
 		// when
 		final MemberResponse memberResponse = memberService.updateLoggedInMember(1L,
-			new MemberUpdateRequest("01012341234", MINIO_PREFIX + "/" + "default-profile-image1.png"));
-		//localhost:9000/images
+			new MemberUpdateRequest("01012341234", MINIO_PREFIX + DELIMITER + "default-profile-image1.png"));
+
 		// then
 		assertAll(
 			() -> verify(memberRepository).findById(1L),

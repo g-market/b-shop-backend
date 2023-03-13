@@ -8,9 +8,9 @@ import com.gabia.bshop.dto.response.MemberResponse;
 import com.gabia.bshop.entity.Member;
 
 @Mapper(componentModel = "spring")
-public abstract class MemberResponseMapper extends MapperSupporter {
+public abstract class MemberMapper extends MapperSupporter {
 
-	public static final MemberResponseMapper INSTANCE = Mappers.getMapper(MemberResponseMapper.class);
+	public static final MemberMapper INSTANCE = Mappers.getMapper(MemberMapper.class);
 
 	@Mapping(target = "profileImageUrl", expression = "java(addPrefixToProfileUrl(member))")
 	public abstract MemberResponse memberToMemberResponse(Member member);

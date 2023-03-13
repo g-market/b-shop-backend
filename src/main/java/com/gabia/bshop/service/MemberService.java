@@ -9,7 +9,7 @@ import com.gabia.bshop.dto.request.MemberUpdateRequest;
 import com.gabia.bshop.dto.response.MemberResponse;
 import com.gabia.bshop.entity.Member;
 import com.gabia.bshop.exception.NotFoundException;
-import com.gabia.bshop.mapper.MemberResponseMapper;
+import com.gabia.bshop.mapper.MemberMapper;
 import com.gabia.bshop.repository.MemberRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -23,7 +23,7 @@ public class MemberService {
 
 	public MemberResponse findLoggedInMember(final Long loggedInId) {
 		final Member member = findMember(loggedInId);
-		return MemberResponseMapper.INSTANCE.memberToMemberResponse(member);
+		return MemberMapper.INSTANCE.memberToMemberResponse(member);
 	}
 
 	@Transactional
@@ -34,7 +34,7 @@ public class MemberService {
 
 		member.updateProfile(memberUpdateRequest.phoneNumber(), profileImage);
 
-		return MemberResponseMapper.INSTANCE.memberToMemberResponse(member);
+		return MemberMapper.INSTANCE.memberToMemberResponse(member);
 	}
 
 	private Member findMember(final Long memberId) {
