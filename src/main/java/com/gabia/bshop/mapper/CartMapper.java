@@ -7,6 +7,7 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Mappings;
+import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 
 import com.gabia.bshop.dto.CartDto;
@@ -16,20 +17,21 @@ import com.gabia.bshop.dto.response.CartResponse;
 import com.gabia.bshop.entity.ItemOption;
 
 @Mapper(componentModel = "spring")
-public interface CartMapper {
+public abstract class CartMapper extends MapperSupporter {
 
-	CartMapper INSTANCE = Mappers.getMapper(CartMapper.class);
+	public static final CartMapper INSTANCE = Mappers.getMapper(CartMapper.class);
 
 	String DELIMITER = "-";
 
-	CartDto cartCreateRequestToCartDto(final CartCreateRequest cartCreateRequest);
+	public abstract CartDto cartCreateRequestToCartDto(final CartCreateRequest cartCreateRequest);
 
 	@Mappings({
 		@Mapping(target = "orderCount", ignore = true)
 	})
-	CartDto cartDeleteRequestToCartDto(final CartDeleteRequest cartDeleteRequest);
+	public abstract CartDto cartDeleteRequestToCartDto(final CartDeleteRequest cartDeleteRequest);
 
-	default List<CartResponse> itemOptionListAndCartDtoToCartResponse(final List<ItemOption> itemOptionList,
+	@Named("itemOptionListAndCartDtoToCartResponse")
+	public List<CartResponse> itemOptionListAndCartDtoToCartResponse(final List<ItemOption> itemOptionList,
 		final List<CartDto> cartDtoList) {
 		final List<CartResponse> cartResponseList = new ArrayList<>(itemOptionList.size());
 		final HashMap<String, Integer> map = new HashMap<>(cartDtoList.size());
@@ -55,7 +57,7 @@ public interface CartMapper {
 		@Mapping(source = "itemOption.optionPrice", target = "optionPrice"),
 		@Mapping(source = "itemOption.stockQuantity", target = "stockQuantity"),
 		@Mapping(source = "itemOption.item.category.name", target = "category"),
-		@Mapping(source = "itemOption.item.thumbnail", target = "itemThumbnailUrl"),
+		@Mapping(target = "itemThumbnailUrl", expression = "java(addPrefixToThumbnail(itemOption.getItem()))"),
 	})
-	CartResponse itemOptionAndOrderCountToCartResponse(ItemOption itemOption, Integer orderCount);
+	public abstract CartResponse itemOptionAndOrderCountToCartResponse(ItemOption itemOption, Integer orderCount);
 }

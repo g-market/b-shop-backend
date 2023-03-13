@@ -283,7 +283,6 @@ public class ConcurrencyOrderServiceTest {
 				try {
 					orderService.createOrder(1L, orderCreateRequest);
 				} catch (ConflictException e) {
-					System.out.println(e.getExceptionResponse().message());
 				} finally {
 					countDownLatch.countDown();
 				}
@@ -292,7 +291,6 @@ public class ConcurrencyOrderServiceTest {
 				try {
 					orderService.createOrder(2L, orderCreateRequest2);
 				} catch (ConflictException e) {
-					System.out.println(e.getExceptionResponse().message());
 				} finally {
 					countDownLatch.countDown();
 				}
@@ -345,7 +343,6 @@ public class ConcurrencyOrderServiceTest {
 				try {
 					orderService.createOrder(3L, orderCreateRequest);
 				} catch (ConflictException e) {
-					System.out.println(e.getExceptionResponse().message());
 				} finally {
 					countDownLatch.countDown();
 				}
@@ -413,7 +410,6 @@ public class ConcurrencyOrderServiceTest {
 				try {
 					orderService.createOrder(5L, orderCreateRequest);
 				} catch (ConflictException e) {
-					System.out.println(e.getExceptionResponse().message());
 				} finally {
 					countDownLatch.countDown();
 				}
@@ -422,7 +418,6 @@ public class ConcurrencyOrderServiceTest {
 				try {
 					orderService.createOrder(6L, orderCreateRequest);
 				} catch (ConflictException e) {
-					System.out.println(e.getExceptionResponse().message());
 				} finally {
 					countDownLatch.countDown();
 				}
@@ -435,7 +430,6 @@ public class ConcurrencyOrderServiceTest {
 				itemOptionService.changeItemOption(itemOption1.getItem().getId(), itemOption1.getId(),
 					itemOptionRequest);
 			} catch (ConflictException e) {
-				System.out.println(e.getExceptionResponse().message());
 			} finally {
 				countDownLatch.countDown();
 			}
