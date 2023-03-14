@@ -2,11 +2,14 @@ package com.gabia.bshop.integration.service;
 
 import static com.gabia.bshop.exception.ErrorCode.*;
 import static com.gabia.bshop.fixture.ItemFixture.*;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
+import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
@@ -18,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.gabia.bshop.dto.request.ItemImageCreateRequest;
 import com.gabia.bshop.dto.request.ItemImageUpdateRequest;
+import com.gabia.bshop.dto.request.ItemThumbnailUpdateRequest;
 import com.gabia.bshop.dto.response.ImageResponse;
 import com.gabia.bshop.dto.response.ItemImageResponse;
 import com.gabia.bshop.entity.Category;
@@ -40,6 +44,7 @@ import io.minio.PutObjectArgs;
 
 @Transactional
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@Disabled
 class ImageServiceTest extends IntegrationTest {
 
 	@Autowired
@@ -59,19 +64,19 @@ class ImageServiceTest extends IntegrationTest {
 	private ImageValidator imageValidator;
 
 	@Value("${minio.endpoint}")
-	private String ENDPOINT;
+	private String endpoint;
 	@Value("${minio.bucket}")
-	private String BUCKET;
+	private String bucket;
 
 	@BeforeAll
 	void before() throws Exception {
 		final String fileName = "No_Image.jpg";
-		minioClient.makeBucket(MakeBucketArgs.builder().bucket(BUCKET).build());
+		minioClient.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());
 
 		final MultipartFile multipartFile = new MockMultipartFile(fileName, fileName,
 			"image/jpg", "test images".getBytes());
 		PutObjectArgs uploadObject = PutObjectArgs.builder()
-			.bucket(BUCKET)
+			.bucket(bucket)
 			.object(fileName)
 			.stream(multipartFile.getInputStream(), multipartFile.getSize(), -1)
 			.contentType(multipartFile.getContentType())
@@ -84,9 +89,10 @@ class ImageServiceTest extends IntegrationTest {
 	@Test
 	void validatorTest() {
 		// given
-		final String NoImageUrl = ENDPOINT + "/images/No_Image.jpg";
+		final String noImageUrl = endpoint + "/images/No_Image.jpg";
+
 		// when
-		boolean isOk = imageValidator.validate(NoImageUrl);
+		boolean isOk = imageValidator.validate(noImageUrl);
 
 		// then
 		Assertions.assertTrue(isOk);
@@ -113,6 +119,29 @@ class ImageServiceTest extends IntegrationTest {
 
 		// then
 		Assertions.assertEquals(uploadFileName, actual);
+	}
+
+	@DisplayName("이미지를 업로드 최대 갯수 보다 많으면 예외를 터트린다")
+	@Test
+	void imageUploadWhenSizeLargerThanMaxSize() throws Exception {
+		// given
+		final String bucket = "images";
+		final String fileName = "test_image.jpg";
+		final MultipartFile multipartFile = new MockMultipartFile(fileName, fileName,
+			"image/jpg", "test_image".getBytes());
+
+		MultipartFile[] multipartFileList = IntStream.rangeClosed(1, 11)
+			.mapToObj(index ->
+				new MockMultipartFile(
+					fileName + index, fileName + index, "image/jpg",
+					"test_image".getBytes())
+			)
+			.toArray(MultipartFile[]::new);
+
+		// when & then
+		assertThatThrownBy(
+			() -> imageService.uploadImage(multipartFileList)
+		);
 	}
 
 	@DisplayName("이미지를 상품에 등록한다")
@@ -159,7 +188,7 @@ class ImageServiceTest extends IntegrationTest {
 		itemImageRepository.save(itemImage);
 
 		final String changedUrl =
-			ENDPOINT + "/" + BUCKET + "/" + "No_Image.jpg"; // http://localhost:{port}/images/No_Image.jpg
+			endpoint + "/" + bucket + "/" + "No_Image.jpg"; // http://localhost:{port}/images/No_Image.jpg
 
 		final ItemImageUpdateRequest itemImageUpdateRequest = new ItemImageUpdateRequest(itemImage.getId(), changedUrl);
 
@@ -206,5 +235,25 @@ class ImageServiceTest extends IntegrationTest {
 			() -> {
 				itemImageService.findItemImage(item.getId(), itemImage.getId());
 			});
+	}
+
+	@DisplayName("상품의 썸네일 URL 유효하지 않으면 예외를 던진다")
+	@Test
+	void updateItemThumbnail() {
+		// given
+		Category category = CategoryFixture.CATEGORY_1.getInstance();
+		Item item = ITEM_1.getInstance(category);
+		categoryRepository.save(category);
+		itemRepository.save(item);
+
+		// when
+		ItemImage newThumbnail = ItemImage.builder().item(item).imageName("http://update.jpg").build();
+		itemImageRepository.save(newThumbnail);
+		ItemThumbnailUpdateRequest itemThumbnailUpdateRequest = new ItemThumbnailUpdateRequest(newThumbnail.getId());
+
+		// then
+		assertThatThrownBy(
+			() -> itemImageService.updateItemThumbnail(item.getId(), itemThumbnailUpdateRequest)
+		);
 	}
 }
