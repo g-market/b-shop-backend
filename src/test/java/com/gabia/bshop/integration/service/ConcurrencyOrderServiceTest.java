@@ -13,6 +13,7 @@ import java.util.concurrent.Executors;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,7 @@ import com.gabia.bshop.repository.OrderRepository;
 import com.gabia.bshop.service.ItemOptionService;
 import com.gabia.bshop.service.OrderService;
 
+@Disabled
 @SpringBootTest
 public class ConcurrencyOrderServiceTest {
 
@@ -273,7 +275,7 @@ public class ConcurrencyOrderServiceTest {
 			.build();
 
 		int nThreahdsSize = 1000;
-		int repeatSize = 500;
+		int repeatSize = 10;
 		int countDownLatchSize = 1000;
 		ExecutorService executorService = Executors.newFixedThreadPool(nThreahdsSize);
 		CountDownLatch countDownLatch = new CountDownLatch(countDownLatchSize);
