@@ -5,6 +5,7 @@ import static com.gabia.bshop.exception.ErrorCode.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +36,9 @@ public class ItemImageService {
 	private final ItemRepository itemRepository;
 	private final ItemImageRepository itemImageRepository;
 	private final ImageValidator imageValidator;
+
+	@Value("${minio.prefix}")
+	private String minioPrefix;
 
 	public ItemImageResponse findItemImage(final Long itemId, final Long imageId) {
 		final ItemImage itemImage = findItemImageByImageIdAndItemId(imageId, itemId);
@@ -81,8 +85,7 @@ public class ItemImageService {
 	}
 
 	@Transactional
-	public ItemResponse updateItemThumbnail(final Long itemId,
-		final ItemThumbnailUpdateRequest itemThumbnailUpdateRequest) {
+	public ItemResponse updateItemThumbnail(final Long itemId, final ItemThumbnailUpdateRequest itemThumbnailUpdateRequest) {
 		Item item = findItemById(itemId);
 		final ItemImage itemImage = findItemImageByImageIdAndItemId(itemThumbnailUpdateRequest.imageId(), itemId);
 
@@ -109,7 +112,8 @@ public class ItemImageService {
 			.orElseThrow(() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, itemId));
 	}
 
-	private void urlValidate(final String url) {
+	private void urlValidate(final String imageName) {
+		final String url = minioPrefix + "/" + imageName;
 		final boolean isValid = imageValidator.validate(url);
 
 		if (!isValid) {
