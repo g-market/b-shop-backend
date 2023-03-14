@@ -5,7 +5,6 @@ import static com.gabia.bshop.exception.ErrorCode.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -16,7 +15,6 @@ import com.gabia.bshop.dto.response.ItemImageResponse;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.entity.ItemImage;
-import com.gabia.bshop.exception.BadRequestException;
 import com.gabia.bshop.exception.ConflictException;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.ItemImageMapper;
@@ -37,9 +35,6 @@ public class ItemImageService {
 	private final ItemImageRepository itemImageRepository;
 	private final ImageValidator imageValidator;
 
-	@Value("${minio.prefix}")
-	private String minioPrefix;
-
 	public ItemImageResponse findItemImage(final Long itemId, final Long imageId) {
 		final ItemImage itemImage = findItemImageByImageIdAndItemId(imageId, itemId);
 		return ItemImageMapper.INSTANCE.itemImageToItemImageResponse(itemImage);
@@ -56,15 +51,14 @@ public class ItemImageService {
 		final Item item = findItemById(itemId);
 
 		List<ItemImage> itemImageList = new ArrayList<>();
-		final int totalImageSize = item.getItemImageList().size() + itemImageCreateRequest.urlList().size();
+		final int totalImageSize = item.getItemImageList().size() + itemImageCreateRequest.imageNameList().size();
 
 		if (totalImageSize > MAX_ITEM_IMAGE_COUNT) {
 			throw new ConflictException(MAX_ITEM_IMAGE_LIMITATION_EXCEPTION, MAX_ITEM_IMAGE_COUNT);
 		}
 
-		for (String imageUrl : itemImageCreateRequest.urlList()) {
-			urlValidate(imageUrl);
-			final String imageName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+		for (String imageName : itemImageCreateRequest.imageNameList()) {
+			imageValidator.validate(imageName);
 			itemImageList.add(ItemImage.builder().item(item).imageName(imageName).build());
 		}
 		itemImageList = itemImageRepository.saveAll(itemImageList);
@@ -74,22 +68,20 @@ public class ItemImageService {
 	@Transactional
 	public ItemImageResponse updateItemImage(final Long itemId, final ItemImageUpdateRequest itemImageUpdateRequest) {
 		ItemImage itemImage = findItemImageByImageIdAndItemId(itemImageUpdateRequest.imageId(), itemId);
-		urlValidate(itemImageUpdateRequest.imageUrl());
 
-		final String imageName = itemImageUpdateRequest.imageUrl()
-			.substring(itemImageUpdateRequest.imageUrl().lastIndexOf("/") + 1);
-
-		itemImage.updateImageName(imageName);
+		imageValidator.validate(itemImage.getImageName());
+		itemImage.updateImageName(itemImage.getImageName());
 
 		return ItemImageMapper.INSTANCE.itemImageToItemImageResponse(itemImage);
 	}
 
 	@Transactional
-	public ItemResponse updateItemThumbnail(final Long itemId, final ItemThumbnailUpdateRequest itemThumbnailUpdateRequest) {
+	public ItemResponse updateItemThumbnail(final Long itemId,
+		final ItemThumbnailUpdateRequest itemThumbnailUpdateRequest) {
 		Item item = findItemById(itemId);
 		final ItemImage itemImage = findItemImageByImageIdAndItemId(itemThumbnailUpdateRequest.imageId(), itemId);
 
-		urlValidate(itemImage.getImageName()); // image validate
+		imageValidator.validate(itemImage.getImageName());
 		item.updateThumbnail(itemImage.getImageName());
 
 		return ItemMapper.INSTANCE.itemToItemResponse(item);
@@ -110,14 +102,5 @@ public class ItemImageService {
 	private Item findItemById(final Long itemId) {
 		return itemRepository.findById(itemId)
 			.orElseThrow(() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, itemId));
-	}
-
-	private void urlValidate(final String imageName) {
-		final String url = minioPrefix + "/" + imageName;
-		final boolean isValid = imageValidator.validate(url);
-
-		if (!isValid) {
-			throw new BadRequestException(INCORRECT_URL_EXCEPTION);
-		}
 	}
 }
