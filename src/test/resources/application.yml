@@ -9,18 +9,18 @@ spring:
       ddl-auto: create
     properties:
       hibernate:
-        format_sql: true
+        #        format_sql: true
         default_batch_fetch_size: 100
       jakarta:
         persistence:
           sharedCache:
             mode: ALL
-    show-sql: true
+    #    show-sql: true
     open-in-view: false
 
-logging:
-  level:
-    org.hibernate.SQL: debug
+#logging:
+#  level:
+#    org.hibernate.SQL: debug
 
 ---
 server:
