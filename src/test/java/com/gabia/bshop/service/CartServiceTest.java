@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -114,6 +115,21 @@ class CartServiceTest {
 				NotFoundException.class),
 			() -> verify(itemOptionRepository).existsByItem_IdAndIdAndStockQuantityIsGreaterThanEqual(itemId,
 				itemOptionId, orderCount)
+		);
+	}
+
+	@Test
+	@DisplayName("빈 장바구니를 조회하면 빈 장바구니를 반환한다")
+	void given_nothing_when_findAll_then_return_List_of_CartResponse() {
+		// given
+		given(cartRepository.findAllByMemberId(memberId)).willReturn(Collections.emptyList());
+
+		// when
+		final List<CartResponse> actual = cartService.findCartList(memberId);
+
+		// then
+		assertAll(
+			() -> assertThat(actual).usingRecursiveComparison().isEqualTo(Collections.emptyList())
 		);
 	}
 
