@@ -260,12 +260,12 @@ public class ConcurrencyOrderServiceTest {
 
 		OrderItemDto orderItemDto1 = OrderItemDto.builder().itemId(1L).itemOptionId(1L).orderCount(1).build();
 		OrderItemDto orderItemDto3 = OrderItemDto.builder().itemId(3L).itemOptionId(3L).orderCount(1).build();
-		OrderItemDto orderItemDto10 = OrderItemDto.builder().itemId(9L).itemOptionId(10L).orderCount(1).build();
+		OrderItemDto orderItemDto9 = OrderItemDto.builder().itemId(9L).itemOptionId(10L).orderCount(1).build();
 
-		OrderItemDto orderItemDto10_2 = OrderItemDto.builder().itemId(9L).itemOptionId(10L).orderCount(2).build();
+		OrderItemDto orderItemDto10 = OrderItemDto.builder().itemId(9L).itemOptionId(10L).orderCount(2).build();
 
-		List<OrderItemDto> orderItemDtoList = List.of(orderItemDto1, orderItemDto3, orderItemDto10);
-		List<OrderItemDto> orderItemDtoList2 = List.of(orderItemDto3, orderItemDto10_2);
+		List<OrderItemDto> orderItemDtoList = List.of(orderItemDto1, orderItemDto3, orderItemDto9);
+		List<OrderItemDto> orderItemDtoList2 = List.of(orderItemDto3, orderItemDto10);
 
 		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder().orderItemDtoList(orderItemDtoList).build();
 		OrderCreateRequest orderCreateRequest2 = OrderCreateRequest.builder()
@@ -304,12 +304,13 @@ public class ConcurrencyOrderServiceTest {
 		List<OrderItem> oi3 = orderItemRepository.findAllByOptionId(3L);
 		List<OrderItem> oi10 = orderItemRepository.findAllByOptionId(10L);
 
-		Assertions.assertThat(afterItemOption3.getStockQuantity()).isEqualTo(0);//3번 상품은 재고가 0이여야한다.
+		Assertions.assertThat(afterItemOption3.getStockQuantity()).isEqualTo(0); //3번 상품은 재고가 0이여야한다.
 
 		Assertions.assertThat(oi3.stream().mapToInt(orderItem -> orderItem.getOrderCount()).sum())
-			.isEqualTo(beforeItemOption3.getStockQuantity());//3번 상품의 orderItem의 orderCount합과 기존 재고가 일치해야 한다.
+			.isEqualTo(beforeItemOption3.getStockQuantity()); //3번 상품의 orderItem의 orderCount합과 기존 재고가 일치해야 한다.
 		Assertions.assertThat(
-				oi10.stream().mapToInt(orderItem -> orderItem.getOrderCount()).sum() + afterItemOption10.getStockQuantity())
+				oi10.stream()
+					.mapToInt(orderItem -> orderItem.getOrderCount()).sum() + afterItemOption10.getStockQuantity())
 			.isEqualTo(beforeItemOption10.getStockQuantity());
 		Assertions.assertThat(orderAll.size()).isEqualTo(beforeItemOption3.getStockQuantity());
 	}

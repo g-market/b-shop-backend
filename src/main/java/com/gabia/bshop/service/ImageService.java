@@ -29,7 +29,7 @@ public class ImageService {
 	@Value("${minio.bucket}")
 	private String bucketName;
 	@Value("${minio.prefix}")
-	private String IMAGE_SERVER_PREFIX;
+	private String imageServerPrefix;
 
 	public List<ImageResponse> uploadImage(final MultipartFile[] fileList) {
 		if (fileList.length > MAX_IMAGE_UPLOAD_COUNT) {
@@ -51,7 +51,7 @@ public class ImageService {
 
 				imageResponseList.add(ImageResponse.builder()
 					.fileName(file.getOriginalFilename())
-					.url(IMAGE_SERVER_PREFIX + "/" + fileName).build()
+					.url(imageServerPrefix + "/" + fileName).build()
 				);
 			}
 		} catch (Exception e) {

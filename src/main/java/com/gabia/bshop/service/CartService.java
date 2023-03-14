@@ -32,8 +32,7 @@ public class CartService {
 		if (cartDtoList.isEmpty()) {
 			return Collections.emptyList();
 		}
-		final List<ItemOption> itemOptionList = itemOptionRepository.findWithItemAndCategoryAndImageByItemIdListAndIdList(
-			cartDtoList);
+		final List<ItemOption> itemOptionList = itemOptionRepository.findAllByItemIdsAndItemOptionIds(cartDtoList);
 		return CartMapper.INSTANCE.itemOptionListAndCartDtoToCartResponse(itemOptionList, cartDtoList);
 	}
 

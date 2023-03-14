@@ -25,7 +25,7 @@ public class ItemOptionRepositoryCustomImpl implements ItemOptionRepositoryCusto
 	private final JPAQueryFactory jpaQueryFactory;
 
 	@Override
-	public List<ItemOption> findWithItemAndCategoryAndImageByItemIdListAndIdList(List<CartDto> cartDtoList) {
+	public List<ItemOption> findAllByItemIdsAndItemOptionIds(List<CartDto> cartDtoList) {
 		return jpaQueryFactory.select(itemOption)
 			.from(itemOption)
 			.join(itemOption.item, item).fetchJoin()

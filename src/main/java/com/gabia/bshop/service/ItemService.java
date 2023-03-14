@@ -41,7 +41,7 @@ public class ItemService {
 	private final ImageValidator imageValidator;
 	private final ImageDefaultProperties imageDefaultProperties;
 
-		/**
+	/**
 	 * 상품 조회
 	 * 1. fetch join
 	 ** */

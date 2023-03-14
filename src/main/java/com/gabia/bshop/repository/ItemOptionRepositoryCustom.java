@@ -8,7 +8,7 @@ import com.gabia.bshop.entity.ItemOption;
 
 public interface ItemOptionRepositoryCustom {
 
-	List<ItemOption> findWithItemAndCategoryAndImageByItemIdListAndIdList(List<CartDto> cartDtoList);
+	List<ItemOption> findAllByItemIdsAndItemOptionIds(List<CartDto> cartDtoList);
 
 	List<ItemOption> findByItemIdListAndIdListWithLock(List<OrderItemDto> orderItemDtoList);
 }

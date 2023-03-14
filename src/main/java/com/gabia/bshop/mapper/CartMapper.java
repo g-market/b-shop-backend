@@ -21,7 +21,7 @@ public abstract class CartMapper extends MapperSupporter {
 
 	public static final CartMapper INSTANCE = Mappers.getMapper(CartMapper.class);
 
-	String DELIMITER = "-";
+	private static final String DELIMITER = "-";
 
 	public abstract CartDto cartCreateRequestToCartDto(final CartCreateRequest cartCreateRequest);
 
