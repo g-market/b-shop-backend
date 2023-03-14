@@ -33,7 +33,7 @@ test:
     - name: docker:dind
   script:
     - ./gradlew test
-  coverage: '/ - Instruction Coverage: ([0-9.]+)%/'
+  coverage: '/    - Instruction Coverage: ([0-9.]+)%/'
   artifacts:
     paths:
       - build/reports/jacoco/test/jacoco*.xml
