@@ -220,7 +220,6 @@ class OrderServiceTest {
 			.openAt(now)//deleted true
 			.build();
 		ItemOption itemOption1 = ItemOption.builder()
-			.id(1L)
 			.item(item1)
 			.description("description")
 			.optionPrice(0)
