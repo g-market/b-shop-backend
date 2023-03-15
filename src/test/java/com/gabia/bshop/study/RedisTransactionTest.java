@@ -29,6 +29,7 @@ class RedisTransactionTest extends IntegrationTest {
 	@BeforeEach
 	void setUp() {
 		final RedisConnectionFactory connectionFactory = redisTemplate.getConnectionFactory();
+		assert connectionFactory != null;
 		connectionFactory.getConnection().serverCommands().flushAll();
 	}
 
