@@ -19,7 +19,7 @@ public interface OrderRepository extends JpaRepository<Order, Long>, OrderReposi
 		select o from Order o
 		join fetch o.orderItemList
 		where o.id = :orderId
-		and o.member.id in :memberId
+		and o.member.id = :memberId
 		""")
 	@Lock(LockModeType.PESSIMISTIC_WRITE)
 	Optional<Order> findByIdAndMemberIdWithLock(Long orderId, Long memberId);

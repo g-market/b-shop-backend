@@ -2,6 +2,7 @@ package com.gabia.bshop.service;
 
 import static com.gabia.bshop.fixture.CategoryFixture.*;
 import static com.gabia.bshop.fixture.ItemFixture.*;
+import static com.gabia.bshop.fixture.ItemOptionFixture.*;
 import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -23,15 +24,22 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
 import com.gabia.bshop.config.ImageDefaultProperties;
+import com.gabia.bshop.dto.ItemImageDto;
+import com.gabia.bshop.dto.ItemOptionDto;
+import com.gabia.bshop.dto.request.ItemCreateRequest;
 import com.gabia.bshop.dto.request.ItemUpdateRequest;
 import com.gabia.bshop.dto.response.ItemPageResponse;
 import com.gabia.bshop.dto.response.ItemResponse;
+import com.gabia.bshop.dto.searchConditions.ItemSearchConditions;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
+import com.gabia.bshop.entity.ItemImage;
+import com.gabia.bshop.entity.ItemOption;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.mapper.ItemMapper;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemRepository;
+import com.gabia.bshop.util.ImageValidator;
 
 @ExtendWith(MockitoExtension.class)
 class ItemServiceTest {
@@ -42,6 +50,8 @@ class ItemServiceTest {
 	private ItemRepository itemRepository;
 	@Mock
 	private ImageDefaultProperties imageDefaultProperties;
+	@Mock
+	private ImageValidator imageValidator;
 
 	@InjectMocks
 	private ItemService itemService;
@@ -124,7 +134,7 @@ class ItemServiceTest {
 
 		// when
 		when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
-		when(imageDefaultProperties.getItemImageUrl()).thenReturn("http://localhost:9000/images/No_Image.jpg");
+		when(imageDefaultProperties.getItemImageUrl()).thenReturn("default-item-image.jpg");
 		when(itemRepository.save(any())).thenReturn(returnItem);
 
 		ItemResponse itemResponse = itemService.createItem(ItemMapper.INSTANCE.itemToItemCreateRequest(item));
@@ -136,7 +146,71 @@ class ItemServiceTest {
 			() -> assertEquals(itemResponse.basePrice(), item.getBasePrice()),
 			() -> assertEquals(itemResponse.description(), item.getDescription())
 		);
+	}
 
+	@Test
+	@DisplayName("상품을 아이템 옵션과 함께 생성한다")
+	void createItemWithOption() {
+		// given
+		Category category = CATEGORY_1.getInstance(1L);
+
+		Item item = ITEM_1.getInstance(category);
+		ItemOption itemOption1 = ITEM_OPTION_1.getInstance(item);
+		ItemOption itemOption2 = ITEM_OPTION_2.getInstance(item);
+		ItemOption itemOption3 = ITEM_OPTION_3.getInstance(item);
+		List.of(itemOption1, itemOption2, itemOption3).forEach(item::addItemOption);
+		ItemImage itemImage1 = ItemImage.builder()
+			.item(item)
+			.imageName("http://localhost:9000/images/item-image1.jpg")
+			.build();
+		ItemImage itemImage2 = ItemImage.builder()
+			.item(item)
+			.imageName("http://localhost:9000/images/item-image2.jpg")
+			.build();
+		List.of(itemImage1, itemImage2).forEach(item::addItemImage);
+
+		Item returnItem = ITEM_1.getInstance(1L, category);
+
+		// when
+		when(categoryRepository.findById(1L)).thenReturn(Optional.of(category));
+		when(itemRepository.save(any())).thenReturn(returnItem);
+		when(imageValidator.validate(any())).thenReturn(true);
+
+		ItemCreateRequest itemCreateRequest = ItemCreateRequest.builder()
+			.categoryId(category.getId())
+			.itemOptionDtoList(List.of(
+				ItemOptionDto.builder()
+					.description(itemOption1.getDescription())
+					.optionPrice(itemOption1.getOptionPrice())
+					.stockQuantity(itemOption1.getStockQuantity())
+					.build(),
+				ItemOptionDto.builder()
+					.description(itemOption2.getDescription())
+					.optionPrice(itemOption2.getOptionPrice())
+					.stockQuantity(itemOption2.getStockQuantity())
+					.build()
+			))
+			.itemImageDtoList(List.of(
+				ItemImageDto.builder()
+					.imageId(1L)
+					.imageUrl("http://localhost:9000/images/item-image1.jpg")
+					.build(),
+				ItemImageDto.builder()
+					.imageId(2L)
+					.imageUrl("http://localhost:9000/images/item-image2.jpg")
+					.build()
+			))
+			.build();
+
+		ItemResponse itemResponse = itemService.createItem(itemCreateRequest);
+
+		// then
+		assertAll(
+			() -> assertEquals(itemResponse.categoryDto().id(), item.getCategory().getId()),
+			() -> assertEquals(itemResponse.name(), item.getName()),
+			() -> assertEquals(itemResponse.basePrice(), item.getBasePrice()),
+			() -> assertEquals(itemResponse.description(), item.getDescription())
+		);
 	}
 
 	@Test
@@ -227,6 +301,60 @@ class ItemServiceTest {
 		assertAll(
 			() -> verify(itemRepository).findItemYears(),
 			() -> assertThat(result).usingRecursiveComparison().isEqualTo(itemYearList)
+		);
+	}
+
+	@Test
+	@DisplayName("삭제한 상품을 단건 조회한다")
+	void findDeletedItem() {
+		// given
+		Long itemId = 1L;
+		Category category = CATEGORY_1.getInstance(1L);
+		Item item1 = ITEM_1.getInstance(1L, category);
+		// when
+		when(itemRepository.findById(itemId)).thenReturn(Optional.of(item1));
+		itemService.findItemWithDeleted(itemId);
+
+		// then
+		verify(itemRepository, times(1)).findById(itemId);
+	}
+
+	@Test
+	@DisplayName("삭제한 상품을 여러개를 조회한다")
+	void findDeletedItemList() {
+		// given
+		Category category = CATEGORY_1.getInstance(1L);
+		Item item1 = ITEM_1.getInstance(1L, category);
+		Item item2 = ITEM_2.getInstance(2L, category);
+		Item item3 = ITEM_3.getInstance(3L, category);
+		Item item4 = ITEM_4.getInstance(4L, category);
+		Item item5 = ITEM_5.getInstance(5L, category);
+		PageRequest pageable = PageRequest.of(0, 10);
+		Page<Item> itemPage = new PageImpl<>(List.of(item1, item2, item3, item4, item5), pageable, 5);
+		ItemSearchConditions itemSearchConditions = new ItemSearchConditions(null, null, null);
+		when(itemRepository.findItemListWithDeletedByItemSearchConditions(pageable,
+			itemSearchConditions)).thenReturn(itemPage);
+
+		// when
+		itemService.findItemListWithDeleted(pageable, itemSearchConditions);
+
+		// then
+		verify(itemRepository, times(1)).findItemListWithDeletedByItemSearchConditions(pageable,
+			itemSearchConditions);
+	}
+
+	@Test
+	@DisplayName("상품 조회시 PRIVATE면 예외를 던진다")
+	void findPrivateItem() {
+		// given
+		Long itemId = 1L;
+		Category category = CATEGORY_1.getInstance(1L);
+		Item item4 = ITEM_4.getInstance(1L, category);
+		// when
+		when(itemRepository.findById(itemId)).thenReturn(Optional.of(item4));
+
+		assertThatThrownBy(
+			() -> itemService.findItem(itemId)
 		);
 	}
 }

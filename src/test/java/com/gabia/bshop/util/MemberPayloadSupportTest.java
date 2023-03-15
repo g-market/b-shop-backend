@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.*;
 
 import java.util.Optional;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.gabia.bshop.entity.enumtype.MemberRole;
@@ -12,7 +13,8 @@ import com.gabia.bshop.security.MemberPayload;
 class MemberPayloadSupportTest {
 
 	@Test
-	void MemberPayLoad_Null값이_들어오면_null을_반환한다() {
+	@DisplayName("MemberPayLoad null값이 들어오면 null을 반환한다")
+	void given_null_when_getLoggedInMemberId_then_return_null() {
 		// given
 		final Optional<MemberPayload> memberPayload = Optional.empty();
 
@@ -24,7 +26,8 @@ class MemberPayloadSupportTest {
 	}
 
 	@Test
-	void MemberPayLoad값이_들어오면_memberId을_반환한다() {
+	@DisplayName("MemberPayLoad값이 들어오면 memberId를 반환한다")
+	void given_member_payload_when_getLoggedInMemberId_then_return_memberId() {
 		// given
 		final Optional<MemberPayload> memberPayload = Optional.of(new MemberPayload(1L, MemberRole.NORMAL));
 
