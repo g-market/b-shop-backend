@@ -66,9 +66,7 @@ public class ItemService {
 	}
 
 	public ItemAllInfoResponse findItemWithDeleted(final Long itemId) {
-		final Item item = itemRepository.findById(itemId).orElseThrow(
-			() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, itemId)
-		);
+		final Item item = findItemById(itemId);
 		return ItemMapper.INSTANCE.itemToItemAllInfoResponse(item);
 	}
 
