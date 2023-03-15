@@ -402,7 +402,7 @@ public class DataInit {
 			.thumbnail(imageDefaultProperties.getItemImageUrl())
 			.year(2023)
 			.openAt(now)
-			.build();//deleted true
+			.build(); //deleted true
 
 		Item item11 = Item.builder()
 			.category(kitchen)
@@ -413,7 +413,7 @@ public class DataInit {
 			.thumbnail(imageDefaultProperties.getItemImageUrl())
 			.year(2023)
 			.openAt(now)
-			.build();//deleted true
+			.build(); //deleted true
 		Item item12 = Item.builder()
 			.category(kitchen)
 			.name("temp_item_name10")
@@ -423,7 +423,7 @@ public class DataInit {
 			.thumbnail(imageDefaultProperties.getItemImageUrl())
 			.year(2023)
 			.openAt(now)
-			.build();//deleted true
+			.build(); //deleted true
 		Item item13 = Item.builder()
 			.category(kitchen)
 			.name("temp_item_name10")
@@ -433,7 +433,7 @@ public class DataInit {
 			.thumbnail(imageDefaultProperties.getItemImageUrl())
 			.year(2023)
 			.openAt(now)
-			.build();//deleted trueItem item10 = Item.builder()
+			.build(); //deleted trueItem item10 = Item.builder()
 		Item item14 = Item.builder()
 			.category(kitchen)
 			.name("temp_item_name10")
@@ -443,7 +443,7 @@ public class DataInit {
 			.thumbnail(imageDefaultProperties.getItemImageUrl())
 			.year(2023)
 			.openAt(now)
-			.build();//deleted true
+			.build(); //deleted true
 
 		Item item15 = Item.builder()
 			.category(kitchen)
@@ -454,7 +454,7 @@ public class DataInit {
 			.thumbnail(imageDefaultProperties.getItemImageUrl())
 			.year(2023)
 			.openAt(now)
-			.build();//deleted true
+			.build(); //deleted true
 		Item item16 = Item.builder()
 			.category(kitchen)
 			.name("temp_item_name10")
@@ -464,7 +464,7 @@ public class DataInit {
 			.thumbnail(imageDefaultProperties.getItemImageUrl())
 			.year(2023)
 			.openAt(now)
-			.build();//deleted true
+			.build(); //deleted true
 
 		Item item17 = Item.builder()
 			.category(kitchen)
@@ -535,7 +535,7 @@ public class DataInit {
 			.thumbnail(imageDefaultProperties.getItemImageUrl())
 			.year(2023)
 			.openAt(now)
-			.build();//deleted true
+			.build(); //deleted true
 
 		Item item24 = Item.builder()
 			.category(kitchen)
@@ -546,7 +546,7 @@ public class DataInit {
 			.thumbnail(imageDefaultProperties.getItemImageUrl())
 			.year(2023)
 			.openAt(now)
-			.build();//deleted true
+			.build(); //deleted true
 		Item item25 = Item.builder()
 			.category(kitchen)
 			.name("temp_item_name10")
@@ -556,7 +556,7 @@ public class DataInit {
 			.thumbnail(imageDefaultProperties.getItemImageUrl())
 			.year(2023)
 			.openAt(now)
-			.build();//deleted true
+			.build(); //deleted true
 		Item item26 = Item.builder()
 			.category(kitchen)
 			.name("temp_item_name10")
@@ -566,7 +566,7 @@ public class DataInit {
 			.thumbnail(imageDefaultProperties.getItemImageUrl())
 			.year(2023)
 			.openAt(now)
-			.build();//deleted trueItem item10 = Item.builder()
+			.build(); //deleted trueItem item10 = Item.builder()
 		Item item27 = Item.builder()
 			.category(kitchen)
 			.name("temp_item_name10")
@@ -576,7 +576,7 @@ public class DataInit {
 			.year(2023)
 			.thumbnail(imageDefaultProperties.getItemImageUrl())
 			.openAt(now)
-			.build();//deleted true
+			.build(); //deleted true
 		Item item28 = Item.builder()
 			.category(kitchen)
 			.name("temp_item_name10")
@@ -586,7 +586,7 @@ public class DataInit {
 			.year(2023)
 			.thumbnail(imageDefaultProperties.getItemImageUrl())
 			.openAt(now)
-			.build();//deleted true
+			.build(); //deleted true
 		Item item29 = Item.builder()
 			.category(kitchen)
 			.name("temp_item_name10")
@@ -596,7 +596,7 @@ public class DataInit {
 			.year(2023)
 			.thumbnail(imageDefaultProperties.getItemImageUrl())
 			.openAt(now)
-			.build();//deleted true
+			.build(); //deleted true
 
 		Item item30 = Item.builder()
 			.category(kitchen)
@@ -607,7 +607,7 @@ public class DataInit {
 			.year(2023)
 			.thumbnail(imageDefaultProperties.getItemImageUrl())
 			.openAt(now)
-			.build();//deleted true
+			.build(); //deleted true
 		Item item31 = Item.builder()
 			.category(kitchen)
 			.name("temp_item_name4")

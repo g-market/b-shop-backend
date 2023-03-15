@@ -220,7 +220,6 @@ class OrderServiceTest {
 			.openAt(now)//deleted true
 			.build();
 		ItemOption itemOption1 = ItemOption.builder()
-			.id(1L)
 			.item(item1)
 			.description("description")
 			.optionPrice(0)
@@ -259,8 +258,8 @@ class OrderServiceTest {
 		entityManager.clear();
 
 		//when
-		Page<OrderInfoPageResponse> orderInfoList = orderService.findOrderInfoList(pageable, member1.getId(),
-			new OrderSearchConditions(null, null));
+		Page<OrderInfoPageResponse> orderInfoList = orderService.findAllOrderInfoList(
+			new OrderSearchConditions(null, null), pageable);
 
 		//then
 		Assertions.assertThat(orderInfoList.getTotalElements()).isEqualTo(1);

@@ -21,7 +21,7 @@ class ItemOptionRepositoryCustomImplTest {
 		final CartDto cartDto1 = new CartDto(1L, 1L, 3);
 		final CartDto cartDto2 = new CartDto(2L, 3L, 3);
 		final CartDto cartDto3 = new CartDto(2L, 4L, 3);
-		itemOptionRepository.findWithItemAndCategoryAndImageByItemIdListAndIdList(
+		itemOptionRepository.findAllByItemIdsAndItemOptionIds(
 			List.of(cartDto1, cartDto2, cartDto3));
 	}
 }

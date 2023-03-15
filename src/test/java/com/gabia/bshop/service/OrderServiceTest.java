@@ -273,8 +273,11 @@ class OrderServiceTest {
 			.orderItemList(orderItemList)
 			.build();
 
-		when(orderRepository.findByIdAndMemberIdWithLock(order.getId(), member.getId())).thenReturn(
+		when(orderRepository.findByIdAndMemberId(order.getId(), member.getId())).thenReturn(
 			Optional.ofNullable(order));
+		when(
+			itemOptionRepository.findByItemIdListAndIdListInOrderItemListWithLock(order.getOrderItemList())).thenReturn(
+			List.of());
 
 		//when
 		orderService.cancelOrder(member.getId(), order.getId());
