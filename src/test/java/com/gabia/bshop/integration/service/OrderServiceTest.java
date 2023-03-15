@@ -259,8 +259,8 @@ class OrderServiceTest {
 		entityManager.clear();
 
 		//when
-		Page<OrderInfoPageResponse> orderInfoList = orderService.findOrderInfoList(pageable, member1.getId(),
-			new OrderSearchConditions(null, null));
+		Page<OrderInfoPageResponse> orderInfoList = orderService.findAllOrderInfoList(
+			new OrderSearchConditions(null, null), pageable);
 
 		//then
 		Assertions.assertThat(orderInfoList.getTotalElements()).isEqualTo(1);

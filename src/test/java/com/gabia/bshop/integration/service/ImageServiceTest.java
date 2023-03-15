@@ -62,7 +62,7 @@ public class ImageServiceTest extends IntegrationTest {
 
 	@DisplayName("이미지를 업로드 최대 갯수 보다 많으면 예외를 터트린다")
 	@Test
-	void imageUploadWhenSizeLargerThanMaxSize(){
+	void imageUploadWhenSizeLargerThanMaxSize() {
 		// given
 		final String fileName = "test_image.jpg";
 

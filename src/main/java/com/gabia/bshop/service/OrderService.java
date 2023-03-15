@@ -96,8 +96,9 @@ public class OrderService {
 
 	@Transactional
 	public void cancelOrder(final Long memberId, final Long orderId) {
-		final Order order = findOrderByIdAndMemberIdWithLock(orderId, memberId);
+		final Order order = findOrderByIdAndMemberId(orderId, memberId);
 		validateCancelOrderStatus(order);
+		itemOptionRepository.findByItemIdListAndIdListInOrderItemListWithLock(order.getOrderItemList());
 		order.cancelOrder();
 	}
 

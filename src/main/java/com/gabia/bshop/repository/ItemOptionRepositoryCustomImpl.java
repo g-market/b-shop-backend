@@ -11,6 +11,7 @@ import com.gabia.bshop.dto.CartDto;
 import com.gabia.bshop.dto.OrderItemAble;
 import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.entity.ItemOption;
+import com.gabia.bshop.entity.OrderItem;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
@@ -42,6 +43,26 @@ public class ItemOptionRepositoryCustomImpl implements ItemOptionRepositoryCusto
 			.orderBy(item.id.asc(), itemOption.id.asc())
 			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
 			.fetch();
+	}
+
+	@Override
+	public List<ItemOption> findByItemIdListAndIdListInOrderItemListWithLock(List<OrderItem> orderItemList) {
+		return jpaQueryFactory.select(itemOption)
+			.from(itemOption)
+			.where(
+				Expressions.list(item.id, itemOption.id).in(searchItemIdAndItemOptionIdInOrderItemList(orderItemList)))
+			.orderBy(item.id.asc(), itemOption.id.asc())
+			.setLockMode(LockModeType.PESSIMISTIC_WRITE)
+			.fetch();
+	}
+
+	private Expression[] searchItemIdAndItemOptionIdInOrderItemList(List<OrderItem> orderItemList) {
+		List<Expression<Object>> tuples = new ArrayList<>();
+		for (OrderItem orderItem : orderItemList) {
+			tuples.add(Expressions.template(Object.class, "(({0}, {1}))", orderItem.getItem().getId(),
+				orderItem.getOption().getId()));
+		}
+		return tuples.toArray(new Expression[0]);
 	}
 
 	private BooleanExpression itemIdEq(Long itemId) {

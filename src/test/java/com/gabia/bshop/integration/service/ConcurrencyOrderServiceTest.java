@@ -40,12 +40,8 @@ import com.gabia.bshop.repository.OrderRepository;
 import com.gabia.bshop.service.ItemOptionService;
 import com.gabia.bshop.service.OrderService;
 
-import jakarta.persistence.EntityManager;
-
 @SpringBootTest
 public class ConcurrencyOrderServiceTest {
-
-	static int idx = 0;
 
 	@Autowired
 	private MemberRepository memberRepository;
@@ -77,9 +73,6 @@ public class ConcurrencyOrderServiceTest {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
-	@Autowired
-	private EntityManager entityManager;
-
 	@AfterEach
 	public void afterEach() {
 		deleteAll();
@@ -102,7 +95,7 @@ public class ConcurrencyOrderServiceTest {
 		Member member1 = JENNA.getInstance();
 		Member member2 = JAIME.getInstance();
 
-		Category category1 = Category.builder().name("카테고리" + idx++).build();
+		Category category1 = Category.builder().name("카테고리").build();
 
 		Item item1 = Item.builder()
 			.category(category1)
@@ -343,7 +336,7 @@ public class ConcurrencyOrderServiceTest {
 		Assertions.assertThat(orderAll.size()).isEqualTo(beforeItemOption3.getStockQuantity());
 	}
 
-	@DisplayName("동시에_주문을_취소한다.")
+	@DisplayName("동시에_1000명이_주문을_생성하고_주문을_취소한다.")
 	@Rollback
 	@Test
 	void concurrencyOrderCancel() throws InterruptedException {
@@ -352,7 +345,7 @@ public class ConcurrencyOrderServiceTest {
 		Member member1 = JENNA.getInstance();
 		Member member2 = JAIME.getInstance();
 
-		Category category1 = Category.builder().name("카테고리" + idx++).build();
+		Category category1 = Category.builder().name("카테고리").build();
 
 		Item item1 = Item.builder()
 			.category(category1)
@@ -445,7 +438,7 @@ public class ConcurrencyOrderServiceTest {
 			.year(2023)
 			.build();
 
-		int stockQuantity = 300;
+		int stockQuantity = 500;
 
 		ItemOption itemOption1 = ItemOption.builder()
 			.item(item1)
@@ -517,10 +510,6 @@ public class ConcurrencyOrderServiceTest {
 
 		List<ItemOption> beforeItemOptionList = itemOptionRepository.findAll();
 
-		for (ItemOption itemOption : beforeItemOptionList) {
-			System.out.println(itemOption);
-		}
-
 		List<OrderItemDto> orderItemDtoList = new ArrayList<>();
 		for (ItemOption itemOption : beforeItemOptionList) {
 			OrderItemDto orderItemDto = OrderItemDto.builder()
@@ -544,7 +533,6 @@ public class ConcurrencyOrderServiceTest {
 				try {
 					orderService.createOrder(member1.getId(), orderCreateRequest);
 				} catch (ConflictException e) {
-					//e.printStackTrace();
 				} finally {
 					countDownLatch.countDown();
 				}
@@ -562,8 +550,7 @@ public class ConcurrencyOrderServiceTest {
 			executorService.submit(() -> {
 				try {
 					orderService.cancelOrder(member1.getId(), orderId);
-				} catch (Exception e) {
-					e.printStackTrace();
+				} catch (ConflictException e) {
 				} finally {
 					countDownLatch2.countDown();
 				}
@@ -571,21 +558,8 @@ public class ConcurrencyOrderServiceTest {
 		}
 		countDownLatch2.await();
 
-		entityManager.clear();
-
 		List<ItemOption> afterItemOptionList = itemOptionRepository.findAll();
 
-		for (ItemOption itemOption : beforeItemOptionList) {
-			int i = 1;
-			System.out.println("i:" + i + "+" + beforeItemOptionList);
-			i++;
-		}
-
-		for (ItemOption itemOption : afterItemOptionList) {
-			int i = 1;
-			System.out.println("i:" + i + " " + afterItemOptionList);
-			i++;
-		}
 		// 주문 취소 후 처음 재고와 일치하는지 확인
 		for (int i = 0; i < afterItemOptionList.size(); i++) {
 			Assertions.assertThat(afterItemOptionList.get(i).getStockQuantity())
@@ -601,7 +575,7 @@ public class ConcurrencyOrderServiceTest {
 		Member member1 = JENNA.getInstance();
 		Member member2 = JAIME.getInstance();
 
-		Category category1 = Category.builder().name("카테고리" + idx++).build();
+		Category category1 = Category.builder().name("카테고리").build();
 
 		Item item1 = Item.builder()
 			.category(category1)
