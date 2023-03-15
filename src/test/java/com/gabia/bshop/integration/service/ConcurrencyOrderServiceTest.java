@@ -87,6 +87,15 @@ public class ConcurrencyOrderServiceTest {
 		jdbcTemplate.update("DELETE FROM category");
 	}
 
+	private void initAutoIncrement() {
+		jdbcTemplate.execute("ALTER TABLE order_item AUTO_INCREMENT = 1");
+		jdbcTemplate.execute("ALTER TABLE orders AUTO_INCREMENT = 1");
+		jdbcTemplate.execute("ALTER TABLE member AUTO_INCREMENT = 1");
+		jdbcTemplate.execute("ALTER TABLE item_option AUTO_INCREMENT = 1");
+		jdbcTemplate.execute("ALTER TABLE item AUTO_INCREMENT = 1");
+		jdbcTemplate.execute("ALTER TABLE category AUTO_INCREMENT = 1");
+	}
+
 	@DisplayName("동시에_1000명이_주문을_한다.")
 	@Test
 	void concurrencyOrder() throws InterruptedException {
