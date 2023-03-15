@@ -26,6 +26,7 @@ import com.gabia.bshop.config.ImageDefaultProperties;
 import com.gabia.bshop.dto.request.ItemUpdateRequest;
 import com.gabia.bshop.dto.response.ItemPageResponse;
 import com.gabia.bshop.dto.response.ItemResponse;
+import com.gabia.bshop.dto.searchConditions.ItemSearchConditions;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.exception.NotFoundException;
@@ -228,5 +229,44 @@ class ItemServiceTest {
 			() -> verify(itemRepository).findItemYears(),
 			() -> assertThat(result).usingRecursiveComparison().isEqualTo(itemYearList)
 		);
+	}
+
+	@Test
+	@DisplayName("삭제한 상품을 단건 조회한다")
+	void findDeletedItem() {
+		// given
+		Long itemId = 1L;
+		Category category = CATEGORY_1.getInstance(1L);
+		Item item1 = ITEM_1.getInstance(1L, category);
+		// when
+		when(itemRepository.findById(itemId)).thenReturn(Optional.of(item1));
+		itemService.findItemWithDeleted(itemId);
+
+		// then
+		verify(itemRepository, times(1)).findById(itemId);
+	}
+
+	@Test
+	@DisplayName("삭제한 상품을 여러개를 조회한다")
+	void findDeletedItemList() {
+		// given
+		Category category = CATEGORY_1.getInstance(1L);
+		Item item1 = ITEM_1.getInstance(1L, category);
+		Item item2 = ITEM_2.getInstance(2L, category);
+		Item item3 = ITEM_3.getInstance(3L, category);
+		Item item4 = ITEM_4.getInstance(4L, category);
+		Item item5 = ITEM_5.getInstance(5L, category);
+		PageRequest pageable = PageRequest.of(0, 10);
+		Page<Item> itemPage = new PageImpl<>(List.of(item1, item2, item3, item4, item5), pageable, 5);
+		ItemSearchConditions itemSearchConditions = new ItemSearchConditions(null, null, null);
+		when(itemRepository.findItemListWithDeletedByItemSearchConditions(pageable,
+			itemSearchConditions)).thenReturn(itemPage);
+
+		// when
+		itemService.findItemListWithDeleted(pageable, itemSearchConditions);
+
+		// then
+		verify(itemRepository, times(1)).findItemListWithDeletedByItemSearchConditions(pageable,
+			itemSearchConditions);
 	}
 }
