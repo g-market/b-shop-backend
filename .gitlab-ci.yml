@@ -39,7 +39,6 @@ test:
       - build/reports/jacoco/test/jacoco*.xml
     reports:
       junit: build/test-results/test/**/TEST-*.xml
-      cobertura: build/reports/jacoco/test/jacocoTestReport.xml
 
 #https://docs.gitlab.com/ee/ci/testing/test_coverage_visualization.html
 visualization:
