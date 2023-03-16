@@ -15,6 +15,7 @@ import com.gabia.bshop.dto.validator.ValidFile;
 import com.gabia.bshop.dto.validator.ValidFileLength;
 import com.gabia.bshop.dto.validator.group.FileValidationGroups;
 import com.gabia.bshop.dto.validator.group.ValidationSequence;
+import com.gabia.bshop.security.Login;
 import com.gabia.bshop.service.ImageService;
 
 import lombok.RequiredArgsConstructor;
@@ -26,6 +27,7 @@ public class ImageController {
 
 	private final ImageService imageService;
 
+	@Login
 	@PostMapping("/images")
 	public ResponseEntity<List<ImageResponse>> uploadImage(
 		@RequestParam("fileList")
