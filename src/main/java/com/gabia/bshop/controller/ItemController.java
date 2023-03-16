@@ -32,11 +32,13 @@ public class ItemController {
 
 	private final ItemService itemService;
 
+	@Login
 	@GetMapping("/items/{id}")
 	public ResponseEntity<ItemResponse> findItem(@PathVariable final Long id) {
 		return ResponseEntity.ok(itemService.findItem(id));
 	}
 
+	@Login
 	@GetMapping("/items")
 	public ResponseEntity<Page<ItemPageResponse>> findItemList(@LimitedSizePagination final Pageable pageable,
 		final ItemSearchConditions itemSearchConditions) {
@@ -75,6 +77,7 @@ public class ItemController {
 		return ResponseEntity.noContent().build();
 	}
 
+	@Login
 	@GetMapping("/item-years")
 	public ResponseEntity<List<Integer>> findYears() {
 		return ResponseEntity.ok(itemService.findItemYears());
