@@ -22,14 +22,14 @@ public class MemberController {
 
 	private final MemberService memberService;
 
-	@GetMapping("/members/me")
 	@Login
+	@GetMapping("/members/me")
 	public ResponseEntity<MemberResponse> findLoggedInMember(@CurrentMember final MemberPayload memberPayload) {
 		return ResponseEntity.ok(memberService.findLoggedInMember(memberPayload.id()));
 	}
 
-	@PatchMapping("/members/me")
 	@Login
+	@PatchMapping("/members/me")
 	public ResponseEntity<MemberResponse> updateLoggedInMember(@CurrentMember final MemberPayload memberPayload,
 		@Valid @RequestBody final MemberUpdateRequest memberUpdateRequest) {
 		return ResponseEntity.ok(memberService.updateLoggedInMember(memberPayload.id(), memberUpdateRequest));

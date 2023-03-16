@@ -25,6 +25,7 @@ public class ItemOptionController {
 
 	private final ItemOptionService itemOptionService;
 
+	@Login
 	@GetMapping("/items/{itemId}/options/{optionId}")
 	public ResponseEntity<ItemOptionResponse> findItemOption(
 		@PathVariable final Long itemId,
@@ -32,6 +33,7 @@ public class ItemOptionController {
 		return ResponseEntity.ok().body(itemOptionService.findItemOption(itemId, optionId));
 	}
 
+	@Login
 	@GetMapping("/items/{itemId}/options")
 	public ResponseEntity<List<ItemOptionResponse>> findItemOptionList(@PathVariable final Long itemId) {
 		return ResponseEntity.ok().body(itemOptionService.findOptionList(itemId));

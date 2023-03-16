@@ -31,11 +31,13 @@ public class CategoryController {
 
 	private final CategoryService categoryService;
 
+	@Login
 	@GetMapping("/categories/{categoryId}")
 	public ResponseEntity<CategoryDto> findCategory(@PathVariable final Long categoryId) {
 		return ResponseEntity.ok(categoryService.findCategory(categoryId));
 	}
 
+	@Login
 	@GetMapping("/categories")
 	public ResponseEntity<Page<CategoryDto>> findCategoryList(@LimitedSizePagination final Pageable pageable) {
 		return ResponseEntity.ok(categoryService.findCategoryList(pageable));
