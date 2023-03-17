@@ -5,6 +5,7 @@ import java.util.Objects;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.hibernate.envers.Audited;
+import org.hibernate.envers.NotAudited;
 
 import com.gabia.bshop.dto.request.ItemOptionRequest;
 
@@ -48,7 +49,7 @@ public class ItemOption extends BaseEntity {
 
 	@Column(nullable = false)
 	private int optionPrice;
-
+	@NotAudited
 	@Column(nullable = false)
 	private int stockQuantity;
 
