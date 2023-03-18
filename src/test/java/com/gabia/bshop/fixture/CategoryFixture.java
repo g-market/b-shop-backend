@@ -8,8 +8,7 @@ public enum CategoryFixture {
 	CATEGORY_2("카테고리 2"),
 	CATEGORY_3("카테고리 3"),
 	CATEGORY_4("카테고리 4"),
-	CATEGORY_5("카테고리 5"),
-	;
+	CATEGORY_5("카테고리 5");
 
 	private final String name;
 

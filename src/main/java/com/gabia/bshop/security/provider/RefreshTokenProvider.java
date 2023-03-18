@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.springframework.stereotype.Component;
 
+import com.gabia.bshop.config.TokenProperties;
 import com.gabia.bshop.security.RefreshToken;
 
 import lombok.RequiredArgsConstructor;

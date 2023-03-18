@@ -2,6 +2,7 @@ package com.gabia.bshop.security.provider;
 
 import static org.assertj.core.api.Assertions.*;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import com.gabia.bshop.entity.enumtype.MemberRole;
@@ -22,7 +23,8 @@ class JwtProviderTest {
 	}
 
 	@Test
-	void 토큰을_생성한다() {
+	@DisplayName("토큰을 생성한다")
+	void createToken() {
 		// given
 		final Long memberId = 1L;
 		// when
@@ -32,7 +34,8 @@ class JwtProviderTest {
 	}
 
 	@Test
-	void 토큰이_유효한_경우() {
+	@DisplayName("토큰이 유효성을 판단여부를 검증한다")
+	void isValidToken() {
 		// given
 		String accessToken = jwtProvider.createAccessToken(1L, MemberRole.NORMAL);
 		String authorizationHeader = "Bearer " + accessToken;
@@ -42,7 +45,8 @@ class JwtProviderTest {
 	}
 
 	@Test
-	void 토큰의_유효기간이_지난_경우() {
+	@DisplayName("토큰 유효기간이 지난 경우 이를 검증한다")
+	void isExpiredToken() {
 		// given
 		JwtProvider jwtProvider = new JwtProvider(new AuthTokenExtractor(),
 			TokenPropertiesFixture.EXPIRED_ACCESS_TOKEN_PROPERTIES);
@@ -54,7 +58,8 @@ class JwtProviderTest {
 	}
 
 	@Test
-	void 토큰의_형식이_틀린_경우() {
+	@DisplayName("토큰의 형식이 틀린 경우 이를 검증한다")
+	void isInvalidTokenType() {
 		// given
 		String authorizationHeader = "Bearer invalidToken";
 
@@ -63,7 +68,8 @@ class JwtProviderTest {
 	}
 
 	@Test
-	void 토큰의_시크릿_키가_틀린_경우() {
+	@DisplayName("토큰의 시크릿 키가 틀린 경우 이를 검증한다")
+	void isInvalidSecretKey() {
 		// given
 		JwtProvider invalidJwtProvider = new JwtProvider(new AuthTokenExtractor(),
 			TokenPropertiesFixture.INVALID_TOKEN_PROPERTIES);
@@ -74,7 +80,8 @@ class JwtProviderTest {
 	}
 
 	@Test
-	void 토큰의_payload를_복호화한다() {
+	@DisplayName("토큰의 payload를 복호화한다")
+	void getPayloadFromToken() {
 		// given
 		String token = jwtProvider.createAccessToken(1L, MemberRole.NORMAL);
 		String authorizationHeader = "Bearer " + token;
@@ -85,7 +92,8 @@ class JwtProviderTest {
 	}
 
 	@Test
-	void 토큰의_payload_복호화_시_Long_id가_아니면_예외를_반환한다() {
+	@DisplayName("토큰의 payload 복호화시 Long 자료구조가 아닌 id 이면 예외를 반환한다")
+	void isInvalidTokenIdThenThrowException() {
 		// given
 		String token = fakeJwtProvider.createAccessToken("string", MemberRole.NORMAL);
 		String authorizationHeader = "Bearer " + token;
@@ -95,7 +103,8 @@ class JwtProviderTest {
 	}
 
 	@Test
-	void 토큰의_payload_복호화_시_필요한_정보가_없으면_예외를_반환한다() {
+	@DisplayName("토큰의 payload 복호화시 필요한 정보가 없으면 예외를 반환한다")
+	void isInvalidTokenValueThenThrowException() {
 		// given
 		String accessToken = fakeJwtProvider.createAccessToken(1L);
 		String authorizationHeader = "Bearer " + accessToken;
@@ -106,7 +115,8 @@ class JwtProviderTest {
 	}
 
 	@Test
-	void 토큰의_payload_복호화_시_role값이_올바르지_않으면_예외를_반환한다() {
+	@DisplayName("토큰의 payload 복호화 시 role값이 올바르지 않으면 예외를 반환한다")
+	void isInvalidRoleThenThrowException() {
 		// given
 		String token = fakeJwtProvider.createAccessToken(1L, "invalid");
 		String authorizationHeader = "Bearer " + token;

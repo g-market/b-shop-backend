@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.jupiter.api.DisplayName;
@@ -27,6 +28,8 @@ import com.gabia.bshop.repository.ItemOptionRepository;
 
 @ExtendWith(MockitoExtension.class)
 class CartServiceTest {
+
+	private static final String MINIO_PREFIX = "http://localhost:9000/images";
 
 	private final Long memberId = 1L;
 	private final Long itemId = 1L;
@@ -116,6 +119,21 @@ class CartServiceTest {
 	}
 
 	@Test
+	@DisplayName("빈 장바구니를 조회하면 빈 장바구니를 반환한다")
+	void given_nothing_when_findAll_then_return_List_of_CartResponse() {
+		// given
+		given(cartRepository.findAllByMemberId(memberId)).willReturn(Collections.emptyList());
+
+		// when
+		final List<CartResponse> actual = cartService.findCartList(memberId);
+
+		// then
+		assertAll(
+			() -> assertThat(actual).usingRecursiveComparison().isEqualTo(Collections.emptyList())
+		);
+	}
+
+	@Test
 	@DisplayName("장바구니에 담긴 정보를 통해, 개략적인 상품 정보를 반환한다")
 	void given_SavedItems_when_findAll_then_return_List_of_CartResponse() {
 		// given
@@ -128,16 +146,17 @@ class CartServiceTest {
 		final Item item2 = ItemFixture.ITEM_2.getInstance(newItemId, category1);
 		final ItemOption itemOption2 = ITEM_OPTION_2.getInstance(newItemOptionId, item2);
 
-		// TODO: imageUrl 기입
 		final CartResponse cartResponse1 = new CartResponse(itemId, itemOptionId, cartDto1.orderCount(),
-			item1.getName(), item1.getBasePrice(),
-			itemOption1.getOptionPrice(), category1.getName(), null);
+			itemOption1.getDescription(), item1.getName(), item1.getBasePrice(),
+			itemOption1.getOptionPrice(), itemOption1.getStockQuantity(), category1.getName(),
+			MINIO_PREFIX + "/" + item1.getThumbnail());
 		final CartResponse cartResponse2 = new CartResponse(newItemId, newItemOptionId, cartDto2.orderCount(),
-			item2.getName(), item2.getBasePrice(),
-			itemOption2.getOptionPrice(), category1.getName(), null);
+			itemOption2.getDescription(), item2.getName(), item2.getBasePrice(),
+			itemOption2.getOptionPrice(), itemOption2.getStockQuantity(), category1.getName(),
+			MINIO_PREFIX + "/" + item2.getThumbnail());
 
 		given(cartRepository.findAllByMemberId(memberId)).willReturn(List.of(cartDto1, cartDto2));
-		given(itemOptionRepository.findWithItemAndCategoryAndImageByItemIdListAndIdList(List.of(cartDto1, cartDto2)))
+		given(itemOptionRepository.findAllByItemIdsAndItemOptionIds(List.of(cartDto1, cartDto2)))
 			.willReturn(List.of(itemOption1, itemOption2));
 
 		// when
@@ -161,5 +180,21 @@ class CartServiceTest {
 
 		// then
 		then(cartRepository).should().delete(memberId, cartDto);
+	}
+
+	@Test
+	@DisplayName("장바구니에서 담긴 정보들 여러개를 삭제한다")
+	void given_SavedItems_when_deleteCartList_then_return_void() {
+		// given
+		final CartDto cartDto1 = new CartDto(itemId, itemOptionId, orderCount);
+		final CartDto cartDto2 = new CartDto(itemId, itemOptionId, orderCount);
+		final CartDto cartDto3 = new CartDto(itemId, itemOptionId, orderCount);
+		willDoNothing().given(cartRepository).deleteAll(memberId, List.of(cartDto1, cartDto2, cartDto3));
+
+		// when
+		cartService.deleteCartList(memberId, List.of(cartDto1, cartDto2, cartDto3));
+
+		// then
+		then(cartRepository).should().deleteAll(memberId, List.of(cartDto1, cartDto2, cartDto3));
 	}
 }

@@ -9,6 +9,7 @@ public record MemberResponse(
 	String phoneNumber,
 	String name,
 	MemberRole role,
-	MemberGrade grade
+	MemberGrade grade,
+	String profileImageUrl
 ) {
 }

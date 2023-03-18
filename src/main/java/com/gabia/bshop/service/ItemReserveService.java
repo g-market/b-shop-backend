@@ -33,8 +33,14 @@ public class ItemReserveService {
 	}
 
 	@Transactional
-	public ItemReservationResponse createItemReservation(final Long itemId) {
+	public ItemReservationResponse createItemReservation(final Long itemId,
+		final ReservationUpdateRequest reservationUpdateRequest) {
+
 		final Item item = findItemById(itemId);
+		final LocalDateTime openAt = reservationUpdateRequest.openAt();
+
+		reservationTimeValid(openAt);
+		item.setOpenAt(openAt);
 
 		item.setItemStatus(ItemStatus.RESERVED);
 
@@ -49,12 +55,8 @@ public class ItemReserveService {
 
 		final LocalDateTime openAt = reservationUpdateRequest.openAt();
 
-		//현재시점보다 이전 시점인지 validate
-		if (openAt.isAfter(LocalDateTime.now())) {
-			reservation.getItem().setOpenAt(openAt);
-		} else {
-			throw new ConflictException(RESERVATION_TIME_NOT_VALID_EXCEPTION, openAt);
-		}
+		reservationTimeValid(openAt);
+		reservation.getItem().setOpenAt(openAt);
 
 		return ItemReservationMapper.INSTANCE.reservationToResponse(reservation);
 	}
@@ -76,4 +78,11 @@ public class ItemReserveService {
 			() -> new NotFoundException(ITEM_NOT_FOUND_EXCEPTION, itemId)
 		);
 	}
+
+	private void reservationTimeValid(final LocalDateTime openAt) {
+		if (openAt.isBefore(LocalDateTime.now())) {
+			throw new ConflictException(RESERVATION_TIME_NOT_VALID_EXCEPTION, openAt);
+		}
+	}
+
 }

@@ -5,13 +5,14 @@ import static com.gabia.bshop.exception.ErrorCode.*;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.gabia.bshop.dto.CategoryDto;
 import com.gabia.bshop.dto.request.CategoryCreateRequest;
 import com.gabia.bshop.dto.request.CategoryUpdateRequest;
+import com.gabia.bshop.dto.response.CategoryAllInfoResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.entity.Item;
 import com.gabia.bshop.exception.ConflictException;
@@ -20,44 +21,54 @@ import com.gabia.bshop.mapper.CategoryMapper;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.repository.ItemRepository;
 
-import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 @Service
 public class CategoryService {
 
 	private final CategoryRepository categoryRepository;
 	private final ItemRepository itemRepository;
 
-	//카테고리 단건 조회
 	public CategoryDto findCategory(final Long categoryId) {
 		final Category category = findCategoryById(categoryId);
-
+		if (category.isDeleted()) {
+			throw new NotFoundException(CATEGORY_NOT_FOUND_EXCEPTION, category.getId());
+		}
 		return CategoryMapper.INSTANCE.categoryToDto(category);
 	}
 
-	//카테고리 목록 조회
 	public Page<CategoryDto> findCategoryList(final Pageable pageable) {
-		final Page<Category> categoryPage = categoryRepository.findAll(pageable);
-		return new PageImpl<>(categoryPage.stream().map(CategoryMapper.INSTANCE::categoryToDto).toList());
+		return categoryRepository.findCategoryList(pageable).map(CategoryMapper.INSTANCE::categoryToDto);
 	}
 
-	//카테고리 생성
+	public CategoryAllInfoResponse findCategoryWithDeleted(final Long categoryId) {
+		final Category category = findCategoryById(categoryId);
+		return CategoryMapper.INSTANCE.categoryToCategoryAllInfoResponse(category);
+	}
+
+	public Page<CategoryAllInfoResponse> findCategoryListWithDeleted(final Pageable pageable) {
+		return categoryRepository.findCategoryListWithDeleted(pageable)
+			.map(CategoryMapper.INSTANCE::categoryToCategoryAllInfoResponse);
+	}
+
+	@Transactional
 	public CategoryDto createCategory(final CategoryCreateRequest categoryCreateRequest) {
+		existCategoryByName(categoryCreateRequest.name());
 		Category category = CategoryMapper.INSTANCE.CategoryRequestToEntity(categoryCreateRequest);
 		return CategoryMapper.INSTANCE.categoryToDto(categoryRepository.save(category));
 	}
 
-	//카테고리 수정
+	@Transactional
 	public CategoryDto updateCategory(final CategoryUpdateRequest categoryUpdateRequest) {
+		existCategoryByName(categoryUpdateRequest.name());
 		final Category category = findCategoryById(categoryUpdateRequest.id());
 		category.update(categoryUpdateRequest);
 		return CategoryMapper.INSTANCE.categoryToDto(category);
 	}
 
-	//카테고리 삭제
+	@Transactional
 	public void deleteCategory(final Long categoryId) {
 		final Category category = findCategoryById(categoryId);
 		validateDeleteCategoryById(categoryId);
@@ -65,9 +76,20 @@ public class CategoryService {
 		categoryRepository.delete(category);
 	}
 
+	public List<String> findCategoryNames() {
+		return categoryRepository.findCategoryNames();
+	}
+
 	private Category findCategoryById(final Long categoryId) {
 		return categoryRepository.findById(categoryId)
 			.orElseThrow(() -> new NotFoundException(CATEGORY_NOT_FOUND_EXCEPTION, categoryId));
+	}
+
+	private void existCategoryByName(final String categoryName) {
+		final boolean isExistCategoryName = categoryRepository.existsByName(categoryName);
+		if (isExistCategoryName) {
+			throw new ConflictException(CATEGORY_NAME_UNIQUE_EXCEPTION, categoryName);
+		}
 	}
 
 	private void validateDeleteCategoryById(final Long categoryId) {
@@ -76,5 +98,4 @@ public class CategoryService {
 			throw new ConflictException(CATEGORY_ITEM_DELETE_EXCEPTION, categoryId);
 		}
 	}
-
 }
