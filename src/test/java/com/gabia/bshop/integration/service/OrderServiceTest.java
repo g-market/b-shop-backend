@@ -10,6 +10,7 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -74,6 +75,9 @@ class OrderServiceTest {
 
 	@Autowired
 	private ImageDefaultProperties imageDefaultProperties;
+
+	@Value("${minio.prefix}")
+	private String minioPrefix;
 
 	@DisplayName("주문을_한_회원이_주문목록_조회를_수행하면_주문내역들이_조회되어야한다")
 	@Test
@@ -182,21 +186,21 @@ class OrderServiceTest {
 			new OrderSearchConditions(null, null));
 		//then
 		Assertions.assertThat(orderInfoList.getTotalElements()).isEqualTo(2);
-		Assertions.assertThat(orderInfoList.getContent().get(0).orderId()).isEqualTo(order1.getId());
+		Assertions.assertThat(orderInfoList.getContent().get(0).orderId()).isEqualTo(order2.getId());
 		Assertions.assertThat(orderInfoList.getContent().get(0).itemThumbnail())
-			.contains(itemImage1.getImageName());
+			.contains(minioPrefix + "/" + itemImage1.getImageName());
 		Assertions.assertThat(orderInfoList.getContent().get(0).itemName())
 			.isEqualTo(item1.getName());
-		Assertions.assertThat(orderInfoList.getContent().get(0).itemTotalCount()).isEqualTo(1);
+		Assertions.assertThat(orderInfoList.getContent().get(0).itemTotalCount()).isEqualTo(2);
 		Assertions.assertThat(orderInfoList.getContent().get(0).orderStatus())
 			.isEqualTo(order1.getStatus());
 
-		Assertions.assertThat(orderInfoList.getContent().get(1).orderId()).isEqualTo(order2.getId());
+		Assertions.assertThat(orderInfoList.getContent().get(1).orderId()).isEqualTo(order1.getId());
 		Assertions.assertThat(orderInfoList.getContent().get(1).itemThumbnail())
 			.contains(item1.getThumbnail());
 		Assertions.assertThat(orderInfoList.getContent().get(1).itemName())
 			.contains(item2.getName());
-		Assertions.assertThat(orderInfoList.getContent().get(1).itemTotalCount()).isEqualTo(2);
+		Assertions.assertThat(orderInfoList.getContent().get(1).itemTotalCount()).isEqualTo(1);
 		Assertions.assertThat(orderInfoList.getContent().get(1).orderStatus())
 			.isEqualTo(order2.getStatus());
 	}
@@ -500,13 +504,13 @@ class OrderServiceTest {
 			pageable);
 		//then
 		Assertions.assertThat(orderInfoList.getTotalElements()).isEqualTo(2);
-		Assertions.assertThat(orderInfoList.getContent().get(0).orderId()).isEqualTo(order1.getId());
-		Assertions.assertThat(orderInfoList.getContent().get(0).itemTotalCount()).isEqualTo(1);
+		Assertions.assertThat(orderInfoList.getContent().get(0).orderId()).isEqualTo(order2.getId());
+		Assertions.assertThat(orderInfoList.getContent().get(0).itemTotalCount()).isEqualTo(2);
 		Assertions.assertThat(orderInfoList.getContent().get(0).orderStatus()).isEqualTo(order1.getStatus());
-		Assertions.assertThat(orderInfoList.getContent().get(0).itemThumbnail()).contains(item1.getThumbnail());
-		Assertions.assertThat(orderInfoList.getContent().get(1).itemThumbnail()).contains(item2.getThumbnail());
-		Assertions.assertThat(orderInfoList.getContent().get(1).orderId()).isEqualTo(order2.getId());
-		Assertions.assertThat(orderInfoList.getContent().get(1).itemTotalCount()).isEqualTo(2);
-		Assertions.assertThat(orderInfoList.getContent().get(1).orderStatus()).isEqualTo(order2.getStatus());
+		Assertions.assertThat(orderInfoList.getContent().get(0).itemThumbnail()).contains(item2.getThumbnail());
+		Assertions.assertThat(orderInfoList.getContent().get(1).itemThumbnail()).contains(item1.getThumbnail());
+		Assertions.assertThat(orderInfoList.getContent().get(1).orderId()).isEqualTo(order1.getId());
+		Assertions.assertThat(orderInfoList.getContent().get(1).itemTotalCount()).isEqualTo(1);
+		Assertions.assertThat(orderInfoList.getContent().get(1).orderStatus()).isEqualTo(order1.getStatus());
 	}
 }
