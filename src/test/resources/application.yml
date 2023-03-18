@@ -4,23 +4,30 @@ spring:
   datasource:
     driver-class-name: org.testcontainers.jdbc.ContainerDatabaseDriver
     url: jdbc:tc:mysql:8.0.31://testDB
+  #    hikari:
+  #      maximum-pool-size: 20
+  #      connection-timeout: 30000
   jpa:
     hibernate:
       ddl-auto: create
     properties:
       hibernate:
-        format_sql: true
+        #        format_sql: true
         default_batch_fetch_size: 100
       jakarta:
         persistence:
           sharedCache:
             mode: ALL
-    show-sql: true
+    #    show-sql: true
     open-in-view: false
 
-logging:
-  level:
-    org.hibernate.SQL: debug
+#logging:
+#  level:
+#    org.hibernate.SQL: debug
+#    com.zaxxer.hikari: trace
+#    com.zaxxer.hikari.HikariConfig: debug
+#    org.hibernate.orm.jdbc.bind: trace
+#    org.springframework.jdbc.core: trace
 
 ---
 server:
@@ -29,6 +36,9 @@ server:
   prod:
     domain: https://b-shop.com
     url: https://123.456.789.1
+  default:
+    profile-image-url: default-profile-image.png
+    item-image-url: default-item-image.png
 
 cart:
   expired-time: 86400000
@@ -48,8 +58,7 @@ token:
 
 minio:
   endpoint: http://localhost:9000
+  prefix: http://localhost:9000/images
   user: minio
   password: minio1234
   bucket: images
-  default:
-    image: http://localhost:9000/images/No_Image.jpg

@@ -8,6 +8,8 @@ import com.gabia.bshop.dto.ItemImageDto;
 import com.gabia.bshop.dto.ItemOptionDto;
 import com.gabia.bshop.entity.enumtype.ItemStatus;
 
+import lombok.Builder;
+
 /**
  * Item 에 관련된 상세 정보
  * Item 조회 시 사용
@@ -16,8 +18,9 @@ import com.gabia.bshop.entity.enumtype.ItemStatus;
  * Option list entity
  * ItemImage list entity
  **/
+@Builder
 public record ItemResponse(
-	Long id,
+	Long itemId,
 	List<ItemOptionDto> itemOptionDtoList,
 	List<ItemImageDto> itemImageDtoList,
 	CategoryDto categoryDto,
@@ -28,5 +31,4 @@ public record ItemResponse(
 	ItemStatus itemStatus,
 	Integer year,
 	LocalDateTime openAt) {
-
 }

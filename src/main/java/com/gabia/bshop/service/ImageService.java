@@ -8,7 +8,6 @@ import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.gabia.bshop.dto.response.ImageResponse;
@@ -20,19 +19,17 @@ import io.minio.PutObjectArgs;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
 public class ImageService {
 
+	private static final int MAX_IMAGE_UPLOAD_COUNT = 10;
 	private final MinioClient minioClient;
 	@Value("${minio.bucket}")
 	private String bucketName;
-	@Value("${minio.endpoint}")
-	private String endpoint;
-	private static final int MAX_IMAGE_UPLOAD_COUNT = 10;
+	@Value("${minio.prefix}")
+	private String imageServerPrefix;
 
 	public List<ImageResponse> uploadImage(final MultipartFile[] fileList) {
-
 		if (fileList.length > MAX_IMAGE_UPLOAD_COUNT) {
 			throw new ConflictException(MAX_FILE_UPLOAD_REQUEST_EXCEPTION, MAX_IMAGE_UPLOAD_COUNT);
 		}
@@ -52,7 +49,7 @@ public class ImageService {
 
 				imageResponseList.add(ImageResponse.builder()
 					.fileName(file.getOriginalFilename())
-					.url(endpoint + "/" + bucketName + "/" + fileName).build()
+					.url(imageServerPrefix + "/" + fileName).build()
 				);
 			}
 		} catch (Exception e) {
@@ -60,6 +57,5 @@ public class ImageService {
 		}
 
 		return imageResponseList;
-
 	}
 }

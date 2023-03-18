@@ -19,7 +19,8 @@ class LocalHiworksOauthClientTest {
 	final String adminAuthCode = "admin01authCodeauthCodeauthCodeauthCode";
 
 	@Test
-	void accessToken은_authCode의_접두사_기준으로_생성한다() {
+	@DisplayName("accessToken은_authCode의_접두사_기준으로_생성한다")
+	void given_access_token_when_getProfileUsingAccessToken_then_return_normalMemberProfile() {
 		// when & then
 		assertAll(
 			() -> assertThat(localHiworksOauthClient.getAccessToken(normalAuthCode))

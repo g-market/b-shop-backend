@@ -14,7 +14,7 @@ public interface HiworksProfileMapper {
 	HiworksProfileMapper INSTANCE = Mappers.getMapper(HiworksProfileMapper.class);
 	String EMAIL_PROVIDER = "@gabia.com";
 
-	default Member toNormalMember(HiworksProfileResponse hiworksProfileResponse) {
+	default Member hiworksProfileResponseToMember(HiworksProfileResponse hiworksProfileResponse) {
 		return Member.builder()
 			.email(hiworksProfileResponse.email() + EMAIL_PROVIDER)
 			.name(hiworksProfileResponse.name())

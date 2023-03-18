@@ -11,12 +11,14 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.gabia.bshop.config.ImageDefaultProperties;
 import com.gabia.bshop.dto.response.AdminLoginResponse;
 import com.gabia.bshop.dto.response.HiworksProfileResponse;
 import com.gabia.bshop.dto.response.IssuedTokensResponse;
@@ -27,7 +29,7 @@ import com.gabia.bshop.exception.ForbiddenException;
 import com.gabia.bshop.exception.UnAuthorizedException;
 import com.gabia.bshop.exception.UnAuthorizedRefreshTokenException;
 import com.gabia.bshop.mapper.HiworksProfileMapper;
-import com.gabia.bshop.mapper.MemberResponseMapper;
+import com.gabia.bshop.mapper.MemberMapper;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.RefreshTokenRepository;
 import com.gabia.bshop.security.RefreshToken;
@@ -52,9 +54,12 @@ class AuthServiceTest {
 	private RefreshTokenProvider refreshTokenProvider;
 	@Mock
 	private RefreshTokenRepository refreshTokenRepository;
+	@Mock
+	private ImageDefaultProperties imageDefaultProperties;
 
 	@Test
-	void 하이웍스_인증_코드가_들어왔을때_회원정보가_없으면_회원정보를_저장하고_회원정보와_토큰을_반환한다() {
+	@DisplayName("하이웍스 인증 코드가 들어왔을 때 회원정보가 없으면 회원 정보를 저장하고 회원 정보와 토큰을 반환한다")
+	void given_authCodeAndFirst_when_login_then_return_loginResult() {
 		// given
 		final String authCode = "authCode";
 		final String accessToken = "accessToken";
@@ -70,13 +75,15 @@ class AuthServiceTest {
 			.willReturn(hiworksProfileResponse);
 		given(memberRepository.findByHiworksId(hiworksProfileResponse.hiworksId()))
 			.willReturn(Optional.empty());
-		given(memberRepository.save(HiworksProfileMapper.INSTANCE.toNormalMember(hiworksProfileResponse)))
+		given(
+			memberRepository.save(HiworksProfileMapper.INSTANCE.hiworksProfileResponseToMember(hiworksProfileResponse)))
 			.willReturn(member);
 		given(jwtProvider.createAccessToken(member.getId(), member.getRole()))
 			.willReturn(applicationToken);
 		given(refreshTokenProvider.createToken(memberId))
 			.willReturn(refreshToken);
 		given(refreshTokenRepository.save(refreshToken)).willReturn(refreshToken);
+		given(imageDefaultProperties.getProfileImageUrl()).willReturn("http://b-shop.com/profile/me");
 
 		// when
 		final LoginResult loginResult = authService.login(authCode);
@@ -84,12 +91,14 @@ class AuthServiceTest {
 		// then
 		assertAll(
 			() -> assertThat(loginResult.accessToken()).isEqualTo(applicationToken),
-			() -> assertThat(loginResult.memberResponse()).isEqualTo(MemberResponseMapper.INSTANCE.from(member)),
+			() -> assertThat(loginResult.memberResponse()).isEqualTo(
+				MemberMapper.INSTANCE.memberToMemberResponse(member)),
 			() -> assertThat(loginResult.refreshToken()).isEqualTo(refreshTokenValue),
 			() -> verify(hiworksOauthClient).getAccessToken(authCode),
 			() -> verify(hiworksOauthClient).getProfile(accessToken),
 			() -> verify(memberRepository).findByHiworksId(hiworksProfileResponse.hiworksId()),
-			() -> verify(memberRepository).save(HiworksProfileMapper.INSTANCE.toNormalMember(hiworksProfileResponse)),
+			() -> verify(memberRepository).save(
+				HiworksProfileMapper.INSTANCE.hiworksProfileResponseToMember(hiworksProfileResponse)),
 			() -> verify(jwtProvider).createAccessToken(memberId, member.getRole()),
 			() -> verify(refreshTokenProvider).createToken(memberId),
 			() -> verify(refreshTokenRepository).save(refreshToken)
@@ -97,7 +106,8 @@ class AuthServiceTest {
 	}
 
 	@Test
-	void 하이웍스_인증코드가_들어왔을때_회원정보가_있으면_이름을_업데이트하고_회원정보와_토큰을_반환한다() {
+	@DisplayName("하이웍스 인증코드가 들어왔을때 회원정보가 있으면 이름을 업데이트하고 회원정보와 토큰을 반환한다")
+	void given_authCode_when_login_then_return_loginResult() {
 		// given
 		final String authCode = "authCode";
 		final String accessToken = "accessToken";
@@ -118,6 +128,7 @@ class AuthServiceTest {
 		given(refreshTokenProvider.createToken(memberId))
 			.willReturn(refreshToken);
 		given(refreshTokenRepository.save(refreshToken)).willReturn(refreshToken);
+		given(imageDefaultProperties.getProfileImageUrl()).willReturn("http://b-shop.com/profile/me");
 
 		// when
 		final LoginResult loginResult = authService.login(authCode);
@@ -125,7 +136,8 @@ class AuthServiceTest {
 		// then
 		assertAll(
 			() -> assertThat(loginResult.accessToken()).isEqualTo(applicationToken),
-			() -> assertThat(loginResult.memberResponse()).isEqualTo(MemberResponseMapper.INSTANCE.from(member)),
+			() -> assertThat(loginResult.memberResponse()).isEqualTo(
+				MemberMapper.INSTANCE.memberToMemberResponse(member)),
 			() -> verify(hiworksOauthClient).getAccessToken(authCode),
 			() -> verify(hiworksOauthClient).getProfile(accessToken),
 			() -> verify(memberRepository).findByHiworksId(hiworksProfileResponse.hiworksId()),
@@ -136,22 +148,23 @@ class AuthServiceTest {
 	}
 
 	@Test
-	void 하이웍스_코드가_들어왔을때_회원정보가_있고_어드민_계정이면_어드민_로그인을_진행하고_토큰을_반환한다() {
+	@DisplayName("하이웍스 코드가 들어왔을때 회원정보가 있고 어드민 계정이면 어드민 로그인을 진행하고 토큰을 반환한다")
+	void given_authCode_when_loginAdmin_then_return_adminLoginResponse() {
 		// given
 		final String authCode = "authCode";
 		final String accessToken = "accessToken";
 		final String applicationToken = "applicationToken";
 
 		HiworksProfileResponse hiworksProfileResponse = AIDEN.hiworksProfileResponse();
-		Member ADMIN = AIDEN.getInstance(memberId);
+		Member administer = AIDEN.getInstance(memberId);
 
 		given(hiworksOauthClient.getAccessToken(authCode))
 			.willReturn(accessToken);
 		given(hiworksOauthClient.getProfile(accessToken))
 			.willReturn(hiworksProfileResponse);
 		given(memberRepository.findByHiworksId(hiworksProfileResponse.hiworksId()))
-			.willReturn(Optional.of(ADMIN));
-		given(jwtProvider.createAccessToken(ADMIN.getId(), ADMIN.getRole()))
+			.willReturn(Optional.of(administer));
+		given(jwtProvider.createAccessToken(administer.getId(), administer.getRole()))
 			.willReturn(applicationToken);
 
 		// when
@@ -163,12 +176,13 @@ class AuthServiceTest {
 			() -> verify(hiworksOauthClient).getAccessToken(authCode),
 			() -> verify(hiworksOauthClient).getProfile(accessToken),
 			() -> verify(memberRepository).findByHiworksId(hiworksProfileResponse.hiworksId()),
-			() -> verify(jwtProvider).createAccessToken(memberId, ADMIN.getRole())
+			() -> verify(jwtProvider).createAccessToken(memberId, administer.getRole())
 		);
 	}
 
 	@Test
-	void 하이웍스_코드가_들어왔을때_하이웍스_유저이지만_어드민이_아닌경우_어드민_로그인을_실패하고_예외가_발생한다() {
+	@DisplayName("하이웍스 코드가 들어왔을때 하이웍스 유저이지만 어드민이 아닌경우 어드민 로그인을 실패하고 예외가 발생한다")
+	void given_authCodeAndNotAdmin_when_loginAdmin_then_throw_exception() {
 		// given
 		final String authCode = "authCode";
 		final String accessToken = "accessToken";
@@ -194,7 +208,8 @@ class AuthServiceTest {
 	}
 
 	@Test
-	void 유효한_리프레시_토큰으로_액세스_토큰을_발급한다() {
+	@DisplayName("유효한 리프레시 토큰으로 액세스 토큰을 발급한다")
+	void given_validRefreshToken_when_issueAccessToken_then_return_IssuedTokenResponse() {
 		// given
 		String refreshTokenValue = "validRefreshToken";
 		String newAccessTokenValue = "newAccessToken";
@@ -231,7 +246,8 @@ class AuthServiceTest {
 	}
 
 	@Test
-	void 저장되어_있지않은_리프레시_토큰으로_액세스_토큰_발급하려할_경우_예외_발생한다() {
+	@DisplayName("저장되어 있지않은 리프레시 토큰으로 액세스 토큰 발급하려할 경우 예외 발생한다")
+	void given_NotSavedRefreshToken_when_issueAccessToken_then_throw_exception() {
 		// given
 		given(refreshTokenRepository.findToken(any()))
 			.willThrow(new UnAuthorizedException(REFRESH_TOKEN_NOT_FOUND_EXCEPTION));
@@ -242,7 +258,8 @@ class AuthServiceTest {
 	}
 
 	@Test
-	void 만료된_리프레시_토큰으로_액세스_토큰_발급하려할_경우_예외_발생한다() {
+	@DisplayName("만료된 리프레시 토큰으로 액세스 토큰 발급하려할 경우 예외 발생한다")
+	void given_ExpiredRefreshToken_when_issueAccessToken_then_throw_exception() {
 		// given
 		String refreshTokenValue = "refreshToken";
 		LocalDateTime expiredDate = LocalDateTime.now().minusDays(1);

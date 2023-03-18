@@ -14,7 +14,7 @@ variables:
 
 .push_rules:
   rules:
-    - if : '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == "main"'
+    - if : '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == "develop"'
 
 test:
   rules:
@@ -33,7 +33,7 @@ test:
     - name: docker:dind
   script:
     - ./gradlew test
-  coverage: '/ - Instruction Coverage: ([0-9.]+)%/'
+  coverage: '/    - Instruction Coverage: ([0-9.]+)%/'
   artifacts:
     paths:
       - build/reports/jacoco/test/jacoco*.xml

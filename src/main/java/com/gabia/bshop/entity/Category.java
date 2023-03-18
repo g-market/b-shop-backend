@@ -32,7 +32,7 @@ public class Category extends BaseEntity {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@Column(columnDefinition = "varchar(255)", unique = true, nullable = false)
+	@Column(unique = true, nullable = false)
 	private String name;
 
 	@Column(nullable = false)

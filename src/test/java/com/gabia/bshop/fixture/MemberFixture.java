@@ -9,21 +9,21 @@ import com.gabia.bshop.entity.enumtype.MemberRole;
 public enum MemberFixture {
 
 	JAIME("jaime@gabia.com", "01011112222", "제이미", MemberRole.NORMAL,
-		MemberGrade.GOLD, "jaime"),
+		MemberGrade.GOLD, "jaime", "default-profile-image.png"),
 	SUMMER("summer@gabia.com", "01022223333", "썸머", MemberRole.NORMAL,
-		MemberGrade.PLATINUM, "summer"),
+		MemberGrade.PLATINUM, "summer", "default-profile-image.png"),
 
 	JENNA("jenna@gabia.com", "01033334444", "제나", MemberRole.NORMAL,
-		MemberGrade.PLATINUM, "jenna"),
+		MemberGrade.PLATINUM, "jenna", "default-profile-image.png"),
 
 	BECKER("becker@gabia.com", "01044445555", "벡커", MemberRole.NORMAL,
-		MemberGrade.PLATINUM, "becker"),
+		MemberGrade.PLATINUM, "becker", "default-profile-image.png"),
 
 	AIDEN("aiden@gabia.com", "01055556666", "에이든", MemberRole.ADMIN,
-		MemberGrade.PLATINUM, "aiden"),
+		MemberGrade.PLATINUM, "aiden", "default-profile-image.png"),
 
 	ENDO("endo@gabia.com", "01066667777", "엔도", MemberRole.ADMIN,
-		MemberGrade.PLATINUM, "endo");
+		MemberGrade.PLATINUM, "endo", "default-profile-image.png");
 
 	private final String email;
 	private final String phoneNumber;
@@ -31,15 +31,18 @@ public enum MemberFixture {
 	private final MemberRole memberRole;
 	private final MemberGrade memberGrade;
 	private final String hiworksId;
+	private final String profileImageUrl;
 
 	MemberFixture(final String email, final String phoneNumber, final String name,
-		final MemberRole memberRole, final MemberGrade memberGrade, final String hiworksId) {
+		final MemberRole memberRole, final MemberGrade memberGrade, final String hiworksId,
+		final String profileImageUrl) {
 		this.email = email;
 		this.phoneNumber = phoneNumber;
 		this.name = name;
 		this.memberRole = memberRole;
 		this.memberGrade = memberGrade;
 		this.hiworksId = hiworksId;
+		this.profileImageUrl = profileImageUrl;
 	}
 
 	public Member getInstance() {
@@ -58,7 +61,8 @@ public enum MemberFixture {
 			.name(name)
 			.role(memberRole)
 			.grade(memberGrade)
-			.hiworksId(hiworksId);
+			.hiworksId(hiworksId)
+			.profileImageUrl(profileImageUrl);
 	}
 
 	public HiworksProfileResponse hiworksProfileResponse() {

@@ -2,11 +2,9 @@ package com.gabia.bshop.util;
 
 import static com.gabia.bshop.exception.ErrorCode.*;
 
-import org.apache.commons.validator.routines.UrlValidator;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.gabia.bshop.exception.BadRequestException;
 import com.gabia.bshop.exception.InternalServerException;
 
 import io.minio.MinioClient;
@@ -18,16 +16,10 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class ImageValidator {
 	private final MinioClient minioClient;
-	private final UrlValidator urlValidator;
 	@Value("${minio.bucket}")
 	private String bucketName;
 
-	public boolean validate(final String imageUrl) {
-		if (!urlValidator.isValid(imageUrl)) {
-			throw new BadRequestException(INCORRECT_URL_EXCEPTION);
-		}
-
-		final String imageName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+	public boolean validate(final String imageName) {
 		try {
 			minioClient.statObject(StatObjectArgs.builder()
 				.bucket(bucketName)
