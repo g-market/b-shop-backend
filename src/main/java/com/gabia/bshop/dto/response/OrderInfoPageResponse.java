@@ -6,18 +6,17 @@ import java.util.List;
 import com.gabia.bshop.dto.OrderItemDto;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
 
-public record OrderInfoPageResponse(
-	int resultCount,
-	List<OrderInfo> orderInfoList) {
+import lombok.Builder;
 
-	public record OrderInfo(
-		Long orderId,
-		List<OrderItemDto> orderItemDtoList,
-		String thumbnailImage,
-		String representativeName,
-		int itemTotalCount,
-		OrderStatus orderStatus,
-		long totalPrice,
-		LocalDateTime createdAt) {
-	}
+@Builder
+public record OrderInfoPageResponse(
+	Long orderId,
+	List<OrderItemDto> orderItemDtoList,
+	String itemThumbnail,
+	String itemName,
+	int itemTotalCount,
+	OrderStatus orderStatus,
+	long totalPrice,
+	LocalDateTime createdAt
+) {
 }

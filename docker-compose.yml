@@ -7,11 +7,12 @@ services:
     image: redis:6.2.7
     environment:
       - TZ=Asia/Seoul
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
     ports:
       - ${REDIS_PORT}:6379
     volumes:
       - ./redis/redis.conf:/usr/local/etc/redis/redis.conf
-    command: redis-server /usr/local/etc/redis/redis.conf
+    command: redis-server /usr/local/etc/redis/redis.conf --requirepass ${REDIS_PASSWORD}
   b-shop-database:
     container_name: b-shop-database
     image: mysql:8.0.31
@@ -42,7 +43,7 @@ services:
       - b-shop-minio
     entrypoint: >
       /bin/sh -c "
-      mc config host add minio http://b-shop-minio:${MINIO_WEB_PORT} ${MINIO_USER} ${MINIO_PASSWORD};
+      mc config host add minio http://b-shop-minio:${MINIO_PORT} ${MINIO_USER} ${MINIO_PASSWORD};
       mc mb minio/${MINIO_BUCKET};
       mc anonymous set public minio/${MINIO_BUCKET};
       "

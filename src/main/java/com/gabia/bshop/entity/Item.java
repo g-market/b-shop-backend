@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 import org.hibernate.envers.AuditJoinTable;
 import org.hibernate.envers.Audited;
 
@@ -36,7 +35,6 @@ import lombok.ToString;
 @ToString(exclude = {"category"})
 @Getter
 @SQLDelete(sql = "update item set deleted = true where id = ?")
-@Where(clause = "deleted = false")
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(
 	name = "item",
@@ -71,7 +69,7 @@ public class Item extends BaseEntity {
 	@Column(nullable = false)
 	private boolean deleted;
 
-	@Column
+	@Column(nullable = false)
 	private String thumbnail;
 
 	@Column(columnDefinition = "smallint", nullable = false)
@@ -86,26 +84,29 @@ public class Item extends BaseEntity {
 	private List<ItemImage> itemImageList = new ArrayList<>();
 
 	@Builder
-	private Item(
-		final Long id,
-		final String name,
-		final Category category,
-		final String description,
-		final int basePrice,
-		final ItemStatus itemStatus,
-		final int year,
-		final LocalDateTime openAt,
-		final String thumbnail) {
+	public Item(final Long id, final Category category, final String name, final String description,
+		final int basePrice, final ItemStatus itemStatus,
+		final LocalDateTime openAt, final String thumbnail, final int year) {
 		this.id = id;
-		this.name = name;
 		this.category = category;
+		this.name = name;
 		this.description = description;
 		this.basePrice = basePrice;
 		this.itemStatus = itemStatus;
 		this.openAt = openAt;
-		this.year = year;
 		this.deleted = false;
 		this.thumbnail = thumbnail;
+		this.year = year;
+	}
+
+	public void update(final ItemUpdateRequest itemUpdateRequest, final Category category) {
+		updateName(itemUpdateRequest.name());
+		updatePrice(itemUpdateRequest.basePrice());
+		updateDescription(itemUpdateRequest.description());
+		setOpenAt(itemUpdateRequest.openAt());
+		setItemStatus(itemUpdateRequest.itemStatus());
+		updateYear(itemUpdateRequest.year());
+		updateCategory(category);
 	}
 
 	private void updateName(final String name) {
@@ -114,80 +115,58 @@ public class Item extends BaseEntity {
 		}
 	}
 
-	private void updatePrice(Integer basePrice) {
+	private void updatePrice(final Integer basePrice) {
 		if (basePrice != null) {
 			this.basePrice = basePrice;
 		}
 	}
 
-	private void updateDescription(String description) {
+	private void updateDescription(final String description) {
 		if (description != null) {
 			this.description = description;
 		}
 	}
 
-	private void updateItemStatus(ItemStatus itemStatus) {
-		if (itemStatus != null) {
-			this.itemStatus = itemStatus;
-		}
-	}
-
-	private void updateYear(Integer year) {
+	private void updateYear(final Integer year) {
 		if (year != null) {
 			this.year = year;
 		}
 	}
 
-	private void updateOpenAt(LocalDateTime openAt) {
-		if (openAt != null) {
-			this.openAt = openAt;
-		}
-	}
-
-	private void updateCategory(Category category) {
+	private void updateCategory(final Category category) {
 		if (category != null) {
 			this.category = category;
 		}
 	}
 
-	public void update(final ItemUpdateRequest itemUpdateRequest, final Category category) {
-		updateName(itemUpdateRequest.name());
-		updatePrice(itemUpdateRequest.basePrice());
-		updateDescription(itemUpdateRequest.description());
-		updateOpenAt(itemUpdateRequest.openAt());
-		updateItemStatus(itemUpdateRequest.itemStatus());
-		updateYear(itemUpdateRequest.year());
-		updateCategory(category);
-	}
-
-	public void setThumbnail(ItemImage itemImage) {
-		if (itemImage != null) {
-			this.thumbnail = itemImage.getUrl();
+	public void updateThumbnail(final String thumbnail) {
+		if (thumbnail != null) {
+			this.thumbnail = thumbnail;
 		}
 	}
 
-	public void setItemStatus(ItemStatus itemStatus) {
+	public void setItemStatus(final ItemStatus itemStatus) {
 		if (itemStatus != null) {
 			this.itemStatus = itemStatus;
 		}
 	}
 
-	public void setOpenAt(LocalDateTime localDateTime) {
-		if (localDateTime != null) {
-			this.openAt = localDateTime;
+	public void setOpenAt(final LocalDateTime openAt) {
+		if (openAt != null) {
+			this.openAt = openAt;
 		}
 	}
 
-	public void addItemOption(ItemOption itemOption) {
+	public void addItemOption(final ItemOption itemOption) {
 		this.itemOptionList.add(itemOption);
 	}
 
-	public void addItemImage(ItemImage itemImage) {
+	public void addItemImage(final ItemImage itemImage) {
 		this.itemImageList.add(itemImage);
 	}
 
 	@Override
-	public boolean equals(Object that) {
+	public boolean equals(final Object that) {
 		if (this == that) {
 			return true;
 		}

@@ -5,9 +5,8 @@ import lombok.Builder;
 
 @Builder
 public record ItemImageDto(
-	@NotNull(message = "이미지 ID는 필수 입니다.")
-	Long id,
-
-	@NotNull(message = "url 은 필수 입니다.")
-	String url) {
+	@NotNull(message = "imageId는 필수 입니다.")
+	Long imageId,
+	@NotNull(message = "imageUrl은 필수 입니다.")
+	String imageUrl) {
 }

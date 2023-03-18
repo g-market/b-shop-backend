@@ -5,6 +5,7 @@ import static com.gabia.bshop.exception.ErrorCode.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.gabia.bshop.config.ImageDefaultProperties;
 import com.gabia.bshop.dto.response.AdminLoginResponse;
 import com.gabia.bshop.dto.response.HiworksProfileResponse;
 import com.gabia.bshop.dto.response.IssuedTokensResponse;
@@ -16,7 +17,7 @@ import com.gabia.bshop.exception.ForbiddenException;
 import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.exception.UnAuthorizedRefreshTokenException;
 import com.gabia.bshop.mapper.HiworksProfileMapper;
-import com.gabia.bshop.mapper.MemberResponseMapper;
+import com.gabia.bshop.mapper.MemberMapper;
 import com.gabia.bshop.repository.MemberRepository;
 import com.gabia.bshop.repository.RefreshTokenRepository;
 import com.gabia.bshop.security.RefreshToken;
@@ -38,6 +39,7 @@ public class AuthService {
 	private final JwtProvider jwtProvider;
 	private final RefreshTokenProvider refreshTokenProvider;
 	private final RefreshTokenRepository refreshTokenRepository;
+	private final ImageDefaultProperties imageDefaultProperties;
 
 	@Transactional
 	public LoginResult login(final String authCode) {
@@ -48,7 +50,7 @@ public class AuthService {
 			member.getRole());
 		final RefreshToken refreshToken = refreshTokenProvider.createToken(memberId);
 		refreshTokenRepository.save(refreshToken);
-		final MemberResponse memberResponse = MemberResponseMapper.INSTANCE.from(member);
+		final MemberResponse memberResponse = MemberMapper.INSTANCE.memberToMemberResponse(member);
 		return new LoginResult(refreshToken.refreshToken(), applicationAccessToken, memberResponse);
 	}
 
@@ -93,10 +95,12 @@ public class AuthService {
 	}
 
 	private Member addOrUpdateMember(final HiworksProfileResponse hiworksProfileResponse) {
-		final Member requestedMember = HiworksProfileMapper.INSTANCE.toNormalMember(hiworksProfileResponse);
+		final Member requestedMember = HiworksProfileMapper.INSTANCE
+			.hiworksProfileResponseToMember(hiworksProfileResponse);
+		requestedMember.setDefaultProfileImageUrl(imageDefaultProperties.getProfileImageUrl());
 		final Member member = memberRepository.findByHiworksId(hiworksProfileResponse.hiworksId())
 			.orElseGet(() -> memberRepository.save(requestedMember));
-		member.update(requestedMember);
+		member.updateEmailAndNameAndHiworksId(requestedMember);
 		return member;
 	}
 

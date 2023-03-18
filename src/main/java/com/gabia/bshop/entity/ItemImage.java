@@ -42,22 +42,22 @@ public class ItemImage extends BaseEntity {
 	private Item item;
 
 	@Column(nullable = false)
-	private String url;
+	private String imageName;
 
 	@Column(nullable = false)
 	private boolean deleted;
 
 	@Builder
-	private ItemImage(final Long id, final Item item, final String url) {
+	private ItemImage(final Long id, final Item item, final String imageName) {
 		this.id = id;
 		this.item = item;
-		this.url = url;
+		this.imageName = imageName;
 		this.deleted = false;
 	}
 
-	public void updateUrl(final String url) {
-		if (url != null) {
-			this.url = url;
+	public void updateImageName(final String imageName) {
+		if (imageName != null) {
+			this.imageName = imageName;
 		}
 	}
 

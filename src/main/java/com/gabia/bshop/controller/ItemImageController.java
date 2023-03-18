@@ -12,9 +12,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.gabia.bshop.dto.ItemImageDto;
 import com.gabia.bshop.dto.request.ItemImageCreateRequest;
+import com.gabia.bshop.dto.request.ItemImageUpdateRequest;
 import com.gabia.bshop.dto.request.ItemThumbnailUpdateRequest;
+import com.gabia.bshop.dto.response.ItemImageResponse;
 import com.gabia.bshop.dto.response.ItemResponse;
 import com.gabia.bshop.security.Login;
 import com.gabia.bshop.service.ItemImageService;
@@ -27,21 +28,23 @@ import lombok.RequiredArgsConstructor;
 public class ItemImageController {
 	private final ItemImageService itemImageService;
 
+	@Login
 	@GetMapping("/items/{itemId}/images/{imageId}")
-	public ResponseEntity<ItemImageDto> findItemImage(
+	public ResponseEntity<ItemImageResponse> findItemImage(
 		@PathVariable final Long itemId,
 		@PathVariable final Long imageId) {
 		return ResponseEntity.ok().body(itemImageService.findItemImage(itemId, imageId));
 	}
 
+	@Login
 	@GetMapping("/items/{itemId}/images")
-	public ResponseEntity<List<ItemImageDto>> findItemImageList(@PathVariable final Long itemId) {
+	public ResponseEntity<List<ItemImageResponse>> findItemImageList(@PathVariable final Long itemId) {
 		return ResponseEntity.ok().body(itemImageService.findItemImageList(itemId));
 	}
 
 	@Login(admin = true)
 	@PostMapping("/items/{itemId}/images")
-	public ResponseEntity<List<ItemImageDto>> createItemImageList(
+	public ResponseEntity<List<ItemImageResponse>> createItemImageList(
 		@PathVariable final Long itemId,
 		@RequestBody @Valid final ItemImageCreateRequest itemImageCreateRequest) {
 		return ResponseEntity.status(HttpStatus.CREATED)
@@ -50,10 +53,10 @@ public class ItemImageController {
 
 	@Login(admin = true)
 	@PatchMapping("/items/{itemId}/images")
-	public ResponseEntity<ItemImageDto> updateItemImage(
+	public ResponseEntity<ItemImageResponse> updateItemImage(
 		@PathVariable final Long itemId,
-		@RequestBody @Valid final ItemImageDto itemImageDto) {
-		return ResponseEntity.ok().body(itemImageService.updateItemImage(itemId, itemImageDto));
+		@RequestBody @Valid final ItemImageUpdateRequest itemImageUpdateRequest) {
+		return ResponseEntity.ok().body(itemImageService.updateItemImage(itemId, itemImageUpdateRequest));
 	}
 
 	@Login(admin = true)

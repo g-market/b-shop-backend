@@ -4,7 +4,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.gabia.bshop.dto.request.MemberUpdateRequest;
@@ -19,22 +18,20 @@ import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/members")
 public class MemberController {
 
 	private final MemberService memberService;
 
-	@GetMapping("/me")
 	@Login
-	public MemberResponse findLoggedInMember(@CurrentMember final MemberPayload memberPayload) {
-		return memberService.findLoggedInMember(memberPayload.id());
+	@GetMapping("/members/me")
+	public ResponseEntity<MemberResponse> findLoggedInMember(@CurrentMember final MemberPayload memberPayload) {
+		return ResponseEntity.ok(memberService.findLoggedInMember(memberPayload.id()));
 	}
 
-	@PatchMapping("/me")
 	@Login
-	public ResponseEntity<Void> updateLoggedInMember(@CurrentMember final MemberPayload memberPayload,
+	@PatchMapping("/members/me")
+	public ResponseEntity<MemberResponse> updateLoggedInMember(@CurrentMember final MemberPayload memberPayload,
 		@Valid @RequestBody final MemberUpdateRequest memberUpdateRequest) {
-		memberService.updateLoggedInMember(memberPayload.id(), memberUpdateRequest);
-		return ResponseEntity.ok().build();
+		return ResponseEntity.ok(memberService.updateLoggedInMember(memberPayload.id(), memberUpdateRequest));
 	}
 }

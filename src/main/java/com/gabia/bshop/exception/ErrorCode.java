@@ -34,7 +34,7 @@ public enum ErrorCode {
 	MEMBER_NOT_FOUND_EXCEPTION(NOT_FOUND, "hiworksId: {0}로 등록된 사용자가 존재하지 않습니다."),
 	ORDER_NOT_FOUND_EXCEPTION(NOT_FOUND, "orderId: {0}는 존재하지 않는 주문 ID 입니다."),
 	ITEM_NOT_FOUND_EXCEPTION(NOT_FOUND, "itemId: {0}는 존재하지 않는 아이템 입니다."),
-	ITEM_OPTION_NOT_FOUND_EXCEPTION(NOT_FOUND, "itemId: {0}의 optionId: {1} 를 찾을 수 없습니다."),
+	ITEM_OPTION_NOT_FOUND_EXCEPTION(NOT_FOUND, "itemId: {0}의 optionId: {1} 를 찾을 수 없습니다.(재고 부족)"),
 	CATEGORY_NOT_FOUND_EXCEPTION(NOT_FOUND, "categoryId: {0}는 존재하지 않는 카테고리 입니다."),
 	IMAGE_NOT_FOUND_EXCEPTION(NOT_FOUND, "imageId: {0}는 존재하지 않는 이미지 입니다."),
 	ITEM_IMAGE_NOT_FOUND_EXCEPTION(NOT_FOUND, "itemId: {0}의 imageId: {1} 를 찾을 수 없습니다."),
@@ -42,14 +42,15 @@ public enum ErrorCode {
 	ITEM_RESERVATION_NOT_FOUND_EXCEPTION(NOT_FOUND, "itemId : {0}에 대한 상품예약을 찾을 수 없습니다."),
 
 	// 409(Conflict)
-	ITEM_OPTION_OUT_OF_STOCK_EXCEPTION(CONFLICT, "상품의 재고가 부족합니다."),
-	ORDER_STATUS_ALREADY_COMPLETED_EXCEPTION(CONFLICT, "상품의 상태가 완료된 상태입니다."),
-	ORDER_STATUS_ALREADY_CANCELLED_EXCEPTION(CONFLICT, "상품의 상태가 취소된 상태입니다."),
+	ITEM_OPTION_OUT_OF_STOCK_EXCEPTION(CONFLICT, "itemOptionId: {0} 상품의 재고가 부족합니다.(현재 재고:{1})"),
+	ORDER_STATUS_ALREADY_CANCELLED_EXCEPTION(CONFLICT, "상품의 상태가 이미 취소된 상태입니다."),
+	ORDER_STATUS_ALREADY_UPDATED_EXCEPTION(CONFLICT, "상품의 상태가 이미 {0} 상태입니다."),
 	MAX_PAGE_ELEMENT_REQUEST_SIZE_EXCEPTION(CONFLICT, "한 페이지의 최대 {0}개까지 조회가 가능합니다."),
 	MAX_FILE_UPLOAD_REQUEST_EXCEPTION(CONFLICT, "한번에 최대 {0}개의 파일만 업로드 가능합니다"),
 	ITEM_STATUS_NOT_PUBLIC_EXCEPTION(CONFLICT, "현재 판매하지 않는 상품이 존재합니다."),
 	RESERVATION_TIME_NOT_VALID_EXCEPTION(CONFLICT, "예약시간: {0} 은 현재시간 이후의 시간이어야 합니다."),
 	CATEGORY_ITEM_DELETE_EXCEPTION(CONFLICT, "categoryId: {0}인 상품이 존재합니다."),
+	CATEGORY_NAME_UNIQUE_EXCEPTION(CONFLICT, "categoryName: {0}인 카테고리가 존재합니다."),
 	MAX_ITEM_OPTION_LIMITATION_EXCEPTION(CONFLICT, "최대로 등록할 수 있는 상품 옵션의 수는 {0}개 입니다."),
 	MAX_ITEM_IMAGE_LIMITATION_EXCEPTION(CONFLICT, "최대로 등록할 수 있는 상품 이미지의 수는 {0}개 입니다."),
 
