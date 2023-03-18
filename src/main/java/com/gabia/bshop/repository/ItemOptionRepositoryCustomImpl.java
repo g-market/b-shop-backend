@@ -73,8 +73,7 @@ public class ItemOptionRepositoryCustomImpl implements ItemOptionRepositoryCusto
 		return itemOptionId != null ? itemOption.id.eq(itemOptionId) : null;
 	}
 
-	private <T extends OrderItemAble> Expression[] searchItemIdAndItemOptionIdIn(
-		List<T> itemIdAndItemOptionIdList) {
+	private <T extends OrderItemAble> Expression[] searchItemIdAndItemOptionIdIn(List<T> itemIdAndItemOptionIdList) {
 		List<Expression<Object>> tuples = new ArrayList<>();
 		for (T cartDto : itemIdAndItemOptionIdList) {
 			tuples.add(Expressions.template(Object.class, "(({0}, {1}))", cartDto.itemId(), cartDto.itemOptionId()));
