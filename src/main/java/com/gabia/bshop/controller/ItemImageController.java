@@ -28,6 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class ItemImageController {
 	private final ItemImageService itemImageService;
 
+	@Login
 	@GetMapping("/items/{itemId}/images/{imageId}")
 	public ResponseEntity<ItemImageResponse> findItemImage(
 		@PathVariable final Long itemId,
@@ -35,6 +36,7 @@ public class ItemImageController {
 		return ResponseEntity.ok().body(itemImageService.findItemImage(itemId, imageId));
 	}
 
+	@Login
 	@GetMapping("/items/{itemId}/images")
 	public ResponseEntity<List<ItemImageResponse>> findItemImageList(@PathVariable final Long itemId) {
 		return ResponseEntity.ok().body(itemImageService.findItemImageList(itemId));

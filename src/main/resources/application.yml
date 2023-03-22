@@ -13,7 +13,7 @@ spring:
       ddl-auto: ${DDL_AUTO}
     properties:
       hibernate:
-        hibernate.default_batch_fetch_size: ${FETCH_SIZE}
+        default_batch_fetch_size: ${FETCH_SIZE}
       jakarta:
         persistence:
           sharedCache:

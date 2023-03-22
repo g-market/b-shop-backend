@@ -12,13 +12,18 @@ variables:
   rules:
     - if: '$CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "main" || $CI_MERGE_REQUEST_TARGET_BRANCH_NAME == "develop"'
 
-.push_rules:
+.develop_push_rules:
   rules:
-    - if : '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == "develop"'
+    - if: '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == "develop"'
+
+.main_push_rules:
+  rules:
+    - if : '$CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == "main"'
 
 test:
   rules:
     - !reference [.merge_rules, rules]
+    - !reference [.develop_push_rules, rules]
   variables:
     GRADLE_OPTS: "-Dorg.gradle.daemon=false"
     DOCKER_HOST: "tcp://docker:2375"
@@ -33,7 +38,7 @@ test:
     - name: docker:dind
   script:
     - ./gradlew test
-  coverage: '/ - Instruction Coverage: ([0-9.]+)%/'
+  coverage: '/    - Instruction Coverage: ([0-9.]+)%/'
   artifacts:
     paths:
       - build/reports/jacoco/test/jacoco*.xml
@@ -44,6 +49,7 @@ test:
 visualization:
   rules:
     - !reference [.merge_rules, rules]
+    - !reference [.develop_push_rules, rules]
   stage: visualization
   needs: ["test"]
   image: registry.gitlab.com/haynes/jacoco2cobertura:1.0.7
@@ -58,8 +64,7 @@ visualization:
 
 build:
   rules:
-    - !reference [.merge_rules, rules]
-    - !reference [.push_rules, rules]
+    - !reference [.main_push_rules, rules]
   image: openjdk:17-alpine
   stage: build
   script:
@@ -72,7 +77,7 @@ build:
 
 package:
   rules:
-    - !reference [ .push_rules, rules ]
+    - !reference [.main_push_rules, rules ]
   stage: package
   needs: ["build"]
   image: docker:latest
@@ -90,7 +95,7 @@ package:
 
 deploy:
   rules:
-    - !reference [ .push_rules, rules ]
+    - !reference [.main_push_rules, rules ]
   stage: deploy
   needs: ["package"]
   tags:

@@ -29,6 +29,7 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
 			.from(order)
 			.where(betweenDate(orderSearchConditions), eqMemberId(memberId))
 			.offset(pageable.getOffset())
+			.orderBy(order.id.desc())
 			.limit(pageable.getPageSize())
 			.fetch();
 

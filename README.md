@@ -2,6 +2,12 @@
 [![pipeline status](http://mentoring-gitlab.gabia.com/mentee/mentee_2023.01/team/g-market/gabia_b_shop_backend/badges/develop/pipeline.svg)](http://mentoring-gitlab.gabia.com/mentee/mentee_2023.01/team/g-market/gabia_b_shop_backend/-/commits/develop)
 [![coverage report](http://mentoring-gitlab.gabia.com/mentee/mentee_2023.01/team/g-market/gabia_b_shop_backend/badges/develop/coverage.svg)](http://mentoring-gitlab.gabia.com/mentee/mentee_2023.01/team/g-market/gabia_b_shop_backend/-/commits/develop)
 
+![page](http://mentoring-gitlab.gabia.com/mentee/mentee_2023.01/team/g-market/gabia_b_shop_backend/uploads/86b327064f71e418bc39f97fd53805ed/image.png)
+
+## [개발 진행 과정 (WIKI)](https://mentoring-gitlab.gabia.com/mentee/mentee_2023.01/team/g-market/gabia_b_shop_backend/-/wikis/home) 
+
+<br/>
+
 ## 개발 환경
 - **JAVA 17**
 - **SpringBoot 3.0.2**
@@ -11,10 +17,13 @@
 - **Redis 6.2.7**
 - **MinIO**
 - **Vue.js 3**
+
+<br/>
+
 ## 프로젝트 세팅
-1. `MySql`, `redis` 컨테이너 실행
+1. `MySQL`, `redis` 컨테이너 실행
 ```bash
-docker-compose up -v
+docker-compose up -d
 ```
 
 2. .env 파일 생성
@@ -28,29 +37,30 @@ DB_PORT=<DB_PORT>
 
 3. 환경변수 세팅
 ```text
-ACCESS-EXPIRED-TIME=3600000;
-ACCESSTOKEN-URL=<ACCESSTOKEN_URL>;
-ACTIVE-PROFILE=local;
-CLIENT-ID=<CLIENT_ID>;
-CLIENT-SECRET=<CLIENT_SECRET>;
-DB-PASSWORD=<DB_PASSWORD>;
-DB-URL=jdbc:mysql://localhost:<DB_PORT>/<DB_NAME>;
-DB-USERNAME=<DB_USERNAME>;
-DDL-AUTO=create;
-FETCH-SIZE=<FETCH_SIZE>;
-LOG-LEVEL=debug;
-REDIS-HOST=<REDIS_HOST>;
-REDIS-PORT=<REDIS_PORT>;
-REFRESH-EXPIRED-TIME=1209600000;
-SERVER-PORT=<SERVER_PORT>;
-TOKEN-SECRET=<TOKEN_SECRRT>;
-USER-URL=<USER_URL>
+ACCESS_EXPIRED_TIME=3600000;
+ACCESS_TOKEN_URL=<ACCESS_TOKEN_URL>;
+ACTIVE_PROFILE=<ACTIVE_PROFILE>;
+CLIENT_ID=<CLIENT_ID>;
+CLIENT_SECRET=<CLIENT_SECRET>;
+DB_PASSWORD=<DB_PASSWORD>;
+DB_URL=jdbc:mysql://localhost:<DB_PORT>/<DB_NAME>;
+DB_USERNAME=<DB_USERNAME>;
+DDL_AUTO=<DDL_AUTO>;
+FETCH_SIZE=<FETCH_SIZE>;
+LOG_LEVEL=<LOG_LEVEL>;
+REDIS_HOST=<REDIS_HOST>;
+REDIS_PORT=<REDIS_PORT>;
+REDIS_PASSWORD=<REDIS_PASSWORD>;
+REFRESH_EXPIRED_TIME=<REFRESH_EXPIRED_TIME>;
+SERVER_PORT=<SERVER_PORT>;
+TOKEN_SECRET=<TOKEN_SECRET>;
+USER_URL=<USER_URL>
 ```
 
 ## 역할 분담
 - Backend : @Becker @summer @Jenna @jaime
-- Frontend : @Jenna @jaime
-- 성능 최적화 : @summer
+- Frontend : @jaime
+- 성능 최적화 : @Becker @Jenna @jaime
 - 인프라 구성(CI/CD) : @Becker
 
 ## 설계문서

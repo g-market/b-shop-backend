@@ -4,6 +4,7 @@ plugins {
     id 'io.spring.dependency-management' version '1.1.0'
     id 'checkstyle'
     id 'jacoco'
+    id 'org.barfuin.gradle.jacocolog' version '2.0.0'
 }
 
 compileJava.options.encoding = 'UTF-8'
@@ -43,6 +44,7 @@ dependencies {
     runtimeOnly 'io.jsonwebtoken:jjwt-impl:0.11.5'
     runtimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
+    // mysql
     runtimeOnly 'com.mysql:mysql-connector-j:8.0.31'
 
     // json parser
@@ -58,30 +60,11 @@ dependencies {
     implementation 'io.sentry:sentry-spring-boot-starter-jakarta:6.14.0'
     implementation 'io.sentry:sentry-logback:6.14.0'
 
-    // lombok
-    compileOnly 'org.projectlombok:lombok'
-    annotationProcessor 'org.projectlombok:lombok'
-    testCompileOnly 'org.projectlombok:lombok'
-    testAnnotationProcessor 'org.projectlombok:lombok'
-
-    // test Containers
-    testImplementation "org.testcontainers:junit-jupiter:1.17.6"
-    testImplementation "org.testcontainers:mysql:1.17.6"
-
-    // mockServer
-    testImplementation 'org.mock-server:mockserver-netty:5.15.0'
-
-    testImplementation 'org.springframework.boot:spring-boot-starter-test'
-
-    // mapstruct
-    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
-    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
-
     // minio
     implementation 'io.minio:minio:8.3.6'
 
     // url-validator
-    implementation 'commons-validator:commons-validator:1.6'
+    implementation 'commons-validator:commons-validator:1.7'
 
     // shed-lock
     implementation 'net.javacrumbs.shedlock:shedlock-spring:4.42.0'
@@ -93,9 +76,28 @@ dependencies {
     // actuator
     implementation 'org.springframework.boot:spring-boot-starter-actuator:3.0.4'
 
+    // lombok
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+    testCompileOnly 'org.projectlombok:lombok'
+    testAnnotationProcessor 'org.projectlombok:lombok'
+
+    // mapstruct
+    implementation 'org.mapstruct:mapstruct:1.4.2.Final'
+    annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    // test Containers
+    testImplementation "org.testcontainers:junit-jupiter:1.17.6"
+    testImplementation "org.testcontainers:mysql:1.17.6"
+
+    // mockServer
+    testImplementation 'org.mock-server:mockserver-netty:5.15.0'
+
     // https://mvnrepository.com/artifact/org.redisson/redisson
     implementation group: 'org.redisson', name: 'redisson', version: '3.20.0'
-    
+
 }
 
 tasks.named('test') {
@@ -117,14 +119,17 @@ jacocoTestReport {
 
     afterEvaluate {
         classDirectories.setFrom(files(classDirectories.files.collect {
-            fileTree(dir: it, exclude: [
-                    "**/BshopApplication.class",
-                    "**/entity/**",
-                    "**/config/**",
-                    "**/mapper/**",
-                    "**/dto/**",
-                    "**/util/**"
-            ])
+            fileTree(dir: it, exclude: ["**/BshopApplication.class",
+                                        "**/config/**",
+                                        "**/controller/**",
+                                        "**/dto/**",
+                                        "**/entity/**",
+                                        "**/exception/**",
+                                        "**/mapper/**",
+                                        "**/repository/**",
+                                        "**/schedule/**",
+                                        "**/security/**",
+                                        "**/util/**"])
         }))
     }
     dependsOn test // jacocoTestReport 에 test라는 종속성을 추가
@@ -135,7 +140,6 @@ jacocoTestCoverageVerification {
     violationRules {
         rule {
             element = 'CLASS'
-            enabled = false
 
             limit {
                 counter = 'LINE'
@@ -143,14 +147,17 @@ jacocoTestCoverageVerification {
                 minimum = 0.50
             }
 
-            excludes = [
-                    "**/BshopApplication.class",
-                    "**/entity/**",
-                    "**/config/**",
-                    "**/mapper/**",
-                    "**/dto/**",
-                    "**/util/**"
-            ]
+            excludes = ["*.BshopApplication",
+                        "*.config.*",
+                        "*.controller.*",
+                        "*.dto.*",
+                        "*.entity.*",
+                        "*.exception.*",
+                        "*.mapper.*",
+                        "*.repository.*",
+                        "*.schedule.*",
+                        "*.security.*",
+                        "*.util.*"]
         }
     }
 }
@@ -171,4 +178,3 @@ checkstyle {
 jar {
     enabled = false
 }
-
