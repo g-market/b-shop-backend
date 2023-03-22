@@ -95,7 +95,7 @@ package:
 
 deploy:
   rules:
-    - !reference [main_push_rules, rules ]
+    - !reference [.main_push_rules, rules ]
   stage: deploy
   needs: ["package"]
   tags:
