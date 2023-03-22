@@ -15,14 +15,5 @@ public interface OrderRepository extends JpaRepository<Order, Long>, OrderReposi
 
 	Optional<Order> findByIdAndMemberId(Long orderId, Long memberId);
 
-	@Query("""
-		select o from Order o
-		join fetch o.orderItemList
-		where o.id = :orderId
-		and o.member.id = :memberId
-		""")
-	@Lock(LockModeType.PESSIMISTIC_WRITE)
-	Optional<Order> findByIdAndMemberIdWithLock(Long orderId, Long memberId);
-
 	List<Order> findAllByMemberId(Long memberId);
 }

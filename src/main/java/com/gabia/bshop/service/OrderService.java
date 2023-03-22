@@ -152,11 +152,6 @@ public class OrderService {
 			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
 	}
 
-	private Order findOrderByIdAndMemberIdWithLock(final Long orderId, final Long memberId) {
-		return orderRepository.findByIdAndMemberIdWithLock(orderId, memberId)
-			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
-	}
-
 	private void validateItemStatus(final ItemOption itemOption) {
 		if (itemOption.getItem().getItemStatus() != ItemStatus.PUBLIC) {
 			throw new ConflictException(ITEM_STATUS_NOT_PUBLIC_EXCEPTION);
