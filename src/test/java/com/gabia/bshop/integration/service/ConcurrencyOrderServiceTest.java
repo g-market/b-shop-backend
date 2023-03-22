@@ -15,10 +15,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 
 import com.gabia.bshop.config.ImageDefaultProperties;
 import com.gabia.bshop.dto.OrderItemDto;
@@ -75,6 +74,9 @@ class ConcurrencyOrderServiceTest extends IntegrationTest {
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
 
+	@Autowired
+	private RedisProperties redisProperties;
+
 	@AfterEach
 	public void afterEach() {
 		deleteAll();
@@ -102,11 +104,6 @@ class ConcurrencyOrderServiceTest extends IntegrationTest {
 	@Test
 	void concurrencyOrder() throws InterruptedException {
 
-	@Autowired
-	private RedisProperties redisProperties;
-
-	@BeforeEach
-	void setUp() {
 		LocalDateTime now = LocalDateTime.now();
 		Member member1 = JENNA.getInstance();
 		Member member2 = JAIME.getInstance();
@@ -338,12 +335,12 @@ class ConcurrencyOrderServiceTest extends IntegrationTest {
 
 		Assertions.assertThat(afterItemOption3.getStockQuantity()).isEqualTo(0); //3번 상품은 재고가 0이여야한다.
 
-		// Assertions.assertThat(oi3.stream().mapToInt(orderItem -> orderItem.getOrderCount()).sum())
-		// 	.isEqualTo(beforeItemOption3.getStockQuantity());//3번 상품의 orderItem의 orderCount합과 기존 재고가 일치해야 한다.
-		// Assertions.assertThat(
-		// 		oi10.stream().mapToInt(orderItem -> orderItem.getOrderCount()).sum() + afterItemOption10.getStockQuantity())
-		// 	.isEqualTo(beforeItemOption10.getStockQuantity());
-		// Assertions.assertThat(orderAll.size()).isEqualTo(beforeItemOption3.getStockQuantity());
+		Assertions.assertThat(oi3.stream().mapToInt(orderItem -> orderItem.getOrderCount()).sum())
+			.isEqualTo(beforeItemOption3.getStockQuantity());//3번 상품의 orderItem의 orderCount합과 기존 재고가 일치해야 한다.
+		Assertions.assertThat(
+				oi10.stream().mapToInt(orderItem -> orderItem.getOrderCount()).sum() + afterItemOption10.getStockQuantity())
+			.isEqualTo(beforeItemOption10.getStockQuantity());
+		Assertions.assertThat(orderAll.size()).isEqualTo(beforeItemOption3.getStockQuantity());
 	}
 
 	@DisplayName("동시에_1000명이_주문을_생성하고_주문을_취소한다.")

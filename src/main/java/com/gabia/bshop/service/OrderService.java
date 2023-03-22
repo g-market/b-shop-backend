@@ -35,7 +35,7 @@ import com.gabia.bshop.security.MemberPayload;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Transactional
+@Transactional(readOnly = true)
 @Service
 public class OrderService {
 
@@ -67,6 +67,7 @@ public class OrderService {
 			.map(OrderMapper.INSTANCE::orderToOrderInfoPageResponse);
 	}
 
+	//pessimistic lock
 	@Transactional
 	public OrderCreateResponse createOrder(final Long memberId, final OrderCreateRequest orderCreateRequest) {
 		final Order order = OrderMapper.INSTANCE.orderCreateRequestToEntity(memberId, orderCreateRequest);
@@ -94,6 +95,8 @@ public class OrderService {
 		return OrderMapper.INSTANCE.orderCreateResponseToDto(order);
 	}
 
+	//redisson lock
+	@Transactional
 	public List<OrderItem> lockItemOptionList(List<OrderItemDto> orderItemDtoList, Order order) {
 
 		final List<ItemOption> itemOptionList = itemOptionRepository.findByItemIdListAndIdList(
@@ -105,7 +108,6 @@ public class OrderService {
 		for (int i = 0; i < itemOptionList.size(); i++) {
 			final ItemOption itemOption = itemOptionList.get(i);
 			int orderCount = orderItemDtoList.get(i).orderCount();
-
 			validateItemStatus(itemOption);
 			validateStockQuantity(itemOption, orderCount);
 
@@ -115,6 +117,7 @@ public class OrderService {
 		return orderItemList;
 	}
 
+	@Transactional
 	public OrderCreateResponse saveOrder(List<OrderItem> orderItemList, Order order) {
 		order.createOrder(orderItemList);
 		orderRepository.save(order);

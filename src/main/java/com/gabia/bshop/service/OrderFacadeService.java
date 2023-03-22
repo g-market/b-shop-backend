@@ -42,16 +42,14 @@ public class OrderFacadeService {
 	}
 
 	public List<OrderItem> lockItemOption(List<OrderItemDto> list, Order order) {
-		List<OrderItem> returnList = new ArrayList<OrderItem>();
+		List<OrderItem> returnList;
 		RLock[] lockList = new RLock[list.size()];
 		for (int i = 0; i < list.size(); i++) {
 			lockList[i] = redissonClient.getLock(String.format("%d", list.get(i).itemOptionId()));
 		}
-		//RLock lockList = redissonClient.getLock(String.format("%d", list.get(0).itemOptionId()));
 		RedissonMultiLock multiLock = new RedissonMultiLock(lockList);
 		try {
 			boolean available = multiLock.tryLock(100, 10, TimeUnit.SECONDS);
-			//boolean available = lockList.tryLock(20, 6, TimeUnit.SECONDS);
 			if (!available) {
 				System.out.println("redisson getLock timeout");
 				throw new IllegalArgumentException();
@@ -61,7 +59,6 @@ public class OrderFacadeService {
 		} catch (InterruptedException e) {
 			throw new RuntimeException(e);
 		} finally {
-			//lockList.unlock();
 			multiLock.unlock();
 		}
 		return returnList;
