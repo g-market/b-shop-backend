@@ -95,7 +95,7 @@ dependencies {
     // mockServer
     testImplementation 'org.mock-server:mockserver-netty:5.15.0'
 
-    // https://mvnrepository.com/artifact/org.redisson/redisson
+    // redisson
     implementation group: 'org.redisson', name: 'redisson', version: '3.20.0'
 
 }
