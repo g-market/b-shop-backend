@@ -20,12 +20,13 @@ import com.gabia.bshop.dto.request.CategoryUpdateRequest;
 import com.gabia.bshop.dto.response.CategoryAllInfoResponse;
 import com.gabia.bshop.entity.Category;
 import com.gabia.bshop.fixture.CategoryFixture;
+import com.gabia.bshop.integration.IntegrationTest;
 import com.gabia.bshop.repository.CategoryRepository;
 import com.gabia.bshop.service.CategoryService;
 
 @Transactional
 @SpringBootTest
-class CategoryServiceTest {
+class CategoryServiceTest extends IntegrationTest {
 
 	@Autowired
 	private CategoryRepository categoryRepository;
