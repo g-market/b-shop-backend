@@ -35,7 +35,7 @@ import com.gabia.bshop.security.MemberPayload;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 @Service
 public class OrderService {
 
@@ -88,6 +88,34 @@ public class OrderService {
 			orderItemList.add(OrderItem.createOrderItem(itemOption, order, orderCount));
 		}
 
+		order.createOrder(orderItemList);
+		orderRepository.save(order);
+
+		return OrderMapper.INSTANCE.orderCreateResponseToDto(order);
+	}
+
+	public List<OrderItem> lockItemOptionList(List<OrderItemDto> orderItemDtoList, Order order) {
+
+		final List<ItemOption> itemOptionList = itemOptionRepository.findByItemIdListAndIdList(
+			orderItemDtoList);
+
+		isEqualListSize(orderItemDtoList, itemOptionList);
+
+		final List<OrderItem> orderItemList = new ArrayList<>();
+		for (int i = 0; i < itemOptionList.size(); i++) {
+			final ItemOption itemOption = itemOptionList.get(i);
+			int orderCount = orderItemDtoList.get(i).orderCount();
+
+			validateItemStatus(itemOption);
+			validateStockQuantity(itemOption, orderCount);
+
+			orderItemList.add(OrderItem.createOrderItem(itemOption, order, orderCount));
+		}
+
+		return orderItemList;
+	}
+
+	public OrderCreateResponse saveOrder(List<OrderItem> orderItemList, Order order) {
 		order.createOrder(orderItemList);
 		orderRepository.save(order);
 

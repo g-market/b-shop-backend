@@ -31,6 +31,7 @@ public abstract class IntegrationTest {
 	static {
 		REDIS_CONTAINER = new GenericContainer<>(REDIS_VERSION)
 			.withExposedPorts(REDIS_PORT);
+		// .withCommand("redis-server --requirepass 1234");
 
 		MINIO_ENV.put("MINIO_ROOT_USER", MINIO_ROOT_USER);
 		MINIO_ENV.put("MINIO_ROOT_PASSWORD", MINIO_ROOT_PASSWORD);
@@ -57,6 +58,7 @@ public abstract class IntegrationTest {
 	private static void properties(DynamicPropertyRegistry registry) {
 		registry.add("spring.data.redis.host", REDIS_CONTAINER::getHost);
 		registry.add("spring.data.redis.port", () -> REDIS_CONTAINER.getMappedPort(REDIS_PORT));
+		// registry.add("spring.data.redis.password",() -> "1234");
 		registry.add("minio.endpoint", () -> getContainerAddress(MINIO_CONTAINER, MINIO_PORT));
 		registry.add("minio.user", () -> MINIO_ROOT_USER);
 		registry.add("minio.password", () -> MINIO_ROOT_PASSWORD);

@@ -11,4 +11,6 @@ public interface ItemOptionRepositoryCustom {
 	List<ItemOption> findWithItemAndCategoryAndImageByItemIdListAndIdList(List<CartDto> cartDtoList);
 
 	List<ItemOption> findByItemIdListAndIdListWithLock(List<OrderItemDto> orderItemDtoList);
+
+	List<ItemOption> findByItemIdListAndIdList(List<OrderItemDto> orderItemDtoList);
 }

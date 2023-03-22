@@ -44,6 +44,15 @@ public class ItemOptionRepositoryCustomImpl implements ItemOptionRepositoryCusto
 			.fetch();
 	}
 
+	@Override
+	public List<ItemOption> findByItemIdListAndIdList(List<OrderItemDto> orderItemDtoList) {
+		return jpaQueryFactory.select(itemOption)
+			.from(itemOption)
+			.where(Expressions.list(item.id, itemOption.id).in(searchItemIdAndItemOptionIdIn(orderItemDtoList)))
+			.orderBy(item.id.asc(), itemOption.id.asc())
+			.fetch();
+	}
+
 	private BooleanExpression itemIdEq(Long itemId) {
 		return itemId != null ? item.id.eq(itemId) : null;
 	}

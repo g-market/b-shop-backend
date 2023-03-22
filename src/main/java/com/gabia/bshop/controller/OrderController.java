@@ -22,6 +22,7 @@ import com.gabia.bshop.dto.searchConditions.OrderSearchConditions;
 import com.gabia.bshop.security.CurrentMember;
 import com.gabia.bshop.security.Login;
 import com.gabia.bshop.security.MemberPayload;
+import com.gabia.bshop.service.OrderFacadeService;
 import com.gabia.bshop.service.OrderService;
 import com.gabia.bshop.util.validator.LimitedSizePagination;
 
@@ -33,6 +34,7 @@ import lombok.RequiredArgsConstructor;
 public class OrderController {
 
 	private final OrderService orderService;
+	private final OrderFacadeService orderFacadeService;
 
 	@Login
 	@GetMapping("/orders")
@@ -54,6 +56,15 @@ public class OrderController {
 	public ResponseEntity<Page<OrderInfoPageResponse>> findAllOrderInfoList(
 		@LimitedSizePagination final Pageable pageable, final OrderSearchConditions orderSearchConditions) {
 		return ResponseEntity.ok(orderService.findAllOrderInfoList(orderSearchConditions, pageable));
+	}
+
+	@Login
+	@PostMapping("/orders/redisson")
+	public ResponseEntity<OrderCreateResponse> createOrderRedisson(
+		@CurrentMember final MemberPayload memberPayload,
+		@RequestBody @Valid final OrderCreateRequest orderCreateRequest) {
+		return ResponseEntity.status(HttpStatus.CREATED)
+			.body(orderFacadeService.purchaseOrder(memberPayload.id(), orderCreateRequest));
 	}
 
 	@Login

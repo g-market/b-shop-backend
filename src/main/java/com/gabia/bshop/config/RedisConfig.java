@@ -1,8 +1,12 @@
 package com.gabia.bshop.config;
 
+import org.redisson.Redisson;
+import org.redisson.api.RedissonClient;
+import org.redisson.config.Config;
 import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
@@ -49,6 +53,22 @@ public class RedisConfig {
 			redisProperties.getHost(), redisProperties.getPort());
 		redisStandaloneConfiguration.setPassword(redisProperties.getPassword());
 		return new LettuceConnectionFactory(redisStandaloneConfiguration);
+	}
+
+	@Bean
+	@Profile("!test")
+	public RedissonClient redissonClient() {
+		Config redisConfig = new Config();
+
+		System.out.println("redis://" + redisProperties.getHost() + ":" + redisProperties.getPort());
+		System.out.println("ps:" + redisProperties.getPassword());
+
+		redisConfig.useSingleServer()
+			.setAddress("redis://" + redisProperties.getHost() + ":" + redisProperties.getPort())
+			.setPassword(redisProperties.getPassword())
+			.setConnectionMinimumIdleSize(5)
+			.setConnectionPoolSize(5);
+		return Redisson.create(redisConfig);
 	}
 
 	@Bean

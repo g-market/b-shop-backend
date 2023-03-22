@@ -92,6 +92,10 @@ dependencies {
 
     // actuator
     implementation 'org.springframework.boot:spring-boot-starter-actuator:3.0.4'
+
+    // https://mvnrepository.com/artifact/org.redisson/redisson
+    implementation group: 'org.redisson', name: 'redisson', version: '3.20.0'
+    
 }
 
 tasks.named('test') {
@@ -167,3 +171,4 @@ checkstyle {
 jar {
     enabled = false
 }
+
