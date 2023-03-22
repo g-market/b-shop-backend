@@ -4,6 +4,8 @@ import static com.gabia.bshop.exception.ErrorCode.*;
 
 import java.util.List;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -53,6 +55,7 @@ public class CategoryService {
 			.map(CategoryMapper.INSTANCE::categoryToCategoryAllInfoResponse);
 	}
 
+	@CacheEvict(key = "0", value = "findCategoryNames")
 	@Transactional
 	public CategoryDto createCategory(final CategoryCreateRequest categoryCreateRequest) {
 		existCategoryByName(categoryCreateRequest.name());
@@ -60,6 +63,7 @@ public class CategoryService {
 		return CategoryMapper.INSTANCE.categoryToDto(categoryRepository.save(category));
 	}
 
+	@CacheEvict(key = "0", value = "findCategoryNames")
 	@Transactional
 	public CategoryDto updateCategory(final CategoryUpdateRequest categoryUpdateRequest) {
 		existCategoryByName(categoryUpdateRequest.name());
@@ -68,6 +72,7 @@ public class CategoryService {
 		return CategoryMapper.INSTANCE.categoryToDto(category);
 	}
 
+	@CacheEvict(key = "0", value = "findCategoryNames")
 	@Transactional
 	public void deleteCategory(final Long categoryId) {
 		final Category category = findCategoryById(categoryId);
@@ -76,6 +81,7 @@ public class CategoryService {
 		categoryRepository.delete(category);
 	}
 
+	@Cacheable(key = "0", value = "findCategoryNames")
 	public List<String> findCategoryNames() {
 		return categoryRepository.findCategoryNames();
 	}
