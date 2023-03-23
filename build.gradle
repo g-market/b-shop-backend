@@ -96,7 +96,7 @@ dependencies {
     testImplementation 'org.mock-server:mockserver-netty:5.15.0'
 
     // redisson
-    implementation group: 'org.redisson', name: 'redisson', version: '3.20.0'
+    implementation 'org.redisson:redisson:3.20.0'
 
 }
 
