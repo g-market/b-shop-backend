@@ -41,6 +41,7 @@ import com.gabia.bshop.repository.OrderRepository;
 import com.gabia.bshop.service.ItemOptionService;
 import com.gabia.bshop.service.OrderFacadeService;
 import com.gabia.bshop.service.OrderService;
+import com.gabia.bshop.testconfig.OrderFacadeFactory;
 
 class ConcurrencyOrderServiceTest extends IntegrationTest {
 
@@ -317,8 +318,8 @@ class ConcurrencyOrderServiceTest extends IntegrationTest {
 		for (int i = 0; i < repeatSize; i++) {
 			executorService.submit(() -> {
 				try {
-					orderService.createOrder(1L, orderCreateRequest);
-					//orderFacadeService.purchaseOrder(1L, orderCreateRequest);//redisson
+					//orderService.createOrder(1L, orderCreateRequest);
+					orderFacadeService.purchaseOrder(1L, orderCreateRequest);//redisson
 				} catch (ConflictException e) {
 				} finally {
 					countDownLatch.countDown();

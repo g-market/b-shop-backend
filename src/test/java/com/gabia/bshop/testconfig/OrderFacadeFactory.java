@@ -1,4 +1,4 @@
-package com.gabia.bshop.integration.service;
+package com.gabia.bshop.testconfig;
 
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
