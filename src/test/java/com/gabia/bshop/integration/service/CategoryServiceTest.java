@@ -19,9 +19,14 @@ import com.gabia.bshop.dto.request.CategoryCreateRequest;
 import com.gabia.bshop.dto.request.CategoryUpdateRequest;
 import com.gabia.bshop.dto.response.CategoryAllInfoResponse;
 import com.gabia.bshop.entity.Category;
+import com.gabia.bshop.entity.Item;
+import com.gabia.bshop.exception.ConflictException;
+import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.fixture.CategoryFixture;
+import com.gabia.bshop.fixture.ItemFixture;
 import com.gabia.bshop.integration.IntegrationTest;
 import com.gabia.bshop.repository.CategoryRepository;
+import com.gabia.bshop.repository.ItemRepository;
 import com.gabia.bshop.service.CategoryService;
 
 @Transactional
@@ -33,6 +38,9 @@ class CategoryServiceTest extends IntegrationTest {
 
 	@Autowired
 	private CategoryService categoryService;
+
+	@Autowired
+	private ItemRepository itemRepository;
 
 	@DisplayName("카테고리를_생성한다.")
 	@Test
@@ -215,5 +223,32 @@ class CategoryServiceTest extends IntegrationTest {
 			.usingRecursiveComparison()
 			.isEqualTo(List.of(category1.getName(), category2.getName(), category3.getName(), category4.getName(),
 				category5.getName()));
+	}
+
+	@DisplayName("삭제된_카테고리를_조회할_경우_예외가_발생한다.")
+	@Test
+	void findDeletedCategoryFail() {
+		// given
+		final Category category1 = CategoryFixture.CATEGORY_1.getInstance();
+		categoryRepository.save(category1);
+		categoryRepository.delete(category1);
+
+		// when & then
+		Assertions.assertThatThrownBy(
+			() -> categoryService.findCategory(category1.getId())).isInstanceOf(NotFoundException.class);
+	}
+
+	@DisplayName("카테고리_삭제_요청_시_카테고리에_아이템이_존재할_경우_예외가_발생한다.")
+	@Test
+	void validateDeleteCategoryByIdFail() {
+		// given
+		final Category category1 = CategoryFixture.CATEGORY_1.getInstance();
+		final Item item1 = ItemFixture.ITEM_1.getInstance(category1);
+		categoryRepository.save(category1);
+		itemRepository.save(item1);
+
+		// when & then
+		Assertions.assertThatThrownBy(
+			() -> categoryService.deleteCategory(category1.getId())).isInstanceOf(ConflictException.class);
 	}
 }
