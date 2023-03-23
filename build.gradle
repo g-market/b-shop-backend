@@ -94,6 +94,10 @@ dependencies {
 
     // mockServer
     testImplementation 'org.mock-server:mockserver-netty:5.15.0'
+
+    // redisson
+    implementation 'org.redisson:redisson:3.20.0'
+
 }
 
 tasks.named('test') {

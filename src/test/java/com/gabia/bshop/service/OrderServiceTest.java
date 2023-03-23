@@ -32,10 +32,13 @@ import com.gabia.bshop.entity.enumtype.MemberGrade;
 import com.gabia.bshop.entity.enumtype.MemberRole;
 import com.gabia.bshop.entity.enumtype.OrderStatus;
 import com.gabia.bshop.exception.BadRequestException;
+import com.gabia.bshop.exception.ConflictException;
+import com.gabia.bshop.exception.NotFoundException;
 import com.gabia.bshop.fixture.CategoryFixture;
 import com.gabia.bshop.fixture.ItemFixture;
 import com.gabia.bshop.fixture.ItemOptionFixture;
 import com.gabia.bshop.fixture.MemberFixture;
+import com.gabia.bshop.fixture.OrderFixture;
 import com.gabia.bshop.mapper.OrderMapper;
 import com.gabia.bshop.repository.ItemOptionRepository;
 import com.gabia.bshop.repository.OrderItemRepository;
@@ -464,5 +467,102 @@ class OrderServiceTest {
 
 		//then
 		assertEquals(order.getId(), returnDto.orderId(), "관리자는 자신의 주문이 아니여도 단건 주문 조회에 성공한다.");
+	}
+
+	@DisplayName("아이템_상태가_현재_판매중이_아닐경우_예외가_발생한다.")
+	@Test
+	void validateItemStatusFail() {
+		//given
+		Member member = MemberFixture.JENNA.getInstance();
+		Category category = CategoryFixture.CATEGORY_1.getInstance();
+		Item item1 = ItemFixture.ITEM_4.getInstance(category);
+		ItemOption itemOption1 = ItemOptionFixture.ITEM_OPTION_1.getInstance(item1);
+
+		OrderItemDto orderItemDto = OrderItemDto.builder()
+			.itemId(item1.getId())
+			.itemOptionId(itemOption1.getId())
+			.orderCount(1)
+			.build();
+
+		List<OrderItemDto> orderItemDtoList = List.of(orderItemDto);
+
+		OrderCreateRequest orderCreateRequest = OrderCreateRequest.builder()
+			.orderItemDtoList(orderItemDtoList)
+			.build();
+
+		//when
+		when(itemOptionRepository.findByItemIdListAndIdListWithLock(orderItemDtoList)).thenReturn(List.of(itemOption1));
+
+		//then
+		Assertions.assertThatThrownBy(() -> orderService.createOrder(member.getId(), orderCreateRequest))
+			.isInstanceOf(ConflictException.class);
+	}
+
+	@DisplayName("주문_상태가_이미_취소인_상태에서_취소를_요청할_경우_예외가_발생한다.")
+	@Test
+	void validateCancelOrderStatusFail() {
+		//given
+		Member member = MemberFixture.JENNA.getInstance();
+		Order order = OrderFixture.ORDER_5.getInstance(member);
+
+		//when
+		when(orderRepository.findByIdAndMemberId(order.getId(), member.getId())).thenReturn(
+			Optional.ofNullable(order));
+
+		//then
+		Assertions.assertThatThrownBy(() -> orderService.cancelOrder(member.getId(), order.getId()))
+			.isInstanceOf(ConflictException.class);
+	}
+
+	@DisplayName("동일한_주문_상태를_업데이트_요청할_경우_예외가_발생한다.")
+	@Test
+	void validateUpdateOrderStatusFail() {
+		//given
+		Member member = MemberFixture.JENNA.getInstance();
+		Order order = OrderFixture.ORDER_5.getInstance(member);
+
+		//when
+		when(orderRepository.findById(order.getId())).thenReturn(Optional.ofNullable(order));
+
+		OrderUpdateStatusRequest reqDto = OrderUpdateStatusRequest.builder()
+			.orderId(order.getId())
+			.status(order.getStatus())
+			.build();
+
+		//then
+		Assertions.assertThatThrownBy(() -> orderService.updateOrderStatus(reqDto))
+			.isInstanceOf(ConflictException.class);
+	}
+
+	@DisplayName("존재하지_않는_주문_ID로_조회_요청할_경우_예외가_발생한다.")
+	@Test
+	void findOrderByIdFail() {
+		//given
+		Member member = MemberFixture.JENNA.getInstance();//NOMAL
+		MemberPayload memberPayload = MemberPayload.builder()
+			.id(member.getId())
+			.role(member.getRole())
+			.build();
+		Order order = OrderFixture.ORDER_5.getInstance(member);
+
+		//when & then
+		Assertions.assertThatThrownBy(() -> orderService.findOrderInfo(memberPayload, order.getId()))
+			.isInstanceOf(NotFoundException.class);
+	}
+
+	@DisplayName("존재하지_않는_주문_ID+회원_ID로_조회_요청할_경우_예외가_발생한다.")
+	@Test
+	void findOrderByIdAndMemberIdFail() {
+		//given
+		Member member = MemberFixture.AIDEN.getInstance();//ADMIN
+		MemberPayload memberPayload = MemberPayload.builder()
+			.id(member.getId())
+			.role(member.getRole())
+			.build();
+		Order order = OrderFixture.ORDER_5.getInstance(member);
+
+		//when & then
+		Assertions.assertThatThrownBy(() -> orderService.findOrderInfo(memberPayload, order.getId()))
+			.isInstanceOf(NotFoundException.class);
 	}
 }

@@ -67,6 +67,7 @@ public class OrderService {
 			.map(OrderMapper.INSTANCE::orderToOrderInfoPageResponse);
 	}
 
+	//pessimistic lock
 	@Transactional
 	public OrderCreateResponse createOrder(final Long memberId, final OrderCreateRequest orderCreateRequest) {
 		final Order order = OrderMapper.INSTANCE.orderCreateRequestToEntity(memberId, orderCreateRequest);
@@ -88,6 +89,36 @@ public class OrderService {
 			orderItemList.add(OrderItem.createOrderItem(itemOption, order, orderCount));
 		}
 
+		order.createOrder(orderItemList);
+		orderRepository.save(order);
+
+		return OrderMapper.INSTANCE.orderCreateResponseToDto(order);
+	}
+
+	//redisson lock
+	@Transactional
+	public List<OrderItem> lockItemOptionList(List<OrderItemDto> orderItemDtoList, Order order) {
+
+		final List<ItemOption> itemOptionList = itemOptionRepository.findByItemIdListAndIdList(
+			orderItemDtoList);
+
+		isEqualListSize(orderItemDtoList, itemOptionList);
+
+		final List<OrderItem> orderItemList = new ArrayList<>();
+		for (int i = 0; i < itemOptionList.size(); i++) {
+			final ItemOption itemOption = itemOptionList.get(i);
+			int orderCount = orderItemDtoList.get(i).orderCount();
+			validateItemStatus(itemOption);
+			validateStockQuantity(itemOption, orderCount);
+
+			orderItemList.add(OrderItem.createOrderItem(itemOption, order, orderCount));
+		}
+
+		return orderItemList;
+	}
+
+	@Transactional
+	public OrderCreateResponse saveOrder(List<OrderItem> orderItemList, Order order) {
 		order.createOrder(orderItemList);
 		orderRepository.save(order);
 
@@ -118,11 +149,6 @@ public class OrderService {
 
 	private Order findOrderByIdAndMemberId(final Long orderId, final Long memberId) {
 		return orderRepository.findByIdAndMemberId(orderId, memberId)
-			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
-	}
-
-	private Order findOrderByIdAndMemberIdWithLock(final Long orderId, final Long memberId) {
-		return orderRepository.findByIdAndMemberIdWithLock(orderId, memberId)
 			.orElseThrow(() -> new NotFoundException(ORDER_NOT_FOUND_EXCEPTION, orderId));
 	}
 
